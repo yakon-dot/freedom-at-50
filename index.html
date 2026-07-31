@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b0c0e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Freedom at 50">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Freedom at 50</title>
+<style>
+:root{
+  --bg:#0b0c0e;--card:#111316;--card2:#15171b;--line:#2c3037;
+  --text:#f5f4f0;--muted:#999ba4;--yellow:#e7cf63;
+  --green:#84bd91;--blue:#79a9c9;--purple:#aa8fc9;--bronze:#c59669;
+  --safe-bottom:env(safe-area-inset-bottom,0px)
+}
+*{box-sizing:border-box}
+html{background:var(--bg);scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit}
+button{color:inherit}
+.app{max-width:760px;margin:auto;min-height:100vh}
+header{padding:calc(22px + env(safe-area-inset-top,0px)) 20px 16px;background:linear-gradient(180deg,#0b0c0e 80%,rgba(11,12,14,0));position:sticky;top:0;z-index:20}
+.brand-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-weight:790;letter-spacing:-.025em;font-size:22px}
+.version{font-size:12px;color:var(--muted);border:1px solid var(--line);padding:6px 9px;border-radius:999px}
+.tagline{margin-top:5px;color:var(--muted);font-size:13px}
+main{padding:4px 18px calc(108px + var(--safe-bottom))}
+.page{display:none}
+.page.active{display:block}
+.eyebrow{color:var(--yellow);font-size:12px;font-weight:800;letter-spacing:.17em;text-transform:uppercase;margin:20px 0 12px}
+h1{font-size:39px;line-height:1.05;letter-spacing:-.045em;margin:0 0 14px}
+h2{font-size:25px;letter-spacing:-.03em;margin:0}
+.intro{color:var(--muted);font-size:16px;line-height:1.55;margin:0 0 22px}
+.stack{display:grid;gap:14px}
+.card{background:linear-gradient(145deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:25px;padding:20px;min-width:0;transition:transform .18s ease,border-color .22s ease,box-shadow .22s ease}
+.card.gold{border-color:rgba(231,207,99,.52);background:linear-gradient(145deg,rgba(231,207,99,.13),var(--card))}
+.card.house{border-color:rgba(197,150,105,.34)}
+.card.holiday{border-color:rgba(121,169,201,.34)}
+.card.savings{border-color:rgba(132,189,145,.34)}
+.card.pension{border-color:rgba(170,143,201,.34)}
+.card:active{transform:scale(.992)}
+.card-head{display:flex;align-items:center;gap:12px}
+.icon{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;border:1px solid rgba(231,207,99,.32);background:rgba(231,207,99,.08);color:var(--yellow)}
+.icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.label{color:var(--muted);font-size:15px}
+.value{font-size:39px;line-height:1;font-weight:790;letter-spacing:-.045em;margin-top:20px}
+.value.medium{font-size:31px}
+.detail{color:var(--muted);font-size:13px;margin-top:8px;line-height:1.45}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.progress{height:8px;background:#24272c;border-radius:999px;overflow:hidden;margin-top:16px}
+.progress span{display:block;height:100%;background:var(--yellow);border-radius:inherit;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+.pill{font-size:11px;color:var(--yellow);border:1px solid rgba(231,207,99,.32);border-radius:999px;padding:6px 9px;white-space:nowrap}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini-card{padding:17px;border-radius:21px}
+.mini-card .value{font-size:27px;margin-top:13px}
+.section-title{display:flex;align-items:end;justify-content:space-between;margin:30px 2px 13px}
+.north-star{border:1px dashed #383b42;border-radius:23px;padding:20px;margin-top:14px;color:#d9d4c1;font-family:"Bradley Hand","Segoe Print","Comic Sans MS",cursive;font-size:20px;line-height:1.35}
+input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px solid #343840;border-radius:14px;padding:14px 15px;font-size:16px;outline:none}
+input:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(231,207,99,.1)}
+label{display:block;color:var(--muted);font-size:13px;margin-top:15px}
+.save-btn,.secondary-btn{width:100%;border-radius:16px;padding:14px 16px;margin-top:16px;font-weight:720}
+.save-btn{background:var(--yellow);color:#17150b;border:0}
+.secondary-btn{background:transparent;border:1px solid #454952;color:var(--text)}
+.loan-card{padding:19px}
+.loan-title{font-size:19px;font-weight:760}
+.loan-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.loan-stat{background:#0e1013;border:1px solid #272b31;border-radius:15px;padding:12px}
+.loan-stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}
+.loan-stat strong{font-size:16px}
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.empty-note{color:var(--muted);font-size:14px;line-height:1.5}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(12,13,15,.96);backdrop-filter:blur(18px);border-top:1px solid #292c31;padding:8px 8px calc(8px + var(--safe-bottom));display:grid;grid-template-columns:repeat(5,1fr);gap:3px}
+.nav-btn{border:0;background:transparent;color:#9799a2;border-radius:15px;min-height:58px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px}
+.nav-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn.active{color:var(--yellow);background:rgba(231,207,99,.1)}
+.save-note{position:fixed;left:50%;bottom:calc(86px + var(--safe-bottom));transform:translate(-50%,14px);background:#f0ead0;color:#17150d;padding:10px 14px;border-radius:999px;font-weight:700;font-size:12px;opacity:0;pointer-events:none;transition:.18s;z-index:80}
+.save-note.show{opacity:1;transform:translate(-50%,0)}
+.install-banner{display:none;margin-bottom:16px;border:1px solid rgba(231,207,99,.35);background:rgba(231,207,99,.08);border-radius:18px;padding:14px}
+.install-banner button{margin-top:10px;width:100%;border:0;border-radius:13px;padding:11px;background:var(--yellow);color:#17150b;font-weight:750}
+@keyframes cardEnter{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes numberPop{0%{transform:translateY(0)}45%{transform:translateY(-5px)}100%{transform:translateY(0)}}
+@keyframes completionPulse{0%{transform:scale(1);box-shadow:0 0 0 rgba(132,189,145,0)}48%{transform:scale(1.012);box-shadow:0 0 34px rgba(132,189,145,.18)}100%{transform:scale(1);box-shadow:0 0 0 rgba(132,189,145,0)}}
+.page.active .card{animation:cardEnter .45s cubic-bezier(.2,.75,.25,1) both}
+.value.changed{animation:numberPop .48s cubic-bezier(.2,.8,.2,1)}
+.celebrate{animation:completionPulse .78s cubic-bezier(.2,.8,.2,1) both!important}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.001ms!important;transition-duration:.001ms!important;scroll-behavior:auto!important}}
+@media(min-width:600px){main{padding-left:28px;padding-right:28px}.overview-support{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.0</div></div>
+  <div class="tagline">Small wins become big freedom.</div>
+</header>
+
+<main>
+<section class="page active" id="overview">
+  <div class="eyebrow">Overview</div>
+  <h1>One step closer.</h1>
+  <p class="intro">Progress first. The detailed figures stay available when you choose to look at them.</p>
+  <div class="install-banner" id="installBanner"><strong>Install Freedom at 50</strong><div class="detail">Add it to your Home Screen so it opens like an app.</div><button id="installBtn">Install app</button></div>
+  <div class="stack">
+    <article class="card"><div class="card-head"><div class="icon"><svg viewBox="0 0 24 24"><path d="m12 3 1.2 3.3 3.3 1.2-3.3 1.2L12 12l-1.2-3.3-3.3-1.2 3.3-1.2L12 3Z"/></svg></div><div class="label">Money returned</div></div><div class="value" id="overviewReturned">€8,393</div><div class="detail">Money you have already moved back towards your future.</div></article>
+    <article class="card gold" id="firstVictoryCard"><div class="row"><div class="card-head"><div class="icon"><svg viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 5h10l-2 3 2 3H5"/></svg></div><div><div class="label">First victory</div><div style="font-size:20px;font-weight:760;margin-top:3px">House Pocket</div></div></div><div class="pill">Quickest win</div></div><div class="value medium" id="pocketOverview">€300 remaining</div><div class="progress"><span id="pocketBar" style="width:40%"></span></div><div class="row detail"><span id="pocketMessage">Your first finish line is close.</span><span id="pocketMonths">About 3 months</span></div></article>
+    <article class="card"><div class="card-head"><div class="icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></div><div class="label">Freedom progress</div></div><div class="value" id="overviewProgress">17%</div><div class="progress"><span id="overviewProgressBar" style="width:16.6%"></span></div></article>
+    <article class="card"><div class="card-head"><div class="icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m14 7 5 5-5 5"/></svg></div><div class="label">Next milestone</div></div><div class="value medium" id="nextMilestoneName">House Pocket</div><div class="detail" id="nextMilestoneDetail">€300 remaining • about 3 months</div></article>
+  </div>
+  <div class="section-title"><h2>What you are building</h2></div>
+  <div class="grid2 overview-support">
+    <article class="card mini-card house"><div class="label">House Fund</div><div class="value" id="overviewHouse">€9,000</div></article>
+    <article class="card mini-card holiday"><div class="label">Holiday Fund</div><div class="value" id="overviewHoliday">€1,450</div></article>
+    <article class="card mini-card savings"><div class="label">Personal Savings</div><div class="value" id="overviewSavings">€565</div></article>
+    <article class="card mini-card pension"><div class="label">Pension</div><div class="value" id="overviewPension">€48,952</div></article>
+  </div>
+  <article class="north-star">Does seeing this make me feel more motivated to open the app next month?</article>
+</section>
+
+<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><h1>Pieces of your future, being returned.</h1><p class="intro">Update a balance whenever it moves. Everything else recalculates automatically.</p><div class="stack" id="loanList"></div><button class="secondary-btn" id="restoreLoans">Restore starting figures</button></section>
+
+<section class="page" id="goals"><div class="eyebrow">Goals</div><h1>Life alongside the plan.</h1><p class="intro">Debt progress matters, but so do the things you are building and enjoying now.</p><div class="stack">
+<article class="card gold"><h2>House Pocket</h2><label>Amount still owed</label><input id="housePocket" type="number" inputmode="decimal"><label>Planned monthly repayment</label><input id="housePocketMonthly" type="number" inputmode="decimal"><button class="save-btn" data-save>Save House Pocket</button></article>
+<article class="card house"><h2>House Fund</h2><label>Current joint balance</label><input id="houseFund" type="number" inputmode="decimal"><button class="save-btn" data-save>Save House Fund</button></article>
+<article class="card holiday"><h2>Holiday Fund</h2><label>Current balance</label><input id="holidayFund" type="number" inputmode="decimal"><label>Combined monthly contribution</label><input id="holidayMonthly" type="number" inputmode="decimal"><button class="save-btn" data-save>Save Holiday Fund</button></article>
+<article class="card savings"><h2>Personal Savings</h2><label>Current balance</label><input id="personalSavings" type="number" inputmode="decimal"><button class="save-btn" data-save>Save Personal Savings</button></article>
+</div></section>
+
+<section class="page" id="pension"><div class="eyebrow">Pension</div><h1>Future freedom, growing quietly.</h1><article class="card pension"><div class="label">Current pension value</div><div class="value" id="pensionDisplay">€48,951.79</div><label>Update pension value</label><input id="pensionValue" type="number" inputmode="decimal"><label>Your monthly contribution</label><input id="pensionPersonal" type="number" inputmode="decimal"><label>Employer contribution</label><input id="pensionEmployer" type="number" inputmode="decimal"><div class="loan-summary"><div class="loan-stat"><small>Total added monthly</small><strong id="pensionMonthlyTotal">€585.00</strong></div><div class="loan-stat"><small>Annual contributions</small><strong id="pensionAnnual">€7,020.00</strong></div></div><button class="save-btn" data-save>Save Pension</button></article></section>
+
+<section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom">€742</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming.</p></article></div></section>
+</main>
+</div>
+
+<nav class="bottom-nav">
+<button class="nav-btn active" data-page="overview"><span>Overview</span></button>
+<button class="nav-btn" data-page="journey"><span>Journey</span></button>
+<button class="nav-btn" data-page="goals"><span>Goals</span></button>
+<button class="nav-btn" data-page="pension"><span>Pension</span></button>
+<button class="nav-btn" data-page="more"><span>More</span></button>
+</nav>
+<div class="save-note" id="saveNote">Saved locally ✓</div>
+
+<script>
+const KEY="freedom50-pwa-v1";
+const defaults={loans:[
+{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},
+{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},
+{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},
+{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},
+{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}
+],housePocket:300,housePocketMonthly:100,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensionValue:48951.79,pensionPersonal:342.5,pensionEmployer:242.5};
+let state;try{state=Object.assign({},defaults,JSON.parse(localStorage.getItem(KEY)||"{}"))}catch(e){state=structuredClone(defaults)}
+const id=x=>document.getElementById(x);
+const euro0=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(+n||0);
+const euro2=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2}).format(+n||0);
+function monthsText(b,p){if(!p)return"Repayment not set";const m=Math.ceil(b/p);return m===1?"About 1 month":`About ${m} months`}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));const n=id("saveNote");n.classList.add("show");setTimeout(()=>n.classList.remove("show"),1000)}
+function page(name){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===name));document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.page===name));history.replaceState(null,"","#"+name);scrollTo(0,0)}
+document.querySelectorAll(".nav-btn").forEach(b=>b.onclick=()=>page(b.dataset.page));
+function renderLoans(){const list=id("loanList");list.innerHTML="";state.loans.forEach((l,i)=>{const r=Math.max(0,l.starting-l.current),p=l.starting?r/l.starting*100:0;const c=document.createElement("article");c.className="card loan-card";c.innerHTML=`<div class="row"><div class="loan-title">${l.name}</div><div class="pill">${p.toFixed(1)}% returned</div></div><div class="progress"><span style="width:${p}%"></span></div><div class="loan-summary"><div class="loan-stat"><small>Money returned</small><strong>${euro2(r)}</strong></div><div class="loan-stat"><small>Current balance</small><strong>${euro2(l.current)}</strong></div><div class="loan-stat"><small>Monthly repayment</small><strong>${euro2(l.payment)}</strong></div><div class="loan-stat"><small>Estimated freedom</small><strong>${monthsText(l.current,l.payment)}</strong></div></div><div class="editor-grid"><div><label>Current balance</label><input data-i="${i}" data-f="current" type="number" value="${l.current}"></div><div><label>Monthly repayment</label><input data-i="${i}" data-f="payment" type="number" value="${l.payment}"></div></div>`;list.appendChild(c)});list.querySelectorAll("input").forEach(x=>x.onchange=e=>{state.loans[+e.target.dataset.i][e.target.dataset.f]=Math.max(0,+e.target.value||0);save();render()})}
+function fill(){["housePocket","housePocketMonthly","houseFund","holidayFund","holidayMonthly","personalSavings","pensionValue","pensionPersonal","pensionEmployer"].forEach(k=>id(k).value=state[k])}
+function render(){const original=state.loans.reduce((s,x)=>s+x.starting,0),current=state.loans.reduce((s,x)=>s+x.current,0),returned=original-current,pct=returned/original*100,monthly=state.loans.reduce((s,x)=>s+x.payment,0);id("overviewReturned").textContent=euro0(returned);id("overviewProgress").textContent=Math.round(pct)+"%";id("overviewProgressBar").style.width=pct+"%";id("overviewHouse").textContent=euro0(state.houseFund);id("overviewHoliday").textContent=euro0(state.holidayFund);id("overviewSavings").textContent=euro0(state.personalSavings);id("overviewPension").textContent=euro0(state.pensionValue);id("monthlyFreedom").textContent=euro0(monthly);const hp=state.housePocket,hpm=state.housePocketMonthly;id("pocketOverview").textContent=hp<=0?"Complete":euro0(hp)+" remaining";id("pocketBar").style.width=(hp<=0?100:Math.max(0,Math.min(100,(500-hp)/5)))+"%";id("pocketMessage").textContent=hp<=0?"One less thing to carry.":hp<=100?"One payment away.":"Your first finish line is close.";id("pocketMonths").textContent=hp<=0?"First victory achieved":monthsText(hp,hpm);id("nextMilestoneName").textContent=hp>0?"House Pocket":"Credit Card 2";id("nextMilestoneDetail").textContent=hp>0?`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`:"Your next commitment is ready.";if(hp<=0)id("firstVictoryCard").classList.add("celebrate");id("pensionDisplay").textContent=euro2(state.pensionValue);const pm=state.pensionPersonal+state.pensionEmployer;id("pensionMonthlyTotal").textContent=euro2(pm);id("pensionAnnual").textContent=euro2(pm*12);renderLoans()}
+document.querySelectorAll("[data-save]").forEach(b=>b.onclick=()=>{["housePocket","housePocketMonthly","houseFund","holidayFund","holidayMonthly","personalSavings","pensionValue","pensionPersonal","pensionEmployer"].forEach(k=>state[k]=Math.max(0,+id(k).value||0));save();render()});
+id("restoreLoans").onclick=()=>{state.loans=structuredClone(defaults.loans);save();render()};
+fill();render();
+if(location.hash)page(location.hash.slice(1));
+if("serviceWorker" in navigator)navigator.serviceWorker.register("service-worker.js");
+let deferredPrompt;window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;id("installBanner").style.display="block"});id("installBtn").onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();await deferredPrompt.userChoice;id("installBanner").style.display="none"}};
+</script>
+</body>
+</html>
