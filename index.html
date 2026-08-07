@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Freedom at 50 — Web app v1.8</title>
+<title>Freedom at 50 — Web app v1.8.1</title>
 <style>
 :root{--bg:#0b0c0e;--card:#111316;--card2:#15171b;--line:#2c3037;--text:#f5f4f0;--muted:#999ba4;--yellow:#e7cf63;--green:#84bd91;--blue:#79a9c9;--purple:#aa8fc9;--bronze:#c59669;--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box} html{background:var(--bg);scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased} button,input{font:inherit} button{color:inherit}.app{max-width:720px;margin:0 auto;min-height:100vh}
@@ -41,441 +41,174 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .goal-item .goal-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .archive-toggle{width:100%;margin-top:10px}
 .mini-btn.delete{border-color:rgba(255,255,255,.12);color:#c8c2b6}
+@media(min-width:600px){main{padding-left:28px;padding-right:28px}.overview-support{grid-template-columns:repeat(2,1fr)}}
 
-/* v1.8 visual polish */
-#overviewHouseCard,#overviewHolidayCard,#overviewSavingsCard,.mini-card.pension{border-width:3px!important}
-.reflection-card{margin-top:16px;border:1px solid var(--line);border-radius:20px;padding:18px;background:rgba(255,255,255,.02)}
-.reflection-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.reflection-icon{font-size:20px;line-height:1}
-.reflection-title{font-family:Georgia,"Times New Roman",serif;font-size:18px;font-weight:600;letter-spacing:.01em;margin:0}
-.reflection-copy{font-family:Georgia,"Times New Roman",serif;font-size:17px;line-height:1.7;color:var(--text);margin:0}
-.reflection-copy strong{font-weight:600}
-
-/* ===== v1.8 visual system refinement ===== */
+/* ===== Freedom v1.8.1 clean mobile home ===== */
 :root{
   --house:#67d8d2;
   --holiday:#9fc8ff;
   --savings:#93c88d;
   --pension-accent:#a88bd1;
-  --zen:#e8c39f;
+  --zen:#efcbaa;
 }
-.build-grid .mini-card,
-.mini-card.house,
-.mini-card.holiday,
-.mini-card.savings,
-.mini-card.pension{
-  position:relative;
-  overflow:hidden;
-  border-width:2px!important;
-  box-shadow:0 0 0 1px rgba(255,255,255,.02), inset 0 0 28px rgba(255,255,255,.018);
-}
-#overviewHouseCard{border-color:rgba(103,216,210,.78)!important;background:linear-gradient(145deg,rgba(103,216,210,.075),rgba(255,255,255,.012))!important}
-#overviewHolidayCard{border-color:rgba(159,200,255,.82)!important;background:linear-gradient(145deg,rgba(159,200,255,.08),rgba(255,255,255,.012))!important}
-#overviewSavingsCard{border-color:rgba(147,200,141,.78)!important;background:linear-gradient(145deg,rgba(147,200,141,.07),rgba(255,255,255,.012))!important}
-.mini-card.pension{border-color:rgba(168,139,209,.78)!important;background:linear-gradient(145deg,rgba(168,139,209,.075),rgba(255,255,255,.012))!important}
-#overviewHouseCard::before,#overviewHolidayCard::before,#overviewSavingsCard::before,.mini-card.pension::before{
-  content:"";position:absolute;inset:-35% auto auto -10%;width:55%;height:85%;filter:blur(30px);opacity:.16;pointer-events:none;border-radius:50%;
-}
-#overviewHouseCard::before{background:var(--house)}
-#overviewHolidayCard::before{background:var(--holiday)}
-#overviewSavingsCard::before{background:var(--savings)}
-.mini-card.pension::before{background:var(--pension-accent)}
-.build-icon{width:38px;height:38px;display:grid;place-items:center;flex:0 0 auto}
-.build-icon svg{width:34px;height:34px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-#overviewHouseCard .build-icon{color:var(--house)}
-#overviewHolidayCard .build-icon{color:var(--holiday)}
-#overviewSavingsCard .build-icon{color:var(--savings)}
-.mini-card.pension .build-icon{color:var(--pension-accent)}
-.build-card-inner{display:flex;align-items:center;gap:14px}
-.build-copy{min-width:0}
-.build-copy .label{margin-bottom:5px}
-.reflection-card{
-  margin-top:18px;
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:24px;
-  padding:24px 22px 22px;
-  background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,.012));
-  text-align:center;
-  position:relative;
-  overflow:hidden;
-}
-.reflection-card::after{
-  content:"";position:absolute;left:50%;bottom:-18px;transform:translateX(-50%);
-  width:180px;height:40px;border-radius:50%;background:rgba(232,195,159,.08);filter:blur(24px)
-}
-.zen-mark{width:52px;height:44px;margin:0 auto 10px;color:var(--zen)}
-.zen-mark svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.reflection-copy{
-  font-family:"Noteworthy","Bradley Hand","Segoe Print","Comic Sans MS",cursive;
-  font-size:21px;line-height:1.55;color:#efd1b6;margin:0;
-  letter-spacing:.01em;font-weight:400;
-}
-.reflection-options{
-  margin-top:12px;
-  font-family:"Noteworthy","Bradley Hand","Segoe Print","Comic Sans MS",cursive;
-  font-size:17px;line-height:1.65;color:#e9c8aa;
-  display:flex;justify-content:center;gap:14px;flex-wrap:wrap;
-}
-.reflection-options span{white-space:nowrap}
-.reflection-options span+span::before{content:"|";color:rgba(255,255,255,.22);margin-right:14px;font-family:system-ui,sans-serif}
-.reflection-stroke{width:110px;height:12px;margin:13px auto 0;color:var(--zen);opacity:.9}
-.reflection-stroke svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
-.goal-controls{margin-top:18px!important;padding-top:4px}
-.goal-controls .mini-btn{margin-top:2px}
-#goals .card h2{margin-bottom:18px}
-.desktop-goals-panel{display:none}
-.desktop-goals-panel .desktop-goals-card{padding:18px}
-.desktop-goals-panel h2{font-size:24px;margin-bottom:14px}
-.desktop-goal-list{display:grid;gap:12px}
-.desktop-goal-item{border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px;background:rgba(255,255,255,.018)}
-.desktop-goal-item .row{gap:10px}
-.desktop-goal-main{display:flex;gap:10px;align-items:center;min-width:0}
-.desktop-goal-icon{width:28px;height:28px;display:grid;place-items:center}
-.desktop-goal-icon svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.desktop-goal-name{font-weight:760}
-.desktop-goal-detail{font-size:12px;color:var(--muted);margin-top:3px}
-.desktop-goal-item .progress{height:7px;margin-top:10px}
-.desktop-goal-item .goal-controls{margin-top:13px!important;padding-top:0}
-.desktop-goal-item .mini-btn{font-size:12px;padding:8px 10px}
-#desktopHouseGoal .desktop-goal-icon{color:var(--house)}
-#desktopHolidayGoal .desktop-goal-icon{color:var(--holiday)}
-#desktopSavingsGoal .desktop-goal-icon{color:var(--savings)}
-#desktopPensionGoal .desktop-goal-icon{color:var(--pension-accent)}
-@media(min-width:1000px){
-  .app{max-width:1180px}
-  #overview.page.active{
-    display:grid!important;
-    grid-template-columns:minmax(0,1fr) 330px;
-    gap:22px;
-    align-items:start;
-  }
-  #overview .overview-main{min-width:0}
-  .desktop-goals-panel{display:block;position:sticky;top:24px}
-}
-@media(max-width:999px){
-  .reflection-card{padding:20px 16px}
-  .reflection-copy{font-size:19px}
-  .reflection-options{font-size:15px;gap:8px}
-  .reflection-options span+span::before{margin-right:8px}
-}
+#overviewHouseCard{border-color:rgba(103,216,210,.88)!important;border-width:2px!important}
+#overviewHolidayCard{border-color:rgba(159,200,255,.90)!important;border-width:2px!important}
+#overviewSavingsCard{border-color:rgba(147,200,141,.88)!important;border-width:2px!important}
+.mini-card.pension{border-color:rgba(168,139,209,.88)!important;border-width:2px!important}
+.goal-controls{margin-top:18px!important;padding-top:5px}
 
-.holiday{border-color:rgba(159,200,255,.5)!important}
-.holiday .progress span,#desktopHolidayGoal .progress span{background:var(--holiday)!important}
-@media(min-width:600px){main{padding-left:28px;padding-right:28px}.overview-support{grid-template-columns:repeat(2,1fr)}}
+.reflection-v181{
+  margin-top:18px;border:1px solid rgba(255,255,255,.06);border-radius:18px;padding:20px 16px 18px;
+  background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,.01));text-align:center
+}
+.reflection-v181 .zen{width:44px;height:38px;margin:0 auto 7px;color:var(--zen)}
+.reflection-v181 .zen svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
+.reflection-v181 .lead{font-family:"Caveat","Segoe Print","Bradley Hand",cursive;font-size:24px;line-height:1.2;color:var(--zen);margin:0}
+.reflection-v181 .opts{margin-top:10px;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;font-size:18px;line-height:1.35;color:var(--zen);display:flex;justify-content:center;gap:11px;flex-wrap:wrap}
+.reflection-v181 .opts span+span::before{content:"|";color:rgba(239,203,170,.28);margin-right:11px;font-family:system-ui,sans-serif;font-size:14px}
+.reflection-v181 .stroke{width:108px;height:10px;margin:12px auto 0;color:var(--zen)}
+.reflection-v181 .stroke svg{width:100%;height:100%;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
 
-/* v1.8 reflection — matched to approved reference */
-.reflection-card{
-  margin-top:18px;
-  border:1px solid rgba(255,255,255,.06);
-  border-radius:18px;
-  padding:20px 18px 18px;
-  background:
-    radial-gradient(circle at 50% 40%, rgba(232,195,159,.045), transparent 34%),
-    linear-gradient(180deg, rgba(255,255,255,.018), rgba(255,255,255,.01));
-  text-align:center;
-  box-shadow: inset 0 0 24px rgba(255,255,255,.012);
-}
-.zen-mark{
-  width:46px;
-  height:39px;
-  margin:0 auto 7px;
-  color:#e8c39f;
-}
-.zen-mark svg{
-  width:100%;
-  height:100%;
-  stroke:currentColor;
-  fill:none;
-  stroke-width:1.55;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-}
-.reflection-copy{
-  font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
-  font-size:24px;
-  line-height:1.2;
-  color:#efcbaa;
-  margin:0;
-  font-weight:400;
-  letter-spacing:.005em;
-}
-.reflection-options{
-  margin-top:10px;
-  font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
-  font-size:19px;
-  line-height:1.25;
-  color:#efcbaa;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-}
-.reflection-options span{white-space:nowrap}
-.reflection-options span+span::before{
-  content:"|";
-  color:rgba(239,203,170,.32);
-  margin-right:12px;
-  font-family:system-ui,sans-serif;
-  font-size:15px;
-  font-weight:300;
-}
-.reflection-stroke{
-  width:106px;
-  height:11px;
-  margin:12px auto 0;
-  color:#e8c39f;
-  opacity:.95;
-}
-.reflection-stroke svg{
-  width:100%;
-  height:100%;
-  stroke:currentColor;
-  fill:none;
-  stroke-width:2.1;
-  stroke-linecap:round;
-}
-@media(max-width:600px){
-  .reflection-card{padding:18px 12px 16px}
-  .reflection-copy{font-size:22px}
-  .reflection-options{font-size:17px;gap:8px}
-  .reflection-options span+span::before{margin-right:8px}
-}
+.mobile-home-v181,.mobile-menu-open-v181{display:none}
 
+@media(max-width:820px){
+  body.mobile-home-active-v181{overflow:hidden}
+  body.mobile-home-active-v181 .app,
+  body.mobile-home-active-v181 .bottom-nav{visibility:hidden}
 
-/* ===== Freedom v1.8 mobile home ===== */
-.freedom-mobile-home{display:none}
-.freedom-menu-button{display:none}
-
-@media(max-width:699px){
-  body.freedom-home-open{overflow:hidden}
-  body.freedom-home-open .app,
-  body.freedom-home-open .bottom-nav{visibility:hidden}
-
-  .freedom-mobile-home{
-    position:fixed;
-    inset:0;
-    z-index:500;
-    display:none;
-    overflow:hidden;
-    color:#f4f1ea;
+  .mobile-home-v181{
+    position:fixed;inset:0;z-index:700;display:none;overflow:hidden;color:#f4f1ea;
     background:
-      linear-gradient(180deg,rgba(8,12,15,.10),rgba(8,12,15,.02)),
+      linear-gradient(180deg,rgba(7,11,14,.34) 0%,rgba(7,11,14,.22) 42%,rgba(7,11,14,.05) 100%),
       url("./freedom-mobile-wallpaper.jpg") center center/cover no-repeat;
   }
-  body.freedom-home-open .freedom-mobile-home{display:block}
+  body.mobile-home-active-v181 .mobile-home-v181{display:block}
 
-  .freedom-mobile-home::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    background:linear-gradient(
-      180deg,
-      rgba(8,12,15,.46) 0%,
-      rgba(8,12,15,.34) 24%,
-      rgba(8,12,15,.18) 53%,
-      rgba(8,12,15,.08) 100%
-    );
-    pointer-events:none;
+  .mobile-home-inner-v181{
+    position:relative;min-height:100dvh;
+    padding:calc(22px + env(safe-area-inset-top,0px)) 28px calc(18px + env(safe-area-inset-bottom,0px));
   }
 
-  .freedom-mobile-inner{
-    position:relative;
-    z-index:2;
-    min-height:100dvh;
-    padding:
-      calc(30px + env(safe-area-inset-top,0px))
-      30px
-      calc(22px + env(safe-area-inset-bottom,0px));
-  }
-
-  .freedom-brand{
-    text-align:center;
-    color:#efcbaa;
-    line-height:1;
-    margin:4px auto 34px;
-  }
-  .freedom-brand-main{
+  .mobile-brand-v181{
+    position:absolute;left:28px;top:calc(22px + env(safe-area-inset-top,0px));
     font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
-    font-size:36px;
-    font-weight:400;
-    letter-spacing:.01em;
-  }
-  .freedom-brand-sub{
-    margin-top:4px;
-    font-size:11px;
-    letter-spacing:.09em;
-    color:rgba(239,203,170,.78);
+    font-size:39px;line-height:1;font-weight:400;color:#efcbaa;
   }
 
-  .freedom-close{
-    position:absolute;
-    top:calc(16px + env(safe-area-inset-top,0px));
-    right:18px;
-    width:42px;
-    height:42px;
-    border:0;
-    background:transparent;
-    color:#f3eee8;
-    font-size:30px;
-    font-weight:200;
-    line-height:1;
-    padding:0;
+  .mobile-close-v181{
+    position:absolute;top:calc(15px + env(safe-area-inset-top,0px));right:18px;
+    width:42px;height:42px;border:0;background:transparent;color:#f3eee8;
+    font-size:30px;font-weight:200;line-height:1;padding:0
   }
 
-  .freedom-nav{
-    max-width:285px;
-    margin:0 0 0 8px;
-  }
-  .freedom-nav-btn,
-  .freedom-more-toggle{
-    width:100%;
-    border:0;
-    background:transparent;
-    color:#f2f0eb;
-    display:flex;
-    align-items:center;
-    gap:14px;
-    text-align:left;
-    padding:10px 0;
-    font-size:15px;
-    font-weight:520;
-    letter-spacing:.005em;
-  }
-  .freedom-nav-btn svg,
-  .freedom-more-toggle svg{
-    width:23px;
-    height:23px;
-    fill:none;
-    stroke:#efcbaa;
-    stroke-width:1.55;
-    stroke-linecap:round;
-    stroke-linejoin:round;
-    flex:0 0 auto;
-  }
-  .freedom-nav-btn:active,
-  .freedom-more-toggle:active{opacity:.72}
+  .mobile-nav-v181{width:min(292px,82vw);margin-top:112px;margin-left:2px}
 
-  .freedom-more-toggle .chev{
-    margin-left:auto;
-    color:#f2f0eb;
-    font-size:18px;
-    transform:rotate(0deg);
-    transition:transform .18s ease;
+  .mobile-nav-btn-v181,.mobile-more-btn-v181{
+    width:100%;border:0;background:transparent;color:#f2f0eb;display:flex;align-items:center;gap:15px;
+    text-align:left;padding:10px 0;font-size:16px;font-weight:500
   }
-  .freedom-more-toggle[aria-expanded="true"] .chev{transform:rotate(180deg)}
+  .mobile-nav-btn-v181 svg,.mobile-more-btn-v181 svg{
+    width:24px;height:24px;fill:none;stroke:#efcbaa;stroke-width:1.65;
+    stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto
+  }
+  .mobile-nav-btn-v181:active,.mobile-more-btn-v181:active,.mobile-sub-btn-v181:active{opacity:.68}
 
-  .freedom-more-sub{
-    margin-left:31px;
-    border-left:1px solid rgba(239,203,170,.18);
-    padding-left:18px;
-    display:grid;
-    grid-template-rows:0fr;
-    transition:grid-template-rows .2s ease;
+  .mobile-more-btn-v181 .chev{
+    margin-left:auto;width:9px;height:9px;border-right:1.5px solid #f2f0eb;border-bottom:1.5px solid #f2f0eb;
+    transform:rotate(45deg) translateY(-2px);transition:transform .18s ease
   }
-  .freedom-more-sub.open{grid-template-rows:1fr}
-  .freedom-more-sub>div{overflow:hidden}
-  .freedom-sub-btn{
-    width:100%;
-    border:0;
-    background:transparent;
-    color:#dedbd4;
-    text-align:left;
-    padding:7px 0;
-    font-size:13px;
+  .mobile-more-btn-v181[aria-expanded="true"] .chev{transform:rotate(225deg) translate(-2px,-2px)}
+
+  .mobile-more-sub-v181{
+    margin-left:34px;border-left:1px solid rgba(239,203,170,.18);padding-left:19px;
+    display:grid;grid-template-rows:0fr;transition:grid-template-rows .18s ease
+  }
+  .mobile-more-sub-v181.open{grid-template-rows:1fr}
+  .mobile-more-sub-v181>div{overflow:hidden}
+
+  .mobile-sub-btn-v181{
+    width:100%;border:0;background:transparent;color:#dedad3;text-align:left;padding:7px 0;font-size:13.5px;font-weight:450
   }
 
-  .freedom-menu-button{
-    position:fixed;
-    top:calc(13px + env(safe-area-inset-top,0px));
-    right:16px;
-    z-index:220;
-    display:grid;
-    place-items:center;
-    width:42px;
-    height:42px;
-    border-radius:50%;
-    border:1px solid rgba(255,255,255,.10);
-    background:rgba(12,16,19,.82);
-    color:#ece8e1;
-    backdrop-filter:blur(12px);
-    box-shadow:0 8px 24px rgba(0,0,0,.26);
+  .mobile-menu-open-v181{
+    position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:16px;z-index:250;
+    display:grid;place-items:center;width:42px;height:42px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.10);background:rgba(12,16,19,.84);color:#ece8e1;
+    backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,.26)
   }
-  .freedom-menu-button svg{
-    width:21px;height:21px;
-    stroke:currentColor;fill:none;stroke-width:1.6;
-    stroke-linecap:round;stroke-linejoin:round;
+  .mobile-menu-open-v181 svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.55;stroke-linecap:round}
+
+  body.mobile-home-active-v181 .mobile-brand-v181{animation:freedomFade181 .5s ease both}
+  body.mobile-home-active-v181 .mobile-nav-v181{animation:freedomFade181 .68s .1s ease both}
+  @keyframes freedomFade181{
+    from{opacity:0;transform:translateY(6px)}
+    to{opacity:1;transform:translateY(0)}
   }
 }
-@media(min-width:700px){
-  .freedom-mobile-home,.freedom-menu-button{display:none!important}
+@media(min-width:821px){
+  .mobile-home-v181,.mobile-menu-open-v181{display:none!important}
 }
 
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="mobile-home-active-v181">
 
-<button class="freedom-menu-button" id="freedomMenuButton" type="button" aria-label="Open Freedom menu">
+<button class="mobile-menu-open-v181" id="mobileMenuOpen181" type="button" aria-label="Open Freedom menu">
   <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
 </button>
 
-<div class="freedom-mobile-home" id="freedomMobileHome" aria-hidden="true">
-  <div class="freedom-mobile-inner">
-    <button class="freedom-close" id="freedomClose" type="button" aria-label="Close menu">×</button>
+<div class="mobile-home-v181" id="mobileHome181" aria-hidden="false">
+  <div class="mobile-home-inner-v181">
+    <div class="mobile-brand-v181">Freedom</div>
+    <button class="mobile-close-v181" id="mobileClose181" type="button" aria-label="Close menu">×</button>
 
-    <div class="freedom-brand">
-      <div class="freedom-brand-main">Freedom</div>
-      <div class="freedom-brand-sub">at 50</div>
-    </div>
-
-    <nav class="freedom-nav" aria-label="Freedom navigation">
-      <button class="freedom-nav-btn" type="button" data-freedom-page="overview">
-        <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-6h5v6"/></svg>
+    <nav class="mobile-nav-v181" aria-label="Freedom navigation">
+      <button class="mobile-nav-btn-v181" type="button" data-mobile181-page="overview">
+        <svg viewBox="0 0 24 24"><path d="M3.8 11.2 12 4.5l8.2 6.7"/><path d="M5.8 10.6V20h12.4v-9.4"/><path d="M9.6 20v-6.2h4.8V20"/></svg>
         <span>Overview</span>
       </button>
 
-      <button class="freedom-nav-btn" type="button" data-freedom-page="journey">
-        <svg viewBox="0 0 24 24"><path d="M7 5c3 0 4 2 4 4s-1 4-4 4-4 2-4 4 1 3 4 3"/><path d="M17 4c-3 0-4 2-4 4s1 4 4 4 4 2 4 4-1 4-4 4"/><path d="M10 7h4M10 17h4"/></svg>
+      <button class="mobile-nav-btn-v181" type="button" data-mobile181-page="journey">
+        <svg viewBox="0 0 24 24"><path d="M5 6.5h5.5c2 0 3.5 1.5 3.5 3.5S12.5 13.5 10.5 13.5H8"/><path d="M8 10.5 5 13.5 8 16.5"/><path d="M19 17.5h-5.5c-2 0-3.5-1.5-3.5-3.5"/></svg>
         <span>Journey</span>
       </button>
 
-      <button class="freedom-nav-btn" type="button" data-freedom-page="goals">
-        <svg viewBox="0 0 24 24"><path d="m3 13 7-2 8-7c1.2-1 3.1-.8 3.8.3.4.7.2 1.5-.4 2.1L15 13l-1.5 7-2.2-.8.8-5.3-4.5 3-2.2-.8 3-3.8-4.4-1.5z"/></svg>
+      <button class="mobile-nav-btn-v181" type="button" data-mobile181-page="goals">
+        <svg viewBox="0 0 24 24"><path d="m4 14 15-9-6 15-2.4-6.6L4 14Z"/><path d="m10.6 13.4 3.7-3.7"/></svg>
         <span>Goals</span>
       </button>
 
-      <button class="freedom-nav-btn" type="button" data-freedom-page="pension">
-        <svg viewBox="0 0 24 24"><path d="M12 21V8"/><path d="M12 12c-4 0-6-2.5-6-6 4 0 6 2.5 6 6Z"/><path d="M12 10c4 0 6-2.5 6-6-4 0-6 2.5-6 6Z"/><path d="M8 21h8"/></svg>
+      <button class="mobile-nav-btn-v181" type="button" data-mobile181-page="pension">
+        <svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-3.8 0-6-2.1-6-5.8 3.8 0 6 2.1 6 5.8Z"/><path d="M12 11c3.8 0 6-2.1 6-5.8-3.8 0-6 2.1-6 5.8Z"/><path d="M8.5 21h7"/></svg>
         <span>Pension</span>
       </button>
 
-      <button class="freedom-more-toggle" id="freedomMoreToggle" type="button" aria-expanded="false">
+      <button class="mobile-more-btn-v181" id="mobileMore181" type="button" aria-expanded="true">
         <svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg>
-        <span>More</span>
-        <span class="chev">⌄</span>
+        <span>More</span><span class="chev" aria-hidden="true"></span>
       </button>
 
-      <div class="freedom-more-sub" id="freedomMoreSub">
+      <div class="mobile-more-sub-v181 open" id="mobileMoreSub181">
         <div>
-          <button class="freedom-sub-btn" type="button" data-freedom-more="archive">Archived goals</button>
-          <button class="freedom-sub-btn" type="button" data-freedom-more="reports">Reports</button>
-          <button class="freedom-sub-btn" type="button" data-freedom-more="settings">Settings</button>
-          <button class="freedom-sub-btn" type="button" data-freedom-more="backup">Backup & export</button>
-          <button class="freedom-sub-btn" type="button" data-freedom-more="help">Help</button>
+          <button class="mobile-sub-btn-v181" type="button" data-mobile181-more="archive">Archived goals</button>
+          <button class="mobile-sub-btn-v181" type="button" data-mobile181-more="reports">Reports</button>
+          <button class="mobile-sub-btn-v181" type="button" data-mobile181-more="settings">Settings</button>
+          <button class="mobile-sub-btn-v181" type="button" data-mobile181-more="backup">Backup & export</button>
         </div>
       </div>
     </nav>
   </div>
 </div>
+
 <div class="update-banner" id="updateBanner" hidden>
   <div><strong>Freedom has been updated</strong><span>Tap once to load the newest version.</span></div>
   <button class="update-btn" id="updateNow" type="button">Update now</button>
 </div>
 <div class="app">
-<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8</div></div><div class="tagline">Small wins become big freedom.</div></header>
+<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.1</div></div><div class="tagline">Small wins become big freedom.</div></header>
 <main>
-<section class="page active" id="overview"><div class="overview-main">
+<section class="page active" id="overview">
   <div class="eyebrow">Overview</div><h1>One step closer.</h1><p class="intro">Progress first. The detailed figures stay available when you choose to look at them.</p>
   <div class="stack">
     <article class="card"><div class="card-head"><div class="icon"><svg viewBox="0 0 24 24"><path d="m12 3 1.2 3.3 3.3 1.2-3.3 1.2L12 12l-1.2-3.3-3.3-1.2 3.3-1.2L12 3Z"/><path d="m18 14 .8 2.2 2.2.8-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/></svg></div><div class="label">Money returned</div></div><div class="value" id="overviewReturned">€0</div><div class="detail">Money you have already moved back towards your future.</div></article>
@@ -484,28 +217,14 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     <article class="card tap-card" data-page-link="journey"><div class="card-head"><div class="icon"><svg viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m14 7 5 5-5 5"/></svg></div><div class="label">Next milestone</div></div><div class="value medium" id="nextMilestoneName">House Pocket</div><div class="detail" id="nextMilestoneDetail"></div></article>
   </div>
   <div class="section-title"><h2>What you are building</h2></div>
-  <div class="grid2 overview-support"><article class="card mini-card house tap-card" id="overviewHouseCard" data-page-link="goals"><div class="build-card-inner"><span class="build-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 15.5 16 6l11 9.5"/><path d="M8 14.5V27h16V14.5"/><path d="M13 27v-8h6v8"/></svg></span><div class="build-copy"><div class="label">House Fund</div><div class="value" id="overviewHouse"></div></div></div></article><article class="card mini-card holiday tap-card" id="overviewHolidayCard" data-page-link="goals"><div class="build-card-inner"><span class="build-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="m4 18 9-3 10-9c1.6-1.4 4.3-1 5.1.4.5.9.2 2-.6 2.8L19 18l-2 9-3-1 1-7-6 4-3-1 4-5-6-2z"/></svg></span><div class="build-copy"><div class="label">Holiday Fund</div><div class="value" id="overviewHoliday"></div></div></div></article><article class="card mini-card savings tap-card" id="overviewSavingsCard" data-page-link="goals"><div class="build-card-inner"><span class="build-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M8 13c2-4 7-6 12-4 4 1 7 4 7 8 0 5-4 9-10 9H9c-3 0-5-2-5-5v-4h4"/><circle cx="17" cy="7" r="3"/><path d="M25 12h3v5"/><path d="M11 26v3M22 25v4"/></svg></span><div class="build-copy"><div class="label">Personal Savings</div><div class="value" id="overviewSavings"></div></div></div></article><div id="overviewCustomGoals" style="display:contents"></div><article class="card mini-card pension tap-card" data-page-link="pension"><div class="build-card-inner"><span class="build-icon" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M16 27V10"/><path d="M16 16c-5 0-8-3-8-7 5 0 8 3 8 7Z"/><path d="M16 13c5 0 8-3 8-7-5 0-8 3-8 7Z"/><path d="M10 27h12"/></svg></span><div class="build-copy"><div class="label">Pension</div><div class="value" id="overviewPension"></div></div></div></article></div>
-  <div class="reflection-card">
-  <div class="zen-mark" aria-hidden="true">
-    <svg viewBox="0 0 64 52">
-      <ellipse cx="32" cy="11" rx="9" ry="6"/>
-      <ellipse cx="32" cy="25" rx="14" ry="6"/>
-      <path d="M17 39c3-6 9-9 15-9s12 3 15 9c-5 2-10 3-15 3s-10-1-15-3Z"/>
-      <path d="M10 47h44"/>
-    </svg>
-  </div>
-  <p class="reflection-copy">Does seeing this make me feel...</p>
-  <div class="reflection-options"><span>calmer?</span><span>more organised?</span><span>more hopeful?</span><span>or more in control?</span></div>
-  <div class="reflection-stroke" aria-hidden="true"><svg viewBox="0 0 120 12"><path d="M4 8c25-3 50-5 112-2"/></svg></div>
-</div><p class="reflection-copy">Does seeing this make me feel <strong>calmer</strong>, more organised, more hopeful, or more in control?</p>
-</div>
-</div>
-<aside class="desktop-goals-panel">
-  <article class="card desktop-goals-card">
-    <div class="row"><h2 style="margin:0">Goals</h2><button class="mini-btn gold" id="desktopAddGoal" type="button">＋ Add goal</button></div>
-    <div class="desktop-goal-list" id="desktopGoalList"></div>
-  </article>
-</aside></section>
+  <div class="grid2 overview-support"><article class="card mini-card house tap-card" id="overviewHouseCard" data-page-link="goals"><div class="label">House Fund</div><div class="value" id="overviewHouse"></div></article><article class="card mini-card holiday tap-card" id="overviewHolidayCard" data-page-link="goals"><div class="label">Holiday Fund</div><div class="value" id="overviewHoliday"></div></article><article class="card mini-card savings tap-card" id="overviewSavingsCard" data-page-link="goals"><div class="label">Personal Savings</div><div class="value" id="overviewSavings"></div></article><div id="overviewCustomGoals" style="display:contents"></div><div class="reflection-v181">
+  <div class="zen" aria-hidden="true"><svg viewBox="0 0 64 52"><ellipse cx="32" cy="11" rx="9" ry="6"/><ellipse cx="32" cy="25" rx="14" ry="6"/><path d="M17 39c3-6 9-9 15-9s12 3 15 9c-5 2-10 3-15 3s-10-1-15-3Z"/><path d="M10 47h44"/></svg></div>
+  <p class="lead">Does seeing this make me feel...</p>
+  <div class="opts"><span>calmer?</span><span>more organised?</span><span>more hopeful?</span><span>or more in control?</span></div>
+  <div class="stroke" aria-hidden="true"><svg viewBox="0 0 120 12"><path d="M4 8c25-3 50-5 112-2"/></svg></div>
+</div><article class="card mini-card pension tap-card" data-page-link="pension"><div class="label">Pension</div><div class="value" id="overviewPension"></div></article></div>
+  <article class="north-star">Does seeing this make me feel more motivated to open the app next month?</article>
+</section>
 <section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><h1>Pieces of your future, being returned.</h1><p class="intro">Rename a journey, update its balance, add a new one, or archive one you no longer want on the active plan.</p><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div><button class="secondary-btn" id="restoreLoans">Restore original starting journeys</button></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><h1>Life alongside the plan.</h1><p class="intro">Debt progress matters, but so do the things you are building and enjoying now.</p>
 <div class="goal-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div>
@@ -520,9 +239,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 </div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><h1>Future freedom, growing quietly.</h1><p class="intro">The value leads. Contributions sit underneath it when you need the detail.</p><article class="card pension"><div class="label">Current pension value</div><div class="value" id="pensionDisplay"></div><label for="pensionValue">Update pension value</label><input id="pensionValue" inputmode="decimal" type="number" min="0" step="0.01"><label for="pensionPersonal">Your monthly contribution</label><input id="pensionPersonal" inputmode="decimal" type="number" min="0" step="0.01"><label for="pensionEmployer">Employer contribution</label><input id="pensionEmployer" inputmode="decimal" type="number" min="0" step="0.01"><div class="loan-summary"><div class="loan-stat"><small>Total added monthly</small><strong id="pensionMonthlyTotal"></strong></div><div class="loan-stat"><small>Annual contributions</small><strong id="pensionAnnual"></strong></div></div><button class="save-btn" data-save>Save Pension</button></article></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card" id="moreArchive"><h2>Archived goals & journeys</h2><p class="empty-note">Finished or removed items live here instead of disappearing forever.</p><button class="mini-btn gold archive-toggle" id="toggleArchiveList" type="button">View archived items</button><div class="archive-list" id="archiveList" hidden></div></article><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreSettings"><h2>Settings & privacy</h2><p class="empty-note">This HTML file stores edits only in this browser on this device. It does not connect to a bank or upload your figures anywhere.</p></article>
-<article class="card" id="moreReports"><h2>Reports</h2><p class="empty-note">Progress reports will live here.</p></article>
-<article class="card" id="moreBackup"><h2>Backup & export</h2><p class="empty-note">Export and restore Freedom data from here.</p></article>
-<article class="card" id="moreHelp"><h2>Help</h2><p class="empty-note">Freedom guidance and support will live here.</p></article></div></section>
+<article class="card" id="moreReports"><h2>Reports</h2><p class="empty-note">Progress summaries and reporting views will live here.</p></article>
+<article class="card" id="moreBackup"><h2>Backup & export</h2><p class="empty-note">Export and restore your Freedom data from here.</p></article></div></section>
 </main></div>
 <nav class="bottom-nav" aria-label="Main navigation"><button class="nav-btn active" data-page="overview"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></svg><span>Overview</span></button><button class="nav-btn" data-page="journey"><svg viewBox="0 0 24 24"><path d="M5 20V8"/><path d="M5 8h10l-2-3 2-3H5"/><path d="M9 20h8"/></svg><span>Journey</span></button><button class="nav-btn" data-page="goals"><svg viewBox="0 0 24 24"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/><path d="M9 20v-5h6v5"/></svg><span>Goals</span></button><button class="nav-btn" data-page="pension"><svg viewBox="0 0 24 24"><path d="M4 19V9"/><path d="M10 19V5"/><path d="M16 19v-7"/><path d="M22 19H2"/></svg><span>Pension</span></button><button class="nav-btn" data-page="more"><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></svg><span>More</span></button></nav>
 <div class="save-note" id="saveNote">Saved locally ✓</div>
@@ -552,44 +270,6 @@ const builtInGoalMeta={
   holidayFund:{name:"Holiday Fund",valueKey:"holidayFund",target:0,cardId:"holidayFundCard",overviewId:"overviewHolidayCard"},
   personalSavings:{name:"Personal Savings",valueKey:"personalSavings",target:5000,cardId:"personalSavingsCard",overviewId:"overviewSavingsCard"}
 };
-
-function goalIconSvg(type){
-  const icons={
-    house:`<svg viewBox="0 0 32 32"><path d="M5 15.5 16 6l11 9.5"/><path d="M8 14.5V27h16V14.5"/><path d="M13 27v-8h6v8"/></svg>`,
-    holiday:`<svg viewBox="0 0 32 32"><path d="m4 18 9-3 10-9c1.6-1.4 4.3-1 5.1.4.5.9.2 2-.6 2.8L19 18l-2 9-3-1 1-7-6 4-3-1 4-5-6-2z"/></svg>`,
-    savings:`<svg viewBox="0 0 32 32"><path d="M8 13c2-4 7-6 12-4 4 1 7 4 7 8 0 5-4 9-10 9H9c-3 0-5-2-5-5v-4h4"/><circle cx="17" cy="7" r="3"/><path d="M25 12h3v5"/><path d="M11 26v3M22 25v4"/></svg>`,
-    pension:`<svg viewBox="0 0 32 32"><path d="M16 27V10"/><path d="M16 16c-5 0-8-3-8-7 5 0 8 3 8 7Z"/><path d="M16 13c5 0 8-3 8-7-5 0-8 3-8 7Z"/><path d="M10 27h12"/></svg>`,
-    custom:`<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="10"/><path d="M16 11v10M11 16h10"/></svg>`
-  };return icons[type]||icons.custom;
-}
-function renderDesktopGoals(){
-  const wrap=byId("desktopGoalList");if(!wrap)return;
-  const rows=[];
-  if(!state.hiddenBuiltInGoals.houseFund&&!state.deletedBuiltInGoals.houseFund)rows.push({kind:"house",key:"houseFund",name:"House Fund",current:state.houseFund,target:50000});
-  if(!state.hiddenBuiltInGoals.holidayFund&&!state.deletedBuiltInGoals.holidayFund)rows.push({kind:"holiday",key:"holidayFund",name:"Holiday Fund",current:state.holidayFund,target:0});
-  if(!state.hiddenBuiltInGoals.personalSavings&&!state.deletedBuiltInGoals.personalSavings)rows.push({kind:"savings",key:"personalSavings",name:"Personal Savings",current:state.personalSavings,target:5000});
-  rows.push({kind:"pension",key:"pension",name:"Pension",current:state.pensionPot,target:0});
-  state.customGoals.forEach((g,i)=>rows.push({kind:"custom",key:"custom-"+i,index:i,name:g.name,current:g.current,target:g.target}));
-  wrap.innerHTML=rows.map((g,idx)=>{
-    const pct=g.target>0?Math.min(100,(g.current/g.target)*100):0;
-    const id=g.kind==="house"?"desktopHouseGoal":g.kind==="holiday"?"desktopHolidayGoal":g.kind==="savings"?"desktopSavingsGoal":g.kind==="pension"?"desktopPensionGoal":"";
-    const actions=g.kind==="pension"?"":`<div class="goal-controls"><button class="mini-btn danger" data-desktop-archive="${g.key}" type="button">Archive goal</button><button class="mini-btn delete" data-desktop-delete="${g.key}" type="button">Delete</button></div>`;
-    return `<div class="desktop-goal-item" id="${id}"><div class="desktop-goal-main"><span class="desktop-goal-icon">${goalIconSvg(g.kind)}</span><div><div class="desktop-goal-name">${esc(g.name)}</div><div class="desktop-goal-detail">${euro0(g.current)}${g.target>0?" / "+euro0(g.target):""}</div></div></div>${g.target>0?`<div class="progress"><span style="width:${pct}%"></span></div>`:""}${actions}</div>`;
-  }).join("");
-  wrap.querySelectorAll("[data-desktop-archive]").forEach(btn=>btn.addEventListener("click",()=>{
-    const key=btn.dataset.desktopArchive;
-    if(key.startsWith("custom-")){const i=Number(key.split("-")[1]),goal=state.customGoals[i];if(!goal)return;if(!confirm(`Archive ${goal.name}?`))return;state.archivedGoals.unshift({...goal,type:"custom",archivedAt:new Date().toISOString()});state.customGoals.splice(i,1)}
-    else{const m=builtInGoalMeta[key];if(!m)return;if(!confirm(`Archive ${m.name}?`))return;state.hiddenBuiltInGoals[key]=true}
-    persist();render();
-  }));
-  wrap.querySelectorAll("[data-desktop-delete]").forEach(btn=>btn.addEventListener("click",()=>{
-    const key=btn.dataset.desktopDelete;
-    if(key.startsWith("custom-")){const i=Number(key.split("-")[1]),goal=state.customGoals[i];if(!goal)return;if(!confirm(`Delete ${goal.name}?\\n\\nThis permanently removes the goal.`))return;state.customGoals.splice(i,1)}
-    else{const m=builtInGoalMeta[key];if(!m)return;if(!confirm(`Delete ${m.name}?\\n\\nThis permanently removes the goal.`))return;state.deletedBuiltInGoals[key]=true;state.hiddenBuiltInGoals[key]=false}
-    persist();render();
-  }));
-}
-
 function renderGoals(){
   Object.entries(builtInGoalMeta).forEach(([key,m])=>{
     const hidden=!!state.hiddenBuiltInGoals[key]||!!state.deletedBuiltInGoals[key];
@@ -682,10 +362,9 @@ if(hp>0){
 }
 if(hp>0){byId("nextMilestoneName").textContent="House Pocket";byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){byId("nextMilestoneName").textContent=next.name;byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else{byId("nextMilestoneName").textContent="All clear";byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
 byId("housePocketActive").hidden=hp<=0||!!state.housePocketArchived;
-byId("housePocketCompleted").hidden=hp>0||!!state.housePocketArchived;byId("housePocketRemaining").value=state.housePocket;byId("houseFundBar").style.width=Math.min(100,state.houseFund/50000*100)+"%";byId("savingsBar").style.width=Math.min(100,state.personalSavings/5000*100)+"%";byId("pensionDisplay").textContent=euro2(state.pensionValue);const pensionMonthly=state.pensionPersonal+state.pensionEmployer;byId("pensionMonthlyTotal").textContent=euro2(pensionMonthly);byId("pensionAnnual").textContent=euro2(pensionMonthly*12);renderLoans();renderGoals();renderDesktopGoals();renderArchive()}
+byId("housePocketCompleted").hidden=hp>0||!!state.housePocketArchived;byId("housePocketRemaining").value=state.housePocket;byId("houseFundBar").style.width=Math.min(100,state.houseFund/50000*100)+"%";byId("savingsBar").style.width=Math.min(100,state.personalSavings/5000*100)+"%";byId("pensionDisplay").textContent=euro2(state.pensionValue);const pensionMonthly=state.pensionPersonal+state.pensionEmployer;byId("pensionMonthlyTotal").textContent=euro2(pensionMonthly);byId("pensionAnnual").textContent=euro2(pensionMonthly*12);renderLoans();renderGoals();renderArchive()}
 byId("recordHousePocket").addEventListener("click",()=>{const input=byId("housePocketPayment");const amount=Math.max(0,Number(input.value)||0);if(!amount){input.focus();return}if(amount>state.housePocket){alert(`The payment is more than the ${euro0(state.housePocket)} still owed. Enter the amount actually paid.`);input.focus();return}state.housePocket=Math.max(0,Math.round((state.housePocket-amount)*100)/100);state.houseFund=Math.round((state.houseFund+amount)*100)/100;if(state.housePocket<=0){state.housePocket=0;state.housePocketCompletedAt=new Date().toISOString();const archiveNow=confirm("House Pocket complete 🎉\n\nYou’ve returned the full €1,000.\n\nArchive it from Goals now?\n\nPress Cancel if you want to leave the completed victory on screen for a while.");state.housePocketArchived=archiveNow}persist();input.value="";fillForm();render();if(state.housePocket<=0&&state.housePocketArchived)page("overview")});
 byId("archiveHousePocket").addEventListener("click",()=>{if(state.housePocket>0)return;state.housePocketArchived=true;persist();render();page("overview")});
-byId("desktopAddGoal").addEventListener("click",()=>{page("goals");const card=byId("addGoalCard");card.hidden=false;setTimeout(()=>{byId("newGoalName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})},80)});
 byId("toggleAddGoal").addEventListener("click",()=>{const card=byId("addGoalCard");card.hidden=!card.hidden;if(!card.hidden){byId("newGoalName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addGoal").addEventListener("click",()=>{const name=byId("newGoalName").value.trim(),current=Math.max(0,Number(byId("newGoalCurrent").value)||0),target=Math.max(0,Number(byId("newGoalTarget").value)||0);if(!name){byId("newGoalName").focus();return}state.customGoals.push({name,current,target});persist();["newGoalName","newGoalCurrent","newGoalTarget"].forEach(id=>byId(id).value="");byId("addGoalCard").hidden=true;render()});
 document.querySelectorAll("[data-archive-built-in]").forEach(btn=>btn.addEventListener("click",()=>{const key=btn.dataset.archiveBuiltIn,m=builtInGoalMeta[key];if(!m)return;if(!confirm(`Archive ${m.name}?\\n\\nIt will disappear from Goals and Overview, but you can restore it later from More.`))return;state.hiddenBuiltInGoals[key]=true;persist();render()}));
@@ -696,76 +375,60 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
 })();
 
 
-// Freedom v1.8 mobile home
+// Freedom v1.8.1 mobile home behavior
 (function(){
-  const isMobile=()=>window.matchMedia("(max-width:699px)").matches;
-  const home=byId("freedomMobileHome");
-  const openBtn=byId("freedomMenuButton");
-  const closeBtn=byId("freedomClose");
-  const moreBtn=byId("freedomMoreToggle");
-  const moreSub=byId("freedomMoreSub");
+  const isMobile=()=>window.matchMedia("(max-width:820px)").matches;
+  const home=byId("mobileHome181");
+  const openBtn=byId("mobileMenuOpen181");
+  const closeBtn=byId("mobileClose181");
+  const moreBtn=byId("mobileMore181");
+  const moreSub=byId("mobileMoreSub181");
 
   function openHome(){
-    if(!isMobile()) return;
-    document.body.classList.add("freedom-home-open");
-    if(home) home.setAttribute("aria-hidden","false");
+    if(!isMobile())return;
+    document.body.classList.add("mobile-home-active-v181");
+    if(home)home.setAttribute("aria-hidden","false");
   }
   function closeHome(){
-    document.body.classList.remove("freedom-home-open");
-    if(home) home.setAttribute("aria-hidden","true");
+    document.body.classList.remove("mobile-home-active-v181");
+    if(home)home.setAttribute("aria-hidden","true");
   }
 
-  if(openBtn) openBtn.addEventListener("click",openHome);
-  if(closeBtn) closeBtn.addEventListener("click",closeHome);
+  if(openBtn)openBtn.addEventListener("click",openHome);
+  if(closeBtn)closeBtn.addEventListener("click",closeHome);
 
-  if(moreBtn) moreBtn.addEventListener("click",()=>{
+  if(moreBtn)moreBtn.addEventListener("click",()=>{
     const open=moreSub.classList.toggle("open");
     moreBtn.setAttribute("aria-expanded",open?"true":"false");
   });
 
-  document.querySelectorAll("[data-freedom-page]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      page(btn.dataset.freedomPage);
-      closeHome();
-      window.scrollTo({top:0,behavior:"auto"});
-    });
-  });
+  document.querySelectorAll("[data-mobile181-page]").forEach(btn=>btn.addEventListener("click",()=>{
+    page(btn.dataset.mobile181Page);
+    closeHome();
+    window.scrollTo({top:0,behavior:"auto"});
+  }));
 
-  const targets={
-    archive:"moreArchive",
-    reports:"moreReports",
-    settings:"moreSettings",
-    backup:"moreBackup",
-    help:"moreHelp"
-  };
-
-  document.querySelectorAll("[data-freedom-more]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      const key=btn.dataset.freedomMore;
-      page("more");
-      closeHome();
-      setTimeout(()=>{
-        if(key==="archive"){
-          const list=byId("archiveList");
-          const toggle=byId("toggleArchiveList");
-          if(list && list.hidden){
-            list.hidden=false;
-            if(toggle) toggle.textContent="Hide archived items";
-          }
+  const targets={archive:"moreArchive",reports:"moreReports",settings:"moreSettings",backup:"moreBackup"};
+  document.querySelectorAll("[data-mobile181-more]").forEach(btn=>btn.addEventListener("click",()=>{
+    const key=btn.dataset.mobile181More;
+    page("more");
+    closeHome();
+    setTimeout(()=>{
+      if(key==="archive"){
+        const list=byId("archiveList");
+        const toggle=byId("toggleArchiveList");
+        if(list&&list.hidden){
+          list.hidden=false;
+          if(toggle)toggle.textContent="Hide archived items";
         }
-        const target=byId(targets[key]);
-        if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
-      },80);
-    });
-  });
+      }
+      const target=byId(targets[key]);
+      if(target)target.scrollIntoView({behavior:"smooth",block:"start"});
+    },80);
+  }));
 
-  window.addEventListener("load",()=>{
-    if(isMobile()) setTimeout(openHome,60);
-  });
-
-  window.addEventListener("resize",()=>{
-    if(!isMobile()) closeHome();
-  });
+  window.addEventListener("load",()=>{if(isMobile())openHome();else closeHome()});
+  window.addEventListener("resize",()=>{if(!isMobile())closeHome()});
 })();
 
 // Update flow for the installed PWA.
@@ -812,8 +475,8 @@ if ("serviceWorker" in navigator) {
       }
 
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (sessionStorage.getItem("freedom50-sw-reloaded-v18")) return;
-        sessionStorage.setItem("freedom50-sw-reloaded-v18", "1");
+        if (sessionStorage.getItem("freedom50-sw-reloaded-v181")) return;
+        sessionStorage.setItem("freedom50-sw-reloaded-v181", "1");
         window.location.reload();
       });
     } catch (err) {
