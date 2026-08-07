@@ -1,5 +1,5 @@
 /* Freedom at 50 — verified mobile Home release */
-const CACHE_NAME = "freedom-at-50-mobile-navigation-v2";
+const CACHE_NAME = "freedom-at-50-mobile-navigation-v2-1";
 const APP_SHELL = [
   "./",
   "./index.html",
