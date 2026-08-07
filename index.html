@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Freedom at 50 — Web app v1.8.1</title>
+<title>Freedom at 50 — Web app v1.8.2</title>
 <style>
 :root{--bg:#0b0c0e;--card:#111316;--card2:#15171b;--line:#2c3037;--text:#f5f4f0;--muted:#999ba4;--yellow:#e7cf63;--green:#84bd91;--blue:#79a9c9;--purple:#aa8fc9;--bronze:#c59669;--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box} html{background:var(--bg);scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased} button,input{font:inherit} button{color:inherit}.app{max-width:720px;margin:0 auto;min-height:100vh}
@@ -149,6 +149,18 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   .mobile-home-v181,.mobile-menu-open-v181{display:none!important}
 }
 
+
+/* v1.8.2 interaction hardening */
+.mobile-home-v181{pointer-events:auto}
+.mobile-home-inner-v181{pointer-events:none}
+.mobile-brand-v181{pointer-events:none}
+.mobile-nav-v181,
+.mobile-close-v181{pointer-events:auto}
+.mobile-nav-btn-v181,
+.mobile-more-btn-v181,
+.mobile-sub-btn-v181{pointer-events:auto;position:relative;z-index:5;touch-action:manipulation}
+.mobile-home-v181::before{pointer-events:none}
+
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 </head>
@@ -206,7 +218,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   <button class="update-btn" id="updateNow" type="button">Update now</button>
 </div>
 <div class="app">
-<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.1</div></div><div class="tagline">Small wins become big freedom.</div></header>
+<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.2</div></div><div class="tagline">Small wins become big freedom.</div></header>
 <main>
 <section class="page active" id="overview">
   <div class="eyebrow">Overview</div><h1>One step closer.</h1><p class="intro">Progress first. The detailed figures stay available when you choose to look at them.</p>
@@ -431,6 +443,24 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   window.addEventListener("resize",()=>{if(!isMobile())closeHome()});
 })();
 
+
+// v1.8.2 iOS tap fallback: only fires if normal click did not already navigate.
+document.querySelectorAll("[data-mobile181-page]").forEach(btn=>{
+  btn.addEventListener("pointerup",e=>{
+    if(e.pointerType==="touch"){
+      const target=btn.dataset.mobile181Page;
+      setTimeout(()=>{
+        if(document.body.classList.contains("mobile-home-active-v181")){
+          page(target);
+          document.body.classList.remove("mobile-home-active-v181");
+          const home=byId("mobileHome181");
+          if(home)home.setAttribute("aria-hidden","true");
+        }
+      },0);
+    }
+  },{passive:true});
+});
+
 // Update flow for the installed PWA.
 // Freedom checks GitHub on launch. When a new service worker is ready,
 // a one-tap update banner appears. Saved localStorage data is untouched.
@@ -475,8 +505,8 @@ if ("serviceWorker" in navigator) {
       }
 
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (sessionStorage.getItem("freedom50-sw-reloaded-v181")) return;
-        sessionStorage.setItem("freedom50-sw-reloaded-v181", "1");
+        if (sessionStorage.getItem("freedom50-sw-reloaded-v182")) return;
+        sessionStorage.setItem("freedom50-sw-reloaded-v182", "1");
         window.location.reload();
       });
     } catch (err) {
