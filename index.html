@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Freedom at 50 — Web app v1.8.6</title>
+<title>Freedom at 50 — </title>
 <style>
 :root{--bg:#0b0c0e;--card:#111316;--card2:#15171b;--line:#2c3037;--text:#f5f4f0;--muted:#999ba4;--yellow:#e7cf63;--green:#84bd91;--blue:#79a9c9;--purple:#aa8fc9;--bronze:#c59669;--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box} html{background:var(--bg);scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased} button,input{font:inherit} button{color:inherit}.app{max-width:720px;margin:0 auto;min-height:100vh}
@@ -172,6 +172,21 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     -webkit-tap-highlight-color:rgba(239,203,170,.10);
   }
 }
+
+/* final mobile navigation interaction */
+.mobile-close-v181{display:none!important}
+@media(max-width:820px){
+  .mobile-nav-btn-v181,.mobile-more-btn-v181,.mobile-sub-btn-v181{
+    min-height:46px;
+    cursor:pointer;
+    touch-action:manipulation;
+    position:relative;
+    z-index:10;
+    pointer-events:auto!important;
+    -webkit-tap-highlight-color:rgba(239,203,170,.12);
+  }
+  .mobile-nav-v181,.mobile-more-sub-v181{pointer-events:auto!important}
+}
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 </head>
@@ -214,7 +229,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
       <div class="mobile-more-sub-v181 open" id="mobileMoreSub181">
         <div>
           <button class="mobile-sub-btn-v181" type="button" data-mobile181-more="archive">Archived goals</button>
-          <button class="mobile-sub-btn-v181" type="button" data-mobile181-more="backup">Backup & Restore</button>
+          <button class="mobile-sub-btn-v181" type="button" data-mobile181-more="backup">Backup</button>
         </div>
       </div>
     </nav>
@@ -226,7 +241,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   <button class="update-btn" id="updateNow" type="button">Update now</button>
 </div>
 <div class="app">
-<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.6</div></div><div class="tagline">Small wins become big freedom.</div></header>
+<header><div class="brand-row"><div class="brand">Freedom at 50</div></div><div class="tagline">Small wins become big freedom.</div></header>
 <main>
 <section class="page active" id="overview">
   <div class="eyebrow">Overview</div><h1>One step closer.</h1><p class="intro">Progress first. The detailed figures stay available when you choose to look at them.</p>
@@ -395,7 +410,7 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
 })();
 
 
-// Freedom v1.8.4 mobile home behavior
+// Freedom mobile home behavior
 (function(){
   const isMobile=()=>window.matchMedia("(max-width:820px)").matches;
   const home=byId("mobileHome181");
@@ -414,14 +429,16 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
     if(home) home.setAttribute("aria-hidden","true");
   }
 
-  // The original dashboard's page() function is private inside its own script.
-  // Use the existing bottom-nav buttons to perform the real page switch.
-  function goToPage(id){
-    const nav=document.querySelector(`.nav-btn[data-page="${id}"]`);
-    if(!nav) return;
-    nav.click();
+  function navigateTo(id){
+    document.querySelectorAll(".page").forEach(el=>{
+      el.classList.toggle("active",el.id===id);
+    });
+    document.querySelectorAll(".nav-btn").forEach(el=>{
+      el.classList.toggle("active",el.dataset.page===id);
+    });
+    try{ history.replaceState(null,"","#"+id); }catch(e){}
     closeHome();
-    window.scrollTo({top:0,behavior:"auto"});
+    window.scrollTo(0,0);
   }
 
   if(openBtn) openBtn.addEventListener("click",openHome);
@@ -434,39 +451,32 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   }
 
   document.querySelectorAll("[data-mobile181-page]").forEach(btn=>{
-    const id=btn.dataset.mobile181Page;
-    btn.addEventListener("click",()=>goToPage(id));
+    btn.addEventListener("click",()=>{
+      navigateTo(btn.dataset.mobile181Page);
+    });
   });
 
-  const targets={
-    archive:"moreArchive",
-    reports:"moreReports",
-    settings:"moreSettings",
-    backup:"moreBackup"
-  };
-
-  function goToMoreItem(key){
-    const nav=document.querySelector('.nav-btn[data-page="more"]');
-    if(nav) nav.click();
-    closeHome();
-
-    setTimeout(()=>{
-      if(key==="archive"){
-        const list=byId("archiveList");
-        const toggle=byId("toggleArchiveList");
-        if(list && list.hidden){
-          list.hidden=false;
-          if(toggle) toggle.textContent="Hide archived items";
-        }
-      }
-      const target=byId(targets[key]);
-      if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
-    },120);
-  }
-
   document.querySelectorAll("[data-mobile181-more]").forEach(btn=>{
-    const key=btn.dataset.mobile181More;
-    btn.addEventListener("click",()=>goToMoreItem(key));
+    btn.addEventListener("click",()=>{
+      const key=btn.dataset.mobile181More;
+      navigateTo("more");
+      setTimeout(()=>{
+        if(key==="archive"){
+          const list=byId("archiveList");
+          const toggle=byId("toggleArchiveList");
+          if(list && list.hidden){
+            list.hidden=false;
+            if(toggle) toggle.textContent="Hide archived items";
+          }
+          const target=byId("moreArchive");
+          if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
+        }
+        if(key==="backup"){
+          const target=byId("moreBackup");
+          if(target) target.scrollIntoView({behavior:"smooth",block:"start"});
+        }
+      },80);
+    });
   });
 
   window.addEventListener("load",()=>{
@@ -523,8 +533,8 @@ if ("serviceWorker" in navigator) {
       }
 
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (sessionStorage.getItem("freedom50-sw-reloaded-v186")) return;
-        sessionStorage.setItem("freedom50-sw-reloaded-v186", "1");
+        if (sessionStorage.getItem("freedom50-sw-reloaded-v187")) return;
+        sessionStorage.setItem("freedom50-sw-reloaded-v187", "1");
         window.location.reload();
       });
     } catch (err) {
