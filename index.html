@@ -282,7 +282,7 @@ function renderGoals(){
       const pct=g.target>0?Math.min(100,(g.current/g.target)*100):0;
       const card=document.createElement("article");
       card.className="card goal-item";
-      card.innerHTML=`<div class="row"><div><h2>${esc(g.name)}</h2><div class="goal-meta">${g.target>0?`${euro2(g.current)} of ${euro2(g.target)}`:`${euro2(g.current)} saved`}</div></div>${g.target>0?`<div class="pill">${pct.toFixed(0)}%</div>`:""}</div>${g.target>0?`<div class="progress"><span style="width:${pct}%"></span></div>`:""}<div class="editor"><label>Goal name</label><input data-goal="${i}" data-goal-field="name" type="text" value="${esc(g.name)}"><div class="editor-grid"><div><label>Current amount</label><input data-goal="${i}" data-goal-field="current" type="number" min="0" step="0.01" value="${g.current}"></div><div><label>Target amount</label><input data-goal="${i}" data-goal-field="target" type="number" min="0" step="0.01" value="${g.target}"></div></div><div class="goal-controls"><button class="mini-btn danger" data-archive-goal="${i}" type="button">Archive goal</button><button class="mini-btn delete" data-delete-goal="${i}" type="button">Delete</button></div></div>`;
+      card.innerHTML=`<div class="row"><div><h2>${esc(g.name)}</h2><div class="goal-meta">${g.target>0?`${euro2(g.current)} of ${euro2(g.target)}`:`${euro2(g.current)} saved`}</div></div>${g.target>0?`<div class="pill">${pct.toFixed(0)}%</div>`:""}</div>${g.target>0?`<div class="progress"><span style="width:${pct}%"></span></div>`:""}<div class="editor"><label>Goal name</label><input data-goal="${i}" data-goal-field="name" type="text" value="${esc(g.name)}"><div class="editor-grid"><div><label>Current amount</label><input data-goal="${i}" data-goal-field="current" type="number" min="0" step="0.01" value="${g.current}"></div><div><label>Target amount</label><input data-goal="${i}" data-goal-field="target" type="number" min="0" step="0.01" value="${g.target}"></div></div><button class="save-btn" data-save-goal="${i}" type="button">Save ${esc(g.name)}</button><div class="goal-controls"><button class="mini-btn danger" data-archive-goal="${i}" type="button">Archive goal</button><button class="mini-btn delete" data-delete-goal="${i}" type="button">Delete</button></div></div>`;
       list.appendChild(card);
     });
     list.querySelectorAll("[data-goal]").forEach(input=>input.addEventListener("change",e=>{
@@ -295,6 +295,20 @@ function renderGoals(){
       const i=Number(e.currentTarget.dataset.archiveGoal),goal=state.customGoals[i];if(!goal)return;
       if(!confirm(`Archive ${goal.name}?\\n\\nIt will disappear from active Goals and Overview but remain available under More.`))return;
       state.archivedGoals.unshift({...goal,type:"custom",archivedAt:new Date().toISOString()});
+      state.customGoals.splice(i,1);persist();render();
+    }));
+    list.querySelectorAll("[data-save-goal]").forEach(btn=>btn.addEventListener("click",e=>{
+      const i=Number(e.currentTarget.dataset.saveGoal),goal=state.customGoals[i];if(!goal)return;
+      const card=e.currentTarget.closest(".goal-item"),name=card.querySelector('[data-goal-field="name"]').value.trim();
+      if(!name){card.querySelector('[data-goal-field="name"]').focus();return}
+      goal.name=name;
+      goal.current=Math.max(0,Number(card.querySelector('[data-goal-field="current"]').value)||0);
+      goal.target=Math.max(0,Number(card.querySelector('[data-goal-field="target"]').value)||0);
+      persist();render();
+    }));
+    list.querySelectorAll("[data-delete-goal]").forEach(btn=>btn.addEventListener("click",e=>{
+      const i=Number(e.currentTarget.dataset.deleteGoal),goal=state.customGoals[i];if(!goal)return;
+      if(!confirm(`Delete ${goal.name}?\\n\\nThis permanently removes it from Goals and Overview. It will not appear in Archived items.`))return;
       state.customGoals.splice(i,1);persist();render();
     }));
   }
@@ -371,6 +385,7 @@ byId("archiveHousePocket").addEventListener("click",()=>{if(state.housePocket>0)
 byId("toggleAddGoal").addEventListener("click",()=>{const card=byId("addGoalCard");card.hidden=!card.hidden;if(!card.hidden){byId("newGoalName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addGoal").addEventListener("click",()=>{const name=byId("newGoalName").value.trim(),current=Math.max(0,Number(byId("newGoalCurrent").value)||0),target=Math.max(0,Number(byId("newGoalTarget").value)||0);if(!name){byId("newGoalName").focus();return}state.customGoals.push({name,current,target});persist();["newGoalName","newGoalCurrent","newGoalTarget"].forEach(id=>byId(id).value="");byId("addGoalCard").hidden=true;render()});
 document.querySelectorAll("[data-archive-built-in]").forEach(btn=>btn.addEventListener("click",()=>{const key=btn.dataset.archiveBuiltIn,m=builtInGoalMeta[key];if(!m)return;if(!confirm(`Archive ${m.name}?\\n\\nIt will disappear from Goals and Overview, but you can restore it later from More.`))return;state.hiddenBuiltInGoals[key]=true;persist();render()}));
+document.querySelectorAll("[data-delete-built-in]").forEach(btn=>btn.addEventListener("click",()=>{const key=btn.dataset.deleteBuiltIn,m=builtInGoalMeta[key];if(!m)return;if(!confirm(`Delete ${m.name}?\\n\\nThis permanently removes it from Goals and Overview. It will not appear in Archived items.`))return;state.hiddenBuiltInGoals[key]=false;state.deletedBuiltInGoals[key]=true;persist();render()}));
 byId("toggleArchiveList").addEventListener("click",()=>{const list=byId("archiveList");list.hidden=!list.hidden;byId("toggleArchiveList").textContent=list.hidden?"View archived items":"Hide archived items"});
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment});persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
