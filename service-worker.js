@@ -1,6 +1,6 @@
-/* Freedom at 50 — service worker v1.2.1
-   Network-first for pages so GitHub updates appear immediately. */
-const CACHE_NAME = "freedom-at-50-v1.2.1";
+/* Freedom at 50 — service worker v1.3
+   Network-first pages + one-tap controlled upgrades. */
+const CACHE_NAME = "freedom-at-50-v1.3";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -10,12 +10,18 @@ const APP_SHELL = [
 ];
 
 self.addEventListener("install", event => {
-  self.skipWaiting();
+  // Do not auto-activate. The current app stays open until "Update now" is tapped.
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache =>
       Promise.all(APP_SHELL.map(url => cache.add(url).catch(() => null)))
     )
   );
+});
+
+self.addEventListener("message", event => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener("activate", event => {
@@ -36,7 +42,6 @@ self.addEventListener("fetch", event => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // HTML/navigation: always try the live GitHub version first.
   if (req.mode === "navigate" || req.destination === "document") {
     event.respondWith(
       fetch(req, { cache: "no-store" })
@@ -56,10 +61,9 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // Static files: stale-while-revalidate.
   event.respondWith(
     caches.match(req).then(cached => {
-      const fresh = fetch(req).then(response => {
+      const fresh = fetch(req, { cache: "no-cache" }).then(response => {
         if (response && response.ok) {
           const copy = response.clone();
           caches.open(CACHE_NAME).then(cache => cache.put(req, copy));

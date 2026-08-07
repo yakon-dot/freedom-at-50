@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Freedom at 50 — Web app v1.2.1</title>
+<title>Freedom at 50 — Web app v1.3</title>
 <style>
 :root{--bg:#0b0c0e;--card:#111316;--card2:#15171b;--line:#2c3037;--text:#f5f4f0;--muted:#999ba4;--yellow:#e7cf63;--green:#84bd91;--blue:#79a9c9;--purple:#aa8fc9;--bronze:#c59669;--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box} html{background:var(--bg);scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased} button,input{font:inherit} button{color:inherit}.app{max-width:720px;margin:0 auto;min-height:100vh}
@@ -17,12 +17,18 @@ main{padding:4px 18px calc(106px + var(--safe-bottom))}.page{display:none}.page.
 .card{background:linear-gradient(145deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:25px;padding:20px;min-width:0}.card.gold{border-color:rgba(231,207,99,.52);background:linear-gradient(145deg,rgba(231,207,99,.13),var(--card))}.card.house{border-color:rgba(197,150,105,.34)}.card.holiday{border-color:rgba(121,169,201,.34)}.card.savings{border-color:rgba(132,189,145,.34)}.card.pension{border-color:rgba(170,143,201,.34)}.card.completed{border-color:rgba(132,189,145,.42);background:linear-gradient(145deg,rgba(132,189,145,.09),var(--card))}.card-head{display:flex;align-items:center;gap:12px}.icon{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;border:1px solid rgba(231,207,99,.32);background:rgba(231,207,99,.08);color:var(--yellow)}.icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.label{color:var(--muted);font-size:15px}.value{font-size:39px;line-height:1;font-weight:790;letter-spacing:-.045em;margin-top:20px}.value.medium{font-size:31px}.detail{color:var(--muted);font-size:13px;margin-top:8px;line-height:1.45}.row{display:flex;align-items:center;justify-content:space-between;gap:12px}.progress{height:8px;background:#24272c;border-radius:999px;overflow:hidden;margin-top:16px}.progress span{display:block;height:100%;background:var(--yellow);border-radius:inherit}.pill{font-size:11px;color:var(--yellow);border:1px solid rgba(231,207,99,.32);border-radius:999px;padding:6px 9px;white-space:nowrap}.pill.complete{color:var(--green);border-color:rgba(132,189,145,.35)}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.mini-card{padding:17px;border-radius:21px}.mini-card .value{font-size:27px;margin-top:13px}.section-title{display:flex;align-items:end;justify-content:space-between;margin:30px 2px 13px}.tap-card{cursor:pointer;-webkit-tap-highlight-color:transparent}.tap-card:active{transform:scale(.992)}.north-star{border:1px dashed #383b42;border-radius:23px;padding:20px;margin-top:14px;color:#d9d4c1;font-family:"Bradley Hand","Segoe Print","Comic Sans MS",cursive;font-size:20px;line-height:1.35}
 input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px solid #343840;border-radius:14px;padding:14px 15px;font-size:16px;outline:none}input:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(231,207,99,.1)}input[readonly]{color:#d9d9d5;background:#101215}label{display:block;color:var(--muted);font-size:13px;margin-top:15px}.save-btn,.secondary-btn{width:100%;border-radius:16px;padding:14px 16px;margin-top:16px;font-weight:720}.save-btn{background:var(--yellow);color:#17150b;border:0}.save-btn.complete{background:var(--green);color:#0c130e}.secondary-btn{background:transparent;border:1px solid #454952;color:var(--text)}.loan-card{padding:19px}.loan-title{font-size:19px;font-weight:760}.loan-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.loan-stat{background:#0e1013;border:1px solid #272b31;border-radius:15px;padding:12px}.loan-stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.loan-stat strong{font-size:16px}.editor{margin-top:15px;padding-top:2px}.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.empty-note{color:var(--muted);font-size:14px;line-height:1.5}.success-copy{color:#c9decf;font-size:14px;line-height:1.5;margin:12px 0 0}
 .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(12,13,15,.96);backdrop-filter:blur(18px);border-top:1px solid #292c31;padding:8px 8px calc(8px + var(--safe-bottom));display:grid;grid-template-columns:repeat(5,1fr);gap:3px}.nav-btn{border:0;background:transparent;color:#9799a2;border-radius:15px;min-height:58px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;-webkit-tap-highlight-color:transparent}.nav-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-btn.active{color:var(--yellow);background:rgba(231,207,99,.1)}.save-note{position:fixed;left:50%;bottom:calc(86px + var(--safe-bottom));transform:translate(-50%,14px);background:#f0ead0;color:#17150d;padding:10px 14px;border-radius:999px;font-weight:700;font-size:12px;opacity:0;pointer-events:none;transition:.18s;z-index:80}.save-note.show{opacity:1;transform:translate(-50%,0)}
+
+.update-banner{position:fixed;left:14px;right:14px;top:calc(12px + env(safe-area-inset-top,0px));z-index:120;max-width:680px;margin:0 auto;background:#f0ead0;color:#17150d;border:1px solid rgba(231,207,99,.75);border-radius:18px;padding:12px 12px 12px 15px;box-shadow:0 12px 34px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:space-between;gap:12px}.update-banner[hidden]{display:none}.update-banner strong{display:block;font-size:14px}.update-banner span{display:block;font-size:12px;opacity:.72;margin-top:2px}.update-btn{border:0;background:#17150d;color:#f5f4f0;border-radius:12px;padding:10px 13px;font-weight:760;white-space:nowrap}
 @media(min-width:600px){main{padding-left:28px;padding-right:28px}.overview-support{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
 <body>
+<div class="update-banner" id="updateBanner" hidden>
+  <div><strong>Freedom has been updated</strong><span>Tap once to load the newest version.</span></div>
+  <button class="update-btn" id="updateNow" type="button">Update now</button>
+</div>
 <div class="app">
-<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.2.1</div></div><div class="tagline">Small wins become big freedom.</div></header>
+<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.3</div></div><div class="tagline">Small wins become big freedom.</div></header>
 <main>
 <section class="page active" id="overview">
   <div class="eyebrow">Overview</div><h1>One step closer.</h1><p class="intro">Progress first. The detailed figures stay available when you choose to look at them.</p>
@@ -78,19 +84,56 @@ byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName
 document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{pullForm();persist();render()}));byId("restoreLoans").addEventListener("click",()=>{state.loans=JSON.parse(JSON.stringify(defaults.loans));persist();render()});fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);
 })();
 
-// Keep the installed PWA on the newest published version instead of an old cached index.html.
+// Update flow for the installed PWA.
+// Freedom checks GitHub on launch. When a new service worker is ready,
+// a one-tap update banner appears. Saved localStorage data is untouched.
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
+    const banner = document.getElementById("updateBanner");
+    const updateNow = document.getElementById("updateNow");
+    let registration = null;
+
+    const showUpdate = reg => {
+      registration = reg || registration;
+      if (banner) banner.hidden = false;
+    };
+
     try {
-      const reg = await navigator.serviceWorker.register("./service-worker.js", { updateViaCache: "none" });
-      await reg.update();
+      registration = await navigator.serviceWorker.register("./service-worker.js", { updateViaCache: "none" });
+
+      if (registration.waiting && navigator.serviceWorker.controller) {
+        showUpdate(registration);
+      }
+
+      registration.addEventListener("updatefound", () => {
+        const worker = registration.installing;
+        if (!worker) return;
+        worker.addEventListener("statechange", () => {
+          if (worker.state === "installed" && navigator.serviceWorker.controller) {
+            showUpdate(registration);
+          }
+        });
+      });
+
+      await registration.update();
+
+      if (updateNow) {
+        updateNow.addEventListener("click", () => {
+          if (registration && registration.waiting) {
+            registration.waiting.postMessage({ type: "SKIP_WAITING" });
+          } else {
+            window.location.reload();
+          }
+        });
+      }
+
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (sessionStorage.getItem("freedom50-sw-reloaded")) return;
-        sessionStorage.setItem("freedom50-sw-reloaded", "1");
+        if (sessionStorage.getItem("freedom50-sw-reloaded-v13")) return;
+        sessionStorage.setItem("freedom50-sw-reloaded-v13", "1");
         window.location.reload();
       });
     } catch (err) {
-      console.warn("Service worker update failed:", err);
+      console.warn("Service worker update check failed:", err);
     }
   });
 }
