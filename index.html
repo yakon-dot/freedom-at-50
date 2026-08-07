@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Freedom at 50 — Web app v1.3</title>
+<title>Freedom at 50 — Web app v1.4</title>
 <style>
 :root{--bg:#0b0c0e;--card:#111316;--card2:#15171b;--line:#2c3037;--text:#f5f4f0;--muted:#999ba4;--yellow:#e7cf63;--green:#84bd91;--blue:#79a9c9;--purple:#aa8fc9;--bronze:#c59669;--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box} html{background:var(--bg);scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased} button,input{font:inherit} button{color:inherit}.app{max-width:720px;margin:0 auto;min-height:100vh}
@@ -19,6 +19,9 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(12,13,15,.96);backdrop-filter:blur(18px);border-top:1px solid #292c31;padding:8px 8px calc(8px + var(--safe-bottom));display:grid;grid-template-columns:repeat(5,1fr);gap:3px}.nav-btn{border:0;background:transparent;color:#9799a2;border-radius:15px;min-height:58px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;-webkit-tap-highlight-color:transparent}.nav-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-btn.active{color:var(--yellow);background:rgba(231,207,99,.1)}.save-note{position:fixed;left:50%;bottom:calc(86px + var(--safe-bottom));transform:translate(-50%,14px);background:#f0ead0;color:#17150d;padding:10px 14px;border-radius:999px;font-weight:700;font-size:12px;opacity:0;pointer-events:none;transition:.18s;z-index:80}.save-note.show{opacity:1;transform:translate(-50%,0)}
 
 .update-banner{position:fixed;left:14px;right:14px;top:calc(12px + env(safe-area-inset-top,0px));z-index:120;max-width:680px;margin:0 auto;background:#f0ead0;color:#17150d;border:1px solid rgba(231,207,99,.75);border-radius:18px;padding:12px 12px 12px 15px;box-shadow:0 12px 34px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:space-between;gap:12px}.update-banner[hidden]{display:none}.update-banner strong{display:block;font-size:14px}.update-banner span{display:block;font-size:12px;opacity:.72;margin-top:2px}.update-btn{border:0;background:#17150d;color:#f5f4f0;border-radius:12px;padding:10px 13px;font-weight:760;white-space:nowrap}
+
+.archive-goal-btn{margin-top:14px;width:auto;padding:10px 14px;border-radius:999px;border:1px solid rgba(231,207,99,.45);background:transparent;color:var(--gold);font-size:13px;font-weight:750;cursor:pointer}
+.archive-goal-btn:active{transform:translateY(1px)}
 @media(min-width:600px){main{padding-left:28px;padding-right:28px}.overview-support{grid-template-columns:repeat(2,1fr)}}
 </style>
 </head>
@@ -28,7 +31,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   <button class="update-btn" id="updateNow" type="button">Update now</button>
 </div>
 <div class="app">
-<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.3</div></div><div class="tagline">Small wins become big freedom.</div></header>
+<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.4</div></div><div class="tagline">Small wins become big freedom.</div></header>
 <main>
 <section class="page active" id="overview">
   <div class="eyebrow">Overview</div><h1>One step closer.</h1><p class="intro">Progress first. The detailed figures stay available when you choose to look at them.</p>
@@ -45,7 +48,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 <section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><h1>Pieces of your future, being returned.</h1><p class="intro">Rename a journey, update its balance, or add a new one whenever life changes. Your Overview updates automatically.</p><div class="stack" id="loanList"></div><article class="card" style="margin-top:14px"><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><button class="secondary-btn" id="restoreLoans">Restore original starting journeys</button></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><h1>Life alongside the plan.</h1><p class="intro">Debt progress matters, but so do the things you are building and enjoying now.</p><div class="stack">
   <article class="card gold" id="housePocketActive"><h2>House Pocket</h2><label for="housePocketRemaining">Amount still owed</label><input id="housePocketRemaining" type="number" readonly><label for="housePocketPayment">Payment made</label><input id="housePocketPayment" inputmode="decimal" type="number" min="0" step="10" placeholder="Enter payment"><button class="save-btn" id="recordHousePocket">Record Payment</button><p class="success-copy">When this reaches €0, Freedom will ask whether you want to remove House Pocket from active Goals and keep it as a completed victory.</p></article>
-  <article class="card completed" id="housePocketCompleted" hidden><div class="row"><div><div class="label">Completed victory</div><h2 style="margin-top:5px">House Pocket</h2></div><div class="pill complete">Complete ✓</div></div><p class="success-copy">The full €1,000 has been returned. House Pocket is no longer an active goal.</p></article>
+  <article class="card completed" id="housePocketCompleted" hidden><div class="row"><div><div class="label">Completed victory</div><h2 style="margin-top:5px">House Pocket</h2></div><div class="pill complete">Complete ✓</div></div><p class="success-copy">The full €1,000 has been returned. Keep it here for a while, then archive it when you’re ready.</p><button class="archive-goal-btn" id="archiveHousePocket" type="button">Archive from Goals</button></article>
   <article class="card house"><h2>House Fund</h2><label for="houseFund">Current joint balance</label><input id="houseFund" inputmode="decimal" type="number" min="0" step="1"><div class="progress"><span id="houseFundBar"></span></div><div class="detail">Reference milestone: €50,000</div><button class="save-btn" data-save>Save House Fund</button></article>
   <article class="card holiday"><h2>Holiday Fund</h2><label for="holidayFund">Current balance</label><input id="holidayFund" inputmode="decimal" type="number" min="0" step="1"><label for="holidayMonthly">Combined monthly contribution</label><input id="holidayMonthly" inputmode="decimal" type="number" min="0" step="1"><button class="save-btn" data-save>Save Holiday Fund</button></article>
   <article class="card savings"><h2>Personal Savings</h2><label for="personalSavings">Current balance</label><input id="personalSavings" inputmode="decimal" type="number" min="0" step="1"><div class="progress"><span id="savingsBar"></span></div><div class="detail">First milestone: €5,000</div><button class="save-btn" data-save>Save Personal Savings</button></article>
@@ -75,11 +78,51 @@ function fillForm(){["houseFund","holidayFund","holidayMonthly","personalSavings
 function nextLoan(){return state.loans.filter(x=>x.current>0).sort((a,b)=>a.current-b.current)[0]||null}
 function render(){const original=state.loans.reduce((s,x)=>s+x.starting,0);const current=state.loans.reduce((s,x)=>s+x.current,0);const loanReturned=Math.max(0,original-current);const hpReturned=Math.max(0,HOUSE_POCKET_START-state.housePocket);const totalOriginal=original+HOUSE_POCKET_START;const totalCurrent=current+state.housePocket;const pct=totalOriginal?Math.max(0,(totalOriginal-totalCurrent)/totalOriginal*100):0;const monthly=state.loans.reduce((s,x)=>s+x.payment,0)+(state.housePocket>0?(Number(state.housePocketMonthly)||0):0);
 byId("overviewReturned").textContent=euro0(loanReturned+hpReturned);byId("overviewProgress").textContent=Math.round(pct)+"%";byId("overviewProgressBar").style.width=Math.min(100,pct)+"%";byId("overviewHouse").textContent=euro0(state.houseFund);byId("overviewHoliday").textContent=euro0(state.holidayFund);byId("overviewSavings").textContent=euro0(state.personalSavings);byId("overviewPension").textContent=euro0(state.pensionValue);byId("monthlyFreedom").textContent=euro0(monthly);
-const hp=state.housePocket,hpm=state.housePocketMonthly;const hpProgress=Math.max(0,Math.min(100,(HOUSE_POCKET_START-hp)/HOUSE_POCKET_START*100));byId("pocketBar").style.width=(hp<=0?100:hpProgress)+"%";
-if(hp<=0){byId("victoryLabel").textContent="First victory achieved";byId("victoryName").textContent="House Pocket";byId("victoryPill").textContent="Complete ✓";byId("victoryPill").classList.add("complete");byId("pocketOverview").textContent="€1,000 returned";byId("pocketMessage").textContent="One less thing to carry.";byId("pocketMonths").textContent="Victory archived";}else{byId("victoryLabel").textContent="First victory";byId("victoryName").textContent="House Pocket";byId("victoryPill").textContent="Quickest win";byId("victoryPill").classList.remove("complete");byId("pocketOverview").textContent=euro0(hp)+" remaining";byId("pocketMessage").textContent=hp<=150?"One payment away.":"Your first finish line is close.";byId("pocketMonths").textContent=monthsText(hp,hpm)}
-const next=nextLoan();if(hp>0){byId("nextMilestoneName").textContent="House Pocket";byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){byId("nextMilestoneName").textContent=next.name;byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else{byId("nextMilestoneName").textContent="All clear";byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
-byId("housePocketActive").hidden=!!state.housePocketArchived;byId("housePocketCompleted").hidden=!state.housePocketArchived;byId("housePocketRemaining").value=state.housePocket;byId("houseFundBar").style.width=Math.min(100,state.houseFund/50000*100)+"%";byId("savingsBar").style.width=Math.min(100,state.personalSavings/5000*100)+"%";byId("pensionDisplay").textContent=euro2(state.pensionValue);const pensionMonthly=state.pensionPersonal+state.pensionEmployer;byId("pensionMonthlyTotal").textContent=euro2(pensionMonthly);byId("pensionAnnual").textContent=euro2(pensionMonthly*12);renderLoans()}
-byId("recordHousePocket").addEventListener("click",()=>{const input=byId("housePocketPayment");const amount=Math.max(0,Number(input.value)||0);if(!amount){input.focus();return}if(amount>state.housePocket){alert(`The payment is more than the ${euro0(state.housePocket)} still owed. Enter the amount actually paid.`);input.focus();return}state.housePocket=Math.max(0,Math.round((state.housePocket-amount)*100)/100);state.houseFund=Math.round((state.houseFund+amount)*100)/100;if(state.housePocket<=0){state.housePocket=0;state.housePocketCompletedAt=new Date().toISOString();const remove=confirm("House Pocket complete 🎉\n\nYou’ve returned the full €1,000.\n\nDelete House Pocket from active Goals and keep it as a completed victory?");state.housePocketArchived=remove}persist();input.value="";fillForm();render();if(state.housePocket<=0&&state.housePocketArchived)page("overview")});
+const hp=state.housePocket,hpm=state.housePocketMonthly;const hpProgress=Math.max(0,Math.min(100,(HOUSE_POCKET_START-hp)/HOUSE_POCKET_START*100));const next=nextLoan();
+if(hp>0){
+  byId("pocketBar").style.width=hpProgress+"%";
+  byId("victoryLabel").textContent="First victory";
+  byId("victoryName").textContent="House Pocket";
+  byId("victoryPill").textContent="Quickest win";
+  byId("victoryPill").classList.remove("complete");
+  byId("pocketOverview").textContent=euro0(hp)+" remaining";
+  byId("pocketMessage").textContent=hp<=150?"One payment away.":"Your first finish line is close.";
+  byId("pocketMonths").textContent=monthsText(hp,hpm);
+}else if(!state.housePocketArchived){
+  byId("pocketBar").style.width="100%";
+  byId("victoryLabel").textContent="Victory complete";
+  byId("victoryName").textContent="House Pocket";
+  byId("victoryPill").textContent="Complete ✓";
+  byId("victoryPill").classList.add("complete");
+  byId("pocketOverview").textContent="€1,000 returned";
+  byId("pocketMessage").textContent="Enjoy this one for a while.";
+  byId("pocketMonths").textContent="Archive when ready";
+}else if(next){
+  const returned=Math.max(0,next.starting-next.current);
+  const nextPct=next.starting?Math.min(100,returned/next.starting*100):0;
+  byId("pocketBar").style.width=nextPct+"%";
+  byId("victoryLabel").textContent="Next victory";
+  byId("victoryName").textContent=next.name;
+  byId("victoryPill").textContent="Queued up";
+  byId("victoryPill").classList.remove("complete");
+  byId("pocketOverview").textContent=euro0(next.current)+" remaining";
+  byId("pocketMessage").textContent="This is your next finish line.";
+  byId("pocketMonths").textContent=monthsText(next.current,next.payment);
+}else{
+  byId("pocketBar").style.width="100%";
+  byId("victoryLabel").textContent="Freedom milestone";
+  byId("victoryName").textContent="All clear";
+  byId("victoryPill").textContent="Complete ✓";
+  byId("victoryPill").classList.add("complete");
+  byId("pocketOverview").textContent="No active journeys";
+  byId("pocketMessage").textContent="Every listed commitment is complete.";
+  byId("pocketMonths").textContent="You did it";
+}
+if(hp>0){byId("nextMilestoneName").textContent="House Pocket";byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){byId("nextMilestoneName").textContent=next.name;byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else{byId("nextMilestoneName").textContent="All clear";byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
+byId("housePocketActive").hidden=hp<=0||!!state.housePocketArchived;
+byId("housePocketCompleted").hidden=hp>0||!!state.housePocketArchived;byId("housePocketRemaining").value=state.housePocket;byId("houseFundBar").style.width=Math.min(100,state.houseFund/50000*100)+"%";byId("savingsBar").style.width=Math.min(100,state.personalSavings/5000*100)+"%";byId("pensionDisplay").textContent=euro2(state.pensionValue);const pensionMonthly=state.pensionPersonal+state.pensionEmployer;byId("pensionMonthlyTotal").textContent=euro2(pensionMonthly);byId("pensionAnnual").textContent=euro2(pensionMonthly*12);renderLoans()}
+byId("recordHousePocket").addEventListener("click",()=>{const input=byId("housePocketPayment");const amount=Math.max(0,Number(input.value)||0);if(!amount){input.focus();return}if(amount>state.housePocket){alert(`The payment is more than the ${euro0(state.housePocket)} still owed. Enter the amount actually paid.`);input.focus();return}state.housePocket=Math.max(0,Math.round((state.housePocket-amount)*100)/100);state.houseFund=Math.round((state.houseFund+amount)*100)/100;if(state.housePocket<=0){state.housePocket=0;state.housePocketCompletedAt=new Date().toISOString();const archiveNow=confirm("House Pocket complete 🎉\n\nYou’ve returned the full €1,000.\n\nArchive it from Goals now?\n\nPress Cancel if you want to leave the completed victory on screen for a while.");state.housePocketArchived=archiveNow}persist();input.value="";fillForm();render();if(state.housePocket<=0&&state.housePocketArchived)page("overview")});
+byId("archiveHousePocket").addEventListener("click",()=>{if(state.housePocket>0)return;state.housePocketArchived=true;persist();render();page("overview")});
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment});persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");render();});
 document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{pullForm();persist();render()}));byId("restoreLoans").addEventListener("click",()=>{state.loans=JSON.parse(JSON.stringify(defaults.loans));persist();render()});fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);
 })();
@@ -128,8 +171,8 @@ if ("serviceWorker" in navigator) {
       }
 
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (sessionStorage.getItem("freedom50-sw-reloaded-v13")) return;
-        sessionStorage.setItem("freedom50-sw-reloaded-v13", "1");
+        if (sessionStorage.getItem("freedom50-sw-reloaded-v14")) return;
+        sessionStorage.setItem("freedom50-sw-reloaded-v14", "1");
         window.location.reload();
       });
     } catch (err) {

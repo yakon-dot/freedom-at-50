@@ -1,6 +1,6 @@
-/* Freedom at 50 — service worker v1.3
+/* Freedom at 50 — service worker v1.4
    Network-first pages + one-tap controlled upgrades. */
-const CACHE_NAME = "freedom-at-50-v1.3";
+const CACHE_NAME = "freedom-at-50-v1.4";
 const APP_SHELL = [
   "./",
   "./index.html",
