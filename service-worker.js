@@ -1,5 +1,5 @@
 /* Freedom at 50 — verified mobile Home release */
-const CACHE_NAME = "freedom-at-50-overview-wallpaper-v3-5-brighter";
+const CACHE_NAME = "freedom-at-50-overview-muted-type-v3-7";
 const APP_SHELL = [
   "./",
   "./index.html",
