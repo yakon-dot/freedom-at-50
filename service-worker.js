@@ -1,12 +1,13 @@
 /* Freedom at 50 — verified mobile Home release */
-const CACHE_NAME = "freedom-at-50-journey-transactions-v2-9";
+const CACHE_NAME = "freedom-at-50-overview-wallpaper-v3-0";
 const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.webmanifest",
   "./icon-192.png",
   "./icon-512.png",
-  "./freedom-mobile-wallpaper.jpg"
+  "./freedom-mobile-wallpaper.jpg",
+  "./overview-wallpaper.png"
 ];
 
 self.addEventListener("install", event => {

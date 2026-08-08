@@ -84,7 +84,17 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
       linear-gradient(180deg,rgba(7,11,14,.34) 0%,rgba(7,11,14,.22) 42%,rgba(7,11,14,.05) 100%),
       url("./freedom-mobile-wallpaper.jpg") center center/cover no-repeat;
   }
-  body.mobile-home-active-v181 .mobile-home-v181{display:block}
+body.mobile-home-active-v181 .mobile-home-v181{display:block}
+
+  /* Overview wallpaper test: this atmosphere belongs to Overview only. */
+  body.overview-active-v300 .app::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:#070809 url("./overview-wallpaper.png") center top/cover no-repeat
+  }
+  body.overview-active-v300 .app{position:relative;isolation:isolate;background:transparent}
+  body.overview-active-v300 header{display:none}
+  body.overview-active-v300 main{padding-top:0}
+  body.overview-active-v300 #overview{padding-top:20vh}
 
   .mobile-home-inner-v181{
     position:relative;min-height:100dvh;
@@ -164,7 +174,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 </head>
-<body class="mobile-home-active-v181">
+<body class="mobile-home-active-v181 overview-active-v300">
 
 <div class="mobile-home-v181" id="mobileHome181" aria-hidden="false">
   <div class="mobile-home-inner-v181">
@@ -266,7 +276,7 @@ const euro0=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",ma
 function showSaved(){const note=byId("saveNote");note.classList.add("show");clearTimeout(showSaved.timer);showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200)}function persist(){localStorage.setItem(KEY,JSON.stringify(state));showSaved()}
 function monthsText(balance,payment){if(balance<=0)return"Complete";if(!payment)return"Repayment not set";const m=Math.ceil(balance/payment);return m===1?"About 1 month":`About ${m} months`}
 function freedomDate(balance,payment){if(balance<=0)return"Freedom reached";if(!payment)return"Set monthly repayment";const months=Math.ceil(balance/payment);const date=new Date();date.setDate(1);date.setMonth(date.getMonth()+months);return date.toLocaleDateString("en-IE",{month:"long",year:"numeric"})}
-function page(id){document.querySelectorAll(".page").forEach(el=>el.classList.toggle("active",el.id===id));document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.page===id));history.replaceState(null,"","#"+id);window.scrollTo(0,0)}
+function page(id){document.querySelectorAll(".page").forEach(el=>el.classList.toggle("active",el.id===id));document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.page===id));document.body.classList.toggle("overview-active-v300",id==="overview");history.replaceState(null,"","#"+id);window.scrollTo(0,0)}
 document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>page(btn.dataset.page)));document.querySelectorAll("[data-page-link]").forEach(card=>card.addEventListener("click",()=>page(card.dataset.pageLink)));
 function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]))}
 
