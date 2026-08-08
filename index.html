@@ -89,12 +89,37 @@ body.mobile-home-active-v181 .mobile-home-v181{display:block}
   /* Overview wallpaper test: this atmosphere belongs to Overview only. */
   body.overview-active-v300 .app::before{
     content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-    background:#070809 url("./overview-wallpaper.png") center top/cover no-repeat
+    background:
+      linear-gradient(rgba(0,0,0,.34),rgba(0,0,0,.34)),
+      #070809 url("./overview-wallpaper.png") center top/cover no-repeat
   }
   body.overview-active-v300 .app{position:relative;isolation:isolate;background:transparent}
   body.overview-active-v300 header{display:none}
   body.overview-active-v300 main{padding-top:0}
   body.overview-active-v300 #overview{padding-top:20vh}
+  body.overview-active-v300 #overview .overview-opening{
+    display:flex;align-items:center;gap:9px;margin-bottom:8px;color:rgba(239,203,170,.78)
+  }
+  body.overview-active-v300 #overview .overview-opening svg{
+    width:21px;height:21px;flex:0 0 auto;fill:none;stroke:currentColor;
+    stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round
+  }
+  body.overview-active-v300 #overview .overview-opening h1{
+    font-size:25px;line-height:1.1;letter-spacing:-.035em;margin:0;color:rgba(245,244,240,.76)
+  }
+  body.overview-active-v300 #overview>.intro{
+    font-size:14px;color:rgba(210,211,214,.57);max-width:34rem;margin-bottom:25px
+  }
+  body.overview-active-v300 #overview .card{
+    background:linear-gradient(145deg,rgba(27,29,32,.72),rgba(13,15,17,.66));
+    backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)
+  }
+  body.overview-active-v300 #overview .card.gold{
+    background:linear-gradient(145deg,rgba(231,207,99,.13),rgba(13,15,17,.62))
+  }
+  body.overview-active-v300 #overview .reflection-v181{
+    border:0;background:transparent;border-radius:0;padding-left:0;padding-right:0
+  }
 
   .mobile-home-inner-v181{
     position:relative;min-height:100dvh;
@@ -224,7 +249,7 @@ body.mobile-home-active-v181 .mobile-home-v181{display:block}
 <header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.6</div></div><div class="tagline">Small wins become big freedom.</div></header>
 <main>
 <section class="page active" id="overview">
-  <div class="eyebrow">Overview</div><h1>One step closer.</h1><p class="intro">Progress first. The detailed figures stay available when you choose to look at them.</p>
+  <div class="overview-opening"><svg viewBox="0 0 28 28" aria-hidden="true"><ellipse cx="10" cy="17" rx="3.7" ry="6.1" transform="rotate(-24 10 17)"/><circle cx="5.5" cy="8.1" r="1.25"/><circle cx="8.4" cy="6.2" r="1.15"/><circle cx="11.5" cy="5.9" r="1.05"/><ellipse cx="20" cy="11" rx="3.7" ry="6.1" transform="rotate(24 20 11)"/><circle cx="16.5" cy="2.8" r="1.05"/><circle cx="19.6" cy="2.1" r="1.15"/><circle cx="22.6" cy="3.3" r="1.25"/></svg><h1>One step closer.</h1></div><p class="intro">Progress first. The detailed figures stay available when you choose to look at them.</p>
   <div class="stack">
     <article class="card"><div class="card-head"><div class="icon"><svg viewBox="0 0 24 24"><path d="m12 3 1.2 3.3 3.3 1.2-3.3 1.2L12 12l-1.2-3.3-3.3-1.2 3.3-1.2L12 3Z"/><path d="m18 14 .8 2.2 2.2.8-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/></svg></div><div class="label">Money returned</div></div><div class="value" id="overviewReturned">€0</div><div class="detail">Money you have already moved back towards your future.</div></article>
     <article class="card gold tap-card" id="victoryCard" data-page-link="goals"><div class="row"><div class="card-head"><div class="icon"><svg viewBox="0 0 24 24"><path d="M5 21V4"/><path d="M5 5h10l-2 3 2 3H5"/></svg></div><div><div class="label" id="victoryLabel">First victory</div><div style="font-size:20px;font-weight:760;margin-top:3px" id="victoryName">House Pocket</div></div></div><div class="pill" id="victoryPill">Quickest win</div></div><div class="value medium" id="pocketOverview">€150 remaining</div><div class="progress"><span id="pocketBar"></span></div><div class="row detail"><span id="pocketMessage">One payment away.</span><span id="pocketMonths">About 1 month</span></div></article>
