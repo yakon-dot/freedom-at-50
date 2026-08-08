@@ -137,18 +137,19 @@ body.mobile-home-active-v181 .mobile-home-v181{display:block}
   }
 
   /* Journey chapter: the Overview visual system with its own landscape. */
-  body.journey-active-v312 .app::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),#070809 url("./journey-wallpaper.png") center -120px/cover no-repeat}
-  body.journey-active-v312 .app{position:relative;isolation:isolate;background:transparent}
-  body.journey-active-v312 header{display:none}
-  body.journey-active-v312 main{padding-top:0}
-  body.journey-active-v312 #journey{padding-top:calc(11vh + 44px)}
-  body.journey-active-v312 #journey>h1{font-size:25px;line-height:1.1;letter-spacing:-.035em;margin:0;text-align:center;color:rgba(245,244,240,.76)}
-  body.journey-active-v312 #journey>.intro{font-size:14px;line-height:1.55;color:rgba(222,220,214,.62);max-width:18rem;margin:11px auto 116px;padding:0 14px;text-align:center}
-  body.journey-active-v312 #journey .journey-actions{margin-bottom:20px}
-  body.journey-active-v312 #journey .stack{gap:20px}
-  body.journey-active-v312 #journey .card{position:relative;overflow:hidden;background:linear-gradient(155deg,rgba(255,255,255,.075) 0%,rgba(255,255,255,.018) 34%,rgba(255,255,255,0) 58%),linear-gradient(145deg,rgba(27,29,32,.60),rgba(13,15,17,.54));backdrop-filter:blur(14px) saturate(120%);-webkit-backdrop-filter:blur(14px) saturate(120%);box-shadow:inset 0 1px 0 rgba(255,255,255,.32),inset 1px 0 0 rgba(255,255,255,.11),inset -1px 0 0 rgba(255,255,255,.035),inset 0 -1px 0 rgba(0,0,0,.24),0 12px 30px rgba(0,0,0,.16)}
-  body.journey-active-v312 #journey .card::before{content:"";position:absolute;z-index:0;pointer-events:none;left:8%;right:8%;top:0;height:38%;background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,0));border-radius:999px;filter:blur(18px);transform:translateY(-62%)}
-  body.journey-active-v312 #journey .card>*{position:relative;z-index:1}
+  body.journey-active-v313 .app::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),#070809 url("./journey-wallpaper.png") center -170px/cover no-repeat}
+  body.journey-active-v313 .app{position:relative;isolation:isolate;background:transparent}
+  body.journey-active-v313 header{display:none}
+  body.journey-active-v313 main{padding-top:0}
+  body.journey-active-v313 #journey{padding-top:calc(11vh + 44px)}
+  body.journey-active-v313 #journey>h1{font-size:25px;line-height:1.1;letter-spacing:-.035em;margin:0;text-align:center;color:rgba(245,244,240,.76)}
+  body.journey-active-v313 #journey>.intro{font-size:14px;line-height:1.55;color:rgba(222,220,214,.62);max-width:18rem;margin:11px auto 116px;padding:0 14px;text-align:center}
+  body.journey-active-v313 #journey .journey-actions{justify-content:flex-end;margin-bottom:20px}
+  body.journey-active-v313 #journey #toggleAddJourney{border-color:rgba(218,167,128,.42);background:rgba(16,18,20,.30);color:rgba(231,177,137,.88);box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+  body.journey-active-v313 #journey .stack{gap:20px}
+  body.journey-active-v313 #journey .card{position:relative;overflow:hidden;background:linear-gradient(155deg,rgba(255,255,255,.075) 0%,rgba(255,255,255,.018) 34%,rgba(255,255,255,0) 58%),linear-gradient(145deg,rgba(27,29,32,.60),rgba(13,15,17,.54));backdrop-filter:blur(14px) saturate(120%);-webkit-backdrop-filter:blur(14px) saturate(120%);box-shadow:inset 0 1px 0 rgba(255,255,255,.32),inset 1px 0 0 rgba(255,255,255,.11),inset -1px 0 0 rgba(255,255,255,.035),inset 0 -1px 0 rgba(0,0,0,.24),0 12px 30px rgba(0,0,0,.16)}
+  body.journey-active-v313 #journey .card::before{content:"";position:absolute;z-index:0;pointer-events:none;left:8%;right:8%;top:0;height:38%;background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,0));border-radius:999px;filter:blur(18px);transform:translateY(-62%)}
+  body.journey-active-v313 #journey .card>*{position:relative;z-index:1}
 
   .mobile-home-inner-v181{
     position:relative;min-height:100dvh;
@@ -330,7 +331,7 @@ const euro0=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",ma
 function showSaved(){const note=byId("saveNote");note.classList.add("show");clearTimeout(showSaved.timer);showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200)}function persist(){localStorage.setItem(KEY,JSON.stringify(state));showSaved()}
 function monthsText(balance,payment){if(balance<=0)return"Complete";if(!payment)return"Repayment not set";const m=Math.ceil(balance/payment);return m===1?"About 1 month":`About ${m} months`}
 function freedomDate(balance,payment){if(balance<=0)return"Freedom reached";if(!payment)return"Set monthly repayment";const months=Math.ceil(balance/payment);const date=new Date();date.setDate(1);date.setMonth(date.getMonth()+months);return date.toLocaleDateString("en-IE",{month:"long",year:"numeric"})}
-function page(id){document.querySelectorAll(".page").forEach(el=>el.classList.toggle("active",el.id===id));document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.page===id));document.body.classList.toggle("overview-active-v300",id==="overview");document.body.classList.toggle("journey-active-v312",id==="journey");history.replaceState(null,"","#"+id);window.scrollTo(0,0)}
+function page(id){document.querySelectorAll(".page").forEach(el=>el.classList.toggle("active",el.id===id));document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.page===id));document.body.classList.toggle("overview-active-v300",id==="overview");document.body.classList.toggle("journey-active-v313",id==="journey");history.replaceState(null,"","#"+id);window.scrollTo(0,0)}
 document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>page(btn.dataset.page)));document.querySelectorAll("[data-page-link]").forEach(card=>card.addEventListener("click",()=>page(card.dataset.pageLink)));
 function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]))}
 
