@@ -1,5 +1,5 @@
 /* Freedom at 50 — verified mobile Home release */
-const CACHE_NAME = "freedom-at-50-overview-visible-glass-v3-8";
+const CACHE_NAME = "freedom-at-50-overview-sea-restored-v3-9";
 const APP_SHELL = [
   "./",
   "./index.html",
