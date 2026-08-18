@@ -343,7 +343,6 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   const isMobile=()=>window.matchMedia("(max-width:820px)").matches;
   const home=document.getElementById("mobile183");
   const open=document.getElementById("open183");
-  const close=document.getElementById("close183");
   const more=document.getElementById("more183");
   const sub=document.getElementById("sub183");
 
@@ -359,7 +358,6 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   }
 
   open.addEventListener("click",showHome);
-  close.addEventListener("click",hideHome);
 
   function closeMore(){
     more.setAttribute("aria-expanded","false");
