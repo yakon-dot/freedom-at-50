@@ -58,11 +58,9 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.home183 .mobile183{display:block}
 
   .inner183{position:relative;min-height:100dvh;padding:calc(22px + env(safe-area-inset-top,0px)) 28px calc(18px + env(safe-area-inset-bottom,0px))}
-  .brand183{position:absolute;left:28px;top:calc(22px + env(safe-area-inset-top,0px));font-family:"Caveat","Segoe Print","Bradley Hand",cursive;font-size:39px;color:#efcbaa;line-height:1}
-  .version183{position:absolute;left:30px;top:calc(65px + env(safe-area-inset-top,0px));font-size:10px;letter-spacing:.08em;color:rgba(239,203,170,.56)}
-  .close183{position:absolute;top:calc(15px + env(safe-area-inset-top,0px));right:18px;width:42px;height:42px;border:0;background:transparent;color:#f3eee8;font-size:30px;font-weight:200;line-height:1;padding:0}
-
-  .nav183{width:min(292px,82vw);margin-top:112px;margin-left:2px}
+  .brand183{position:absolute;left:28px;top:calc(48px + env(safe-area-inset-top,0px));font-family:"Caveat","Segoe Print","Bradley Hand",cursive;font-size:39px;color:#efcbaa;line-height:1}
+  .version183{position:absolute;left:30px;top:calc(91px + env(safe-area-inset-top,0px));font-size:10px;letter-spacing:.08em;color:rgba(239,203,170,.56)}
+  .nav183{width:min(292px,82vw);margin-top:138px;margin-left:2px}
   .navbtn183,.morebtn183{width:100%;border:0;background:transparent;color:#f2f0eb;display:flex;align-items:center;gap:15px;text-align:left;padding:11px 0;font-size:16px;font-weight:500;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .navbtn183 svg,.morebtn183 svg{width:24px;height:24px;fill:none;stroke:#efcbaa;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;pointer-events:none}
   .navbtn183 span,.morebtn183 span{pointer-events:none}
@@ -73,12 +71,20 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 
   .subwrap183{
     margin-left:34px;border-left:1px solid rgba(239,203,170,.18);padding-left:19px;
-    max-height:0;opacity:0;overflow:hidden;transform:translateY(-5px);
-    transition:max-height .28s ease,opacity .2s ease,transform .28s ease;
-    pointer-events:none
+    max-height:0;overflow:hidden;pointer-events:none;
+    transition:max-height .48s cubic-bezier(.22,.61,.36,1)
   }
-  .subwrap183.open{max-height:190px;opacity:1;transform:translateY(0);pointer-events:auto}
-  .sub183{display:block;width:100%;border:0;background:transparent;color:#dedad3;text-align:left;padding:7px 0;font-size:13.5px;font-weight:450;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .subwrap183.open{max-height:190px;pointer-events:auto}
+  .sub183{
+    display:block;width:100%;border:0;background:transparent;color:#dedad3;text-align:left;
+    padding:7px 0;font-size:13.5px;font-weight:450;cursor:pointer;touch-action:manipulation;
+    -webkit-tap-highlight-color:transparent;opacity:0;transform:translateY(-8px);
+    transition:opacity .22s ease,transform .28s cubic-bezier(.22,.61,.36,1)
+  }
+  .subwrap183.open .sub183{opacity:1;transform:translateY(0)}
+  .subwrap183.open .sub183:nth-child(1){transition-delay:.05s}
+  .subwrap183.open .sub183:nth-child(2){transition-delay:.13s}
+  .subwrap183.open .sub183:nth-child(3){transition-delay:.21s}
 
   .open183{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:16px;z-index:300;display:grid;place-items:center;width:42px;height:42px;border-radius:50%;border:1px solid rgba(255,255,255,.10);background:rgba(12,16,19,.84);color:#ece8e1;backdrop-filter:blur(12px);box-shadow:0 8px 24px rgba(0,0,0,.26)}
   .open183 svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.55;stroke-linecap:round}
@@ -87,8 +93,14 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.home183 .nav183{animation:fade183 .62s .08s ease both}
   @keyframes fade183{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 }
-.demo-banner{position:fixed;top:calc(10px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);z-index:950;display:flex;align-items:center;gap:10px;padding:8px 10px 8px 14px;border:1px solid rgba(231,207,99,.42);border-radius:999px;background:rgba(10,12,14,.78);backdrop-filter:blur(12px);color:#f5f2ec;font-size:11px;font-weight:850;letter-spacing:.14em}
-.demo-banner button{border:0;border-radius:999px;padding:7px 10px;background:rgba(231,207,99,.16);color:#f5f2ec;font-size:11px;font-weight:800;letter-spacing:0;cursor:pointer}
+.demo-banner{
+  position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:16px;z-index:950;
+  display:flex;align-items:center;justify-content:center;min-height:42px;padding:0 14px;
+  border:1px solid rgba(239,203,170,.22);border-radius:14px;
+  background:rgba(18,22,27,.38);backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);box-shadow:0 10px 28px rgba(0,0,0,.18);
+  color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em
+}
 @media(min-width:821px){.mobile183,.open183{display:none!important}}
 
 </style>
@@ -103,9 +115,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 <div class="mobile183" id="mobile183" aria-hidden="false">
   <div class="inner183">
     <div class="brand183">Freedom</div>
-    <div class="version183">v1.8.3</div>
-    <button class="close183" id="close183" type="button" aria-label="Close menu">×</button>
-
+    <div class="version183">v1.8.4</div>
+    
     <nav class="nav183" aria-label="Freedom navigation">
       <button class="navbtn183" type="button" data-go183="overview">
         <svg viewBox="0 0 24 24"><path d="M3.8 11.2 12 4.5l8.2 6.7"/><path d="M5.8 10.6V20h12.4v-9.4"/><path d="M9.6 20v-6.2h4.8V20"/></svg>
@@ -150,7 +161,6 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 </div>
 <div class="demo-banner" id="demoBanner" hidden>
   <span>DEMO MODE</span>
-  <button type="button" id="exitDemo">Exit demo</button>
 </div>
 <div class="app">
 <header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.4</div></div><div class="tagline">Small wins become big freedom.</div></header>
@@ -393,8 +403,6 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
     render();
     showHome();
   }
-  const exitDemoButton=document.getElementById("exitDemo");
-  if(exitDemoButton)exitDemoButton.addEventListener("click",exitDemo);
 
   document.querySelectorAll("[data-more183]").forEach(btn=>{
     btn.addEventListener("click",()=>{
