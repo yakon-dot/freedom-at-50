@@ -861,9 +861,8 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   window.addEventListener("resize",()=>{if(!isMobile())hideHome()});
 })();
 
-// Update flow for the installed PWA.
-// Freedom checks GitHub on launch. When a new service worker is ready,
-// a one-tap update banner appears. Saved localStorage data is untouched.
+// Update flow for Freedom at 50.
+// This is network-first and replaces any older service-worker cache.
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     const banner = document.getElementById("updateBanner");
@@ -876,7 +875,12 @@ if ("serviceWorker" in navigator) {
     };
 
     try {
-      registration = await navigator.serviceWorker.register("./service-worker.js?v=184", { updateViaCache: "none" });
+      registration = await navigator.serviceWorker.register(
+        "./service-worker.js?v=1863",
+        { updateViaCache: "none" }
+      );
+
+      await registration.update();
 
       if (registration.waiting && navigator.serviceWorker.controller) {
         showUpdate(registration);
@@ -892,8 +896,6 @@ if ("serviceWorker" in navigator) {
         });
       });
 
-      await registration.update();
-
       if (updateNow) {
         updateNow.addEventListener("click", () => {
           if (registration && registration.waiting) {
@@ -905,8 +907,9 @@ if ("serviceWorker" in navigator) {
       }
 
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        if (sessionStorage.getItem("freedom50-sw-reloaded-v183")) return;
-        sessionStorage.setItem("freedom50-sw-reloaded-v183", "1");
+        const key = "freedom50-sw-reloaded-v1863";
+        if (sessionStorage.getItem(key)) return;
+        sessionStorage.setItem(key, "1");
         window.location.reload();
       });
     } catch (err) {
