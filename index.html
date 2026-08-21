@@ -192,11 +192,11 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     padding-top:calc(env(safe-area-inset-top,0px) + 10px);
     padding-bottom:calc(112px + var(--safe-bottom));
   }
-  /* Header centred in the free space above the cards */
+  /* Tall hero so the wallpaper stays visible between headline and cards */
   body.overview-active-v300 #overview .overview-hero{
-    min-height:clamp(108px,20vh,168px);
-    display:flex;flex-direction:column;justify-content:center;align-items:center;
-    padding:18px 18px 22px;
+    min-height:clamp(260px,46vh,400px);
+    display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
+    padding:clamp(48px,9vh,76px) 18px clamp(96px,16vh,148px);
     text-align:center;box-sizing:border-box;
   }
   body.overview-active-v300 #overview .overview-hero h1{
