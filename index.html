@@ -8,7 +8,7 @@
 <link rel="apple-touch-icon" href="./icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Freedom at 50 — Web app v1.8.5</title>
+<title>Freedom at 50 — Web app v1.8.5.4</title>
 <style>
 :root{--bg:#0b0c0e;--card:#111316;--card2:#15171b;--line:#2c3037;--text:#f5f4f0;--muted:#999ba4;--yellow:#e7cf63;--green:#84bd91;--blue:#79a9c9;--purple:#aa8fc9;--bronze:#c59669;--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box} html{background:var(--bg);scroll-behavior:smooth} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased} button,input{font:inherit} button{color:inherit}.app{max-width:720px;margin:0 auto;min-height:100vh}
@@ -156,6 +156,122 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
 }
 
+
+/* ===== Dots app: established Overview + Journey visual system ===== */
+@media(max-width:820px){
+  body.overview-active-v300 .app::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
+      #070809 url("./overview-wallpaper.png") center top/cover no-repeat;
+  }
+  body.overview-active-v300 .app,
+  body.journey-active-v313 .app{position:relative;isolation:isolate;background:transparent}
+  body.overview-active-v300 .app>header,
+  body.journey-active-v313 .app>header{display:none}
+  body.overview-active-v300 .app>main,
+  body.journey-active-v313 .app>main{padding-top:0}
+
+  body.overview-active-v300 #overview{
+    padding-top:calc(11vh + 44px);
+    padding-bottom:calc(112px + var(--safe-bottom));
+  }
+  body.overview-active-v300 #overview .overview-hero{
+    padding:0 18px 120px;
+    text-align:center;
+  }
+  body.overview-active-v300 #overview .overview-hero h1{
+    margin:0;font-size:25px;line-height:1.1;letter-spacing:-.035em;
+    color:rgba(245,244,240,.76);
+  }
+  body.overview-active-v300 #overview .overview-hero p{
+    margin:11px auto 0;max-width:18rem;font-size:14px;line-height:1.55;
+    color:rgba(222,220,214,.62);
+  }
+  body.overview-active-v300 #overview .overview-cards{
+    display:grid;gap:22px;padding:0 18px;
+  }
+  body.overview-active-v300 #overview .overview-card{
+    position:relative;overflow:hidden;
+    background:
+      linear-gradient(155deg,rgba(255,255,255,.075) 0%,rgba(255,255,255,.018) 34%,rgba(255,255,255,0) 58%),
+      linear-gradient(145deg,rgba(27,29,32,.60),rgba(13,15,17,.54));
+    backdrop-filter:blur(14px) saturate(120%);
+    -webkit-backdrop-filter:blur(14px) saturate(120%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.32),
+      inset 1px 0 0 rgba(255,255,255,.11),
+      inset -1px 0 0 rgba(255,255,255,.035),
+      inset 0 -1px 0 rgba(0,0,0,.24),
+      0 12px 30px rgba(0,0,0,.16);
+  }
+  body.overview-active-v300 #overview .overview-card::before{
+    content:"";position:absolute;z-index:0;pointer-events:none;left:8%;right:8%;top:0;height:38%;
+    background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,0));
+    border-radius:999px;filter:blur(18px);transform:translateY(-62%);
+  }
+  body.overview-active-v300 #overview .overview-card>*{position:relative;z-index:1}
+  body.overview-active-v300 #overview .overview-card.victory-card{
+    border-color:rgba(231,207,99,.42);
+    background:
+      linear-gradient(155deg,rgba(255,255,255,.09) 0%,rgba(255,255,255,.02) 34%,rgba(255,255,255,0) 58%),
+      linear-gradient(145deg,rgba(231,207,99,.14),rgba(13,15,17,.50));
+  }
+
+  body.journey-active-v313 .app::before{
+    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background:
+      linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
+      #070809 url("./journey-wallpaper.png") center -170px/cover no-repeat;
+  }
+  body.journey-active-v313 #journey{
+    padding-top:calc(11vh + 44px);
+    padding-bottom:calc(112px + var(--safe-bottom));
+  }
+  body.journey-active-v313 #journey>.eyebrow{display:none}
+  body.journey-active-v313 #journey>h1{
+    font-size:25px;line-height:1.1;letter-spacing:-.035em;margin:0;text-align:center;
+    color:rgba(245,244,240,.76);
+  }
+  body.journey-active-v313 #journey>.intro{
+    font-size:14px;line-height:1.55;color:rgba(222,220,214,.62);max-width:18rem;
+    margin:11px auto 116px;padding:0 14px;text-align:center;
+  }
+  body.journey-active-v313 #journey .journey-actions{justify-content:flex-end;margin-bottom:20px}
+  body.journey-active-v313 #journey #toggleAddJourney{
+    border-color:rgba(218,167,128,.42);background:rgba(16,18,20,.30);
+    color:rgba(231,177,137,.88);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  body.journey-active-v313 #journey .stack{gap:20px}
+  body.journey-active-v313 #journey .card{
+    position:relative;overflow:hidden;
+    background:
+      linear-gradient(155deg,rgba(255,255,255,.075) 0%,rgba(255,255,255,.018) 34%,rgba(255,255,255,0) 58%),
+      linear-gradient(145deg,rgba(27,29,32,.60),rgba(13,15,17,.54));
+    backdrop-filter:blur(14px) saturate(120%);
+    -webkit-backdrop-filter:blur(14px) saturate(120%);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.32),
+      inset 1px 0 0 rgba(255,255,255,.11),
+      inset -1px 0 0 rgba(255,255,255,.035),
+      inset 0 -1px 0 rgba(0,0,0,.24),
+      0 12px 30px rgba(0,0,0,.16);
+  }
+  body.journey-active-v313 #journey .loan-card{
+    background:
+      linear-gradient(155deg,rgba(255,255,255,.035) 0%,rgba(255,255,255,.006) 34%,rgba(255,255,255,0) 58%),
+      linear-gradient(145deg,rgba(27,29,32,.14),rgba(13,15,17,.10));
+    backdrop-filter:blur(3px) saturate(108%);
+    -webkit-backdrop-filter:blur(3px) saturate(108%);
+  }
+  body.journey-active-v313 #journey .card::before{
+    content:"";position:absolute;z-index:0;pointer-events:none;left:8%;right:8%;top:0;height:38%;
+    background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,0));
+    border-radius:999px;filter:blur(18px);transform:translateY(-62%);
+  }
+  body.journey-active-v313 #journey .card>*{position:relative;z-index:1}
+}
+
 /* ===== Freedom v1.8.5 mobile home ===== */
 .mobile183,.open183{display:none}
 @media(max-width:820px){
@@ -237,10 +353,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
       </button>
 
       <button class="navbtn183" type="button" data-go183="journey">
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M3 6.5 9 3.5l6 3 6-3v14l-6 3-6-3-6 3z"/>
-          <path d="M9 3.5v14M15 6.5v14"/>
-        </svg>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6.5 9 4 3.5 6.5v13L9 17l5.5 2.5 6-2.75v-13Z"/><path d="M9 4v13M14.5 6.5v13"/></svg>
         <span>Journey</span>
       </button>
 
@@ -275,7 +388,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   <span>DEMO MODE</span>
 </div>
 <div class="app">
-<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.5</div></div><div class="tagline">Small wins become big freedom.</div></header>
+<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.5.4</div></div><div class="tagline">Small wins become big freedom.</div></header>
 <main>
 <section class="page active" id="overview">
   <div class="overview-mobile">
@@ -406,10 +519,14 @@ const euro0=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",ma
 function showSaved(){const note=byId("saveNote");note.classList.add("show");clearTimeout(showSaved.timer);showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200)}function persist(){if(demoMode)return;localStorage.setItem(KEY,JSON.stringify(state));showSaved()}
 function monthsText(balance,payment){if(balance<=0)return"Complete";if(!payment)return"Repayment not set";const m=Math.ceil(balance/payment);return m===1?"About 1 month":`About ${m} months`}
 function page(id){
-  if(id==="home"){showHome();return}
+  if(id==="home"){
+    if(typeof showHome==="function"){showHome();return}
+  }
   document.querySelectorAll(".page").forEach(el=>el.classList.toggle("active",el.id===id));
   document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.page===id));
-  document.body.classList.toggle("overview-active",id==="overview");
+  document.body.classList.toggle("overview-active-v300",id==="overview");
+  document.body.classList.toggle("journey-active-v313",id==="journey");
+  document.body.classList.remove("overview-active");
   history.replaceState(null,"","#"+id);
   window.scrollTo(0,0)
 }
@@ -536,7 +653,7 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
 
   function showHome(){
     if(!isMobile())return;
-    document.body.classList.remove("overview-active");
+    document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313");
     closeMore();
     document.body.classList.add("home183");
     home.setAttribute("aria-hidden","false");

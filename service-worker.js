@@ -1,5 +1,5 @@
-/* Freedom at 50 — service worker v1.8.5.3 */
-const CACHE_NAME="freedom-at-50-v1.8.5.3";
+/* Freedom at 50 — service worker v1.8.5.4 */
+const CACHE_NAME="freedom-at-50-v1.8.5.4";
 self.addEventListener("install",event=>{
   self.skipWaiting();
   event.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(["./","./index.html","./manifest.webmanifest","./icon-192.png","./icon-512.png","./overview-wallpaper.png"]).catch(()=>null)));
