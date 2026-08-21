@@ -192,10 +192,12 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     padding-top:calc(env(safe-area-inset-top,0px) + 10px);
     padding-bottom:calc(112px + var(--safe-bottom));
   }
-  /* Header sits lower — middle of the free space above the cards */
+  /* Header centred in the free space above the cards */
   body.overview-active-v300 #overview .overview-hero{
-    padding:clamp(96px,18vh,150px) 18px clamp(56px,11vh,96px);
-    text-align:center;
+    min-height:clamp(210px,42vh,360px);
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    padding:24px 18px 28px;
+    text-align:center;box-sizing:border-box;
   }
   body.overview-active-v300 #overview .overview-hero h1{
     margin:0;font-size:25px;line-height:1.1;letter-spacing:-.035em;
