@@ -258,8 +258,32 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     margin-top:10px;color:rgba(190,188,182,.58);
     font-size:12.5px;line-height:1.5;text-align:left;width:100%;
   }
+  body.overview-active-v300 #overview .overview-card-heading{
+    display:flex;flex-direction:column;align-items:flex-start;width:100%;
+  }
   body.overview-active-v300 #overview .overview-card-detail-row{
-    display:flex;justify-content:flex-start;flex-wrap:wrap;gap:14px;
+    display:flex;justify-content:space-between;align-items:flex-start;gap:12px;width:100%;
+  }
+  body.overview-active-v300 #overview .overview-card.victory-card{
+    position:relative;
+  }
+  body.overview-active-v300 #overview #victoryPill{
+    position:absolute;top:14px;right:14px;z-index:2;
+    font-size:11px;font-weight:700;letter-spacing:.01em;
+    color:rgba(231,207,99,.92);
+    border:1px solid rgba(231,207,99,.34);
+    border-radius:999px;padding:6px 10px;white-space:nowrap;
+    background:rgba(18,20,24,.28);
+  }
+  body.overview-active-v300 #overview #victoryPill.complete{
+    color:rgba(132,189,145,.95);
+    border-color:rgba(132,189,145,.38);
+  }
+  body.overview-active-v300 #overview .overview-card-main{
+    padding-right:0;
+  }
+  body.overview-active-v300 #overview .overview-card.victory-card .overview-card-main{
+    padding-right:78px; /* room for Queued up pill */
   }
   body.overview-active-v300 #overview .overview-chevron{display:none}
 
@@ -458,29 +482,6 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     </div>
 
     <div class="overview-cards">
-      <article class="overview-card victory-card" id="victoryCard" data-page-link="goals">
-        <div class="overview-card-top">
-          <div class="overview-card-icon">
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M5 21V4"/>
-              <path d="M5 5h10l-2 3 2 3H5"/>
-            </svg>
-          </div>
-          <div class="overview-card-main">
-            <div class="overview-card-heading">
-              <div class="overview-card-label" id="victoryLabel">Next victory</div>
-              <div class="overview-card-name" id="victoryName">House Pocket</div><span id="victoryPill" hidden></span>
-            </div>
-            <div class="overview-card-value medium" id="pocketOverview">€150 remaining</div>
-            <div class="overview-progress"><span id="pocketBar"></span></div>
-            <div class="overview-card-detail overview-card-detail-row">
-              <span id="pocketMessage">One payment away.</span>
-              <span id="pocketMonths">About 1 month</span>
-            </div>
-          </div>
-        </div>
-      </article>
-
       <article class="overview-card">
         <div class="overview-card-top">
           <div class="overview-card-icon">
@@ -493,6 +494,30 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
             <div class="overview-card-label">Money returned</div>
             <div class="overview-card-value" id="overviewReturned">€0</div>
             <div class="overview-card-detail">Money you have already moved<br>back towards your future.</div>
+          </div>
+        </div>
+      </article>
+
+      <article class="overview-card victory-card" id="victoryCard" data-page-link="goals">
+        <span class="pill" id="victoryPill">Queued up</span>
+        <div class="overview-card-top">
+          <div class="overview-card-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 21V4"/>
+              <path d="M5 5h10l-2 3 2 3H5"/>
+            </svg>
+          </div>
+          <div class="overview-card-main">
+            <div class="overview-card-heading">
+              <div class="overview-card-label" id="victoryLabel">Next victory</div>
+              <div class="overview-card-name" id="victoryName">House Pocket</div>
+            </div>
+            <div class="overview-card-value medium" id="pocketOverview">€150 remaining</div>
+            <div class="overview-progress"><span id="pocketBar"></span></div>
+            <div class="overview-card-detail overview-card-detail-row">
+              <span id="pocketMessage">This is your next finish line.</span>
+              <span id="pocketMonths">About 1 month</span>
+            </div>
           </div>
         </div>
       </article>
@@ -661,7 +686,7 @@ if(hp>0){
   byId("pocketBar").style.width=hpProgress+"%";
   byId("victoryLabel").textContent="First victory";
   byId("victoryName").textContent="House Pocket";
-  byId("victoryPill").textContent="Quickest win";
+  byId("victoryPill").hidden=false;byId("victoryPill").textContent="Quickest win";
   byId("victoryPill").classList.remove("complete");
   byId("pocketOverview").textContent=euro0(hp)+" remaining";
   byId("pocketMessage").textContent=hp<=150?"One payment away.":"Your first finish line is close.";
@@ -670,7 +695,7 @@ if(hp>0){
   byId("pocketBar").style.width="100%";
   byId("victoryLabel").textContent="Victory complete";
   byId("victoryName").textContent="House Pocket";
-  byId("victoryPill").textContent="Complete ✓";
+  byId("victoryPill").hidden=false;byId("victoryPill").textContent="Complete ✓";
   byId("victoryPill").classList.add("complete");
   byId("pocketOverview").textContent="€1,000 returned";
   byId("pocketMessage").textContent="Enjoy this one for a while.";
@@ -681,7 +706,7 @@ if(hp>0){
   byId("pocketBar").style.width=nextPct+"%";
   byId("victoryLabel").textContent="Next victory";
   byId("victoryName").textContent=next.name;
-  byId("victoryPill").textContent="Queued up";
+  byId("victoryPill").hidden=false;byId("victoryPill").textContent="Queued up";
   byId("victoryPill").classList.remove("complete");
   byId("pocketOverview").textContent=euro0(next.current)+" remaining";
   byId("pocketMessage").textContent="This is your next finish line.";
@@ -690,7 +715,7 @@ if(hp>0){
   byId("pocketBar").style.width="100%";
   byId("victoryLabel").textContent="Freedom milestone";
   byId("victoryName").textContent="All clear";
-  byId("victoryPill").textContent="Complete ✓";
+  byId("victoryPill").hidden=false;byId("victoryPill").textContent="Complete ✓";
   byId("victoryPill").classList.add("complete");
   byId("pocketOverview").textContent="No active journeys";
   byId("pocketMessage").textContent="Every listed commitment is complete.";
