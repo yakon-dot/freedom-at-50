@@ -189,52 +189,81 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.journey-active-v313 .app>main{padding-top:0}
 
   body.overview-active-v300 #overview{
-    padding-top:calc(11vh + 44px);
+    padding-top:calc(env(safe-area-inset-top,0px) + 10px);
     padding-bottom:calc(112px + var(--safe-bottom));
   }
+  /* Header centred in the free space above the cards */
   body.overview-active-v300 #overview .overview-hero{
-    padding:0 18px 120px;
-    text-align:center;
+    min-height:clamp(210px,42vh,360px);
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    padding:24px 18px 28px;
+    text-align:center;box-sizing:border-box;
   }
   body.overview-active-v300 #overview .overview-hero h1{
     margin:0;font-size:25px;line-height:1.1;letter-spacing:-.035em;
-    color:rgba(245,244,240,.76);
+    color:rgba(236,232,224,.78);
   }
   body.overview-active-v300 #overview .overview-hero p{
     margin:11px auto 0;max-width:18rem;font-size:14px;line-height:1.55;
-    color:rgba(222,220,214,.62);
+    color:rgba(200,198,192,.55);
   }
   body.overview-active-v300 #overview .overview-cards{
-    display:grid;gap:22px;padding:0 18px;
+    display:grid;gap:18px;padding:0 18px;
   }
   body.overview-active-v300 #overview .overview-card{
-    position:relative;overflow:hidden;
-    background:
-      linear-gradient(155deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,.04) 32%,rgba(255,255,255,0) 58%),
-      linear-gradient(145deg,rgba(27,29,32,.38),rgba(13,15,17,.30));
-    backdrop-filter:blur(22px) saturate(140%);
-    -webkit-backdrop-filter:blur(22px) saturate(140%);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.42),
-      inset 1px 0 0 rgba(255,255,255,.14),
-      inset -1px 0 0 rgba(255,255,255,.05),
-      inset 0 -1px 0 rgba(0,0,0,.22),
-      0 14px 34px rgba(0,0,0,.18);
+    position:relative;overflow:visible;
+    border:1px solid rgba(220,190,150,.22);
+    border-radius:22px;
+    padding:16px 16px 15px;
+    background:rgba(18,20,24,.34);
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+    box-shadow:none;
   }
-  body.overview-active-v300 #overview .overview-card::before{
-    content:"";position:absolute;z-index:0;pointer-events:none;left:8%;right:8%;top:0;height:42%;
-    background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,0));
-    border-radius:999px;filter:blur(18px);transform:translateY(-62%);
-  }
-  body.overview-active-v300 #overview .overview-card>*{position:relative;z-index:1}
+  body.overview-active-v300 #overview .overview-card::before{display:none}
   body.overview-active-v300 #overview .overview-card.victory-card{
-    border-color:rgba(231,207,99,.42);
-    background:
-      linear-gradient(155deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.04) 32%,rgba(255,255,255,0) 58%),
-      linear-gradient(145deg,rgba(231,207,99,.16),rgba(13,15,17,.28));
+    border-color:rgba(210,170,110,.34);
+    background:rgba(28,24,18,.36);
   }
+  body.overview-active-v300 #overview .overview-card-top{
+    display:flex;align-items:flex-start;gap:14px;
+  }
+  body.overview-active-v300 #overview .overview-card-icon{
+    width:46px;height:46px;border-radius:14px;margin-top:2px;
+  }
+  body.overview-active-v300 #overview .overview-card-main{
+    min-width:0;flex:1;
+    display:flex;flex-direction:column;align-items:flex-start;
+    text-align:left;
+  }
+  body.overview-active-v300 #overview .overview-card-label{
+    color:rgba(210,208,202,.62);font-size:13px;font-weight:500;
+  }
+  body.overview-active-v300 #overview .overview-card-name{
+    margin-top:3px;color:rgba(230,226,218,.78);
+    font-size:15px;font-weight:650;letter-spacing:-.015em;
+  }
+  body.overview-active-v300 #overview .overview-card-value{
+    margin-top:6px;color:rgba(236,232,224,.82);
+    font-size:28px;line-height:1.05;font-weight:720;letter-spacing:-.03em;
+    text-align:left;
+  }
+  body.overview-active-v300 #overview .overview-card-value.medium{font-size:24px}
+  body.overview-active-v300 #overview .overview-progress{
+    margin-top:12px;height:5px;width:100%;
+    background:rgba(255,255,255,.08);
+  }
+  body.overview-active-v300 #overview .overview-progress span{background:#c9a07a}
+  body.overview-active-v300 #overview .overview-card-detail{
+    margin-top:10px;color:rgba(190,188,182,.58);
+    font-size:12.5px;line-height:1.5;text-align:left;width:100%;
+  }
+  body.overview-active-v300 #overview .overview-card-detail-row{
+    display:flex;justify-content:flex-start;flex-wrap:wrap;gap:14px;
+  }
+  body.overview-active-v300 #overview .overview-chevron{display:none}
 
-  body.journey-active-v313 .app::before{
+    body.journey-active-v313 .app::before{
     content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
@@ -437,17 +466,18 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
               <path d="M5 5h10l-2 3 2 3H5"/>
             </svg>
           </div>
-          <div class="overview-card-heading">
-            <div class="overview-card-label" id="victoryLabel">Next victory</div>
-            <div class="overview-card-name" id="victoryName">House Pocket</div><span id="victoryPill" hidden></span>
+          <div class="overview-card-main">
+            <div class="overview-card-heading">
+              <div class="overview-card-label" id="victoryLabel">Next victory</div>
+              <div class="overview-card-name" id="victoryName">House Pocket</div><span id="victoryPill" hidden></span>
+            </div>
+            <div class="overview-card-value medium" id="pocketOverview">€150 remaining</div>
+            <div class="overview-progress"><span id="pocketBar"></span></div>
+            <div class="overview-card-detail overview-card-detail-row">
+              <span id="pocketMessage">One payment away.</span>
+              <span id="pocketMonths">About 1 month</span>
+            </div>
           </div>
-          <span class="overview-chevron" aria-hidden="true"></span>
-        </div>
-        <div class="overview-card-value medium" id="pocketOverview">€150 remaining</div>
-        <div class="overview-progress"><span id="pocketBar"></span></div>
-        <div class="overview-card-detail overview-card-detail-row">
-          <span id="pocketMessage">One payment away.</span>
-          <span id="pocketMonths">About 1 month</span>
         </div>
       </article>
 
@@ -459,10 +489,12 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
               <path d="m18 14 .8 2.2 2.2.8-2.2.8L18 20l-.8-2.2L15 17l2.2-.8L18 14Z"/>
             </svg>
           </div>
-          <div class="overview-card-label">Money returned</div>
+          <div class="overview-card-main">
+            <div class="overview-card-label">Money returned</div>
+            <div class="overview-card-value" id="overviewReturned">€0</div>
+            <div class="overview-card-detail">Money you have already moved<br>back towards your future.</div>
+          </div>
         </div>
-        <div class="overview-card-value" id="overviewReturned">€0</div>
-        <div class="overview-card-detail">Money you have already moved<br>back towards your future.</div>
       </article>
 
       <article class="overview-card">
@@ -474,11 +506,13 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
               <path d="M12 2v3M22 12h-3M12 22v-3M2 12h3"/>
             </svg>
           </div>
-          <div class="overview-card-label">Freedom progress</div>
+          <div class="overview-card-main">
+            <div class="overview-card-label">Freedom progress</div>
+            <div class="overview-card-value" id="overviewProgress">0%</div>
+            <div class="overview-progress"><span id="overviewProgressBar"></span></div>
+            <div class="overview-card-detail">Based on the commitments listed<br>in your Freedom Journey.</div>
+          </div>
         </div>
-        <div class="overview-card-value" id="overviewProgress">0%</div>
-        <div class="overview-progress"><span id="overviewProgressBar"></span></div>
-        <div class="overview-card-detail">Based on the commitments listed<br>in your Freedom Journey.</div>
       </article>
     </div>
   </div>
