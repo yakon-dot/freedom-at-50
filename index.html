@@ -290,6 +290,15 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   .inner183{position:relative;min-height:100dvh;padding:calc(22px + env(safe-area-inset-top,0px)) 28px calc(18px + env(safe-area-inset-bottom,0px))}
   .brand183{position:absolute;left:28px;top:calc(48px + env(safe-area-inset-top,0px));font-family:"Caveat","Segoe Print","Bradley Hand",cursive;font-size:39px;color:#efcbaa;line-height:1}
   .version183{position:absolute;left:30px;top:calc(91px + env(safe-area-inset-top,0px));font-size:10px;letter-spacing:.08em;color:rgba(239,203,170,.56)}
+  .demo183{
+    position:absolute;right:28px;top:calc(52px + env(safe-area-inset-top,0px));z-index:2;
+    display:flex;align-items:center;justify-content:center;min-height:36px;padding:0 12px;
+    border:1px solid rgba(239,203,170,.22);border-radius:14px;
+    background:rgba(18,22,27,.38);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em;
+    cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent
+  }
+  .demo183:active{opacity:.6}
   .nav183{width:min(292px,82vw);margin-top:138px;margin-left:2px}
   .navbtn183,.morebtn183{width:100%;border:0;background:transparent;color:#f2f0eb;display:flex;align-items:center;gap:15px;text-align:left;padding:11px 0;font-size:16px;font-weight:500;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .navbtn183 svg,.morebtn183 svg{width:24px;height:24px;fill:none;stroke:#efcbaa;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;pointer-events:none}
@@ -348,6 +357,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   <div class="inner183">
     <div class="brand183">Freedom</div>
     <div class="version183">v1.8.6.2.2</div>
+    <button class="demo183" id="demo183" type="button">DEMO MODE</button>
     
     <nav class="nav183" aria-label="Freedom navigation">
       <button class="navbtn183" type="button" data-go183="overview">
