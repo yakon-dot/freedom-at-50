@@ -245,24 +245,36 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.overview-active-v300 #overview .overview-card-value{
     margin-top:6px;color:rgba(236,232,224,.82);
-    font-size:28px;line-height:1.05;font-weight:720;letter-spacing:-.03em;
-    text-align:left;
+    font-size:26px;line-height:1.1;font-weight:720;letter-spacing:-.03em;
+    text-align:left;white-space:nowrap;
   }
-  body.overview-active-v300 #overview .overview-card-value.medium{font-size:24px}
+  body.overview-active-v300 #overview .overview-card-value.medium{font-size:22px;white-space:nowrap}
   body.overview-active-v300 #overview .overview-progress{
-    margin-top:12px;height:5px;width:100%;
+    margin-top:14px;height:5px;width:100%;
     background:rgba(255,255,255,.08);
   }
   body.overview-active-v300 #overview .overview-progress span{background:#c9a07a}
   body.overview-active-v300 #overview .overview-card-detail{
     margin-top:10px;color:rgba(190,188,182,.58);
-    font-size:12.5px;line-height:1.5;text-align:left;width:100%;
+    font-size:12px;line-height:1.45;text-align:left;width:100%;
   }
   body.overview-active-v300 #overview .overview-card-heading{
     display:flex;flex-direction:column;align-items:flex-start;width:100%;
+    padding-right:86px; /* keep label/name clear of Queued up pill */
+    box-sizing:border-box;
   }
   body.overview-active-v300 #overview .overview-card-detail-row{
-    display:flex;justify-content:space-between;align-items:flex-start;gap:12px;width:100%;
+    display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;
+    flex-wrap:nowrap;white-space:nowrap;
+  }
+  body.overview-active-v300 #overview .overview-card-detail-row span{
+    white-space:nowrap;
+  }
+  body.overview-active-v300 #overview .overview-card-detail-row span:first-child{
+    min-width:0;overflow:hidden;text-overflow:ellipsis;
+  }
+  body.overview-active-v300 #overview .overview-card-detail-row span:last-child{
+    flex:0 0 auto;
   }
   body.overview-active-v300 #overview .overview-card.victory-card{
     position:relative;
@@ -280,10 +292,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     border-color:rgba(132,189,145,.38);
   }
   body.overview-active-v300 #overview .overview-card-main{
-    padding-right:0;
-  }
-  body.overview-active-v300 #overview .overview-card.victory-card .overview-card-main{
-    padding-right:78px; /* room for Queued up pill */
+    padding-right:0;min-width:0;
   }
   body.overview-active-v300 #overview .overview-chevron{display:none}
 
@@ -493,7 +502,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
           <div class="overview-card-main">
             <div class="overview-card-label">Money returned</div>
             <div class="overview-card-value" id="overviewReturned">€0</div>
-            <div class="overview-card-detail">Money you have already moved<br>back towards your future.</div>
+            <div class="overview-card-detail">Money you have already moved back towards your future.</div>
           </div>
         </div>
       </article>
@@ -513,12 +522,12 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
               <div class="overview-card-name" id="victoryName">House Pocket</div>
             </div>
             <div class="overview-card-value medium" id="pocketOverview">€150 remaining</div>
-            <div class="overview-progress"><span id="pocketBar"></span></div>
-            <div class="overview-card-detail overview-card-detail-row">
-              <span id="pocketMessage">This is your next finish line.</span>
-              <span id="pocketMonths">About 1 month</span>
-            </div>
           </div>
+        </div>
+        <div class="overview-progress"><span id="pocketBar"></span></div>
+        <div class="overview-card-detail overview-card-detail-row">
+          <span id="pocketMessage">This is your next finish line.</span>
+          <span id="pocketMonths">About 1 month</span>
         </div>
       </article>
 
@@ -535,7 +544,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
             <div class="overview-card-label">Freedom progress</div>
             <div class="overview-card-value" id="overviewProgress">0%</div>
             <div class="overview-progress"><span id="overviewProgressBar"></span></div>
-            <div class="overview-card-detail">Based on the commitments listed<br>in your Freedom Journey.</div>
+            <div class="overview-card-detail">Based on the commitments listed in your Freedom Journey.</div>
           </div>
         </div>
       </article>
