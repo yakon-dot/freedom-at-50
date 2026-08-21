@@ -1,6 +1,6 @@
 {
   "name": "Freedom at 50",
-  "short_name": "Freedom50",
+  "short_name": "Freedom",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#0b0c0e",
