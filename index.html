@@ -192,11 +192,11 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     padding-top:calc(env(safe-area-inset-top,0px) + 10px);
     padding-bottom:calc(112px + var(--safe-bottom));
   }
-  /* Tall hero so the wallpaper stays visible between headline and cards */
+  /* Moderate hero band: wallpaper shows through, without half-screen emptiness */
   body.overview-active-v300 #overview .overview-hero{
-    min-height:clamp(260px,46vh,400px);
+    min-height:clamp(168px,30vh,248px);
     display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
-    padding:clamp(48px,9vh,76px) 18px clamp(96px,16vh,148px);
+    padding:clamp(36px,6vh,56px) 18px clamp(40px,7vh,64px);
     text-align:center;box-sizing:border-box;
   }
   body.overview-active-v300 #overview .overview-hero h1{
