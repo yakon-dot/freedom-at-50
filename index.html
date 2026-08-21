@@ -212,7 +212,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 <div class="mobile183" id="mobile183" aria-hidden="false">
   <div class="inner183">
     <div class="brand183">Freedom</div>
-    <div class="version183">v1.8.5</div>
+    <div class="version183">v1.8.5.2</div>
     
     <nav class="nav183" aria-label="Freedom navigation">
       <button class="navbtn183" type="button" data-go183="overview">
@@ -517,12 +517,27 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   });
 
   document.querySelectorAll("[data-go183]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
+    btn.addEventListener("click",(event)=>{
+      event.preventDefault();
+      event.stopPropagation();
       const target=btn.getAttribute("data-go183");
-      page(target);
       hideHome();
+      requestAnimationFrame(()=>{
+        page(target);
+      });
     });
   });
+
+  // Explicit fallback for the primary Home → Overview route.
+  const homeOverview=document.querySelector('.navbtn183[data-go183="overview"]');
+  if(homeOverview){
+    homeOverview.addEventListener("click",(event)=>{
+      event.preventDefault();
+      event.stopPropagation();
+      hideHome();
+      requestAnimationFrame(()=>page("overview"));
+    });
+  }
 
   const destinations={archive:"moreArchive",companion:"moreCompanion"};
   function enterDemo(){
