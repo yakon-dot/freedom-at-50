@@ -1545,6 +1545,17 @@ function setupLoanReorder(list){
 function pensionMonthly(p){return (Number(p.personal)||0)+(Number(p.employer)||0);}
 function overviewPensionTotal(){if(!Array.isArray(state.pensions))return 0;return state.pensions.filter(p=>p.showInOverview!==false).reduce((s,p)=>s+(Number(p.value)||0),0);}
 function includedPensionCount(){if(!Array.isArray(state.pensions))return 0;return state.pensions.filter(p=>p.showInOverview!==false).length;}
+function updateOverviewPensionCard(){
+  const pensionCard=byId("overviewPensionCard");
+  if(!pensionCard) return;
+  if(includedPensionCount()>0){
+    pensionCard.hidden=false;
+    const valueEl=byId("overviewPension");
+    if(valueEl) valueEl.textContent=euro0(overviewPensionTotal());
+  }else{
+    pensionCard.hidden=true;
+  }
+}
 function pensionCardHead(i,p,collapsed){
   const name=p.name||"Pension";
   const titleHtml=!collapsed
@@ -1607,6 +1618,16 @@ function renderPensions(){
   list.querySelectorAll("[data-save-pension]").forEach(btn=>btn.addEventListener("click",e=>{
     savePension(Number(e.currentTarget.dataset.savePension));
   }));
+  list.querySelectorAll("[data-pension-overview]").forEach(input=>{
+    input.addEventListener("change",e=>{
+      const i=Number(e.currentTarget.dataset.pensionOverview);
+      const p=state.pensions[i];
+      if(!p) return;
+      p.showInOverview=!!e.currentTarget.checked;
+      persist();
+      updateOverviewPensionCard();
+    });
+  });
   list.querySelectorAll("[data-archive-pension]").forEach(btn=>btn.addEventListener("click",e=>{
     const i=Number(e.currentTarget.dataset.archivePension);
     const p=state.pensions[i];
@@ -1648,7 +1669,7 @@ wrap.querySelectorAll("[data-restore-built-in]").forEach(btn=>btn.addEventListen
 function fillForm(){const hp=byId("housePocketRemaining");if(hp)hp.value=state.housePocket}
 function nextLoan(){return state.loans.filter(x=>x.current>0).sort((a,b)=>a.current-b.current)[0]||null}
 function render(){const original=state.loans.reduce((s,x)=>s+x.starting,0);const current=state.loans.reduce((s,x)=>s+x.current,0);const loanReturned=Math.max(0,original-current);const hpReturned=Math.max(0,HOUSE_POCKET_START-state.housePocket);const totalOriginal=original+HOUSE_POCKET_START;const totalCurrent=current+state.housePocket;const pct=totalOriginal?Math.max(0,(totalOriginal-totalCurrent)/totalOriginal*100):0;const monthly=state.loans.reduce((s,x)=>s+x.payment,0)+(state.housePocket>0?(Number(state.housePocketMonthly)||0):0);
-byId("overviewReturned").textContent=euro0(loanReturned+hpReturned);byId("overviewProgress").textContent=Math.round(pct)+"%";byId("overviewProgressBar").style.width=Math.min(100,pct)+"%";if(byId("overviewHouse"))byId("overviewHouse").textContent=euro0(state.houseFund);if(byId("overviewHoliday"))byId("overviewHoliday").textContent=euro0(state.holidayFund);if(byId("overviewSavings"))byId("overviewSavings").textContent=euro0(state.personalSavings);const pensionCard=byId("overviewPensionCard");if(pensionCard){const pensionCount=includedPensionCount();if(pensionCount>0){pensionCard.hidden=false;byId("overviewPension").textContent=euro0(overviewPensionTotal());}else pensionCard.hidden=true;}byId("monthlyFreedom").textContent=euro0(monthly);
+byId("overviewReturned").textContent=euro0(loanReturned+hpReturned);byId("overviewProgress").textContent=Math.round(pct)+"%";byId("overviewProgressBar").style.width=Math.min(100,pct)+"%";if(byId("overviewHouse"))byId("overviewHouse").textContent=euro0(state.houseFund);if(byId("overviewHoliday"))byId("overviewHoliday").textContent=euro0(state.holidayFund);if(byId("overviewSavings"))byId("overviewSavings").textContent=euro0(state.personalSavings);updateOverviewPensionCard();byId("monthlyFreedom").textContent=euro0(monthly);
 const hp=state.housePocket,hpm=state.housePocketMonthly;const hpProgress=Math.max(0,Math.min(100,(HOUSE_POCKET_START-hp)/HOUSE_POCKET_START*100));const next=nextLoan();
 if(hp>0){
   byId("pocketBar").style.width=hpProgress+"%";
