@@ -183,7 +183,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.overview-active-v300 .app{
     position:relative;z-index:1;background:transparent;
   }
-  body.journey-active-v313 .app{position:relative;isolation:isolate;background:transparent}
+  body.journey-active-v313 .app{position:relative;z-index:1;background:transparent}
   body.overview-active-v300 .app>header,
   body.journey-active-v313 .app>header{display:none}
   body.overview-active-v300 .app>main,
@@ -315,8 +315,17 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     padding:calc(env(safe-area-inset-top,0px) + 10px) 18px calc(112px + var(--safe-bottom));
   }
   body.journey-active-v313 #journey>.eyebrow{display:none}
-  body.journey-active-v313 #journey>h1{
-    font-size:25px;line-height:1.1;letter-spacing:-.035em;margin:0 0 24px;text-align:center;
+  body.journey-active-v313 #journey .journey-hero{
+    --hero-text-top:clamp(120px,20vh,175px);
+    --journey-intro-footprint:110px;
+    position:relative;
+    min-height:clamp(200px,36vh,300px);
+    margin-bottom:calc(var(--journey-intro-footprint) - clamp(200px,36vh,300px));
+    text-align:center;box-sizing:border-box;
+  }
+  body.journey-active-v313 #journey .journey-hero h1{
+    position:absolute;left:0;right:0;top:var(--hero-text-top);
+    font-size:25px;line-height:1.1;letter-spacing:-.035em;margin:0;
     color:rgba(236,232,224,.78);
   }
   body.journey-active-v313 #journey .journey-actions{justify-content:flex-end;margin:0 0 18px}
@@ -592,7 +601,7 @@ body.home183 .demo183{
     </div>
   </div>
 </section>
-<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><h1>Pieces of your future being returned.</h1><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div><button class="secondary-btn" id="restoreLoans">Restore original starting journeys</button></section>
+<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future being returned.</h1></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div><button class="secondary-btn" id="restoreLoans">Restore original starting journeys</button></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><h1>Life alongside the plan.</h1><p class="intro">Debt progress matters, but so do the things you are building and enjoying now.</p>
 <div class="goal-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div>
 <article class="card add-journey-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><div class="editor-grid"><div><label for="newGoalCurrent">Current amount</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addGoal">Add Goal</button></article>
