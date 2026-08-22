@@ -748,12 +748,59 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     font-size:13px;font-weight:760;width:auto;
     background:rgba(201,160,122,.72);color:#17150b;border:0;
   }
-  body.pension-active-v315 #pension .add-pension-card label,
-  body.pension-active-v315 #pension .add-pension-card .empty-note{
-    color:rgba(190,188,182,.58);
+  body.pension-active-v315 #pension .add-pension-card{
+    display:flex;flex-direction:column;
+    background:rgba(18,20,24,.14);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border:1px solid rgba(220,190,150,.18);
   }
   body.pension-active-v315 #pension .add-pension-card h2{
-    color:rgba(236,232,224,.78);font-size:20px;
+    color:rgba(236,232,224,.78);font-size:20px;font-weight:720;margin:0 0 6px;
+  }
+  body.pension-active-v315 #pension .add-pension-card .empty-note{
+    color:rgba(190,188,182,.55);font-size:13px;line-height:1.45;margin:0 0 4px;
+  }
+  body.pension-active-v315 #pension .add-pension-card label{
+    display:block;color:rgba(190,188,182,.50);font-size:11px;font-weight:500;
+    margin-top:12px;margin-bottom:4px;
+  }
+  body.pension-active-v315 #pension .add-pension-card input{
+    width:100%;margin:0;padding:8px 11px;min-height:40px;
+    border:1px solid rgba(220,190,150,.10);border-radius:11px;
+    background:rgba(18,20,24,.22);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    font-size:15px;font-weight:500;letter-spacing:-.01em;
+    color:rgba(236,232,224,.72);outline:none;
+    scroll-margin-bottom:160px;
+    box-shadow:none;
+  }
+  body.pension-active-v315 #pension .add-pension-card input::placeholder{
+    color:rgba(190,188,182,.42);font-weight:500;
+  }
+  body.pension-active-v315 #pension .add-pension-card input:focus{
+    border-color:rgba(231,207,99,.22);box-shadow:none;
+  }
+  body.pension-active-v315 #pension .add-pension-card .editor-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:0;
+    align-items:stretch;
+  }
+  body.pension-active-v315 #pension .add-pension-card .editor-grid > div{
+    display:flex;flex-direction:column;min-width:0;
+  }
+  body.pension-active-v315 #pension .add-pension-card .editor-grid label{
+    margin-top:12px;margin-bottom:4px;
+    min-height:2.7em;line-height:1.35;
+    display:flex;align-items:flex-start;
+  }
+  body.pension-active-v315 #pension .add-pension-card .editor-grid input{
+    margin-top:auto;min-height:40px;height:40px;
+  }
+  body.pension-active-v315 #pension .add-pension-card #addPension{
+    width:fit-content;align-self:flex-end;display:block;margin:16px 0 0 auto;
+    padding:9px 22px;border-radius:999px;border:0;
+    font-size:13px;font-weight:760;
+    background:rgba(201,160,122,.72);color:#17150b;
+    scroll-margin-bottom:140px;
   }
 }
 
@@ -980,7 +1027,7 @@ body.home183 .demo183{
 </section>
 <section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><div class="editor-grid"><div><label for="newGoalCurrent">Current amount</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
-<section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><h2>Add a new pension</h2><p class="empty-note">Track any pension pot — workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
+<section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><h2>Add a new pension</h2><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card" id="moreArchive"><h2>Archived goals & journeys</h2><p class="empty-note">Finished or removed items live here instead of disappearing forever.</p><button class="mini-btn gold archive-toggle" id="toggleArchiveList" type="button">View archived items</button><div class="archive-list" id="archiveList" hidden></div></article><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
 <article class="card" id="moreCompanion"><h2>Companion</h2><p class="empty-note">Patricia lives here when the companion layer needs its own space. For now, Home stays quiet unless there is a reason for her to appear.</p></article>
 <article class="card" id="moreSettings"><h2>Settings & privacy</h2><p class="empty-note">This HTML file stores edits only in this browser on this device. It does not connect to a bank or upload your figures anywhere.</p></article>
@@ -1713,6 +1760,7 @@ if(hp>0){
 if(hp>0){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="House Pocket";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent=next.name;if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else{if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="All clear";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
 renderLoans();renderGoals();renderPensions();renderArchive()}
 byId("toggleAddPension").addEventListener("click",()=>{const card=byId("addPensionCard");card.hidden=!card.hidden;if(!card.hidden){byId("newPensionName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
+["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>{const el=byId(id);if(!el)return;el.addEventListener("focus",()=>{setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"center"}),50)})});
 byId("addPension").addEventListener("click",()=>{const name=byId("newPensionName").value.trim();const value=Math.max(0,Number(byId("newPensionValue").value)||0);const personal=Math.max(0,Number(byId("newPensionPersonal").value)||0);const employer=Math.max(0,Number(byId("newPensionEmployer").value)||0);if(!name){byId("newPensionName").focus();return}state.pensions.push({id:"pension-"+Date.now(),name,value,personal,employer,collapsed:true,showInOverview:true});persist();["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>byId(id).value="");byId("addPensionCard").hidden=true;render()});
 byId("toggleAddGoal").addEventListener("click",()=>{const card=byId("addGoalCard");card.hidden=!card.hidden;if(!card.hidden){byId("newGoalName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addGoal").addEventListener("click",()=>{const name=byId("newGoalName").value.trim(),current=Math.max(0,Number(byId("newGoalCurrent").value)||0),target=Math.max(0,Number(byId("newGoalTarget").value)||0);if(!name){byId("newGoalName").focus();return}state.customGoals.push({name,current,target});persist();["newGoalName","newGoalCurrent","newGoalTarget"].forEach(id=>byId(id).value="");byId("addGoalCard").hidden=true;render()});
