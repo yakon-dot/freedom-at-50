@@ -196,7 +196,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.overview-active-v300 #overview .overview-hero{
     min-height:clamp(200px,36vh,300px);
     display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
-    padding:clamp(40px,7vh,60px) 18px clamp(64px,11vh,100px);
+    /* Top/bottom padding shifted equally so headline sits lower; cards unchanged */
+    padding:clamp(64px,11vh,96px) 18px clamp(40px,7vh,64px);
     text-align:center;box-sizing:border-box;
   }
   body.overview-active-v300 #overview .overview-hero h1{
