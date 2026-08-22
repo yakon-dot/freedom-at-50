@@ -223,14 +223,16 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     border-radius:22px;
     padding:16px 16px 15px;
     background:rgba(18,20,24,.34);
-    backdrop-filter:none;
-    -webkit-backdrop-filter:none;
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
     box-shadow:none;
   }
   body.overview-active-v300 #overview .overview-card::before{display:none}
   body.overview-active-v300 #overview .overview-card.victory-card{
     border-color:rgba(210,170,110,.34);
     background:rgba(28,24,18,.36);
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
   }
   body.overview-active-v300 #overview .overview-card-top{
     display:flex;align-items:flex-start;gap:14px;
@@ -363,7 +365,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     border-radius:22px;
     padding:16px 16px 15px;
     background:rgba(18,20,24,.34);
-    backdrop-filter:none;-webkit-backdrop-filter:none;
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
     box-shadow:none;
   }
   body.journey-active-v313 #journey .card::before{display:none}
@@ -378,9 +380,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     border-bottom-color:rgba(231,207,99,.45);box-shadow:none;
   }
   body.journey-active-v313 #journey .loan-stat{
-    background:rgba(18,20,24,.52);
+    background:rgba(18,20,24,.58);
     border:1px solid rgba(220,190,150,.20);
     border-radius:15px;padding:12px;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   }
   body.journey-active-v313 #journey .loan-stat small{
     display:block;color:rgba(190,188,182,.58);font-size:11px;margin-bottom:5px;
@@ -479,7 +482,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     border-radius:22px;
     padding:16px 16px 15px;
     background:rgba(18,20,24,.34);
-    backdrop-filter:none;-webkit-backdrop-filter:none;
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
     box-shadow:none;
   }
   body.goals-active-v314 #goals .card::before{display:none}
@@ -497,6 +500,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     background:rgba(18,20,24,.58);
     border:1px solid rgba(220,190,150,.20);
     border-radius:15px;padding:12px 12px 11px;
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   }
   body.goals-active-v314 #goals .goal-stat small{
     display:block;color:rgba(190,188,182,.58);font-size:11px;margin-bottom:6px;
@@ -552,6 +556,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.goals-active-v314 #goals .goal-field input.goal-field-value{
     width:100%;margin:0;padding:12px 13px;border:1px solid rgba(220,190,150,.20);
     border-radius:15px;background:rgba(18,20,24,.58);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     font-size:22px;font-weight:720;letter-spacing:-.03em;
     color:rgba(236,232,224,.82);outline:none;
   }
@@ -577,6 +582,18 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.goals-active-v314 #goals .goal-card-head .journey-chevron{
     align-self:flex-start;margin-top:2px;flex-shrink:0;
+  }
+  body.goals-active-v314 #goals .goal-icon-tile{
+    width:46px;height:46px;border-radius:14px;margin-top:2px;
+    flex:0 0 auto;display:grid;place-items:center;
+    border:1px solid rgba(239,203,170,.24);
+    background:rgba(239,203,170,.055);
+    color:rgba(239,203,170,.92);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  }
+  body.goals-active-v314 #goals .goal-icon-tile svg{
+    width:21px;height:21px;fill:none;stroke:currentColor;
+    stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
   }
   body.goals-active-v314 #goals .add-goal-card label,
   body.goals-active-v314 #goals .add-goal-card .empty-note{
@@ -796,7 +813,7 @@ body.home183 .demo183{
     </div>
   </div>
 </section>
-<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div><button class="secondary-btn" id="restoreLoans">Restore original starting journeys</button></section>
+<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><div class="editor-grid"><div><label for="newGoalCurrent">Current amount</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><h1>Future freedom, growing quietly.</h1><p class="intro">The value leads. Contributions sit underneath it when you need the detail.</p><article class="card pension"><div class="label">Current pension value</div><div class="value" id="pensionDisplay"></div><label for="pensionValue">Update pension value</label><input id="pensionValue" inputmode="decimal" type="number" min="0" step="0.01"><label for="pensionPersonal">Your monthly contribution</label><input id="pensionPersonal" inputmode="decimal" type="number" min="0" step="0.01"><label for="pensionEmployer">Employer contribution</label><input id="pensionEmployer" inputmode="decimal" type="number" min="0" step="0.01"><div class="loan-summary"><div class="loan-stat"><small>Total added monthly</small><strong id="pensionMonthlyTotal"></strong></div><div class="loan-stat"><small>Annual contributions</small><strong id="pensionAnnual"></strong></div></div><button class="save-btn" data-save>Save Pension</button></article></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card" id="moreArchive"><h2>Archived goals & journeys</h2><p class="empty-note">Finished or removed items live here instead of disappearing forever.</p><button class="mini-btn gold archive-toggle" id="toggleArchiveList" type="button">View archived items</button><div class="archive-list" id="archiveList" hidden></div></article><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
@@ -905,6 +922,24 @@ function toggleGoalCollapsed(key){state.goalCollapsed[key]=!goalCollapsed(key); 
 function goalChevron(name){
   return `<button class="journey-chevron" type="button" aria-label="Toggle ${esc(name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button>`;
 }
+const goalIconSvg={
+  house:'<path d="M4.5 11 12 5.5 19.5 11V20H4.5z"/><path d="M9.5 20v-5.5h5V20"/>',
+  holiday:'<path d="M12 3v18"/><path d="M8.5 8.5c1.2-2 2.8-2.5 3.5-1 .7-1.5 2.3-1 3.5 1"/><path d="M7 21h10"/>',
+  savings:'<path d="M7.5 12.5h9a3.5 3.5 0 0 1 0 7h-9a3.5 3.5 0 0 1 0-7z"/><path d="M7.5 15.5h7.5"/><circle cx="16.5" cy="15.5" r=".9"/>',
+  pocket:'<path d="M5 21V4"/><path d="M5 5h10l-2 3 2 3H5"/>',
+  custom:'<path d="m12 3 1.2 3.3 3.3 1.2-3.3 1.2L12 12l-1.2-3.3-3.3-1.2 3.3-1.2L12 3Z"/>'
+};
+function goalIconType(key){
+  if(key==="houseFund") return "house";
+  if(key==="holidayFund") return "holiday";
+  if(key==="personalSavings") return "savings";
+  if(key==="housePocket"||key==="housePocketDone") return "pocket";
+  return "custom";
+}
+function goalIconTile(key){
+  const type=goalIconType(key);
+  return `<div class="goal-icon-tile" aria-hidden="true"><svg viewBox="0 0 24 24">${goalIconSvg[type]}</svg></div>`;
+}
 function goalPct(current,target){return target>0?Math.min(100,(Number(current)||0)/target*100):0;}
 function goalProgressBlock(current,target,barId){
   const pct=goalPct(current,target);
@@ -913,7 +948,7 @@ function goalProgressBlock(current,target,barId){
   return `<div class="goal-progress-block"><div class="goal-progress-of">${euro0(current)} of ${euro0(target)}</div><div class="goal-progress-row"><div class="progress"><span${idAttr} style="width:${pct}%"></span></div><span class="goal-progress-pct">${Math.round(pct)}%</span></div></div>`;
 }
 function goalCardHead(key,titleHtml,amountHtml,targetHtml,name){
-  return `<div class="goal-card-head" data-toggle-goal="${esc(key)}"><div class="goal-head-main">${titleHtml}${amountHtml}${targetHtml||""}</div>${goalChevron(name||"")}</div>`;
+  return `<div class="goal-card-head" data-toggle-goal="${esc(key)}">${goalIconTile(key)}<div class="goal-head-main">${titleHtml}${amountHtml}${targetHtml||""}</div>${goalChevron(name||"")}</div>`;
 }
 function saveGoal(key){
   if(key.startsWith("custom:")){
@@ -1401,7 +1436,7 @@ byId("addGoal").addEventListener("click",()=>{const name=byId("newGoalName").val
 byId("toggleArchiveList").addEventListener("click",()=>{const list=byId("archiveList");list.hidden=!list.hidden;byId("toggleArchiveList").textContent=list.hidden?"View archived items":"Hide archived items"});
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment});persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
-document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{pullForm();persist();render()}));byId("restoreLoans").addEventListener("click",()=>{state.loans=JSON.parse(JSON.stringify(defaults.loans));persist();render()});fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);
+document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{pullForm();persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);
 })();
 
 
