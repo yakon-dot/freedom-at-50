@@ -28,6 +28,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 
 .journey-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .goals-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.pension-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .mini-btn{width:auto;border:1px solid var(--line);background:transparent;color:var(--text);padding:9px 12px;border-radius:999px;font-size:13px;font-weight:760;cursor:pointer}
 .mini-btn.gold{border-color:rgba(231,207,99,.5);color:var(--gold)}
 .mini-btn.danger{border-color:rgba(255,255,255,.14);color:var(--muted)}
@@ -595,6 +596,165 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.goals-active-v314 #goals .goal-card.completed .goal-amount{
     color:rgba(132,189,145,.92);
   }
+
+  /* ===== Pension page (v315) — matches Journey/Goals system ===== */
+  body.pension-active-v315{background:transparent}
+  html:has(body.pension-active-v315){background:#070809}
+  body.pension-active-v315::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
+      #070809 url("./pension-wallpaper.png") center -150px/cover no-repeat;
+  }
+  body.pension-active-v315 .app::before{display:none}
+  body.pension-active-v315 .app{position:relative;z-index:1;background:transparent}
+  body.pension-active-v315 .app>header{display:none}
+  body.pension-active-v315 .app>main{padding-top:0}
+  body.pension-active-v315 #pension{
+    position:relative;z-index:1;
+    padding:calc(env(safe-area-inset-top,0px) + 10px) 18px calc(112px + var(--safe-bottom));
+  }
+  body.pension-active-v315 #pension>.eyebrow{display:none}
+  body.pension-active-v315 #pension .pension-hero{
+    --hero-text-top:clamp(62px,calc(20vh - 58px),117px);
+    position:relative;
+    min-height:clamp(200px,36vh,300px);
+    padding:clamp(40px,7vh,60px) 18px clamp(64px,11vh,100px);
+    text-align:center;box-sizing:border-box;
+  }
+  body.pension-active-v315 #pension .pension-hero h1{
+    position:absolute;left:18px;right:18px;top:var(--hero-text-top);
+    font-size:25px;line-height:1.1;letter-spacing:-.035em;margin:0;
+    color:rgba(236,232,224,.78);
+  }
+  body.pension-active-v315 #pension .pension-hero p{
+    position:absolute;left:18px;right:18px;
+    top:calc(var(--hero-text-top) + 66px);max-width:18rem;margin:0 auto;
+    font-size:14px;line-height:1.55;
+    color:rgba(200,198,192,.55);
+  }
+  body.pension-active-v315 #pension .pension-actions{justify-content:flex-end;margin:0 0 clamp(6px,1vh,10px)}
+  body.pension-active-v315 #pension #pensionList{margin-top:clamp(18px,3.5vh,32px);gap:18px}
+  body.pension-active-v315 #pension #toggleAddPension{
+    border-color:rgba(218,167,128,.42);background:rgba(16,18,20,.30);
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  }
+  body.pension-active-v315 #pension .stack{gap:18px}
+  body.pension-active-v315 #pension .card.pension-card,
+  body.pension-active-v315 #pension .card.add-pension-card{
+    position:relative;overflow:visible;
+    border:1px solid rgba(220,190,150,.22);
+    border-radius:22px;
+    padding:16px 16px 15px;
+    background:rgba(18,20,24,.11);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    box-shadow:none;
+  }
+  body.pension-active-v315 #pension .card::before{display:none}
+  body.pension-active-v315 #pension .pension-card-head{
+    display:flex;align-items:flex-start;gap:10px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  body.pension-active-v315 #pension .pension-head-main{min-width:0;flex:1}
+  body.pension-active-v315 #pension .pension-title{color:rgba(236,232,224,.78)}
+  body.pension-active-v315 #pension .pension-title-input{
+    min-width:0;flex:1;margin:0;padding:0 0 2px;border:0;border-radius:0;
+    background:transparent;font-size:19px;font-weight:760;
+    color:rgba(236,232,224,.78);
+    border-bottom:1px solid rgba(220,190,150,.22);
+  }
+  body.pension-active-v315 #pension .pension-title-input:focus{
+    border-bottom-color:rgba(231,207,99,.45);box-shadow:none;outline:none;
+  }
+  body.pension-active-v315 #pension .pension-amount{
+    margin-top:8px;font-size:28px;line-height:1;font-weight:720;
+    letter-spacing:-.03em;color:rgba(236,232,224,.82);
+  }
+  body.pension-active-v315 #pension .pension-card-head .journey-chevron{
+    align-self:flex-start;margin-top:2px;flex-shrink:0;
+  }
+  body.pension-active-v315 #pension .pension-card.is-collapsed{padding-top:17px;padding-bottom:17px}
+  body.pension-active-v315 #pension .pension-card:not(.is-collapsed) .journey-chevron{transform:rotate(180deg)}
+  body.pension-active-v315 #pension .pension-fields{
+    display:grid;gap:10px;margin-top:16px;
+  }
+  body.pension-active-v315 #pension .pension-field label{
+    display:block;color:rgba(190,188,182,.50);font-size:11px;font-weight:500;margin-bottom:3px;
+  }
+  body.pension-active-v315 #pension .pension-field input.pension-field-value{
+    width:100%;margin:0;padding:7px 10px;border:1px solid rgba(220,190,150,.09);
+    border-radius:11px;background:rgba(18,20,24,.20);
+    backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    font-size:15px;font-weight:500;letter-spacing:-.01em;
+    color:rgba(236,232,224,.72);outline:none;min-height:40px;
+  }
+  body.pension-active-v315 #pension .pension-field input.pension-field-value:focus{
+    border-color:rgba(231,207,99,.20);box-shadow:none;
+  }
+  body.pension-active-v315 #pension .pension-summary{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;
+  }
+  body.pension-active-v315 #pension .pension-stat{
+    background:rgba(18,20,24,.14);
+    border:1px solid rgba(220,190,150,.08);
+    border-radius:11px;padding:9px 10px 8px;
+    backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  }
+  body.pension-active-v315 #pension .pension-stat small{
+    display:block;color:rgba(190,188,182,.50);font-size:11px;font-weight:500;margin-bottom:4px;
+  }
+  body.pension-active-v315 #pension .pension-stat strong{
+    font-size:15px;font-weight:500;letter-spacing:-.01em;color:rgba(236,232,224,.72);
+  }
+  body.pension-active-v315 #pension .pension-overview-setting{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin-top:14px;padding-top:12px;border-top:1px solid rgba(220,190,150,.08);
+  }
+  body.pension-active-v315 #pension .pension-overview-setting span{
+    font-size:12px;color:rgba(190,188,182,.52);
+  }
+  body.pension-active-v315 #pension .pension-toggle{
+    position:relative;width:42px;height:24px;flex:0 0 auto;
+  }
+  body.pension-active-v315 #pension .pension-toggle input{
+    position:absolute;inset:0;width:100%;height:100%;margin:0;opacity:0;cursor:pointer;z-index:1;
+    -webkit-appearance:none;appearance:none;
+  }
+  body.pension-active-v315 #pension .pension-toggle-track{
+    display:block;width:100%;height:100%;border-radius:999px;
+    background:rgba(18,20,24,.32);border:1px solid rgba(220,190,150,.12);
+    transition:background .18s ease,border-color .18s ease;
+  }
+  body.pension-active-v315 #pension .pension-toggle-thumb{
+    position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+    background:rgba(190,188,182,.55);transition:transform .18s ease,background .18s ease;
+    pointer-events:none;
+  }
+  body.pension-active-v315 #pension .pension-toggle input:checked + .pension-toggle-track{
+    background:rgba(201,160,122,.28);border-color:rgba(201,160,122,.35);
+  }
+  body.pension-active-v315 #pension .pension-toggle input:checked + .pension-toggle-track + .pension-toggle-thumb{
+    transform:translateX(18px);background:rgba(236,232,224,.82);
+  }
+  body.pension-active-v315 #pension .pension-action-row{
+    display:flex;align-items:center;gap:8px;margin-top:16px;flex-wrap:wrap;
+  }
+  body.pension-active-v315 #pension .pension-action-row .mini-btn.danger,
+  body.pension-active-v315 #pension .pension-action-row .mini-btn.delete{
+    font-size:12px;padding:8px 11px;
+  }
+  body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pension]{
+    margin-left:auto;margin-top:0;padding:9px 22px;border-radius:999px;
+    font-size:13px;font-weight:760;width:auto;
+    background:rgba(201,160,122,.72);color:#17150b;border:0;
+  }
+  body.pension-active-v315 #pension .add-pension-card label,
+  body.pension-active-v315 #pension .add-pension-card .empty-note{
+    color:rgba(190,188,182,.58);
+  }
+  body.pension-active-v315 #pension .add-pension-card h2{
+    color:rgba(236,232,224,.78);font-size:20px;
+  }
 }
 
 /* ===== Freedom v1.8.5 mobile home ===== */
@@ -798,12 +958,29 @@ body.home183 .demo183{
           </div>
         </div>
       </article>
+
+      <article class="overview-card" id="overviewPensionCard" data-page-link="pension" hidden>
+        <div class="overview-card-top">
+          <div class="overview-card-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 21V9"/>
+              <path d="M12 13c-3.8 0-6-2.1-6-5.8 3.8 0 6 2.1 6 5.8Z"/>
+              <path d="M12 11c3.8 0 6-2.1 6-5.8-3.8 0-6 2.1-6 5.8Z"/>
+              <path d="M8.5 21h7"/>
+            </svg>
+          </div>
+          <div class="overview-card-main">
+            <div class="overview-card-label">Pension</div>
+            <div class="overview-card-value" id="overviewPension">€0</div>
+          </div>
+        </div>
+      </article>
     </div>
   </div>
 </section>
 <section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><div class="editor-grid"><div><label for="newGoalCurrent">Current amount</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
-<section class="page" id="pension"><div class="eyebrow">Pension</div><h1>Future freedom, growing quietly.</h1><p class="intro">The value leads. Contributions sit underneath it when you need the detail.</p><article class="card pension"><div class="label">Current pension value</div><div class="value" id="pensionDisplay"></div><label for="pensionValue">Update pension value</label><input id="pensionValue" inputmode="decimal" type="number" min="0" step="0.01"><label for="pensionPersonal">Your monthly contribution</label><input id="pensionPersonal" inputmode="decimal" type="number" min="0" step="0.01"><label for="pensionEmployer">Employer contribution</label><input id="pensionEmployer" inputmode="decimal" type="number" min="0" step="0.01"><div class="loan-summary"><div class="loan-stat"><small>Total added monthly</small><strong id="pensionMonthlyTotal"></strong></div><div class="loan-stat"><small>Annual contributions</small><strong id="pensionAnnual"></strong></div></div><button class="save-btn" data-save>Save Pension</button></article></section>
+<section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><h2>Add a new pension</h2><p class="empty-note">Track any pension pot — workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card" id="moreArchive"><h2>Archived goals & journeys</h2><p class="empty-note">Finished or removed items live here instead of disappearing forever.</p><button class="mini-btn gold archive-toggle" id="toggleArchiveList" type="button">View archived items</button><div class="archive-list" id="archiveList" hidden></div></article><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
 <article class="card" id="moreCompanion"><h2>Companion</h2><p class="empty-note">Patricia lives here when the companion layer needs its own space. For now, Home stays quiet unless there is a reason for her to appear.</p></article>
 <article class="card" id="moreSettings"><h2>Settings & privacy</h2><p class="empty-note">This HTML file stores edits only in this browser on this device. It does not connect to a bank or upload your figures anywhere.</p></article>
@@ -834,8 +1011,9 @@ body.home183 .demo183{
 const KEY="freedom50-mobile-v1";
 (function preloadJourneyWallpaper(){const img=new Image();img.src="./journey-wallpaper.png";})();
 (function preloadGoalsWallpaper(){const img=new Image();img.src="./goals-wallpaper.png";})();
+(function preloadPensionWallpaper(){const img=new Image();img.src="./pension-wallpaper.png";})();
 const HOUSE_POCKET_START=1000;
-const defaults={archivedJourneys:[],archivedGoals:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},goalTargets:{houseFund:50000,holidayFund:0,personalSavings:5000},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensionValue:48951.79,pensionPersonal:342.50,pensionEmployer:242.50};
+const defaults={archivedJourneys:[],archivedGoals:[],archivedPensions:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},goalTargets:{houseFund:50000,holidayFund:0,personalSavings:5000},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensions:[{id:"pension-1",name:"Pension",value:48951.79,personal:342.50,employer:242.50,collapsed:false,showInOverview:true}]};
 let state;try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");state=saved&&saved.loans?Object.assign({},defaults,saved):JSON.parse(JSON.stringify(defaults));}catch(e){state=JSON.parse(JSON.stringify(defaults));}
 let demoMode=false;
 let realStateSnapshot=null;
@@ -846,11 +1024,29 @@ const demoDefaults={
   goalTargets:{houseFund:50000,holidayFund:8000,personalSavings:5000},
   loans:[{name:"Car Loan",starting:12000,current:4800,payment:320},{name:"Kitchen Finance",starting:6000,current:1650,payment:250}],
   housePocket:0,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:"2026-06-01T00:00:00.000Z",
-  houseFund:14250,holidayFund:3200,holidayMonthly:300,personalSavings:2650,pensionValue:61200,pensionPersonal:400,pensionEmployer:300
+  houseFund:14250,holidayFund:3200,holidayMonthly:300,personalSavings:2650,
+  pensions:[{id:"pension-demo-1",name:"Irish Life",value:61200,personal:400,employer:300,collapsed:false,showInOverview:true}],
+  archivedPensions:[]
 };
 if(!Array.isArray(state.archivedJourneys))state.archivedJourneys=[];
 if(!Array.isArray(state.archivedGoals))state.archivedGoals=[];
+if(!Array.isArray(state.archivedPensions))state.archivedPensions=[];
 if(!Array.isArray(state.customGoals))state.customGoals=[];
+if(state.pensionValue!=null||state.pensionPersonal!=null||state.pensionEmployer!=null){
+  state.pensions=[{id:"pension-1",name:"Pension",value:Number(state.pensionValue)||0,personal:Number(state.pensionPersonal)||0,employer:Number(state.pensionEmployer)||0,collapsed:false,showInOverview:true}];
+  delete state.pensionValue;delete state.pensionPersonal;delete state.pensionEmployer;
+}else if(!Array.isArray(state.pensions)){
+  state.pensions=[];
+}
+state.pensions.forEach((p,i)=>{
+  if(!p.id)p.id="pension-"+(i+1);
+  if(!p.name)p.name="Pension";
+  if(p.showInOverview===undefined)p.showInOverview=true;
+  if(p.collapsed===undefined)p.collapsed=i>0;
+  p.value=Number(p.value)||0;
+  p.personal=Number(p.personal)||0;
+  p.employer=Number(p.employer)||0;
+});
 if(!state.hiddenBuiltInGoals)state.hiddenBuiltInGoals={houseFund:false,holidayFund:false,personalSavings:false};
 if(!state.deletedBuiltInGoals)state.deletedBuiltInGoals={houseFund:false,holidayFund:false,personalSavings:false};
 const builtInGoalDefaultTargets={houseFund:50000,holidayFund:0,personalSavings:5000};
@@ -873,6 +1069,7 @@ function page(id){
   document.body.classList.toggle("overview-active-v300",id==="overview");
   document.body.classList.toggle("journey-active-v313",id==="journey");
   document.body.classList.toggle("goals-active-v314",id==="goals");
+  document.body.classList.toggle("pension-active-v315",id==="pension");
   document.body.classList.remove("overview-active");
   history.replaceState(null,"","#"+id);
   window.scrollTo(0,0)
@@ -1345,20 +1542,113 @@ function setupLoanReorder(list){
     card.addEventListener("pointercancel",onEnd);
   });
 }
+function pensionMonthly(p){return (Number(p.personal)||0)+(Number(p.employer)||0);}
+function overviewPensionTotal(){if(!Array.isArray(state.pensions))return 0;return state.pensions.filter(p=>p.showInOverview!==false).reduce((s,p)=>s+(Number(p.value)||0),0);}
+function includedPensionCount(){if(!Array.isArray(state.pensions))return 0;return state.pensions.filter(p=>p.showInOverview!==false).length;}
+function pensionCardHead(i,p,collapsed){
+  const name=p.name||"Pension";
+  const titleHtml=!collapsed
+    ? `<input class="pension-title-input" data-pension-name="${i}" type="text" value="${esc(name)}" aria-label="Pension name">`
+    : `<div class="pension-title">${esc(name)}</div>`;
+  const amountHtml=`<div class="pension-amount">${euro2(p.value)}</div>`;
+  return `<div class="pension-card-head" data-toggle-pension="${i}"><div class="pension-head-main">${titleHtml}${amountHtml}</div>${goalChevron(name)}</div>`;
+}
+function savePension(i){
+  const p=state.pensions[i];
+  if(!p) return;
+  const nameEl=document.querySelector(`[data-pension-name="${i}"]`);
+  const valueEl=byId(`pensionValue_${i}`);
+  const personalEl=byId(`pensionPersonal_${i}`);
+  const employerEl=byId(`pensionEmployer_${i}`);
+  const overviewEl=byId(`pensionOverview_${i}`);
+  if(nameEl){const n=nameEl.value.trim();if(n)p.name=n;}
+  if(valueEl)p.value=Math.max(0,Number(valueEl.value)||0);
+  if(personalEl)p.personal=Math.max(0,Number(personalEl.value)||0);
+  if(employerEl)p.employer=Math.max(0,Number(employerEl.value)||0);
+  if(overviewEl)p.showInOverview=overviewEl.checked;
+  persist(); render();
+}
+function renderPensionCard(i){
+  const p=state.pensions[i];
+  if(!p) return null;
+  const collapsed=!!p.collapsed;
+  const card=document.createElement("article");
+  card.className="card pension-card"+(collapsed?" is-collapsed":"");
+  card.dataset.pensionIndex=String(i);
+  const head=pensionCardHead(i,p,collapsed);
+  let body="";
+  if(!collapsed){
+    const monthly=pensionMonthly(p);
+    const annual=monthly*12;
+    const overviewChecked=p.showInOverview!==false?" checked":"";
+    body=`<div class="journey-card-body"><div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Current pension value</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.value||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div></div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div></div>`;
+  }
+  card.innerHTML=head+body;
+  return card;
+}
+function renderPensions(){
+  const list=byId("pensionList");
+  if(!list) return;
+  list.innerHTML="";
+  if(!Array.isArray(state.pensions)) state.pensions=[];
+  state.pensions.forEach((_,i)=>{
+    const card=renderPensionCard(i);
+    if(card) list.appendChild(card);
+  });
+  const skipToggle=el=>el.closest("input,button[data-archive-pension],button[data-delete-pension],button[data-save-pension],.save-btn,.pension-toggle");
+  list.querySelectorAll("[data-toggle-pension]").forEach(head=>head.addEventListener("click",e=>{
+    if(skipToggle(e.target)) return;
+    const i=Number(head.dataset.togglePension);
+    const p=state.pensions[i];
+    if(!p) return;
+    p.collapsed=!p.collapsed;
+    persist(); renderPensions();
+  }));
+  list.querySelectorAll("[data-save-pension]").forEach(btn=>btn.addEventListener("click",e=>{
+    savePension(Number(e.currentTarget.dataset.savePension));
+  }));
+  list.querySelectorAll("[data-archive-pension]").forEach(btn=>btn.addEventListener("click",e=>{
+    const i=Number(e.currentTarget.dataset.archivePension);
+    const p=state.pensions[i];
+    if(!p) return;
+    state.archivedPensions.unshift({...p});
+    state.pensions.splice(i,1);
+    persist(); render();
+  }));
+  list.querySelectorAll("[data-delete-pension]").forEach(btn=>btn.addEventListener("click",e=>{
+    const i=Number(e.currentTarget.dataset.deletePension);
+    if(!confirm("Delete this pension?")) return;
+    state.pensions.splice(i,1);
+    persist(); render();
+  }));
+  list.querySelectorAll(".pension-field-value").forEach(input=>{
+    input.addEventListener("input",e=>{
+      const i=Number(e.target.id.split("_").pop());
+      const personal=Math.max(0,Number(byId(`pensionPersonal_${i}`)?.value)||0);
+      const employer=Math.max(0,Number(byId(`pensionEmployer_${i}`)?.value)||0);
+      const monthly=personal+employer;
+      const mEl=list.querySelector(`[data-pension-monthly="${i}"]`);
+      const aEl=list.querySelector(`[data-pension-annual="${i}"]`);
+      if(mEl) mEl.textContent=euro2(monthly);
+      if(aEl) aEl.textContent=euro2(monthly*12);
+    });
+  });
+}
 function renderArchive(){const wrap=byId("archiveList");if(!wrap)return;const items=[];if(state.housePocketArchived){items.push({type:"housePocket",name:"House Pocket",detail:"Completed victory • €1,000 returned"})}
 Object.entries(state.hiddenBuiltInGoals).forEach(([key,hidden])=>{if(hidden&&!state.deletedBuiltInGoals[key]){const m=builtInGoalMeta[key];items.push({type:"builtInGoal",key,name:m.name,detail:`Archived goal • ${euro2(state[m.valueKey])} current value`})}});
 state.archivedGoals.forEach((x,i)=>items.push({type:"goal",index:i,name:x.name,detail:`Archived goal • ${euro2(x.current)} current${x.target>0?" • "+euro2(x.target)+" target":""}`}));
 state.archivedJourneys.forEach((x,i)=>items.push({type:"journey",index:i,name:x.name,detail:`${x.current<=0?"Completed":"Archived"} journey • ${euro2(Math.max(0,x.starting-x.current))} returned • ${euro2(x.current)} balance`}));
+state.archivedPensions.forEach((x,i)=>items.push({type:"pension",index:i,name:x.name,detail:`Archived pension • ${euro2(x.value)} current • ${euro2(pensionMonthly(x))}/month`}));
 if(!items.length){wrap.innerHTML='<p class="empty-archive">Nothing archived yet. Completed and removed items will appear here.</p>';return}
-wrap.innerHTML=items.map(item=>`<div class="archive-item"><div class="row"><div><strong>${esc(item.name)}</strong><small>${esc(item.detail)}</small></div>${item.type==="journey"?`<button class="mini-btn gold" data-restore-journey="${item.index}" type="button">Restore</button>`:item.type==="goal"?`<button class="mini-btn gold" data-restore-goal="${item.index}" type="button">Restore</button>`:item.type==="builtInGoal"?`<button class="mini-btn gold" data-restore-built-in="${item.key}" type="button">Restore</button>`:""}</div></div>`).join("");
+wrap.innerHTML=items.map(item=>`<div class="archive-item"><div class="row"><div><strong>${esc(item.name)}</strong><small>${esc(item.detail)}</small></div>${item.type==="journey"?`<button class="mini-btn gold" data-restore-journey="${item.index}" type="button">Restore</button>`:item.type==="goal"?`<button class="mini-btn gold" data-restore-goal="${item.index}" type="button">Restore</button>`:item.type==="pension"?`<button class="mini-btn gold" data-restore-pension="${item.index}" type="button">Restore</button>`:item.type==="builtInGoal"?`<button class="mini-btn gold" data-restore-built-in="${item.key}" type="button">Restore</button>`:""}</div></div>`).join("");
 wrap.querySelectorAll("[data-restore-journey]").forEach(btn=>btn.addEventListener("click",e=>{const i=Number(e.currentTarget.dataset.restoreJourney),item=state.archivedJourneys[i];if(!item)return;state.loans.push({name:item.name,starting:item.starting,current:item.current,payment:item.payment});state.archivedJourneys.splice(i,1);persist();render()}));
 wrap.querySelectorAll("[data-restore-goal]").forEach(btn=>btn.addEventListener("click",e=>{const i=Number(e.currentTarget.dataset.restoreGoal),item=state.archivedGoals[i];if(!item)return;state.customGoals.push({name:item.name,current:item.current,target:item.target});state.archivedGoals.splice(i,1);persist();render()}));
+wrap.querySelectorAll("[data-restore-pension]").forEach(btn=>btn.addEventListener("click",e=>{const i=Number(e.currentTarget.dataset.restorePension),item=state.archivedPensions[i];if(!item)return;state.pensions.push({...item,collapsed:true});state.archivedPensions.splice(i,1);persist();render()}));
 wrap.querySelectorAll("[data-restore-built-in]").forEach(btn=>btn.addEventListener("click",e=>{state.hiddenBuiltInGoals[e.currentTarget.dataset.restoreBuiltIn]=false;persist();render()}))}
-function fillForm(){["pensionValue","pensionPersonal","pensionEmployer"].forEach(id=>{const el=byId(id);if(el)el.value=state[id]});const hp=byId("housePocketRemaining");if(hp)hp.value=state.housePocket}
-function pullForm(){["pensionValue","pensionPersonal","pensionEmployer"].forEach(id=>{const el=byId(id);if(el)state[id]=Math.max(0,Number(el.value)||0)})}
+function fillForm(){const hp=byId("housePocketRemaining");if(hp)hp.value=state.housePocket}
 function nextLoan(){return state.loans.filter(x=>x.current>0).sort((a,b)=>a.current-b.current)[0]||null}
 function render(){const original=state.loans.reduce((s,x)=>s+x.starting,0);const current=state.loans.reduce((s,x)=>s+x.current,0);const loanReturned=Math.max(0,original-current);const hpReturned=Math.max(0,HOUSE_POCKET_START-state.housePocket);const totalOriginal=original+HOUSE_POCKET_START;const totalCurrent=current+state.housePocket;const pct=totalOriginal?Math.max(0,(totalOriginal-totalCurrent)/totalOriginal*100):0;const monthly=state.loans.reduce((s,x)=>s+x.payment,0)+(state.housePocket>0?(Number(state.housePocketMonthly)||0):0);
-byId("overviewReturned").textContent=euro0(loanReturned+hpReturned);byId("overviewProgress").textContent=Math.round(pct)+"%";byId("overviewProgressBar").style.width=Math.min(100,pct)+"%";if(byId("overviewHouse"))byId("overviewHouse").textContent=euro0(state.houseFund);if(byId("overviewHoliday"))byId("overviewHoliday").textContent=euro0(state.holidayFund);if(byId("overviewSavings"))byId("overviewSavings").textContent=euro0(state.personalSavings);if(byId("overviewPension"))byId("overviewPension").textContent=euro0(state.pensionValue);byId("monthlyFreedom").textContent=euro0(monthly);
+byId("overviewReturned").textContent=euro0(loanReturned+hpReturned);byId("overviewProgress").textContent=Math.round(pct)+"%";byId("overviewProgressBar").style.width=Math.min(100,pct)+"%";if(byId("overviewHouse"))byId("overviewHouse").textContent=euro0(state.houseFund);if(byId("overviewHoliday"))byId("overviewHoliday").textContent=euro0(state.holidayFund);if(byId("overviewSavings"))byId("overviewSavings").textContent=euro0(state.personalSavings);const pensionCard=byId("overviewPensionCard");if(pensionCard){const pensionCount=includedPensionCount();if(pensionCount>0){pensionCard.hidden=false;byId("overviewPension").textContent=euro0(overviewPensionTotal());}else pensionCard.hidden=true;}byId("monthlyFreedom").textContent=euro0(monthly);
 const hp=state.housePocket,hpm=state.housePocketMonthly;const hpProgress=Math.max(0,Math.min(100,(HOUSE_POCKET_START-hp)/HOUSE_POCKET_START*100));const next=nextLoan();
 if(hp>0){
   byId("pocketBar").style.width=hpProgress+"%";
@@ -1400,13 +1690,15 @@ if(hp>0){
   byId("pocketMonths").textContent="You did it";
 }
 if(hp>0){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="House Pocket";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent=next.name;if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else{if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="All clear";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
-byId("pensionDisplay").textContent=euro2(state.pensionValue);const pensionMonthly=state.pensionPersonal+state.pensionEmployer;byId("pensionMonthlyTotal").textContent=euro2(pensionMonthly);byId("pensionAnnual").textContent=euro2(pensionMonthly*12);renderLoans();renderGoals();renderArchive()}
+renderLoans();renderGoals();renderPensions();renderArchive()}
+byId("toggleAddPension").addEventListener("click",()=>{const card=byId("addPensionCard");card.hidden=!card.hidden;if(!card.hidden){byId("newPensionName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
+byId("addPension").addEventListener("click",()=>{const name=byId("newPensionName").value.trim();const value=Math.max(0,Number(byId("newPensionValue").value)||0);const personal=Math.max(0,Number(byId("newPensionPersonal").value)||0);const employer=Math.max(0,Number(byId("newPensionEmployer").value)||0);if(!name){byId("newPensionName").focus();return}state.pensions.push({id:"pension-"+Date.now(),name,value,personal,employer,collapsed:true,showInOverview:true});persist();["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>byId(id).value="");byId("addPensionCard").hidden=true;render()});
 byId("toggleAddGoal").addEventListener("click",()=>{const card=byId("addGoalCard");card.hidden=!card.hidden;if(!card.hidden){byId("newGoalName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addGoal").addEventListener("click",()=>{const name=byId("newGoalName").value.trim(),current=Math.max(0,Number(byId("newGoalCurrent").value)||0),target=Math.max(0,Number(byId("newGoalTarget").value)||0);if(!name){byId("newGoalName").focus();return}state.customGoals.push({name,current,target});persist();["newGoalName","newGoalCurrent","newGoalTarget"].forEach(id=>byId(id).value="");byId("addGoalCard").hidden=true;render()});
 byId("toggleArchiveList").addEventListener("click",()=>{const list=byId("archiveList");list.hidden=!list.hidden;byId("toggleArchiveList").textContent=list.hidden?"View archived items":"Hide archived items"});
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment});persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
-document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{pullForm();persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);
+document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);
 })();
 
 
@@ -1423,7 +1715,7 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   }
   function showHome(){
     if(!isMobile())return;
-    document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314");
+    document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315");
     closeMore();
     document.body.classList.add("home183");
     if(home)home.setAttribute("aria-hidden","false");
