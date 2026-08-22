@@ -532,12 +532,13 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.goals-active-v314 #goals .add-goal-card h2{
     color:rgba(236,232,224,.78);font-size:20px;
   }
-  body.goals-active-v314 #goals .goal-card .save-btn{
-    width:100%;margin-top:14px;border-radius:16px;padding:14px 16px;
-    background:rgba(201,160,122,.88);color:#17150b;border:0;font-weight:720;
+  body.goals-active-v314 #goals .goal-card .save-btn[data-save]{
+    display:block;width:auto;margin:14px auto 0;padding:10px 26px;border-radius:999px;
+    font-size:13px;font-weight:760;
+    background:rgba(201,160,122,.72);color:#17150b;border:0;
   }
-  body.goals-active-v314 #goals .goal-card .save-btn.complete{
-    background:rgba(132,189,145,.88);color:#0c130e;
+  body.goals-active-v314 #goals .goal-card .save-btn[data-save].complete{
+    background:rgba(132,189,145,.72);color:#0c130e;
   }
   body.goals-active-v314 #goals .goal-card .detail{
     color:rgba(190,188,182,.58);font-size:12px;margin-top:8px;line-height:1.45;
@@ -895,7 +896,7 @@ function renderBuiltInGoalCard(key){
   card.className="card goal-card"+(collapsed?" is-collapsed":"");
   card.dataset.goalKey=key;
   card.dataset.goalIndex=String(resolvedGoalOrder().indexOf(key));
-  const saveLabel="Save "+m.name;
+  const saveLabel="Save";
   let extraFields="";
   if(key==="holidayFund"){
     extraFields=`<div class="goal-stat"><small>Combined monthly contribution</small><input class="goal-stat-value" id="holidayMonthly" inputmode="decimal" type="number" min="0" step="1" value="${state.holidayMonthly}"></div>`;
