@@ -194,18 +194,21 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   /* Hero band sized so the horizon glow stays clear above the cards */
   body.overview-active-v300 #overview .overview-hero{
+    --hero-text-top:clamp(120px,20vh,175px);
+    position:relative;
     min-height:clamp(200px,36vh,300px);
-    display:flex;flex-direction:column;justify-content:flex-start;align-items:center;
-    /* Top/bottom padding shifted equally so headline sits lower; cards unchanged */
-    padding:clamp(64px,11vh,96px) 18px clamp(40px,7vh,64px);
+    padding:clamp(40px,7vh,60px) 18px clamp(64px,11vh,100px);
     text-align:center;box-sizing:border-box;
   }
   body.overview-active-v300 #overview .overview-hero h1{
+    position:absolute;left:18px;right:18px;top:var(--hero-text-top);
     margin:0;font-size:25px;line-height:1.1;letter-spacing:-.035em;
     color:rgba(236,232,224,.78);
   }
   body.overview-active-v300 #overview .overview-hero p{
-    margin:11px auto 0;max-width:18rem;font-size:14px;line-height:1.55;
+    position:absolute;left:18px;right:18px;
+    top:calc(var(--hero-text-top) + 38.5px);max-width:18rem;margin:0 auto;
+    font-size:14px;line-height:1.55;
     color:rgba(200,198,192,.55);
   }
   body.overview-active-v300 #overview .overview-cards{
