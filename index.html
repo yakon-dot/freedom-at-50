@@ -494,36 +494,69 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     border-bottom-color:rgba(231,207,99,.45);box-shadow:none;
   }
   body.goals-active-v314 #goals .goal-stat{
-    background:rgba(18,20,24,.52);
+    background:rgba(18,20,24,.58);
     border:1px solid rgba(220,190,150,.20);
-    border-radius:15px;padding:12px;
+    border-radius:15px;padding:12px 12px 11px;
   }
   body.goals-active-v314 #goals .goal-stat small{
-    display:block;color:rgba(190,188,182,.58);font-size:11px;margin-bottom:5px;
+    display:block;color:rgba(190,188,182,.58);font-size:11px;margin-bottom:6px;
   }
   body.goals-active-v314 #goals .goal-stat strong{
-    font-size:16px;font-weight:650;color:rgba(236,232,224,.82);
+    font-size:22px;font-weight:720;letter-spacing:-.03em;color:rgba(236,232,224,.82);
   }
   body.goals-active-v314 #goals .goal-stat input.goal-stat-value,
   body.goals-active-v314 #goals .goal-stat input[type="number"],
   body.goals-active-v314 #goals .goal-stat input[type="text"]{
     width:100%;margin:0;padding:0;border:0;border-radius:0;
-    background:transparent;font-size:16px;font-weight:650;
+    background:transparent;font-size:22px;font-weight:720;letter-spacing:-.03em;
     color:rgba(236,232,224,.82);
   }
   body.goals-active-v314 #goals .goal-stat input:focus{
     box-shadow:none;outline:none;
   }
   body.goals-active-v314 #goals .goal-card .progress{
-    margin-top:14px;height:5px;background:rgba(255,255,255,.08);
+    margin-top:0;height:5px;background:rgba(255,255,255,.08);flex:1;
   }
   body.goals-active-v314 #goals .goal-card .progress span{background:#c9a07a}
-  body.goals-active-v314 #goals .goal-card-footer{
-    display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;
+  body.goals-active-v314 #goals .goal-card-head{
+    display:flex;align-items:flex-start;gap:10px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
   }
-  body.goals-active-v314 #goals .goal-card-footer .mini-btn.danger,
-  body.goals-active-v314 #goals .goal-card-footer .mini-btn.delete{
+  body.goals-active-v314 #goals .goal-head-main{min-width:0;flex:1}
+  body.goals-active-v314 #goals .goal-head-main .goal-title{color:rgba(236,232,224,.78)}
+  body.goals-active-v314 #goals .goal-amount{
+    margin-top:8px;font-size:28px;line-height:1;font-weight:720;
+    letter-spacing:-.03em;color:rgba(236,232,224,.82);
+  }
+  body.goals-active-v314 #goals .goal-amount.medium{font-size:22px}
+  body.goals-active-v314 #goals .goal-target{
+    margin-top:5px;font-size:12px;line-height:1.4;color:rgba(190,188,182,.58);
+  }
+  body.goals-active-v314 #goals .goal-progress-row{
+    display:flex;align-items:center;gap:10px;margin-top:12px;
+  }
+  body.goals-active-v314 #goals .goal-progress-pct{
+    flex:0 0 auto;font-size:12px;font-weight:650;color:rgba(190,188,182,.58);
+    min-width:2.4em;text-align:right;
+  }
+  body.goals-active-v314 #goals .goal-summary{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;
+  }
+  body.goals-active-v314 #goals .goal-action-row{
+    display:flex;align-items:center;gap:8px;margin-top:16px;flex-wrap:wrap;
+  }
+  body.goals-active-v314 #goals .goal-action-row .mini-btn.danger,
+  body.goals-active-v314 #goals .goal-action-row .mini-btn.delete{
     font-size:12px;padding:8px 11px;
+  }
+  body.goals-active-v314 #goals .goal-action-row .save-btn[data-save],
+  body.goals-active-v314 #goals .goal-action-row #recordHousePocket{
+    margin-left:auto;margin-top:0;padding:9px 22px;border-radius:999px;
+    font-size:13px;font-weight:760;width:auto;
+    background:rgba(201,160,122,.72);color:#17150b;border:0;
+  }
+  body.goals-active-v314 #goals .goal-card-head .journey-chevron{
+    align-self:flex-start;margin-top:2px;flex-shrink:0;
   }
   body.goals-active-v314 #goals .add-goal-card label,
   body.goals-active-v314 #goals .add-goal-card .empty-note{
@@ -532,27 +565,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.goals-active-v314 #goals .add-goal-card h2{
     color:rgba(236,232,224,.78);font-size:20px;
   }
-  body.goals-active-v314 #goals .goal-card .save-btn[data-save]{
-    display:block;width:auto;margin:14px auto 0;padding:10px 26px;border-radius:999px;
-    font-size:13px;font-weight:760;
-    background:rgba(201,160,122,.72);color:#17150b;border:0;
-  }
-  body.goals-active-v314 #goals .goal-card .save-btn[data-save].complete{
-    background:rgba(132,189,145,.72);color:#0c130e;
-  }
-  body.goals-active-v314 #goals .goal-card .detail{
-    color:rgba(190,188,182,.58);font-size:12px;margin-top:8px;line-height:1.45;
-  }
-  body.goals-active-v314 #goals .goal-summary{
-    display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;
-  }
   body.goals-active-v314 #goals .goal-card.is-collapsed{padding-top:17px;padding-bottom:17px}
-  body.goals-active-v314 #goals .goal-card.is-collapsed .journey-card-head+.progress{margin-top:12px}
-  body.goals-active-v314 #goals .journey-card-head .goal-title{min-width:0;flex:1}
   body.goals-active-v314 #goals .goal-card:not(.is-collapsed) .journey-chevron{transform:rotate(180deg)}
-  body.goals-active-v314 #goals .goal-card .journey-card-head .pill{margin-left:auto}
-  body.goals-active-v314 #goals .goal-card.completed .pill.complete{
-    color:rgba(132,189,145,.95);border-color:rgba(132,189,145,.38);
+  body.goals-active-v314 #goals .goal-card.completed .goal-amount{
+    color:rgba(132,189,145,.92);
   }
 }
 
@@ -860,31 +876,38 @@ function resolvedGoalOrder(){
 }
 function goalCollapsed(key){if(state.goalCollapsed[key]===undefined) return true; return !!state.goalCollapsed[key];}
 function toggleGoalCollapsed(key){state.goalCollapsed[key]=!goalCollapsed(key); persist(); renderGoals();}
-function goalHeadHtml(key,title,expanded){
-  const collapsed=goalCollapsed(key);
-  const titleHtml=(!collapsed&&expanded)
-    ? `<input class="goal-title-input" data-goal-title="${esc(key)}" type="text" value="${esc(title)}" aria-label="Goal name">`
-    : `<div class="goal-title">${esc(title)}</div>`;
-  return `<div class="journey-card-head" data-toggle-goal="${esc(key)}">${titleHtml}<button class="journey-chevron" type="button" aria-label="Toggle ${esc(title)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div>`;
+function goalChevron(name){
+  return `<button class="journey-chevron" type="button" aria-label="Toggle ${esc(name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button>`;
+}
+function goalProgressRow(pct,barId){
+  const idAttr=barId?` id="${barId}"`:"";
+  return `<div class="goal-progress-row"><div class="progress"><span${idAttr} style="width:${pct}%"></span></div><span class="goal-progress-pct">${Math.round(pct)}%</span></div>`;
+}
+function goalCardHead(key,titleHtml,amountHtml,targetHtml,name){
+  return `<div class="goal-card-head" data-toggle-goal="${esc(key)}"><div class="goal-head-main">${titleHtml}${amountHtml}${targetHtml||""}</div>${goalChevron(name||"")}</div>`;
 }
 function renderHousePocketCard(key){
   const hp=state.housePocket;
   const collapsed=goalCollapsed(key);
   const pct=Math.max(0,Math.min(100,(HOUSE_POCKET_START-hp)/HOUSE_POCKET_START*100));
   const isDone=key==="housePocketDone";
-  const pill=isDone?"Complete ✓":euro0(hp)+" remaining";
-  const pillClass=isDone?" complete":"";
   const card=document.createElement("article");
   card.className="card goal-card"+(collapsed?" is-collapsed":"")+(isDone?" completed":"");
   card.dataset.goalKey=key;
   card.dataset.goalIndex=String(resolvedGoalOrder().indexOf(key));
+  const titleHtml=`<div class="goal-title">House Pocket</div>`;
+  const amountHtml=isDone
+    ? `<div class="goal-amount medium">€1,000 returned</div>`
+    : `<div class="goal-amount medium">${euro0(hp)} remaining</div>`;
+  const head=goalCardHead(key,titleHtml,amountHtml,"","House Pocket");
+  const progressHtml=goalProgressRow(isDone?100:pct);
   let body="";
   if(isDone){
-    body=`<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary"><div class="goal-stat"><small>Status</small><strong class="freedom-estimate">€1,000 returned</strong></div></div><div class="goal-card-footer"><button class="mini-btn danger" id="archiveHousePocket" type="button">Archive from Goals</button></div></div>`;
+    body=`<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-action-row"><button class="mini-btn danger" id="archiveHousePocket" type="button">Archive from Goals</button></div></div>`;
   }else{
-    body=`<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary"><div class="goal-stat"><small>Amount still owed</small><input class="goal-stat-value" id="housePocketRemaining" type="number" readonly value="${hp}"></div><div class="goal-stat"><small>Payment made</small><input class="goal-stat-value" id="housePocketPayment" inputmode="decimal" type="number" min="0" step="10" placeholder="Enter payment"></div></div><button class="save-btn" id="recordHousePocket">Record Payment</button></div>`;
+    body=`<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary"><div class="goal-stat"><small>Amount still owed</small><input class="goal-stat-value" id="housePocketRemaining" type="number" readonly value="${hp}"></div><div class="goal-stat"><small>Payment made</small><input class="goal-stat-value" id="housePocketPayment" inputmode="decimal" type="number" min="0" step="10" placeholder="Enter payment"></div></div><div class="goal-action-row"><button class="save-btn" id="recordHousePocket">Record Payment</button></div></div>`;
   }
-  card.innerHTML=`<div class="journey-card-head" data-toggle-goal="${key}"><div class="goal-title">House Pocket</div><div class="pill${pillClass}">${pill}</div><button class="journey-chevron" type="button" aria-label="Toggle House Pocket"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div><div class="progress"><span style="width:${pct}%"></span></div>${body}`;
+  card.innerHTML=head+progressHtml+body;
   return card;
 }
 function renderBuiltInGoalCard(key){
@@ -896,14 +919,18 @@ function renderBuiltInGoalCard(key){
   card.className="card goal-card"+(collapsed?" is-collapsed":"");
   card.dataset.goalKey=key;
   card.dataset.goalIndex=String(resolvedGoalOrder().indexOf(key));
-  const saveLabel="Save";
-  let extraFields="";
+  const barId=key==="houseFund"?"houseFundBar":key==="personalSavings"?"savingsBar":"goalBar"+key;
+  const titleHtml=`<div class="goal-title">${esc(m.name)}</div>`;
+  const amountHtml=`<div class="goal-amount">${euro0(val)}</div>`;
+  const targetHtml=m.target>0?`<div class="goal-target">Target ${euro0(m.target)}</div>`:"";
+  const head=goalCardHead(key,titleHtml,amountHtml,targetHtml,m.name);
+  const progressHtml=m.target>0?goalProgressRow(pct,barId):"";
+  let summary=`<div class="goal-stat"><small>Current balance</small><input class="goal-stat-value" id="${m.valueKey}" inputmode="decimal" type="number" min="0" step="1" value="${val}"></div>`;
   if(key==="holidayFund"){
-    extraFields=`<div class="goal-stat"><small>Combined monthly contribution</small><input class="goal-stat-value" id="holidayMonthly" inputmode="decimal" type="number" min="0" step="1" value="${state.holidayMonthly}"></div>`;
+    summary+=`<div class="goal-stat"><small>Monthly contribution</small><input class="goal-stat-value" id="holidayMonthly" inputmode="decimal" type="number" min="0" step="1" value="${state.holidayMonthly}"></div>`;
   }
-  let detail=m.target>0?`Reference milestone: ${euro0(m.target)}`:"";
-  if(key==="personalSavings") detail="First milestone: €5,000";
-  card.innerHTML=`<div class="journey-card-head" data-toggle-goal="${key}"><div class="goal-title">${esc(m.name)}</div><div class="pill">${m.target>0?pct.toFixed(0)+"%":euro0(val)}</div><button class="journey-chevron" type="button" aria-label="Toggle ${esc(m.name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div>${m.target>0?`<div class="progress"><span id="${key==="houseFund"?"houseFundBar":key==="personalSavings"?"savingsBar":"goalBar"+key}" style="width:${pct}%"></span></div>`:""}<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary"><div class="goal-stat"><small>Current balance</small><input class="goal-stat-value" id="${m.valueKey}" inputmode="decimal" type="number" min="0" step="1" value="${val}"></div>${extraFields}</div>${detail?`<div class="detail">${detail}</div>`:""}<button class="save-btn" data-save>${saveLabel}</button><div class="goal-card-footer"><button class="mini-btn danger" data-archive-built-in="${key}" type="button">Archive goal</button><button class="mini-btn delete" data-delete-built-in="${key}" type="button">Delete</button></div></div>`;
+  const body=`<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary">${summary}</div><div class="goal-action-row"><button class="mini-btn danger" data-archive-built-in="${key}" type="button">Archive</button><button class="mini-btn delete" data-delete-built-in="${key}" type="button">Delete</button><button class="save-btn" data-save>Save</button></div></div>`;
+  card.innerHTML=head+progressHtml+body;
   return card;
 }
 function renderCustomGoalCard(key,i){
@@ -915,10 +942,15 @@ function renderCustomGoalCard(key,i){
   card.className="card goal-card"+(collapsed?" is-collapsed":"");
   card.dataset.goalKey=key;
   card.dataset.goalIndex=String(resolvedGoalOrder().indexOf(key));
-  const titleHtml=!collapsed
-    ? `<input class="goal-title-input" data-goal="${i}" data-goal-field="name" type="text" value="${esc(g.name)}" aria-label="Goal name">`
-    : `<div class="goal-title">${esc(g.name)}</div>`;
-  card.innerHTML=`<div class="journey-card-head" data-toggle-goal="${key}">${titleHtml}<div class="pill">${g.target>0?pct.toFixed(0)+"%":euro0(g.current)}</div><button class="journey-chevron" type="button" aria-label="Toggle ${esc(g.name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div>${g.target>0?`<div class="progress"><span style="width:${pct}%"></span></div>`:""}<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary"><div class="goal-stat"><small>Current amount</small><input class="goal-stat-value" data-goal="${i}" data-goal-field="current" inputmode="decimal" type="number" min="0" step="0.01" value="${g.current}"></div><div class="goal-stat"><small>Target amount</small><input class="goal-stat-value" data-goal="${i}" data-goal-field="target" inputmode="decimal" type="number" min="0" step="0.01" value="${g.target}"></div></div><div class="goal-card-footer"><button class="mini-btn danger" data-archive-goal="${i}" type="button">Archive goal</button><button class="mini-btn delete" data-delete-goal="${i}" type="button">Delete</button></div></div>`;
+  const titleHtml=collapsed
+    ? `<div class="goal-title">${esc(g.name)}</div>`
+    : `<input class="goal-title-input" data-goal="${i}" data-goal-field="name" type="text" value="${esc(g.name)}" aria-label="Goal name">`;
+  const amountHtml=`<div class="goal-amount">${euro0(g.current)}</div>`;
+  const targetHtml=g.target>0?`<div class="goal-target">Target ${euro0(g.target)}</div>`:"";
+  const head=goalCardHead(key,titleHtml,amountHtml,targetHtml,g.name);
+  const progressHtml=g.target>0?goalProgressRow(pct):"";
+  const body=`<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary"><div class="goal-stat"><small>Current amount</small><input class="goal-stat-value" data-goal="${i}" data-goal-field="current" inputmode="decimal" type="number" min="0" step="0.01" value="${g.current}"></div><div class="goal-stat"><small>Target amount</small><input class="goal-stat-value" data-goal="${i}" data-goal-field="target" inputmode="decimal" type="number" min="0" step="0.01" value="${g.target}"></div></div><div class="goal-action-row"><button class="mini-btn danger" data-archive-goal="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-goal="${i}" type="button">Delete</button></div></div>`;
+  card.innerHTML=head+progressHtml+body;
   return card;
 }
 function renderGoals(){
@@ -990,6 +1022,10 @@ function renderGoals(){
   });
   const arch=byId("archiveHousePocket");
   if(arch) arch.addEventListener("click",()=>{if(state.housePocket>0)return;state.housePocketArchived=true;persist();render();page("overview");});
+  list.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    pullForm(); persist(); render();
+  }));
   setupGoalReorder(list);
   const overview=byId("overviewCustomGoals");
   if(overview){
