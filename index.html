@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#0b0c0e">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preload" as="image" href="./journey-wallpaper.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Freedom at 50 — Web app v1.8.6.2.2.2</title>
@@ -18,7 +19,7 @@ main{padding:4px 18px calc(106px + var(--safe-bottom))}.page{display:none}.page.
 input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px solid #343840;border-radius:14px;padding:14px 15px;font-size:16px;outline:none}input:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(231,207,99,.1)}input[readonly]{color:#d9d9d5;background:#101215}label{display:block;color:var(--muted);font-size:13px;margin-top:15px}.save-btn,.secondary-btn{width:100%;border-radius:16px;padding:14px 16px;margin-top:16px;font-weight:720}.save-btn{background:var(--yellow);color:#17150b;border:0}.save-btn.complete{background:var(--green);color:#0c130e}.secondary-btn{background:transparent;border:1px solid #454952;color:var(--text)}.loan-card{padding:19px}.loan-title{font-size:19px;font-weight:760}.loan-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.loan-stat{background:#0e1013;border:1px solid #272b31;border-radius:15px;padding:12px}.loan-stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.loan-stat strong{font-size:16px}.editor{margin-top:15px;padding-top:2px}.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.empty-note{color:var(--muted);font-size:14px;line-height:1.5}.success-copy{color:#c9decf;font-size:14px;line-height:1.5;margin:12px 0 0}
 .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(12,13,15,.96);backdrop-filter:blur(18px);border-top:1px solid #292c31;padding:8px 8px calc(8px + var(--safe-bottom));display:grid;grid-template-columns:repeat(5,1fr);gap:3px}.nav-btn{border:0;background:transparent;color:#9799a2;border-radius:15px;min-height:58px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;-webkit-tap-highlight-color:transparent}.nav-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-btn.active{color:var(--yellow);background:rgba(231,207,99,.1)}.save-note{position:fixed;left:50%;bottom:calc(86px + var(--safe-bottom));transform:translate(-50%,14px);background:#f0ead0;color:#17150d;padding:10px 14px;border-radius:999px;font-weight:700;font-size:12px;opacity:0;pointer-events:none;transition:.18s;z-index:80}.save-note.show{opacity:1;transform:translate(-50%,0)}
 
-.journey-card-head{display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}.journey-card-head .loan-title{min-width:0;flex:1}.journey-card-head .pill{margin-left:auto}.journey-chevron{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;padding:0;border:1px solid rgba(218,167,128,.28);border-radius:50%;background:rgba(218,167,128,.055);color:rgba(231,177,137,.88);transition:transform .22s ease}.journey-chevron svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.loan-card:not(.is-collapsed) .journey-chevron{transform:rotate(180deg)}.journey-card-body[hidden]{display:none}.loan-card.is-collapsed{padding-top:17px;padding-bottom:17px}.loan-card.is-collapsed .journey-card-head+.progress{margin-top:12px}.loan-card.is-collapsed .loan-summary{display:none}.loan-card.is-collapsed .editor{display:none}
+.journey-card-head{display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}.journey-card-head .loan-title{min-width:0;flex:1}.journey-card-head .pill{margin-left:auto}.journey-chevron{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;padding:0;border:1px solid rgba(218,167,128,.28);border-radius:50%;background:rgba(218,167,128,.055);color:rgba(231,177,137,.88);transition:transform .22s ease}.journey-chevron svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.loan-card:not(.is-collapsed) .journey-chevron{transform:rotate(180deg)}.journey-card-body[hidden]{display:none}.loan-card.is-collapsed{padding-top:17px;padding-bottom:17px}.loan-card.is-collapsed .journey-card-head+.progress{margin-top:12px}.loan-card.is-collapsed .loan-summary{display:none}.loan-card.is-collapsed .journey-card-footer{display:none}
 .update-banner{position:fixed;left:14px;right:14px;top:calc(12px + env(safe-area-inset-top,0px));z-index:120;max-width:680px;margin:0 auto;background:#f0ead0;color:#17150d;border:1px solid rgba(231,207,99,.75);border-radius:18px;padding:12px 12px 12px 15px;box-shadow:0 12px 34px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:space-between;gap:12px}.update-banner[hidden]{display:none}.update-banner strong{display:block;font-size:14px}.update-banner span{display:block;font-size:12px;opacity:.72;margin-top:2px}.update-btn{border:0;background:#17150d;color:#f5f4f0;border-radius:12px;padding:10px 13px;font-weight:760;white-space:nowrap}
 
 .archive-goal-btn{margin-top:14px;width:auto;padding:10px 14px;border-radius:999px;border:1px solid rgba(231,207,99,.45);background:transparent;color:var(--gold);font-size:13px;font-weight:750;cursor:pointer}
@@ -300,58 +301,91 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.overview-active-v300 #overview .overview-chevron{display:none}
 
-    body.journey-active-v313 .app::before{
-    content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  body.journey-active-v313{background:transparent}
+  html:has(body.journey-active-v313){background:#070809}
+  body.journey-active-v313::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
       #070809 url("./journey-wallpaper.png") center -170px/cover no-repeat;
   }
+  body.journey-active-v313 .app::before{display:none}
   body.journey-active-v313 #journey{
-    padding-top:calc(11vh + 44px);
-    padding-bottom:calc(112px + var(--safe-bottom));
+    position:relative;z-index:1;
+    padding:calc(env(safe-area-inset-top,0px) + 10px) 18px calc(112px + var(--safe-bottom));
   }
   body.journey-active-v313 #journey>.eyebrow{display:none}
   body.journey-active-v313 #journey>h1{
-    font-size:25px;line-height:1.1;letter-spacing:-.035em;margin:0;text-align:center;
-    color:rgba(245,244,240,.76);
+    font-size:25px;line-height:1.1;letter-spacing:-.035em;margin:0 0 24px;text-align:center;
+    color:rgba(236,232,224,.78);
   }
-  body.journey-active-v313 #journey>.intro{
-    font-size:14px;line-height:1.55;color:rgba(222,220,214,.62);max-width:18rem;
-    margin:11px auto 116px;padding:0 14px;text-align:center;
-  }
-  body.journey-active-v313 #journey .journey-actions{justify-content:flex-end;margin-bottom:20px}
+  body.journey-active-v313 #journey .journey-actions{justify-content:flex-end;margin:0 0 18px}
   body.journey-active-v313 #journey #toggleAddJourney{
     border-color:rgba(218,167,128,.42);background:rgba(16,18,20,.30);
     color:rgba(231,177,137,.88);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
   }
-  body.journey-active-v313 #journey .stack{gap:20px}
-  body.journey-active-v313 #journey .card{
-    position:relative;overflow:hidden;
-    background:
-      linear-gradient(155deg,rgba(255,255,255,.075) 0%,rgba(255,255,255,.018) 34%,rgba(255,255,255,0) 58%),
-      linear-gradient(145deg,rgba(27,29,32,.60),rgba(13,15,17,.54));
-    backdrop-filter:blur(14px) saturate(120%);
-    -webkit-backdrop-filter:blur(14px) saturate(120%);
-    box-shadow:
-      inset 0 1px 0 rgba(255,255,255,.32),
-      inset 1px 0 0 rgba(255,255,255,.11),
-      inset -1px 0 0 rgba(255,255,255,.035),
-      inset 0 -1px 0 rgba(0,0,0,.24),
-      0 12px 30px rgba(0,0,0,.16);
+  body.journey-active-v313 #journey .stack{gap:18px}
+  body.journey-active-v313 #journey .card.loan-card,
+  body.journey-active-v313 #journey .card.add-journey-card{
+    position:relative;overflow:visible;
+    border:1px solid rgba(220,190,150,.22);
+    border-radius:22px;
+    padding:16px 16px 15px;
+    background:rgba(18,20,24,.34);
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+    box-shadow:none;
   }
-  body.journey-active-v313 #journey .loan-card{
-    background:
-      linear-gradient(155deg,rgba(255,255,255,.035) 0%,rgba(255,255,255,.006) 34%,rgba(255,255,255,0) 58%),
-      linear-gradient(145deg,rgba(27,29,32,.14),rgba(13,15,17,.10));
-    backdrop-filter:blur(3px) saturate(108%);
-    -webkit-backdrop-filter:blur(3px) saturate(108%);
+  body.journey-active-v313 #journey .card::before{display:none}
+  body.journey-active-v313 #journey .loan-title{color:rgba(236,232,224,.78)}
+  body.journey-active-v313 #journey .loan-title-input{
+    min-width:0;flex:1;margin:0;padding:0 0 2px;border:0;border-radius:0;
+    background:transparent;font-size:19px;font-weight:760;
+    color:rgba(236,232,224,.78);
+    border-bottom:1px solid rgba(220,190,150,.22);
   }
-  body.journey-active-v313 #journey .card::before{
-    content:"";position:absolute;z-index:0;pointer-events:none;left:8%;right:8%;top:0;height:38%;
-    background:linear-gradient(180deg,rgba(255,255,255,.085),rgba(255,255,255,0));
-    border-radius:999px;filter:blur(18px);transform:translateY(-62%);
+  body.journey-active-v313 #journey .loan-title-input:focus{
+    border-bottom-color:rgba(231,207,99,.45);box-shadow:none;
   }
-  body.journey-active-v313 #journey .card>*{position:relative;z-index:1}
+  body.journey-active-v313 #journey .loan-stat{
+    background:rgba(18,20,24,.20);
+    border:1px solid rgba(220,190,150,.16);
+    border-radius:15px;padding:12px;
+  }
+  body.journey-active-v313 #journey .loan-stat small{
+    display:block;color:rgba(190,188,182,.58);font-size:11px;margin-bottom:5px;
+  }
+  body.journey-active-v313 #journey .loan-stat strong{
+    font-size:16px;font-weight:650;color:rgba(236,232,224,.82);
+  }
+  body.journey-active-v313 #journey .loan-stat strong.freedom-estimate{
+    color:rgba(132,189,145,.88);
+  }
+  body.journey-active-v313 #journey .loan-stat input.loan-stat-value{
+    width:100%;margin:0;padding:0;border:0;border-radius:0;
+    background:transparent;font-size:16px;font-weight:650;
+    color:rgba(236,232,224,.82);
+  }
+  body.journey-active-v313 #journey .loan-stat input.loan-stat-value:focus{
+    box-shadow:none;outline:none;
+  }
+  body.journey-active-v313 #journey .loan-card .progress{
+    margin-top:14px;height:5px;background:rgba(255,255,255,.08);
+  }
+  body.journey-active-v313 #journey .loan-card .progress span{background:#c9a07a}
+  body.journey-active-v313 #journey .journey-card-footer{
+    display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;
+  }
+  body.journey-active-v313 #journey .journey-card-footer .mini-btn.danger,
+  body.journey-active-v313 #journey .journey-card-footer .mini-btn.delete{
+    font-size:12px;padding:8px 11px;
+  }
+  body.journey-active-v313 #journey .add-journey-card label,
+  body.journey-active-v313 #journey .add-journey-card .empty-note{
+    color:rgba(190,188,182,.58);
+  }
+  body.journey-active-v313 #journey .add-journey-card h2{
+    color:rgba(236,232,224,.78);font-size:20px;
+  }
 }
 
 /* ===== Freedom v1.8.5 mobile home ===== */
@@ -558,7 +592,7 @@ body.home183 .demo183{
     </div>
   </div>
 </section>
-<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><h1>Pieces of your future, being returned.</h1><p class="intro">Rename a journey, update its balance, add a new one, or archive one you no longer want on the active plan.</p><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div><button class="secondary-btn" id="restoreLoans">Restore original starting journeys</button></section>
+<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><h1>Pieces of your future being returned.</h1><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div><button class="secondary-btn" id="restoreLoans">Restore original starting journeys</button></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><h1>Life alongside the plan.</h1><p class="intro">Debt progress matters, but so do the things you are building and enjoying now.</p>
 <div class="goal-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div>
 <article class="card add-journey-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><div class="editor-grid"><div><label for="newGoalCurrent">Current amount</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addGoal">Add Goal</button></article>
@@ -599,6 +633,7 @@ body.home183 .demo183{
 (function(){
 "use strict";
 const KEY="freedom50-mobile-v1";
+(function preloadJourneyWallpaper(){const img=new Image();img.src="./journey-wallpaper.png";})();
 const HOUSE_POCKET_START=1000;
 const defaults={archivedJourneys:[],archivedGoals:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensionValue:48951.79,pensionPersonal:342.50,pensionEmployer:242.50};
 let state;try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");state=saved&&saved.loans?Object.assign({},defaults,saved):JSON.parse(JSON.stringify(defaults));}catch(e){state=JSON.parse(JSON.stringify(defaults));}
@@ -679,7 +714,81 @@ function renderGoals(){
     overview.querySelectorAll("[data-page-link]").forEach(el=>el.addEventListener("click",()=>page(el.dataset.pageLink)));
   }
 }
-function renderLoans(){const list=byId("loanList");list.innerHTML="";state.loans.forEach((loan,i)=>{if(loan.collapsed===undefined)loan.collapsed=true;const returned=Math.max(0,loan.starting-loan.current);const pct=loan.starting?Math.min(100,returned/loan.starting*100):0;const card=document.createElement("article");card.className="card loan-card"+(loan.collapsed?" is-collapsed":"")+(loan.current<=0?" completed":"");card.innerHTML=`<div class="journey-card-head" data-toggle-loan="${i}"><div class="loan-title">${esc(loan.name)}</div><div class="pill ${loan.current<=0?"complete":""}">${loan.current<=0?"Complete ✓":pct.toFixed(1)+"% returned"}</div><button class="journey-chevron" type="button" aria-label="Toggle ${esc(loan.name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div><div class="progress"><span style="width:${pct}%"></span></div><div class="journey-card-body" ${loan.collapsed?"hidden":""}><div class="loan-summary"><div class="loan-stat"><small>Money returned</small><strong>${euro2(returned)}</strong></div><div class="loan-stat"><small>Current balance</small><strong>${euro2(loan.current)}</strong></div><div class="loan-stat"><small>Monthly repayment</small><strong>${euro2(loan.payment)}</strong></div><div class="loan-stat"><small>Estimated freedom</small><strong>${monthsText(loan.current,loan.payment)}</strong></div></div><div class="editor"><label>Journey name</label><input data-loan="${i}" data-field="name" type="text" value="${esc(loan.name)}"><div class="editor-grid"><div><label>Current balance</label><input data-loan="${i}" data-field="current" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.current}"></div><div><label>Monthly repayment</label><input data-loan="${i}" data-field="payment" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.payment}"></div></div><div class="journey-actions" style="margin-top:12px;margin-bottom:0"><button class="mini-btn danger" data-archive-loan="${i}" type="button">Archive journey</button></div></div></div>`;list.appendChild(card)});list.querySelectorAll("[data-toggle-loan]").forEach(head=>head.addEventListener("click",e=>{if(e.target.closest("input,button[data-archive-loan]"))return;const i=Number(head.dataset.toggleLoan);state.loans[i].collapsed=!state.loans[i].collapsed;persist();render()}));list.querySelectorAll("input[data-loan]").forEach(input=>input.addEventListener("change",e=>{const i=Number(e.target.dataset.loan),field=e.target.dataset.field;if(field==="name"){const name=e.target.value.trim();if(!name){e.target.value=state.loans[i].name;return}state.loans[i].name=name}else{state.loans[i][field]=Math.max(0,Number(e.target.value)||0)}persist();render()}));list.querySelectorAll("[data-archive-loan]").forEach(btn=>btn.addEventListener("click",e=>{const i=Number(e.currentTarget.dataset.archiveLoan),loan=state.loans[i];if(!loan)return;const ok=confirm(`Archive ${loan.name}?\n\nIt will be removed from the active Journey and Overview calculations, but kept in More → Archived goals & journeys.`);if(!ok)return;state.archivedJourneys.unshift({...loan,archivedAt:new Date().toISOString()});state.loans.splice(i,1);persist();render()}))}
+function renderLoans(){
+  const list=byId("loanList");
+  list.innerHTML="";
+  state.loans.forEach((loan,i)=>{
+    if(loan.collapsed===undefined)loan.collapsed=true;
+    const returned=Math.max(0,loan.starting-loan.current);
+    const pct=loan.starting?Math.min(100,returned/loan.starting*100):0;
+    const freedom=monthsText(loan.current,loan.payment);
+    const titleHtml=loan.collapsed
+      ? `<div class="loan-title">${esc(loan.name)}</div>`
+      : `<input class="loan-title-input" data-loan="${i}" data-field="name" type="text" value="${esc(loan.name)}" aria-label="Journey name">`;
+    const card=document.createElement("article");
+    card.className="card loan-card"+(loan.collapsed?" is-collapsed":"")+(loan.current<=0?" completed":"");
+    card.innerHTML=`<div class="journey-card-head" data-toggle-loan="${i}">${titleHtml}<div class="pill ${loan.current<=0?"complete":""}">${loan.current<=0?"Complete ✓":pct.toFixed(1)+"% returned"}</div><button class="journey-chevron" type="button" aria-label="Toggle ${esc(loan.name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div><div class="progress"><span style="width:${pct}%"></span></div><div class="journey-card-body" ${loan.collapsed?"hidden":""}><div class="loan-summary"><div class="loan-stat"><small>Money returned</small><strong>${euro2(returned)}</strong></div><div class="loan-stat"><small>Current balance</small><input class="loan-stat-value" data-loan="${i}" data-field="current" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.current}" aria-label="Current balance"></div><div class="loan-stat"><small>Monthly repayment</small><input class="loan-stat-value" data-loan="${i}" data-field="payment" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.payment}" aria-label="Monthly repayment"></div><div class="loan-stat"><small>Estimated freedom</small><strong class="freedom-estimate" data-freedom-for="${i}">${esc(freedom)}</strong></div></div><div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">Archive journey</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button></div></div>`;
+    list.appendChild(card);
+  });
+  const skipToggle=el=>el.closest("input,button[data-archive-loan],button[data-delete-loan]");
+  list.querySelectorAll("[data-toggle-loan]").forEach(head=>head.addEventListener("click",e=>{
+    if(skipToggle(e.target))return;
+    const i=Number(head.dataset.toggleLoan);
+    state.loans[i].collapsed=!state.loans[i].collapsed;
+    persist();render();
+  }));
+  function applyLoanField(i,field,value){
+    if(field==="name"){
+      const name=String(value||"").trim();
+      if(!name)return false;
+      state.loans[i].name=name;
+    }else{
+      state.loans[i][field]=Math.max(0,Number(value)||0);
+    }
+    return true;
+  }
+  function refreshFreedom(i){
+    const loan=state.loans[i];
+    if(!loan)return;
+    const el=list.querySelector(`[data-freedom-for="${i}"]`);
+    if(el)el.textContent=monthsText(loan.current,loan.payment);
+  }
+  list.querySelectorAll("input[data-loan]").forEach(input=>{
+    input.addEventListener("change",e=>{
+      const i=Number(e.target.dataset.loan),field=e.target.dataset.field;
+      if(field==="name"&&!applyLoanField(i,field,e.target.value)){
+        e.target.value=state.loans[i].name;return;
+      }
+      applyLoanField(i,field,e.target.value);
+      persist();render();
+    });
+    if(input.dataset.field==="current"||input.dataset.field==="payment"){
+      input.addEventListener("input",e=>{
+        const i=Number(e.target.dataset.loan),field=e.target.dataset.field;
+        applyLoanField(i,field,e.target.value);
+        refreshFreedom(i);
+      });
+    }
+  });
+  list.querySelectorAll("[data-archive-loan]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const i=Number(e.currentTarget.dataset.archiveLoan),loan=state.loans[i];
+    if(!loan)return;
+    const ok=confirm(`Archive ${loan.name}?\n\nIt will be removed from the active Journey and Overview calculations, but kept in More → Archived goals & journeys.`);
+    if(!ok)return;
+    state.archivedJourneys.unshift({...loan,archivedAt:new Date().toISOString()});
+    state.loans.splice(i,1);
+    persist();render();
+  }));
+  list.querySelectorAll("[data-delete-loan]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const i=Number(e.currentTarget.dataset.deleteLoan);
+    if(!state.loans[i])return;
+    if(!confirm("Delete this journey?"))return;
+    state.loans.splice(i,1);
+    persist();render();
+  }));
+}
 function renderArchive(){const wrap=byId("archiveList");if(!wrap)return;const items=[];if(state.housePocketArchived){items.push({type:"housePocket",name:"House Pocket",detail:"Completed victory • €1,000 returned"})}
 Object.entries(state.hiddenBuiltInGoals).forEach(([key,hidden])=>{if(hidden&&!state.deletedBuiltInGoals[key]){const m=builtInGoalMeta[key];items.push({type:"builtInGoal",key,name:m.name,detail:`Archived goal • ${euro2(state[m.valueKey])} current value`})}});
 state.archivedGoals.forEach((x,i)=>items.push({type:"goal",index:i,name:x.name,detail:`Archived goal • ${euro2(x.current)} current${x.target>0?" • "+euro2(x.target)+" target":""}`}));
