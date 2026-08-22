@@ -731,10 +731,24 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     pointer-events:none;
   }
   body.pension-active-v315 #pension .pension-toggle input:checked + .pension-toggle-track{
-    background:rgba(201,160,122,.28);border-color:rgba(201,160,122,.35);
+    background:rgba(132,189,145,.28);border-color:rgba(132,189,145,.38);
   }
   body.pension-active-v315 #pension .pension-toggle input:checked + .pension-toggle-track + .pension-toggle-thumb{
-    transform:translateX(18px);background:rgba(236,232,224,.82);
+    transform:translateX(18px);background:rgba(236,232,224,.90);
+  }
+  body.pension-active-v315 #pension #pensionList .pension-card{
+    touch-action:pan-y;transition:transform .22s ease,box-shadow .22s ease;
+  }
+  body.pension-active-v315 #pension #pensionList .pension-card.is-dragging{
+    z-index:30;position:relative;
+    box-shadow:0 14px 36px rgba(0,0,0,.28);
+    transition:transform .06s ease,box-shadow .22s ease;
+  }
+  body.pension-dragging{
+    user-select:none;-webkit-user-select:none;
+  }
+  body.pension-dragging #pension #pensionList .pension-card:not(.is-dragging){
+    transition:transform .22s ease;
   }
   body.pension-active-v315 #pension .pension-action-row{
     display:flex;align-items:center;gap:8px;margin-top:16px;flex-wrap:wrap;
@@ -1664,6 +1678,104 @@ function renderPensionCard(i){
   card.innerHTML=head+body;
   return card;
 }
+let pensionDragJustEnded=false;
+function setupPensionReorder(list){
+  if(!list||window.matchMedia("(min-width:821px)").matches)return;
+  const HOLD_MS=500;
+  const MOVE_CANCEL=12;
+  let drag=null,timer=null;
+
+  function pensionCards(){return [...list.querySelectorAll(":scope > .pension-card")];}
+  function isInteractive(t){return t&&t.closest("input,button,textarea,select,a,[contenteditable=true],.pension-toggle");}
+  function clearShifts(){
+    pensionCards().forEach(c=>{c.style.transform="";c.style.touchAction="";c.classList.remove("is-dragging");});
+    document.body.classList.remove("pension-dragging");
+  }
+  function targetIndex(y,fromIdx){
+    const cards=pensionCards();
+    let insertAt=fromIdx;
+    cards.forEach(card=>{
+      const idx=Number(card.dataset.pensionIndex);
+      if(idx===fromIdx)return;
+      const r=card.getBoundingClientRect();
+      const mid=r.top+r.height/2;
+      if(fromIdx<idx&&y>=mid)insertAt=Math.max(insertAt,idx);
+      else if(fromIdx>idx&&y<=mid)insertAt=Math.min(insertAt,idx);
+    });
+    return insertAt;
+  }
+  function shiftSiblings(fromIdx,toIdx){
+    const gap=18;
+    pensionCards().forEach(card=>{
+      if(card.classList.contains("is-dragging"))return;
+      const idx=Number(card.dataset.pensionIndex);
+      const h=card.offsetHeight+gap;
+      let shift=0;
+      if(fromIdx<toIdx&&idx>fromIdx&&idx<=toIdx)shift=-h;
+      if(fromIdx>toIdx&&idx<fromIdx&&idx>=toIdx)shift=h;
+      card.style.transform=shift?`translateY(${shift}px)`:"";
+    });
+  }
+
+  pensionCards().forEach(card=>{
+    let startX=0,startY=0,pressId=null;
+    const onMove=e=>{
+      if(drag&&drag.card===card){
+        e.preventDefault();
+        const dy=e.clientY-drag.startY;
+        card.style.transform=`translateY(${dy}px) scale(1.015)`;
+        drag.toIdx=targetIndex(e.clientY,drag.fromIdx);
+        shiftSiblings(drag.fromIdx,drag.toIdx);
+        return;
+      }
+      if(timer&&pressId===e.pointerId&&(Math.abs(e.clientX-startX)>MOVE_CANCEL||Math.abs(e.clientY-startY)>MOVE_CANCEL)){
+        clearTimeout(timer);timer=null;pressId=null;
+      }
+    };
+    const onEnd=e=>{
+      if(timer&&pressId===e.pointerId){clearTimeout(timer);timer=null;pressId=null;}
+      if(drag&&drag.card===card){
+        e.preventDefault();
+        const from=drag.fromIdx,to=drag.toIdx;
+        clearShifts();
+        drag=null;
+        try{card.releasePointerCapture(e.pointerId);}catch(_){}
+        document.removeEventListener("pointermove",onMove);
+        document.removeEventListener("pointerup",onEnd);
+        document.removeEventListener("pointercancel",onEnd);
+        pensionDragJustEnded=true;
+        setTimeout(()=>{pensionDragJustEnded=false;},350);
+        if(from!==to){
+          const item=state.pensions.splice(from,1)[0];
+          state.pensions.splice(to,0,item);
+          persist();
+        }
+        renderPensions();
+        updateOverviewPensionCard();
+      }
+    };
+    card.addEventListener("pointerdown",e=>{
+      if(isInteractive(e.target)||!e.isPrimary)return;
+      startX=e.clientX;startY=e.clientY;pressId=e.pointerId;
+      timer=setTimeout(()=>{
+        timer=null;
+        const fromIdx=Number(card.dataset.pensionIndex);
+        drag={card,fromIdx,toIdx:fromIdx,startY:e.clientY};
+        card.classList.add("is-dragging");
+        document.body.classList.add("pension-dragging");
+        card.style.touchAction="none";
+        try{card.setPointerCapture(e.pointerId);}catch(_){}
+        if(navigator.vibrate)navigator.vibrate(10);
+        document.addEventListener("pointermove",onMove,{passive:false});
+        document.addEventListener("pointerup",onEnd);
+        document.addEventListener("pointercancel",onEnd);
+      },HOLD_MS);
+    });
+    card.addEventListener("pointermove",onMove);
+    card.addEventListener("pointerup",onEnd);
+    card.addEventListener("pointercancel",onEnd);
+  });
+}
 function renderPensions(){
   const list=byId("pensionList");
   if(!list) return;
@@ -1675,7 +1787,7 @@ function renderPensions(){
   });
   const skipToggle=el=>el.closest("input,button[data-archive-pension],button[data-delete-pension],button[data-save-pension],.save-btn,.pension-toggle");
   list.querySelectorAll("[data-toggle-pension]").forEach(head=>head.addEventListener("click",e=>{
-    if(skipToggle(e.target)) return;
+    if(pensionDragJustEnded||skipToggle(e.target)) return;
     const i=Number(head.dataset.togglePension);
     const p=state.pensions[i];
     if(!p) return;
@@ -1721,6 +1833,7 @@ function renderPensions(){
       if(aEl) aEl.textContent=euro2(monthly*12);
     });
   });
+  setupPensionReorder(list);
 }
 function renderArchive(){const wrap=byId("archiveList");if(!wrap)return;const items=[];if(state.housePocketArchived){items.push({type:"housePocket",name:"House Pocket",detail:"Completed victory • €1,000 returned"})}
 Object.entries(state.hiddenBuiltInGoals).forEach(([key,hidden])=>{if(hidden&&!state.deletedBuiltInGoals[key]){const m=builtInGoalMeta[key];items.push({type:"builtInGoal",key,name:m.name,detail:`Archived goal • ${euro2(state[m.valueKey])} current value`})}});
