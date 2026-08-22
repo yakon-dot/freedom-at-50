@@ -7,6 +7,7 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <link rel="preload" as="image" href="./journey-wallpaper.png">
+<link rel="preload" as="image" href="./goals-wallpaper.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Freedom at 50 — Web app v1.8.6.2.2.2</title>
@@ -26,6 +27,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .archive-goal-btn:active{transform:translateY(1px)}
 
 .journey-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.goals-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .mini-btn{width:auto;border:1px solid var(--line);background:transparent;color:var(--text);padding:9px 12px;border-radius:999px;font-size:13px;font-weight:760;cursor:pointer}
 .mini-btn.gold{border-color:rgba(231,207,99,.5);color:var(--gold)}
 .mini-btn.danger{border-color:rgba(255,255,255,.14);color:var(--muted)}
@@ -415,6 +417,142 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.journey-active-v313 #journey .add-journey-card h2{
     color:rgba(236,232,224,.78);font-size:20px;
   }
+
+  body.goals-active-v314{background:transparent}
+  html:has(body.goals-active-v314){background:#070809}
+  body.goals-active-v314::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
+      #070809 url("./goals-wallpaper.png") center -140px/cover no-repeat;
+  }
+  body.goals-active-v314 .app::before{display:none}
+  body.goals-active-v314 .app{position:relative;z-index:1;background:transparent}
+  body.goals-active-v314 .app>header{display:none}
+  body.goals-active-v314 .app>main{padding-top:0}
+  body.goals-active-v314 #goals{
+    position:relative;z-index:1;
+    padding:calc(env(safe-area-inset-top,0px) + 10px) 18px calc(112px + var(--safe-bottom));
+  }
+  body.goals-active-v314 #goals>.eyebrow{display:none}
+  body.goals-active-v314 #goals .goals-hero{
+    --hero-text-top:clamp(62px,calc(20vh - 58px),117px);
+    position:relative;
+    min-height:clamp(200px,36vh,300px);
+    padding:clamp(40px,7vh,60px) 18px clamp(64px,11vh,100px);
+    text-align:center;box-sizing:border-box;
+  }
+  body.goals-active-v314 #goals .goals-hero h1{
+    position:absolute;left:18px;right:18px;top:var(--hero-text-top);
+    font-size:25px;line-height:1.1;letter-spacing:-.035em;margin:0;
+    color:rgba(236,232,224,.78);
+  }
+  body.goals-active-v314 #goals .goals-hero p{
+    position:absolute;left:18px;right:18px;
+    top:calc(var(--hero-text-top) + 66px);max-width:18rem;margin:0 auto;
+    font-size:14px;line-height:1.55;
+    color:rgba(200,198,192,.55);
+  }
+  body.goals-active-v314 #goals .goals-actions{justify-content:flex-end;margin:0 0 clamp(6px,1vh,10px)}
+  body.goals-active-v314 #goals #goalsList{margin-top:clamp(18px,3.5vh,32px);gap:18px}
+  body.goals-active-v314 #goals #goalsList .goal-card{
+    touch-action:pan-y;transition:transform .22s ease,box-shadow .22s ease;
+  }
+  body.goals-active-v314 #goals #goalsList .goal-card.is-dragging{
+    z-index:30;position:relative;
+    box-shadow:0 14px 36px rgba(0,0,0,.28);
+    transition:transform .06s ease,box-shadow .22s ease;
+  }
+  body.goals-dragging{user-select:none;-webkit-user-select:none}
+  body.goals-dragging #goals #goalsList .goal-card:not(.is-dragging){
+    transition:transform .22s ease;
+  }
+  body.goals-active-v314 #goals #toggleAddGoal{
+    border-color:rgba(218,167,128,.42);background:rgba(16,18,20,.30);
+    color:rgba(231,177,137,.88);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  body.goals-active-v314 #goals .stack{gap:18px}
+  body.goals-active-v314 #goals .card.goal-card,
+  body.goals-active-v314 #goals .card.add-goal-card{
+    position:relative;overflow:visible;
+    border:1px solid rgba(220,190,150,.22);
+    border-radius:22px;
+    padding:16px 16px 15px;
+    background:rgba(18,20,24,.34);
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+    box-shadow:none;
+  }
+  body.goals-active-v314 #goals .card::before{display:none}
+  body.goals-active-v314 #goals .goal-title{color:rgba(236,232,224,.78)}
+  body.goals-active-v314 #goals .goal-title-input{
+    min-width:0;flex:1;margin:0;padding:0 0 2px;border:0;border-radius:0;
+    background:transparent;font-size:19px;font-weight:760;
+    color:rgba(236,232,224,.78);
+    border-bottom:1px solid rgba(220,190,150,.22);
+  }
+  body.goals-active-v314 #goals .goal-title-input:focus{
+    border-bottom-color:rgba(231,207,99,.45);box-shadow:none;
+  }
+  body.goals-active-v314 #goals .goal-stat{
+    background:rgba(18,20,24,.52);
+    border:1px solid rgba(220,190,150,.20);
+    border-radius:15px;padding:12px;
+  }
+  body.goals-active-v314 #goals .goal-stat small{
+    display:block;color:rgba(190,188,182,.58);font-size:11px;margin-bottom:5px;
+  }
+  body.goals-active-v314 #goals .goal-stat strong{
+    font-size:16px;font-weight:650;color:rgba(236,232,224,.82);
+  }
+  body.goals-active-v314 #goals .goal-stat input.goal-stat-value,
+  body.goals-active-v314 #goals .goal-stat input[type="number"],
+  body.goals-active-v314 #goals .goal-stat input[type="text"]{
+    width:100%;margin:0;padding:0;border:0;border-radius:0;
+    background:transparent;font-size:16px;font-weight:650;
+    color:rgba(236,232,224,.82);
+  }
+  body.goals-active-v314 #goals .goal-stat input:focus{
+    box-shadow:none;outline:none;
+  }
+  body.goals-active-v314 #goals .goal-card .progress{
+    margin-top:14px;height:5px;background:rgba(255,255,255,.08);
+  }
+  body.goals-active-v314 #goals .goal-card .progress span{background:#c9a07a}
+  body.goals-active-v314 #goals .goal-card-footer{
+    display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;
+  }
+  body.goals-active-v314 #goals .goal-card-footer .mini-btn.danger,
+  body.goals-active-v314 #goals .goal-card-footer .mini-btn.delete{
+    font-size:12px;padding:8px 11px;
+  }
+  body.goals-active-v314 #goals .add-goal-card label,
+  body.goals-active-v314 #goals .add-goal-card .empty-note{
+    color:rgba(190,188,182,.58);
+  }
+  body.goals-active-v314 #goals .add-goal-card h2{
+    color:rgba(236,232,224,.78);font-size:20px;
+  }
+  body.goals-active-v314 #goals .goal-card .save-btn{
+    width:100%;margin-top:14px;border-radius:16px;padding:14px 16px;
+    background:rgba(201,160,122,.88);color:#17150b;border:0;font-weight:720;
+  }
+  body.goals-active-v314 #goals .goal-card .save-btn.complete{
+    background:rgba(132,189,145,.88);color:#0c130e;
+  }
+  body.goals-active-v314 #goals .goal-card .detail{
+    color:rgba(190,188,182,.58);font-size:12px;margin-top:8px;line-height:1.45;
+  }
+  body.goals-active-v314 #goals .goal-summary{
+    display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;
+  }
+  body.goals-active-v314 #goals .goal-card.is-collapsed{padding-top:17px;padding-bottom:17px}
+  body.goals-active-v314 #goals .goal-card.is-collapsed .journey-card-head+.progress{margin-top:12px}
+  body.goals-active-v314 #goals .journey-card-head .goal-title{min-width:0;flex:1}
+  body.goals-active-v314 #goals .goal-card:not(.is-collapsed) .journey-chevron{transform:rotate(180deg)}
+  body.goals-active-v314 #goals .goal-card .journey-card-head .pill{margin-left:auto}
+  body.goals-active-v314 #goals .goal-card.completed .pill.complete{
+    color:rgba(132,189,145,.95);border-color:rgba(132,189,145,.38);
+  }
 }
 
 /* ===== Freedom v1.8.5 mobile home ===== */
@@ -622,17 +760,7 @@ body.home183 .demo183{
   </div>
 </section>
 <section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div><button class="secondary-btn" id="restoreLoans">Restore original starting journeys</button></section>
-<section class="page" id="goals"><div class="eyebrow">Goals</div><h1>Life alongside the plan.</h1><p class="intro">Debt progress matters, but so do the things you are building and enjoying now.</p>
-<div class="goal-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div>
-<article class="card add-journey-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><div class="editor-grid"><div><label for="newGoalCurrent">Current amount</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addGoal">Add Goal</button></article>
-<div class="stack">
-  <article class="card gold" id="housePocketActive"><h2>House Pocket</h2><label for="housePocketRemaining">Amount still owed</label><input id="housePocketRemaining" type="number" readonly><label for="housePocketPayment">Payment made</label><input id="housePocketPayment" inputmode="decimal" type="number" min="0" step="10" placeholder="Enter payment"><button class="save-btn" id="recordHousePocket">Record Payment</button><p class="success-copy">When this reaches €0, Freedom will ask whether you want to remove House Pocket from active Goals and keep it as a completed victory.</p></article>
-  <article class="card completed" id="housePocketCompleted" hidden><div class="row"><div><div class="label">Completed victory</div><h2 style="margin-top:5px">House Pocket</h2></div><div class="pill complete">Complete ✓</div></div><p class="success-copy">The full €1,000 has been returned. Keep it here for a while, then archive it when you’re ready.</p><button class="archive-goal-btn" id="archiveHousePocket" type="button">Archive from Goals</button></article>
-  <article class="card house" id="houseFundCard"><h2>House Fund</h2><label for="houseFund">Current joint balance</label><input id="houseFund" inputmode="decimal" type="number" min="0" step="1"><div class="progress"><span id="houseFundBar"></span></div><div class="detail">Reference milestone: €50,000</div><button class="save-btn" data-save>Save House Fund</button><div class="goal-controls"><button class="mini-btn danger" data-archive-built-in="houseFund" type="button">Archive goal</button><button class="mini-btn delete" data-delete-built-in="houseFund" type="button">Delete</button></div></article>
-  <article class="card holiday" id="holidayFundCard"><h2>Holiday Fund</h2><label for="holidayFund">Current balance</label><input id="holidayFund" inputmode="decimal" type="number" min="0" step="1"><label for="holidayMonthly">Combined monthly contribution</label><input id="holidayMonthly" inputmode="decimal" type="number" min="0" step="1"><button class="save-btn" data-save>Save Holiday Fund</button><div class="goal-controls"><button class="mini-btn danger" data-archive-built-in="holidayFund" type="button">Archive goal</button><button class="mini-btn delete" data-delete-built-in="holidayFund" type="button">Delete</button></div></article>
-  <article class="card savings" id="personalSavingsCard"><h2>Personal Savings</h2><label for="personalSavings">Current balance</label><input id="personalSavings" inputmode="decimal" type="number" min="0" step="1"><div class="progress"><span id="savingsBar"></span></div><div class="detail">First milestone: €5,000</div><button class="save-btn" data-save>Save Personal Savings</button><div class="goal-controls"><button class="mini-btn danger" data-archive-built-in="personalSavings" type="button">Archive goal</button><button class="mini-btn delete" data-delete-built-in="personalSavings" type="button">Delete</button></div></article>
-  <div id="customGoalsList" class="stack"></div>
-</div></section>
+<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><div class="editor-grid"><div><label for="newGoalCurrent">Current amount</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><h1>Future freedom, growing quietly.</h1><p class="intro">The value leads. Contributions sit underneath it when you need the detail.</p><article class="card pension"><div class="label">Current pension value</div><div class="value" id="pensionDisplay"></div><label for="pensionValue">Update pension value</label><input id="pensionValue" inputmode="decimal" type="number" min="0" step="0.01"><label for="pensionPersonal">Your monthly contribution</label><input id="pensionPersonal" inputmode="decimal" type="number" min="0" step="0.01"><label for="pensionEmployer">Employer contribution</label><input id="pensionEmployer" inputmode="decimal" type="number" min="0" step="0.01"><div class="loan-summary"><div class="loan-stat"><small>Total added monthly</small><strong id="pensionMonthlyTotal"></strong></div><div class="loan-stat"><small>Annual contributions</small><strong id="pensionAnnual"></strong></div></div><button class="save-btn" data-save>Save Pension</button></article></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card" id="moreArchive"><h2>Archived goals & journeys</h2><p class="empty-note">Finished or removed items live here instead of disappearing forever.</p><button class="mini-btn gold archive-toggle" id="toggleArchiveList" type="button">View archived items</button><div class="archive-list" id="archiveList" hidden></div></article><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
 <article class="card" id="moreCompanion"><h2>Companion</h2><p class="empty-note">Patricia lives here when the companion layer needs its own space. For now, Home stays quiet unless there is a reason for her to appear.</p></article>
@@ -663,6 +791,7 @@ body.home183 .demo183{
 "use strict";
 const KEY="freedom50-mobile-v1";
 (function preloadJourneyWallpaper(){const img=new Image();img.src="./journey-wallpaper.png";})();
+(function preloadGoalsWallpaper(){const img=new Image();img.src="./goals-wallpaper.png";})();
 const HOUSE_POCKET_START=1000;
 const defaults={archivedJourneys:[],archivedGoals:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensionValue:48951.79,pensionPersonal:342.50,pensionEmployer:242.50};
 let state;try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");state=saved&&saved.loans?Object.assign({},defaults,saved):JSON.parse(JSON.stringify(defaults));}catch(e){state=JSON.parse(JSON.stringify(defaults));}
@@ -695,6 +824,7 @@ function page(id){
   document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.page===id));
   document.body.classList.toggle("overview-active-v300",id==="overview");
   document.body.classList.toggle("journey-active-v313",id==="journey");
+  document.body.classList.toggle("goals-active-v314",id==="goals");
   document.body.classList.remove("overview-active");
   history.replaceState(null,"","#"+id);
   window.scrollTo(0,0)
@@ -708,41 +838,258 @@ const builtInGoalMeta={
   holidayFund:{name:"Holiday Fund",valueKey:"holidayFund",target:0,cardId:"holidayFundCard",overviewId:"overviewHolidayCard"},
   personalSavings:{name:"Personal Savings",valueKey:"personalSavings",target:5000,cardId:"personalSavingsCard",overviewId:"overviewSavingsCard"}
 };
+let goalDragJustEnded=false;
+if(!state.goalCollapsed)state.goalCollapsed={};
+function visibleGoalKeys(){
+  const keys=[];
+  const hp=state.housePocket;
+  if(!state.housePocketArchived) keys.push(hp>0?"housePocket":"housePocketDone");
+  ["houseFund","holidayFund","personalSavings"].forEach(k=>{
+    if(!state.hiddenBuiltInGoals[k]&&!state.deletedBuiltInGoals[k]) keys.push(k);
+  });
+  state.customGoals.forEach((_,i)=>keys.push("custom:"+i));
+  return keys;
+}
+function resolvedGoalOrder(){
+  const visible=visibleGoalKeys();
+  if(!Array.isArray(state.goalOrder)||!state.goalOrder.length) return visible;
+  const ordered=state.goalOrder.filter(k=>visible.includes(k));
+  visible.forEach(k=>{if(!ordered.includes(k)) ordered.push(k);});
+  return ordered;
+}
+function goalCollapsed(key){if(state.goalCollapsed[key]===undefined) return true; return !!state.goalCollapsed[key];}
+function toggleGoalCollapsed(key){state.goalCollapsed[key]=!goalCollapsed(key); persist(); renderGoals();}
+function goalHeadHtml(key,title,expanded){
+  const collapsed=goalCollapsed(key);
+  const titleHtml=(!collapsed&&expanded)
+    ? `<input class="goal-title-input" data-goal-title="${esc(key)}" type="text" value="${esc(title)}" aria-label="Goal name">`
+    : `<div class="goal-title">${esc(title)}</div>`;
+  return `<div class="journey-card-head" data-toggle-goal="${esc(key)}">${titleHtml}<button class="journey-chevron" type="button" aria-label="Toggle ${esc(title)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div>`;
+}
+function renderHousePocketCard(key){
+  const hp=state.housePocket;
+  const collapsed=goalCollapsed(key);
+  const pct=Math.max(0,Math.min(100,(HOUSE_POCKET_START-hp)/HOUSE_POCKET_START*100));
+  const isDone=key==="housePocketDone";
+  const pill=isDone?"Complete ✓":euro0(hp)+" remaining";
+  const pillClass=isDone?" complete":"";
+  const card=document.createElement("article");
+  card.className="card goal-card"+(collapsed?" is-collapsed":"")+(isDone?" completed":"");
+  card.dataset.goalKey=key;
+  card.dataset.goalIndex=String(resolvedGoalOrder().indexOf(key));
+  let body="";
+  if(isDone){
+    body=`<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary"><div class="goal-stat"><small>Status</small><strong class="freedom-estimate">€1,000 returned</strong></div></div><div class="goal-card-footer"><button class="mini-btn danger" id="archiveHousePocket" type="button">Archive from Goals</button></div></div>`;
+  }else{
+    body=`<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary"><div class="goal-stat"><small>Amount still owed</small><input class="goal-stat-value" id="housePocketRemaining" type="number" readonly value="${hp}"></div><div class="goal-stat"><small>Payment made</small><input class="goal-stat-value" id="housePocketPayment" inputmode="decimal" type="number" min="0" step="10" placeholder="Enter payment"></div></div><button class="save-btn" id="recordHousePocket">Record Payment</button></div>`;
+  }
+  card.innerHTML=`<div class="journey-card-head" data-toggle-goal="${key}"><div class="goal-title">House Pocket</div><div class="pill${pillClass}">${pill}</div><button class="journey-chevron" type="button" aria-label="Toggle House Pocket"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div><div class="progress"><span style="width:${pct}%"></span></div>${body}`;
+  return card;
+}
+function renderBuiltInGoalCard(key){
+  const m=builtInGoalMeta[key];
+  const val=state[m.valueKey];
+  const pct=m.target>0?Math.min(100,val/m.target*100):0;
+  const collapsed=goalCollapsed(key);
+  const card=document.createElement("article");
+  card.className="card goal-card"+(collapsed?" is-collapsed":"");
+  card.dataset.goalKey=key;
+  card.dataset.goalIndex=String(resolvedGoalOrder().indexOf(key));
+  const saveLabel="Save "+m.name;
+  let extraFields="";
+  if(key==="holidayFund"){
+    extraFields=`<div class="goal-stat"><small>Combined monthly contribution</small><input class="goal-stat-value" id="holidayMonthly" inputmode="decimal" type="number" min="0" step="1" value="${state.holidayMonthly}"></div>`;
+  }
+  let detail=m.target>0?`Reference milestone: ${euro0(m.target)}`:"";
+  if(key==="personalSavings") detail="First milestone: €5,000";
+  card.innerHTML=`<div class="journey-card-head" data-toggle-goal="${key}"><div class="goal-title">${esc(m.name)}</div><div class="pill">${m.target>0?pct.toFixed(0)+"%":euro0(val)}</div><button class="journey-chevron" type="button" aria-label="Toggle ${esc(m.name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div>${m.target>0?`<div class="progress"><span id="${key==="houseFund"?"houseFundBar":key==="personalSavings"?"savingsBar":"goalBar"+key}" style="width:${pct}%"></span></div>`:""}<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary"><div class="goal-stat"><small>Current balance</small><input class="goal-stat-value" id="${m.valueKey}" inputmode="decimal" type="number" min="0" step="1" value="${val}"></div>${extraFields}</div>${detail?`<div class="detail">${detail}</div>`:""}<button class="save-btn" data-save>${saveLabel}</button><div class="goal-card-footer"><button class="mini-btn danger" data-archive-built-in="${key}" type="button">Archive goal</button><button class="mini-btn delete" data-delete-built-in="${key}" type="button">Delete</button></div></div>`;
+  return card;
+}
+function renderCustomGoalCard(key,i){
+  const g=state.customGoals[i];
+  if(!g) return null;
+  const pct=g.target>0?Math.min(100,(g.current/g.target)*100):0;
+  const collapsed=goalCollapsed(key);
+  const card=document.createElement("article");
+  card.className="card goal-card"+(collapsed?" is-collapsed":"");
+  card.dataset.goalKey=key;
+  card.dataset.goalIndex=String(resolvedGoalOrder().indexOf(key));
+  const titleHtml=!collapsed
+    ? `<input class="goal-title-input" data-goal="${i}" data-goal-field="name" type="text" value="${esc(g.name)}" aria-label="Goal name">`
+    : `<div class="goal-title">${esc(g.name)}</div>`;
+  card.innerHTML=`<div class="journey-card-head" data-toggle-goal="${key}">${titleHtml}<div class="pill">${g.target>0?pct.toFixed(0)+"%":euro0(g.current)}</div><button class="journey-chevron" type="button" aria-label="Toggle ${esc(g.name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div>${g.target>0?`<div class="progress"><span style="width:${pct}%"></span></div>`:""}<div class="journey-card-body" ${collapsed?"hidden":""}><div class="goal-summary"><div class="goal-stat"><small>Current amount</small><input class="goal-stat-value" data-goal="${i}" data-goal-field="current" inputmode="decimal" type="number" min="0" step="0.01" value="${g.current}"></div><div class="goal-stat"><small>Target amount</small><input class="goal-stat-value" data-goal="${i}" data-goal-field="target" inputmode="decimal" type="number" min="0" step="0.01" value="${g.target}"></div></div><div class="goal-card-footer"><button class="mini-btn danger" data-archive-goal="${i}" type="button">Archive goal</button><button class="mini-btn delete" data-delete-goal="${i}" type="button">Delete</button></div></div>`;
+  return card;
+}
 function renderGoals(){
   Object.entries(builtInGoalMeta).forEach(([key,m])=>{
     const hidden=!!state.hiddenBuiltInGoals[key]||!!state.deletedBuiltInGoals[key];
-    const card=byId(m.cardId),overview=byId(m.overviewId);
-    if(card)card.hidden=hidden;
-    if(overview)overview.hidden=hidden;
+    const overview=byId(m.overviewId);
+    if(overview) overview.hidden=hidden;
   });
-  const list=byId("customGoalsList");
-  if(list){
-    list.innerHTML="";
-    state.customGoals.forEach((g,i)=>{
-      const pct=g.target>0?Math.min(100,(g.current/g.target)*100):0;
-      const card=document.createElement("article");
-      card.className="card goal-item";
-      card.innerHTML=`<div class="row"><div><h2>${esc(g.name)}</h2><div class="goal-meta">${g.target>0?`${euro2(g.current)} of ${euro2(g.target)}`:`${euro2(g.current)} saved`}</div></div>${g.target>0?`<div class="pill">${pct.toFixed(0)}%</div>`:""}</div>${g.target>0?`<div class="progress"><span style="width:${pct}%"></span></div>`:""}<div class="editor"><label>Goal name</label><input data-goal="${i}" data-goal-field="name" type="text" value="${esc(g.name)}"><div class="editor-grid"><div><label>Current amount</label><input data-goal="${i}" data-goal-field="current" type="number" min="0" step="0.01" value="${g.current}"></div><div><label>Target amount</label><input data-goal="${i}" data-goal-field="target" type="number" min="0" step="0.01" value="${g.target}"></div></div><div class="goal-controls"><button class="mini-btn danger" data-archive-goal="${i}" type="button">Archive goal</button><button class="mini-btn delete" data-delete-goal="${i}" type="button">Delete</button></div></div>`;
-      list.appendChild(card);
-    });
-    list.querySelectorAll("[data-goal]").forEach(input=>input.addEventListener("change",e=>{
-      const i=Number(e.target.dataset.goal),field=e.target.dataset.goalField;
-      if(field==="name"){const name=e.target.value.trim();if(!name){e.target.value=state.customGoals[i].name;return}state.customGoals[i].name=name}
-      else state.customGoals[i][field]=Math.max(0,Number(e.target.value)||0);
-      persist();render();
-    }));
-    list.querySelectorAll("[data-archive-goal]").forEach(btn=>btn.addEventListener("click",e=>{
-      const i=Number(e.currentTarget.dataset.archiveGoal),goal=state.customGoals[i];if(!goal)return;
-      if(!confirm(`Archive ${goal.name}?\\n\\nIt will disappear from active Goals and Overview but remain available under More.`))return;
-      state.archivedGoals.unshift({...goal,type:"custom",archivedAt:new Date().toISOString()});
-      state.customGoals.splice(i,1);persist();render();
-    }));
-  }
+  const list=byId("goalsList");
+  if(!list) return;
+  list.innerHTML="";
+  const order=resolvedGoalOrder();
+  order.forEach(key=>{
+    let card=null;
+    if(key==="housePocket"||key==="housePocketDone") card=renderHousePocketCard(key);
+    else if(builtInGoalMeta[key]) card=renderBuiltInGoalCard(key);
+    else if(key.startsWith("custom:")) card=renderCustomGoalCard(key,Number(key.slice(7)));
+    if(card) list.appendChild(card);
+  });
+  const skipToggle=el=>el.closest("input,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,.save-btn");
+  list.querySelectorAll("[data-toggle-goal]").forEach(head=>head.addEventListener("click",e=>{
+    if(goalDragJustEnded||skipToggle(e.target)) return;
+    toggleGoalCollapsed(head.dataset.toggleGoal);
+  }));
+  list.querySelectorAll("[data-goal]").forEach(input=>input.addEventListener("change",e=>{
+    const i=Number(e.target.dataset.goal),field=e.target.dataset.goalField;
+    if(field==="name"){
+      const name=e.target.value.trim();
+      if(!name){ e.target.value=state.customGoals[i].name; return; }
+      state.customGoals[i].name=name;
+    }else state.customGoals[i][field]=Math.max(0,Number(e.target.value)||0);
+    persist(); render();
+  }));
+  list.querySelectorAll("[data-archive-built-in]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const key=e.currentTarget.dataset.archiveBuiltIn,m=builtInGoalMeta[key];
+    if(!m||!confirm(`Archive ${m.name}?\n\nIt will disappear from Goals and Overview, but you can restore it later from More.`)) return;
+    state.hiddenBuiltInGoals[key]=true; persist(); render();
+  }));
+  list.querySelectorAll("[data-delete-built-in]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const key=e.currentTarget.dataset.deleteBuiltIn,m=builtInGoalMeta[key];
+    if(!m||!confirm(`Delete ${m.name}?`)) return;
+    state.deletedBuiltInGoals[key]=true; persist(); render();
+  }));
+  list.querySelectorAll("[data-archive-goal]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const i=Number(e.currentTarget.dataset.archiveGoal),goal=state.customGoals[i];
+    if(!goal||!confirm(`Archive ${goal.name}?\n\nIt will disappear from active Goals and Overview but remain available under More.`)) return;
+    state.archivedGoals.unshift({...goal,type:"custom",archivedAt:new Date().toISOString()});
+    state.customGoals.splice(i,1); persist(); render();
+  }));
+  list.querySelectorAll("[data-delete-goal]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const i=Number(e.currentTarget.dataset.deleteGoal);
+    if(!state.customGoals[i]||!confirm("Delete this goal?")) return;
+    state.customGoals.splice(i,1); persist(); render();
+  }));
+  const rec=byId("recordHousePocket");
+  if(rec) rec.addEventListener("click",()=>{
+    const input=byId("housePocketPayment");
+    const amount=Math.max(0,Number(input.value)||0);
+    if(!amount){input.focus();return}
+    if(amount>state.housePocket){alert(`The payment is more than the ${euro0(state.housePocket)} still owed. Enter the amount actually paid.`);input.focus();return}
+    state.housePocket=Math.max(0,Math.round((state.housePocket-amount)*100)/100);
+    state.houseFund=Math.round((state.houseFund+amount)*100)/100;
+    if(state.housePocket<=0){state.housePocket=0;state.housePocketCompletedAt=new Date().toISOString();const archiveNow=confirm("House Pocket complete 🎉\n\nYou've returned the full €1,000.\n\nArchive it from Goals now?\n\nPress Cancel if you want to leave the completed victory on screen for a while.");state.housePocketArchived=archiveNow}
+    persist();input.value="";fillForm();render();if(state.housePocket<=0&&state.housePocketArchived)page("overview");
+  });
+  const arch=byId("archiveHousePocket");
+  if(arch) arch.addEventListener("click",()=>{if(state.housePocket>0)return;state.housePocketArchived=true;persist();render();page("overview");});
+  setupGoalReorder(list);
   const overview=byId("overviewCustomGoals");
   if(overview){
-    overview.innerHTML=state.customGoals.map((g,i)=>`<article class="card mini-card tap-card" data-page-link="goals"><div class="label">${esc(g.name)}</div><div class="value">${euro0(g.current)}</div></article>`).join("");
+    overview.innerHTML=state.customGoals.map(g=>`<article class="card mini-card tap-card" data-page-link="goals"><div class="label">${esc(g.name)}</div><div class="value">${euro0(g.current)}</div></article>`).join("");
     overview.querySelectorAll("[data-page-link]").forEach(el=>el.addEventListener("click",()=>page(el.dataset.pageLink)));
   }
+}
+function setupGoalReorder(list){
+  if(!list||window.matchMedia("(min-width:821px)").matches) return;
+  const HOLD_MS=500,MOVE_CANCEL=12;
+  let drag=null,timer=null;
+  function goalCards(){return [...list.querySelectorAll(":scope > .goal-card")];}
+  function isInteractive(t){return t&&t.closest("input,button,textarea,select,a,[contenteditable=true]");}
+  function clearShifts(){
+    goalCards().forEach(c=>{c.style.transform="";c.style.touchAction="";c.classList.remove("is-dragging");});
+    document.body.classList.remove("goals-dragging");
+  }
+  function targetIndex(y,fromIdx){
+    const cards=goalCards(); let insertAt=fromIdx;
+    cards.forEach(card=>{
+      const idx=Number(card.dataset.goalIndex);
+      if(idx===fromIdx) return;
+      const r=card.getBoundingClientRect(), mid=r.top+r.height/2;
+      if(fromIdx<idx&&y>=mid) insertAt=Math.max(insertAt,idx);
+      else if(fromIdx>idx&&y<=mid) insertAt=Math.min(insertAt,idx);
+    });
+    return insertAt;
+  }
+  function shiftSiblings(fromIdx,toIdx){
+    const gap=18;
+    goalCards().forEach(card=>{
+      if(card.classList.contains("is-dragging")) return;
+      const idx=Number(card.dataset.goalIndex), h=card.offsetHeight+gap; let shift=0;
+      if(fromIdx<toIdx&&idx>fromIdx&&idx<=toIdx) shift=-h;
+      if(fromIdx>toIdx&&idx<fromIdx&&idx>=toIdx) shift=h;
+      card.style.transform=shift?`translateY(${shift}px)`:"";
+    });
+  }
+  function applyGoalReorder(from,to){
+    const order=resolvedGoalOrder();
+    const moved=order.splice(from,1)[0];
+    order.splice(to,0,moved);
+    const newCustom=[];
+    order.forEach(k=>{ if(k.startsWith("custom:")) newCustom.push(state.customGoals[Number(k.slice(7))]); });
+    state.customGoals=newCustom;
+    let ci=0;
+    state.goalOrder=order.map(k=>k.startsWith("custom:")?("custom:"+(ci++)):k);
+    persist();
+  }
+  goalCards().forEach(card=>{
+    let startX=0,startY=0,pressId=null;
+    const onMove=e=>{
+      if(drag&&drag.card===card){
+        e.preventDefault();
+        const dy=e.clientY-drag.startY;
+        card.style.transform=`translateY(${dy}px) scale(1.015)`;
+        drag.toIdx=targetIndex(e.clientY,drag.fromIdx);
+        shiftSiblings(drag.fromIdx,drag.toIdx);
+        return;
+      }
+      if(timer&&pressId===e.pointerId&&(Math.abs(e.clientX-startX)>MOVE_CANCEL||Math.abs(e.clientY-startY)>MOVE_CANCEL)){
+        clearTimeout(timer); timer=null; pressId=null;
+      }
+    };
+    const onEnd=e=>{
+      if(timer&&pressId===e.pointerId){ clearTimeout(timer); timer=null; pressId=null; }
+      if(drag&&drag.card===card){
+        e.preventDefault();
+        const from=drag.fromIdx,to=drag.toIdx;
+        clearShifts(); drag=null;
+        try{card.releasePointerCapture(e.pointerId);}catch(_){}
+        document.removeEventListener("pointermove",onMove);
+        document.removeEventListener("pointerup",onEnd);
+        document.removeEventListener("pointercancel",onEnd);
+        goalDragJustEnded=true;
+        setTimeout(()=>{goalDragJustEnded=false;},350);
+        if(from!==to) applyGoalReorder(from,to);
+        render();
+      }
+    };
+    card.addEventListener("pointerdown",e=>{
+      if(isInteractive(e.target)||!e.isPrimary) return;
+      startX=e.clientX; startY=e.clientY; pressId=e.pointerId;
+      timer=setTimeout(()=>{
+        timer=null;
+        const fromIdx=Number(card.dataset.goalIndex);
+        drag={card,fromIdx,toIdx:fromIdx,startY:e.clientY};
+        card.classList.add("is-dragging");
+        document.body.classList.add("goals-dragging");
+        card.style.touchAction="none";
+        try{card.setPointerCapture(e.pointerId);}catch(_){}
+        if(navigator.vibrate) navigator.vibrate(10);
+        document.addEventListener("pointermove",onMove,{passive:false});
+        document.addEventListener("pointerup",onEnd);
+        document.addEventListener("pointercancel",onEnd);
+      },HOLD_MS);
+    });
+    card.addEventListener("pointermove",onMove);
+    card.addEventListener("pointerup",onEnd);
+    card.addEventListener("pointercancel",onEnd);
+  });
 }
 function renderLoans(){
   const list=byId("loanList");
@@ -926,8 +1273,8 @@ wrap.innerHTML=items.map(item=>`<div class="archive-item"><div class="row"><div>
 wrap.querySelectorAll("[data-restore-journey]").forEach(btn=>btn.addEventListener("click",e=>{const i=Number(e.currentTarget.dataset.restoreJourney),item=state.archivedJourneys[i];if(!item)return;state.loans.push({name:item.name,starting:item.starting,current:item.current,payment:item.payment});state.archivedJourneys.splice(i,1);persist();render()}));
 wrap.querySelectorAll("[data-restore-goal]").forEach(btn=>btn.addEventListener("click",e=>{const i=Number(e.currentTarget.dataset.restoreGoal),item=state.archivedGoals[i];if(!item)return;state.customGoals.push({name:item.name,current:item.current,target:item.target});state.archivedGoals.splice(i,1);persist();render()}));
 wrap.querySelectorAll("[data-restore-built-in]").forEach(btn=>btn.addEventListener("click",e=>{state.hiddenBuiltInGoals[e.currentTarget.dataset.restoreBuiltIn]=false;persist();render()}))}
-function fillForm(){["houseFund","holidayFund","holidayMonthly","personalSavings","pensionValue","pensionPersonal","pensionEmployer"].forEach(id=>byId(id).value=state[id]);byId("housePocketRemaining").value=state.housePocket}
-function pullForm(){["houseFund","holidayFund","holidayMonthly","personalSavings","pensionValue","pensionPersonal","pensionEmployer"].forEach(id=>state[id]=number(id))}
+function fillForm(){["houseFund","holidayFund","holidayMonthly","personalSavings","pensionValue","pensionPersonal","pensionEmployer"].forEach(id=>{const el=byId(id);if(el)el.value=state[id]});const hp=byId("housePocketRemaining");if(hp)hp.value=state.housePocket}
+function pullForm(){["houseFund","holidayFund","holidayMonthly","personalSavings","pensionValue","pensionPersonal","pensionEmployer"].forEach(id=>{const el=byId(id);if(el)state[id]=Math.max(0,Number(el.value)||0)})}
 function nextLoan(){return state.loans.filter(x=>x.current>0).sort((a,b)=>a.current-b.current)[0]||null}
 function render(){const original=state.loans.reduce((s,x)=>s+x.starting,0);const current=state.loans.reduce((s,x)=>s+x.current,0);const loanReturned=Math.max(0,original-current);const hpReturned=Math.max(0,HOUSE_POCKET_START-state.housePocket);const totalOriginal=original+HOUSE_POCKET_START;const totalCurrent=current+state.housePocket;const pct=totalOriginal?Math.max(0,(totalOriginal-totalCurrent)/totalOriginal*100):0;const monthly=state.loans.reduce((s,x)=>s+x.payment,0)+(state.housePocket>0?(Number(state.housePocketMonthly)||0):0);
 byId("overviewReturned").textContent=euro0(loanReturned+hpReturned);byId("overviewProgress").textContent=Math.round(pct)+"%";byId("overviewProgressBar").style.width=Math.min(100,pct)+"%";if(byId("overviewHouse"))byId("overviewHouse").textContent=euro0(state.houseFund);if(byId("overviewHoliday"))byId("overviewHoliday").textContent=euro0(state.holidayFund);if(byId("overviewSavings"))byId("overviewSavings").textContent=euro0(state.personalSavings);if(byId("overviewPension"))byId("overviewPension").textContent=euro0(state.pensionValue);byId("monthlyFreedom").textContent=euro0(monthly);
@@ -972,13 +1319,9 @@ if(hp>0){
   byId("pocketMonths").textContent="You did it";
 }
 if(hp>0){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="House Pocket";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent=next.name;if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else{if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="All clear";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
-byId("housePocketActive").hidden=hp<=0||!!state.housePocketArchived;
-byId("housePocketCompleted").hidden=hp>0||!!state.housePocketArchived;byId("housePocketRemaining").value=state.housePocket;byId("houseFundBar").style.width=Math.min(100,state.houseFund/50000*100)+"%";byId("savingsBar").style.width=Math.min(100,state.personalSavings/5000*100)+"%";byId("pensionDisplay").textContent=euro2(state.pensionValue);const pensionMonthly=state.pensionPersonal+state.pensionEmployer;byId("pensionMonthlyTotal").textContent=euro2(pensionMonthly);byId("pensionAnnual").textContent=euro2(pensionMonthly*12);renderLoans();renderGoals();renderArchive()}
-byId("recordHousePocket").addEventListener("click",()=>{const input=byId("housePocketPayment");const amount=Math.max(0,Number(input.value)||0);if(!amount){input.focus();return}if(amount>state.housePocket){alert(`The payment is more than the ${euro0(state.housePocket)} still owed. Enter the amount actually paid.`);input.focus();return}state.housePocket=Math.max(0,Math.round((state.housePocket-amount)*100)/100);state.houseFund=Math.round((state.houseFund+amount)*100)/100;if(state.housePocket<=0){state.housePocket=0;state.housePocketCompletedAt=new Date().toISOString();const archiveNow=confirm("House Pocket complete 🎉\n\nYou’ve returned the full €1,000.\n\nArchive it from Goals now?\n\nPress Cancel if you want to leave the completed victory on screen for a while.");state.housePocketArchived=archiveNow}persist();input.value="";fillForm();render();if(state.housePocket<=0&&state.housePocketArchived)page("overview")});
-byId("archiveHousePocket").addEventListener("click",()=>{if(state.housePocket>0)return;state.housePocketArchived=true;persist();render();page("overview")});
+byId("pensionDisplay").textContent=euro2(state.pensionValue);const pensionMonthly=state.pensionPersonal+state.pensionEmployer;byId("pensionMonthlyTotal").textContent=euro2(pensionMonthly);byId("pensionAnnual").textContent=euro2(pensionMonthly*12);renderLoans();renderGoals();renderArchive()}
 byId("toggleAddGoal").addEventListener("click",()=>{const card=byId("addGoalCard");card.hidden=!card.hidden;if(!card.hidden){byId("newGoalName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addGoal").addEventListener("click",()=>{const name=byId("newGoalName").value.trim(),current=Math.max(0,Number(byId("newGoalCurrent").value)||0),target=Math.max(0,Number(byId("newGoalTarget").value)||0);if(!name){byId("newGoalName").focus();return}state.customGoals.push({name,current,target});persist();["newGoalName","newGoalCurrent","newGoalTarget"].forEach(id=>byId(id).value="");byId("addGoalCard").hidden=true;render()});
-document.querySelectorAll("[data-archive-built-in]").forEach(btn=>btn.addEventListener("click",()=>{const key=btn.dataset.archiveBuiltIn,m=builtInGoalMeta[key];if(!m)return;if(!confirm(`Archive ${m.name}?\\n\\nIt will disappear from Goals and Overview, but you can restore it later from More.`))return;state.hiddenBuiltInGoals[key]=true;persist();render()}));
 byId("toggleArchiveList").addEventListener("click",()=>{const list=byId("archiveList");list.hidden=!list.hidden;byId("toggleArchiveList").textContent=list.hidden?"View archived items":"Hide archived items"});
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment});persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
@@ -999,7 +1342,7 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   }
   function showHome(){
     if(!isMobile())return;
-    document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313");
+    document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314");
     closeMore();
     document.body.classList.add("home183");
     if(home)home.setAttribute("aria-hidden","false");
