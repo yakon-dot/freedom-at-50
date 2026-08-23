@@ -702,7 +702,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.pension-active-v315 #pension .pension-title{color:rgba(236,232,224,.78)}
   body.pension-active-v315 #pension .pension-title-input{
     min-width:0;flex:1;margin:0;padding:0 0 2px;border:0;border-radius:0;
-    background:transparent;font-size:19px;font-weight:760;
+    background:transparent;font:inherit;
     color:rgba(236,232,224,.78);
     border-bottom:1px solid rgba(220,190,150,.22);
   }
@@ -1195,7 +1195,7 @@ const freedomWallpapers={
 };
 freedomWallpapers.preloadAll();
 const HOUSE_POCKET_START=1000;
-const defaults={archivedJourneys:[],archivedGoals:[],archivedPensions:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},goalTargets:{houseFund:50000,holidayFund:0,personalSavings:5000},goalHasTarget:{houseFund:true,holidayFund:false,personalSavings:true},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensions:[{id:"pension-1",name:"Pension",value:48951.79,personal:342.50,employer:242.50,collapsed:false,showInOverview:true}]};
+const defaults={archivedJourneys:[],archivedGoals:[],archivedPensions:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},goalNames:{},goalTargets:{houseFund:50000,holidayFund:0,personalSavings:5000},goalHasTarget:{houseFund:true,holidayFund:false,personalSavings:true},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensions:[{id:"pension-1",name:"Pension",value:48951.79,personal:342.50,employer:242.50,collapsed:false,showInOverview:true}]};
 let state;try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");state=saved&&saved.loans?Object.assign({},defaults,saved):JSON.parse(JSON.stringify(defaults));}catch(e){state=JSON.parse(JSON.stringify(defaults));}
 let demoMode=false;
 let realStateSnapshot=null;
@@ -1232,6 +1232,7 @@ state.pensions.forEach((p,i)=>{
 });
 if(!state.hiddenBuiltInGoals)state.hiddenBuiltInGoals={houseFund:false,holidayFund:false,personalSavings:false};
 if(!state.deletedBuiltInGoals)state.deletedBuiltInGoals={houseFund:false,holidayFund:false,personalSavings:false};
+if(!state.goalNames)state.goalNames={};
 const builtInGoalDefaultTargets={houseFund:50000,holidayFund:0,personalSavings:5000};
 if(!state.goalTargets)state.goalTargets={};
 Object.keys(builtInGoalDefaultTargets).forEach(k=>{
@@ -1395,6 +1396,16 @@ const builtInGoalMeta={
   holidayFund:{name:"Holiday Fund",valueKey:"holidayFund",cardId:"holidayFundCard",overviewId:"overviewHolidayCard"},
   personalSavings:{name:"Personal Savings",valueKey:"personalSavings",cardId:"personalSavingsCard",overviewId:"overviewSavingsCard"}
 };
+function goalDisplayName(key){
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    return g?.name||"Goal";
+  }
+  const m=builtInGoalMeta[key];
+  if(!m) return "Goal";
+  const custom=state.goalNames&&state.goalNames[key];
+  return custom&&String(custom).trim()?String(custom).trim():m.name;
+}
 let goalDragJustEnded=false;
 if(!state.goalCollapsed)state.goalCollapsed={};
 function visibleGoalKeys(){
@@ -1477,9 +1488,17 @@ function saveGoal(key){
   }else{
     const m=builtInGoalMeta[key];
     if(!m) return;
+    const nameEl=document.querySelector(`[data-goal-name-built="${key}"]`);
     const targetEl=byId(`goalTarget_${key}`);
     const addEl=byId(`goalAdd_${key}`);
     const hasTargetEl=byId(`goalHasTarget_${key}`);
+    if(nameEl){
+      const n=nameEl.value.trim();
+      if(n){
+        if(!state.goalNames)state.goalNames={};
+        state.goalNames[key]=n;
+      }
+    }
     if(hasTargetEl){
       if(!state.goalHasTarget)state.goalHasTarget={};
       state.goalHasTarget[key]=!!hasTargetEl.checked;
@@ -1502,7 +1521,7 @@ function renderSavingsGoalCard(key){
   }else{
     const m=builtInGoalMeta[key];
     if(!m) return null;
-    name=m.name; current=state[m.valueKey]; target=Math.max(0,Number(state.goalTargets[key])||0);
+    name=goalDisplayName(key); current=state[m.valueKey]; target=Math.max(0,Number(state.goalTargets[key])||0);
     barId=key==="houseFund"?"houseFundBar":key==="personalSavings"?"savingsBar":"goalBar"+key;
   }
   const usesTarget=goalUsesTarget(key);
@@ -1511,8 +1530,10 @@ function renderSavingsGoalCard(key){
   card.className="card goal-card"+(collapsed?" is-collapsed":"");
   card.dataset.goalKey=key;
   card.dataset.goalIndex=String(resolvedGoalOrder().indexOf(key));
-  const titleHtml=isCustom&&!collapsed
-    ? `<input class="goal-title-input" data-goal-name="${customIndex}" type="text" value="${esc(name)}" aria-label="Goal name">`
+  const titleHtml=!collapsed
+    ? (isCustom
+      ? `<input class="goal-title-input" data-goal-name="${customIndex}" type="text" value="${esc(name)}" aria-label="Goal name">`
+      : `<input class="goal-title-input" data-goal-name-built="${key}" type="text" value="${esc(name)}" aria-label="Goal name">`)
     : `<div class="goal-title">${esc(name)}</div>`;
   const amountHtml=`<div class="goal-amount">${euro0(current)}</div>`;
   const collapsedTargetHtml=collapsed&&usesTarget&&target>0?`<div class="goal-target">Target ${euro0(target)}</div>`:"";
@@ -1596,14 +1617,14 @@ function renderGoals(){
   list.querySelectorAll("[data-archive-built-in]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const key=e.currentTarget.dataset.archiveBuiltIn,m=builtInGoalMeta[key];
-    if(!m||!confirm(`Archive ${m.name}?\n\nIt will disappear from Goals and Overview, but you can restore it later from More.`)) return;
+    if(!m||!confirm(`Archive ${goalDisplayName(key)}?\n\nIt will disappear from Goals and Overview, but you can restore it later from More.`)) return;
     const card=e.currentTarget.closest(".goal-card");
     freedomMotion.exitCard(card,()=>{state.hiddenBuiltInGoals[key]=true;persist();render();});
   }));
   list.querySelectorAll("[data-delete-built-in]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const key=e.currentTarget.dataset.deleteBuiltIn,m=builtInGoalMeta[key];
-    if(!m||!confirm(`Delete ${m.name}?`)) return;
+    if(!m||!confirm(`Delete ${goalDisplayName(key)}?`)) return;
     const card=e.currentTarget.closest(".goal-card");
     freedomMotion.exitCard(card,()=>{state.deletedBuiltInGoals[key]=true;persist();render();});
   }));
@@ -2144,7 +2165,7 @@ function renderPensions(){
   setupPensionReorder(list);
 }
 function renderArchive(){const wrap=byId("archiveList");if(!wrap)return;const items=[];if(state.housePocketArchived){items.push({type:"housePocket",name:"House Pocket",detail:"Completed victory • €1,000 returned"})}
-Object.entries(state.hiddenBuiltInGoals).forEach(([key,hidden])=>{if(hidden&&!state.deletedBuiltInGoals[key]){const m=builtInGoalMeta[key];items.push({type:"builtInGoal",key,name:m.name,detail:`Archived goal • ${euro2(state[m.valueKey])} current value`})}});
+Object.entries(state.hiddenBuiltInGoals).forEach(([key,hidden])=>{if(hidden&&!state.deletedBuiltInGoals[key]){const m=builtInGoalMeta[key];items.push({type:"builtInGoal",key,name:goalDisplayName(key),detail:`Archived goal • ${euro2(state[m.valueKey])} current value`})}});
 state.archivedGoals.forEach((x,i)=>items.push({type:"goal",index:i,name:x.name,detail:`Archived goal • ${euro2(x.current)} current${x.target>0?" • "+euro2(x.target)+" target":""}`}));
 state.archivedJourneys.forEach((x,i)=>items.push({type:"journey",index:i,name:x.name,detail:`${x.current<=0?"Completed":"Archived"} journey • ${euro2(Math.max(0,x.starting-x.current))} returned • ${euro2(x.current)} balance`}));
 state.archivedPensions.forEach((x,i)=>items.push({type:"pension",index:i,name:x.name,detail:`Archived pension • ${euro2(x.value)} current • ${euro2(pensionMonthly(x))}/month`}));
