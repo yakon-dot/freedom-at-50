@@ -36,11 +36,88 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .mini-btn.danger{border-color:rgba(255,255,255,.14);color:var(--muted)}
 .mini-btn:active{transform:translateY(1px)}
 .add-journey-card[hidden]{display:none}
-.archive-list{display:grid;gap:10px;margin-top:12px}
-.archive-item{border:1px solid var(--line);border-radius:16px;padding:14px;background:rgba(255,255,255,.015)}
-.archive-item .row{align-items:center}
-.archive-item small{display:block;color:var(--muted);margin-top:4px;line-height:1.45}
-.empty-archive{color:var(--muted);font-size:14px;line-height:1.55;margin:0}
+.empty-archive{color:var(--muted);font-size:14px;line-height:1.55;margin:0;text-align:center;padding:28px 12px}
+
+  body.archive-active-v316{background:#0a0c10}
+  html:has(body.archive-active-v316){background:#08090c}
+  body.archive-active-v316::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(ellipse 120% 70% at 50% -10%, rgba(36,44,58,.34), transparent 58%),
+      linear-gradient(180deg,#0c0e13 0%,#0a0c10 48%,#08090c 100%);
+  }
+  body.archive-active-v316 .app::before{display:none}
+  body.archive-active-v316 .app{position:relative;z-index:1;background:transparent}
+  body.archive-active-v316 .app>header{display:none}
+  body.archive-active-v316 .app>main{padding-top:0}
+  body.archive-active-v316 #archive{
+    position:relative;z-index:1;
+    padding:calc(env(safe-area-inset-top,0px) + 24px) 18px calc(112px + var(--safe-bottom));
+  }
+  body.archive-active-v316 .archive-hero{
+    text-align:center;
+    padding:clamp(28px,7vh,52px) 10px clamp(24px,4vh,36px);
+  }
+  body.archive-active-v316 .archive-title{
+    margin:0 0 12px;color:rgba(239,203,170,.92);
+    font-size:clamp(34px,8vw,42px);line-height:1.05;letter-spacing:-.03em;font-weight:760;
+  }
+  body.archive-active-v316 .archive-subtitle{
+    margin:0 auto;max-width:280px;color:var(--muted);
+    font-size:15px;line-height:1.55;
+  }
+  body.archive-active-v316 .archive-sections{display:grid;gap:18px}
+  body.archive-active-v316 .archive-section-head{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    margin:0 0 10px;padding:0 2px;
+  }
+  body.archive-active-v316 .archive-section-label{
+    color:rgba(231,207,99,.88);font-size:11px;font-weight:800;
+    letter-spacing:.14em;text-transform:uppercase;
+  }
+  body.archive-active-v316 .archive-section-count{
+    flex:0 0 auto;font-size:11px;color:rgba(190,188,182,.58);
+    border:1px solid rgba(220,190,150,.18);border-radius:999px;padding:4px 9px;line-height:1;
+  }
+  body.archive-active-v316 .archive-section-card{
+    border:1px solid rgba(220,190,150,.14);border-radius:22px;
+    background:rgba(18,20,24,.34);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    overflow:hidden;
+  }
+  body.archive-active-v316 .archive-row{
+    padding:14px 16px;border-bottom:1px solid rgba(220,190,150,.07);
+  }
+  body.archive-active-v316 .archive-row:last-child{border-bottom:0}
+  body.archive-active-v316 .archive-row-victory{
+    background:rgba(132,189,145,.035);
+  }
+  body.archive-active-v316 .archive-row-name{
+    font-size:16px;font-weight:650;letter-spacing:-.02em;color:rgba(236,232,224,.84);
+  }
+  body.archive-active-v316 .archive-row-meta{
+    margin-top:5px;font-size:13px;line-height:1.45;color:var(--muted);
+  }
+  body.archive-active-v316 .archive-row-meta-sage{color:rgba(132,189,145,.82)}
+  body.archive-active-v316 .archive-actions{
+    display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap;
+  }
+  body.archive-active-v316 .archive-btn-restore{
+    border:0;border-radius:999px;padding:8px 14px;
+    background:rgba(132,189,145,.22);color:rgba(201,222,207,.95);
+    font-size:12px;font-weight:650;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  }
+  body.archive-active-v316 .archive-btn-delete{
+    border:1px solid rgba(245,244,240,.16);border-radius:999px;padding:8px 14px;
+    background:transparent;color:rgba(190,188,182,.72);
+    font-size:12px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  }
+  body.archive-active-v316 .archive-btn-restore:active,
+  body.archive-active-v316 .archive-btn-delete:active{transform:scale(.98)}
+  body.archive-active-v316 .archive-footer-note{
+    margin:26px 0 0;text-align:center;color:rgba(153,155,164,.72);
+    font-size:12px;line-height:1.55;padding:0 8px;
+  }
 
 .goal-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
 .goal-item .row{align-items:flex-start}
@@ -1249,7 +1326,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 <section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Current amount</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
-<section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card" id="moreArchive"><h2>Archived goals & journeys</h2><p class="empty-note">Finished or removed items live here instead of disappearing forever.</p><button class="mini-btn gold archive-toggle" id="toggleArchiveList" type="button">View archived items</button><div class="archive-list" id="archiveList" hidden></div></article><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
+<section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
+<section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
 <article class="card" id="moreCompanion"><h2>Companion</h2><p class="empty-note">Patricia lives here when the companion layer needs its own space. For now, Home stays quiet unless there is a reason for her to appear.</p></article>
 <article class="card" id="moreSettings"><h2>Settings & privacy</h2><p class="empty-note">This HTML file stores edits only in this browser on this device. It does not connect to a bank or upload your figures anywhere.</p></article>
 <article class="card" id="moreReports"><h2>Reports</h2><p class="empty-note">Progress summaries and reporting views will live here.</p></article>
@@ -1295,7 +1373,7 @@ const freedomWallpapers={
 };
 freedomWallpapers.preloadAll();
 const HOUSE_POCKET_START=1000;
-const defaults={archivedJourneys:[],archivedGoals:[],archivedPensions:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},goalNames:{},goalTargets:{houseFund:50000,holidayFund:0,personalSavings:5000},goalHasTarget:{houseFund:true,holidayFund:false,personalSavings:true},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensions:[{id:"pension-1",name:"Pension",value:48951.79,personal:342.50,employer:242.50,collapsed:false,showInOverview:true}]};
+const defaults={archivedJourneys:[],archivedGoals:[],archivedPensions:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},goalNames:{},goalTargets:{houseFund:50000,holidayFund:0,personalSavings:5000},goalHasTarget:{houseFund:true,holidayFund:false,personalSavings:true},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,housePocketArchiveRemoved:false,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensions:[{id:"pension-1",name:"Pension",value:48951.79,personal:342.50,employer:242.50,collapsed:false,showInOverview:true}]};
 let state;try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");state=saved&&saved.loans?Object.assign({},defaults,saved):JSON.parse(JSON.stringify(defaults));}catch(e){state=JSON.parse(JSON.stringify(defaults));}
 let demoMode=false;
 let realStateSnapshot=null;
@@ -1357,7 +1435,8 @@ if(Array.isArray(state.loans)){
   });
 }
 
-if(state.housePocket<=0 && state.housePocketArchived===undefined)state.housePocketArchived=true;
+if(state.housePocketArchiveRemoved===undefined)state.housePocketArchiveRemoved=false;
+if(state.housePocketArchived===undefined)state.housePocketArchived=false;
 const euro0=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Number(n)||0);const euro2=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);const byId=id=>document.getElementById(id);const number=id=>Math.max(0,Number(byId(id).value)||0);
 function showSaved(){const note=byId("saveNote");note.classList.add("show");clearTimeout(showSaved.timer);showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200)}function persist(){if(demoMode)return;localStorage.setItem(KEY,JSON.stringify(state));showSaved()}
 function monthsText(balance,payment){if(balance<=0)return"Complete";if(!payment)return"Repayment not set";const m=Math.ceil(balance/payment);return m===1?"About 1 month":`About ${m} months`}
@@ -1539,11 +1618,32 @@ function page(id){
   document.body.classList.toggle("journey-active-v313",id==="journey");
   document.body.classList.toggle("goals-active-v314",id==="goals");
   document.body.classList.toggle("pension-active-v315",id==="pension");
+  document.body.classList.toggle("archive-active-v316",id==="archive");
   document.body.classList.remove("overview-active");
   if(["overview","journey","goals","pension"].includes(id))freedomWallpapers.preload(id);
   if(id==="pension" && typeof closeAddPensionForm==="function") closeAddPensionForm();
   history.replaceState(null,"","#"+id);
   window.scrollTo(0,0);
+  if(id==="archive"){
+    renderArchive();
+    if(freedomMotion.activePage!=="archive"){
+      freedomMotion.activePage="archive";
+      requestAnimationFrame(()=>{
+        const pageEl=byId("archive");
+        if(!pageEl||freedomMotion.reduced)return;
+        pageEl.classList.remove("freedom-page-enter");void pageEl.offsetWidth;pageEl.classList.add("freedom-page-enter");
+        setTimeout(()=>pageEl.classList.remove("freedom-page-enter"),280);
+        pageEl.querySelectorAll(".archive-section").forEach((sec,i)=>{
+          if(freedomMotion.reduced)return;
+          const delay=freedomMotion.staggerDelay(i);
+          sec.classList.remove("freedom-card-enter");sec.style.setProperty("--motion-delay",delay+"ms");
+          void sec.offsetWidth;sec.classList.add("freedom-card-enter");
+          setTimeout(()=>{sec.classList.remove("freedom-card-enter");sec.style.removeProperty("--motion-delay")},freedomMotion.enterDuration()+delay+80);
+        });
+      });
+    }
+    return;
+  }
   if(["overview","journey","goals","pension"].includes(id)){
     if(freedomMotion.activePage!==id){
       freedomMotion.activePage=id;
@@ -2377,7 +2477,7 @@ function renderPensions(){
     const p=state.pensions[i];
     if(!p) return;
     const card=e.currentTarget.closest(".pension-card");
-    freedomMotion.exitCard(card,()=>{state.archivedPensions.unshift({...p});state.pensions.splice(i,1);persist();render();});
+    freedomMotion.exitCard(card,()=>{state.archivedPensions.unshift({...p,archivedAt:new Date().toISOString()});state.pensions.splice(i,1);persist();render();});
   }));
   list.querySelectorAll("[data-delete-pension]").forEach(btn=>btn.addEventListener("click",e=>{
     const i=Number(e.currentTarget.dataset.deletePension);
@@ -2399,17 +2499,118 @@ function renderPensions(){
   });
   setupPensionReorder(list);
 }
-function renderArchive(){const wrap=byId("archiveList");if(!wrap)return;const items=[];if(state.housePocketArchived){items.push({type:"housePocket",name:"House Pocket",detail:"Completed victory • €1,000 returned"})}
-Object.entries(state.hiddenBuiltInGoals).forEach(([key,hidden])=>{if(hidden&&!state.deletedBuiltInGoals[key]){const m=builtInGoalMeta[key];items.push({type:"builtInGoal",key,name:goalDisplayName(key),detail:`Archived goal • ${euro2(state[m.valueKey])} current value`})}});
-state.archivedGoals.forEach((x,i)=>items.push({type:"goal",index:i,name:x.name,detail:`Archived goal • ${euro2(x.current)} current${x.target>0?" • "+euro2(x.target)+" target":""}`}));
-state.archivedJourneys.forEach((x,i)=>items.push({type:"journey",index:i,name:x.name,detail:`${x.current<=0?"Completed":"Archived"} journey • ${euro2(Math.max(0,x.starting-x.current))} returned • ${euro2(x.current)} balance`}));
-state.archivedPensions.forEach((x,i)=>items.push({type:"pension",index:i,name:x.name,detail:`Archived pension • ${euro2(x.value)} current • ${euro2(pensionMonthly(x))}/month`}));
-if(!items.length){wrap.innerHTML='<p class="empty-archive">Nothing archived yet. Completed and removed items will appear here.</p>';return}
-wrap.innerHTML=items.map(item=>`<div class="archive-item"><div class="row"><div><strong>${esc(item.name)}</strong><small>${esc(item.detail)}</small></div>${item.type==="journey"?`<button class="mini-btn gold" data-restore-journey="${item.index}" type="button">Restore</button>`:item.type==="goal"?`<button class="mini-btn gold" data-restore-goal="${item.index}" type="button">Restore</button>`:item.type==="pension"?`<button class="mini-btn gold" data-restore-pension="${item.index}" type="button">Restore</button>`:item.type==="builtInGoal"?`<button class="mini-btn gold" data-restore-built-in="${item.key}" type="button">Restore</button>`:""}</div></div>`).join("");
-wrap.querySelectorAll("[data-restore-journey]").forEach(btn=>btn.addEventListener("click",e=>{const i=Number(e.currentTarget.dataset.restoreJourney),item=state.archivedJourneys[i];if(!item)return;state.loans.push({name:item.name,starting:item.starting,current:item.current,payment:item.payment});state.archivedJourneys.splice(i,1);persist();render()}));
-wrap.querySelectorAll("[data-restore-goal]").forEach(btn=>btn.addEventListener("click",e=>{const i=Number(e.currentTarget.dataset.restoreGoal),item=state.archivedGoals[i];if(!item)return;const hasTarget=item.hasTarget!==undefined?!!item.hasTarget:(Number(item.target)||0)>0;state.customGoals.push({name:item.name,current:item.current,target:item.target,hasTarget});state.archivedGoals.splice(i,1);persist();render()}));
-wrap.querySelectorAll("[data-restore-pension]").forEach(btn=>btn.addEventListener("click",e=>{const i=Number(e.currentTarget.dataset.restorePension),item=state.archivedPensions[i];if(!item)return;state.pensions.push({...item,collapsed:true});state.archivedPensions.splice(i,1);persist();render()}));
-wrap.querySelectorAll("[data-restore-built-in]").forEach(btn=>btn.addEventListener("click",e=>{state.hiddenBuiltInGoals[e.currentTarget.dataset.restoreBuiltIn]=false;persist();render()}))}
+function formatArchiveDate(iso){
+  if(!iso)return"";
+  const d=new Date(iso);
+  if(isNaN(d.getTime()))return"";
+  return d.toLocaleDateString("en-IE",{day:"numeric",month:"short",year:"numeric"});
+}
+function archiveActions(restoreAttrs,deleteAttrs){
+  return `<div class="archive-actions"><button class="archive-btn-restore" type="button" ${restoreAttrs}>Restore</button><button class="archive-btn-delete" type="button" ${deleteAttrs}>Delete</button></div>`;
+}
+function archiveRow(name,metas,actionsHtml,extraClass){
+  const metaHtml=(metas||[]).map(m=>`<div class="archive-row-meta${m.sage?" archive-row-meta-sage":""}">${esc(m.text)}</div>`).join("");
+  return `<div class="archive-row${extraClass||""}"><div class="archive-row-main"><div class="archive-row-name">${esc(name)}</div>${metaHtml}</div>${actionsHtml}</div>`;
+}
+function archiveSection(title,count,rowsHtml){
+  return `<section class="archive-section"><div class="archive-section-head"><div class="archive-section-label">${esc(title)}</div><span class="archive-section-count">${count}</span></div><div class="archive-section-card">${rowsHtml}</div></section>`;
+}
+function renderArchive(){
+  const wrap=byId("archiveSections");
+  if(!wrap)return;
+  const sections=[];
+  const victories=[];
+  if(state.housePocketArchived&&!state.housePocketArchiveRemoved&&state.housePocket<=0){
+    const completedDate=formatArchiveDate(state.housePocketCompletedAt);
+    victories.push(archiveRow("House Pocket",[
+      {text:"€1,000 saved"},
+      {text:completedDate?`Completed · ${completedDate}`:"Completed"}
+    ],archiveActions('data-restore-victory="housePocket"','data-delete-victory="housePocket"')," archive-row-victory"));
+  }
+  if(victories.length)sections.push(archiveSection("Completed Victories",victories.length,victories.join("")));
+  const goals=[];
+  Object.entries(state.hiddenBuiltInGoals).forEach(([key,hidden])=>{
+    if(!hidden||state.deletedBuiltInGoals[key])return;
+    goals.push(archiveRow(goalDisplayName(key),[{text:"Archived"}],
+      archiveActions(`data-restore-built-in="${key}"`,`data-delete-built-in-archive="${key}"`)));
+  });
+  state.archivedGoals.forEach((x,i)=>{
+    const date=formatArchiveDate(x.archivedAt);
+    goals.push(archiveRow(x.name,[{text:date?`Archived · ${date}`:"Archived"}],
+      archiveActions(`data-restore-goal="${i}"`,`data-delete-archived-goal="${i}"`)));
+  });
+  if(goals.length)sections.push(archiveSection("Archived Goals",goals.length,goals.join("")));
+  const journeys=[];
+  state.archivedJourneys.forEach((x,i)=>{
+    const date=formatArchiveDate(x.archivedAt);
+    const balance=Number(x.current)||0;
+    journeys.push(archiveRow(x.name,[
+      {text:date?`Archived · ${date}`:"Archived"},
+      {text:`Balance when archived: ${euro2(balance)}`,sage:true}
+    ],archiveActions(`data-restore-journey="${i}"`,`data-delete-archived-journey="${i}"`)));
+  });
+  if(journeys.length)sections.push(archiveSection("Archived Journeys",journeys.length,journeys.join("")));
+  const pensions=[];
+  state.archivedPensions.forEach((x,i)=>{
+    const date=formatArchiveDate(x.archivedAt);
+    pensions.push(archiveRow(x.name,[{text:date?`Archived · ${date}`:"Archived"}],
+      archiveActions(`data-restore-pension="${i}"`,`data-delete-archived-pension="${i}"`)));
+  });
+  if(pensions.length)sections.push(archiveSection("Archived Pensions",pensions.length,pensions.join("")));
+  wrap.innerHTML=sections.length?sections.join(""):'<p class="empty-archive">Nothing archived yet. Completed and removed items will appear here.</p>';
+  wrap.querySelectorAll("[data-restore-victory]").forEach(btn=>btn.addEventListener("click",()=>{
+    state.housePocketArchived=false;state.housePocketArchiveRemoved=false;persist();render();
+  }));
+  wrap.querySelectorAll("[data-delete-victory]").forEach(btn=>btn.addEventListener("click",()=>{
+    if(!confirm("Delete this completed victory permanently?"))return;
+    state.housePocketArchiveRemoved=true;persist();render();
+  }));
+  wrap.querySelectorAll("[data-restore-built-in]").forEach(btn=>btn.addEventListener("click",e=>{
+    state.hiddenBuiltInGoals[e.currentTarget.dataset.restoreBuiltIn]=false;persist();render();
+  }));
+  wrap.querySelectorAll("[data-delete-built-in-archive]").forEach(btn=>btn.addEventListener("click",e=>{
+    const key=e.currentTarget.dataset.deleteBuiltInArchive;
+    if(!confirm(`Delete ${goalDisplayName(key)} permanently?`))return;
+    state.deletedBuiltInGoals[key]=true;persist();render();
+  }));
+  wrap.querySelectorAll("[data-restore-goal]").forEach(btn=>btn.addEventListener("click",e=>{
+    const i=Number(e.currentTarget.dataset.restoreGoal),item=state.archivedGoals[i];
+    if(!item)return;
+    const hasTarget=item.hasTarget!==undefined?!!item.hasTarget:(Number(item.target)||0)>0;
+    state.customGoals.push({name:item.name,current:item.current,target:item.target,hasTarget});
+    state.archivedGoals.splice(i,1);persist();render();
+  }));
+  wrap.querySelectorAll("[data-delete-archived-goal]").forEach(btn=>btn.addEventListener("click",e=>{
+    const i=Number(e.currentTarget.dataset.deleteArchivedGoal);
+    if(!state.archivedGoals[i])return;
+    if(!confirm("Delete this archived goal permanently?"))return;
+    state.archivedGoals.splice(i,1);persist();render();
+  }));
+  wrap.querySelectorAll("[data-restore-journey]").forEach(btn=>btn.addEventListener("click",e=>{
+    const i=Number(e.currentTarget.dataset.restoreJourney),item=state.archivedJourneys[i];
+    if(!item)return;
+    const {archivedAt,...rest}=item;
+    state.loans.push({...rest,collapsed:rest.collapsed!==undefined?rest.collapsed:true});
+    state.archivedJourneys.splice(i,1);persist();render();
+  }));
+  wrap.querySelectorAll("[data-delete-archived-journey]").forEach(btn=>btn.addEventListener("click",e=>{
+    const i=Number(e.currentTarget.dataset.deleteArchivedJourney);
+    if(!state.archivedJourneys[i])return;
+    if(!confirm("Delete this archived journey permanently?"))return;
+    state.archivedJourneys.splice(i,1);persist();render();
+  }));
+  wrap.querySelectorAll("[data-restore-pension]").forEach(btn=>btn.addEventListener("click",e=>{
+    const i=Number(e.currentTarget.dataset.restorePension),item=state.archivedPensions[i];
+    if(!item)return;
+    state.pensions.push({...item,collapsed:true});state.archivedPensions.splice(i,1);persist();render();
+  }));
+  wrap.querySelectorAll("[data-delete-archived-pension]").forEach(btn=>btn.addEventListener("click",e=>{
+    const i=Number(e.currentTarget.dataset.deleteArchivedPension);
+    if(!state.archivedPensions[i])return;
+    if(!confirm("Delete this archived pension permanently?"))return;
+    state.archivedPensions.splice(i,1);persist();render();
+  }));
+}
 function fillForm(){const hp=byId("housePocketRemaining");if(hp)hp.value=state.housePocket}
 function nextLoan(){return state.loans.filter(x=>x.current>0).sort((a,b)=>a.current-b.current)[0]||null}
 function render(){const original=state.loans.reduce((s,x)=>s+x.starting,0);const current=state.loans.reduce((s,x)=>s+x.current,0);const loanReturned=Math.max(0,original-current);const hpReturned=Math.max(0,HOUSE_POCKET_START-state.housePocket);const totalOriginal=original+HOUSE_POCKET_START;const totalCurrent=current+state.housePocket;const pct=totalOriginal?Math.max(0,(totalOriginal-totalCurrent)/totalOriginal*100):0;const monthly=state.loans.reduce((s,x)=>s+x.payment,0)+(state.housePocket>0?(Number(state.housePocketMonthly)||0):0);
@@ -2491,10 +2692,9 @@ byId("addGoal").addEventListener("click",()=>{
   byId("addGoalCard").hidden=true;
   render();
 });
-byId("toggleArchiveList").addEventListener("click",()=>{const list=byId("archiveList");list.hidden=!list.hidden;byId("toggleArchiveList").textContent=list.hidden?"View archived items":"Hide archived items"});
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:null,lastRepaymentDate:null});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
-document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){freedomMotion.activePage=boot;requestAnimationFrame(()=>freedomMotion.pageEnter(boot));}}
+document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more","archive"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){freedomMotion.activePage=boot;requestAnimationFrame(()=>freedomMotion.pageEnter(boot));}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}}
 })();
 
 
@@ -2511,7 +2711,7 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   }
   function showHome(){
     if(!isMobile())return;
-    document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315");
+    document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315","archive-active-v316");
     closeMore();
     document.body.classList.add("home183");
     if(home)home.setAttribute("aria-hidden","false");
@@ -2539,22 +2739,19 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
     });
   });
 
-  const destinations={archive:"moreArchive",companion:"moreCompanion",more:"more"};
   document.querySelectorAll("[data-more183]").forEach(btn=>{
     btn.addEventListener("click",()=>{
       const key=btn.getAttribute("data-more183");
       hideHome();
+      closeMore();
+      if(key==="archive"){
+        if(typeof window.page==="function")window.page("archive");
+        return;
+      }
       if(typeof window.page==="function")window.page("more");
       setTimeout(()=>{
-        if(key==="archive"){
-          const list=document.getElementById("archiveList");
-          const toggle=document.getElementById("toggleArchiveList");
-          if(list&&list.hidden){
-            list.hidden=false;
-            if(toggle)toggle.textContent="Hide archived items";
-          }
-        }
-        const el=document.getElementById(destinations[key]);
+        const destinations={companion:"moreCompanion",more:"more"};
+        const el=document.getElementById(destinations[key]||"more");
         if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
       },60);
     });
@@ -2563,7 +2760,7 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   window.addEventListener("load",()=>{
     if(!isMobile()){ hideHome(); return; }
     const hash=location.hash.slice(1);
-    if(["overview","journey","goals","pension","more"].includes(hash)) return;
+    if(["overview","journey","goals","pension","more","archive"].includes(hash)) return;
     if(!document.body.classList.contains("home183")) return;
     showHome();
   });
