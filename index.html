@@ -765,12 +765,11 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.goals-active-v314 #goals .goal-life-happens-note{
     margin:7px 0 0;font-size:11px;line-height:1.45;color:var(--muted);
   }
-  body.goals-active-v314 #goals .goal-life-happens-panel{
-    margin-top:12px;padding-top:12px;border-top:1px solid rgba(220,190,150,.08);
+  body.goals-active-v314 #goals .goal-life-happens-expand{
+    margin-top:0;
   }
-  body.goals-active-v314 #goals .goal-life-happens-panel[hidden]{display:none!important}
-  body.goals-active-v314 #goals .goal-life-happens-panel-title{
-    margin:0 0 4px;font-size:12px;font-weight:650;color:#efcbaa;
+  body.goals-active-v314 #goals .goal-life-happens-panel{
+    padding-top:12px;border-top:1px solid rgba(220,190,150,.08);margin-top:12px;
   }
   body.goals-active-v314 #goals .goal-life-happens-panel-prompt{
     margin:0 0 10px;font-size:11px;line-height:1.45;color:var(--muted);
@@ -1909,7 +1908,7 @@ function renderSavingsGoalCard(key){
     ? `<div class="goal-field"><label for="${targetId}">Target</label><input class="goal-field-value" id="${targetId}" inputmode="decimal" type="number" min="0" step="1" value="${target||""}" placeholder="0"></div>`
     : "";
   const lifeOpen=!!goalLifeHappensOpen[key];
-  const fieldsHtml=`<div class="goal-fields">${targetFieldHtml}<div class="goal-field"><label for="${addId}">Add funds</label><input class="goal-field-value" id="${addId}" inputmode="decimal" type="number" min="0" step="1" value="" placeholder="0"></div><div class="goal-life-happens-wrap"><button class="goal-life-happens-btn" type="button" data-life-happens-toggle="${esc(key)}">− Life happens</button><p class="goal-life-happens-note">Sometimes the money needs to do something else.</p><div class="goal-life-happens-panel${lifeOpen?" freedom-body-reveal":""}" data-life-happens-panel="${esc(key)}"${lifeOpen?"":" hidden"}><p class="goal-life-happens-panel-title">Life happens</p><p class="goal-life-happens-panel-prompt">How much do you need to take from this goal?</p><div class="goal-field"><label for="${lifeId}">Amount</label><input class="goal-field-value" id="${lifeId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00"></div><p class="goal-life-happens-msg" data-life-happens-msg="${esc(key)}" hidden></p><button class="goal-life-happens-take" type="button" data-life-happens-take="${esc(key)}">− Take from goal</button></div></div></div>`;
+  const fieldsHtml=`<div class="goal-fields">${targetFieldHtml}<div class="goal-field"><label for="${addId}">Add funds</label><input class="goal-field-value" id="${addId}" inputmode="decimal" type="number" min="0" step="1" value="" placeholder="0"></div><div class="goal-life-happens-wrap"><button class="goal-life-happens-btn" type="button" data-life-happens-toggle="${esc(key)}">− Life happens</button><p class="goal-life-happens-note">Sometimes the money needs to do something else.</p><div class="goal-life-happens-expand card-body-wrap${lifeOpen?"":" is-collapsed"}"><div class="goal-life-happens-panel journey-card-body"><p class="goal-life-happens-panel-prompt">How much do you need to take from this goal?</p><div class="goal-field"><label for="${lifeId}">Amount</label><input class="goal-field-value" id="${lifeId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00"></div><p class="goal-life-happens-msg" data-life-happens-msg="${esc(key)}" hidden></p><button class="goal-life-happens-take" type="button" data-life-happens-take="${esc(key)}">− Take from goal</button></div></div></div></div>`;
   const toggleHtml=`<div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="${hasTargetId}" data-goal-has-target="${esc(key)}"${hasTargetChecked} aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div>`;
   const progressBody=usesTarget?goalProgressBlock(current,target,barId):"";
   const actions=isCustom
@@ -2025,19 +2024,26 @@ function renderGoals(){
   list.querySelectorAll("[data-life-happens-toggle]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const key=btn.dataset.lifeHappensToggle;
+    const wrap=btn.closest(".goal-life-happens-wrap")?.querySelector(".goal-life-happens-expand");
     goalLifeHappensOpen[key]=!goalLifeHappensOpen[key];
-    renderGoals();
-    if(goalLifeHappensOpen[key]){
-      requestAnimationFrame(()=>{
-        const panel=list.querySelector(`[data-life-happens-panel="${CSS.escape(key)}"]`);
+    if(wrap){
+      wrap.classList.toggle("is-collapsed",!goalLifeHappensOpen[key]);
+      const panel=wrap.querySelector(".goal-life-happens-panel");
+      const inp=byId(goalLifeHappensInputId(key));
+      const msgEl=wrap.querySelector(`[data-life-happens-msg="${CSS.escape(key)}"]`);
+      if(goalLifeHappensOpen[key]){
         if(panel&&!freedomMotion.reduced){
           panel.classList.add("freedom-body-reveal");
           setTimeout(()=>panel.classList.remove("freedom-body-reveal"),420);
         }
-        const inp=byId(goalLifeHappensInputId(key));
         if(inp)inp.focus();
-      });
+      }else{
+        if(inp)inp.value="";
+        if(msgEl){msgEl.textContent="";msgEl.hidden=true;}
+      }
+      return;
     }
+    renderGoals();
   }));
   list.querySelectorAll("[data-life-happens-take]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
