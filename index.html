@@ -1229,8 +1229,9 @@ function resolvedGoalOrder(){
 }
 function goalCollapsed(key){if(state.goalCollapsed[key]===undefined) return true; return !!state.goalCollapsed[key];}
 function toggleGoalCollapsed(key){state.goalCollapsed[key]=!goalCollapsed(key); persist(); renderGoals();}
-function goalChevron(name){
-  return `<button class="journey-chevron" type="button" aria-label="Toggle ${esc(name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button>`;
+function goalChevron(name,key){
+  const keyAttr=key!=null&&key!==""?` data-goal-chevron="${esc(key)}"`:"";
+  return `<button class="journey-chevron" type="button"${keyAttr} aria-label="Toggle ${esc(name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button>`;
 }
 function goalPct(current,target){return target>0?Math.min(100,(Number(current)||0)/target*100):0;}
 function goalProgressBlock(current,target,barId){
@@ -1240,7 +1241,7 @@ function goalProgressBlock(current,target,barId){
   return `<div class="goal-progress-block"><div class="goal-progress-of">${euro0(current)} of ${euro0(target)}</div><div class="goal-progress-row"><div class="progress"><span${idAttr} style="width:${pct}%"></span></div><span class="goal-progress-pct">${Math.round(pct)}%</span></div></div>`;
 }
 function goalCardHead(key,titleHtml,amountHtml,targetHtml,name){
-  return `<div class="goal-card-head" data-toggle-goal="${esc(key)}"><div class="goal-head-main">${titleHtml}${amountHtml}${targetHtml||""}</div>${goalChevron(name||"")}</div>`;
+  return `<div class="goal-card-head" data-toggle-goal="${esc(key)}"><div class="goal-head-main">${titleHtml}${amountHtml}${targetHtml||""}</div>${goalChevron(name||"",key)}</div>`;
 }
 function goalUsesTarget(key){
   if(key.startsWith("custom:")){
@@ -1376,7 +1377,12 @@ function renderGoals(){
     else if(builtInGoalMeta[key]||key.startsWith("custom:")) card=renderSavingsGoalCard(key);
     if(card) list.appendChild(card);
   });
-  const skipToggle=el=>el.closest("input,button,textarea,select,a,.goal-toggle,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,button[data-save-goal],.save-btn");
+  const skipToggle=el=>el.closest("input,textarea,select,a,.goal-toggle,.journey-chevron,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,button[data-save-goal],.save-btn");
+  list.querySelectorAll("[data-goal-chevron]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    if(goalDragJustEnded) return;
+    toggleGoalCollapsed(btn.dataset.goalChevron);
+  }));
   list.querySelectorAll("[data-toggle-goal]").forEach(head=>head.addEventListener("click",e=>{
     if(goalDragJustEnded||skipToggle(e.target)) return;
     toggleGoalCollapsed(head.dataset.toggleGoal);
@@ -2069,7 +2075,13 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
     });
   });
 
-  window.addEventListener("load",()=>{if(isMobile())showHome();else hideHome()});
+  window.addEventListener("load",()=>{
+    if(!isMobile()){ hideHome(); return; }
+    const hash=location.hash.slice(1);
+    if(["overview","journey","goals","pension","more"].includes(hash)) return;
+    if(!document.body.classList.contains("home183")) return;
+    showHome();
+  });
   window.addEventListener("resize",()=>{if(!isMobile())hideHome()});
 })();
 
