@@ -38,13 +38,13 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .add-journey-card[hidden]{display:none}
 .empty-archive{color:var(--muted);font-size:14px;line-height:1.55;margin:0;text-align:center;padding:28px 12px}
 
-  body.archive-active-v316{background:#0a0c10}
-  html:has(body.archive-active-v316){background:#08090c}
+  body.archive-active-v316{background:transparent}
+  html:has(body.archive-active-v316){background:#070809}
   body.archive-active-v316::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
-      radial-gradient(ellipse 120% 70% at 50% -10%, rgba(36,44,58,.34), transparent 58%),
-      linear-gradient(180deg,#0c0e13 0%,#0a0c10 48%,#08090c 100%);
+      linear-gradient(180deg,rgba(0,0,0,.06) 0%,rgba(0,0,0,.02) 42%,rgba(0,0,0,.24) 72%,rgba(0,0,0,.52) 100%),
+      #070809 url("./archive-wallpaper.png") center top/cover no-repeat;
   }
   body.archive-active-v316 .app::before{display:none}
   body.archive-active-v316 .app{position:relative;z-index:1;background:transparent}
@@ -59,7 +59,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     padding:clamp(28px,7vh,52px) 10px clamp(24px,4vh,36px);
   }
   body.archive-active-v316 .archive-title{
-    margin:0 0 12px;color:rgba(239,203,170,.92);
+    margin:0 0 12px;color:#efcbaa;
     font-size:clamp(34px,8vw,42px);line-height:1.05;letter-spacing:-.03em;font-weight:760;
   }
   body.archive-active-v316 .archive-subtitle{
@@ -72,16 +72,16 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     margin:0 0 10px;padding:0 2px;
   }
   body.archive-active-v316 .archive-section-label{
-    color:rgba(231,207,99,.88);font-size:11px;font-weight:800;
+    color:var(--yellow);font-size:11px;font-weight:800;
     letter-spacing:.14em;text-transform:uppercase;
   }
   body.archive-active-v316 .archive-section-count{
-    flex:0 0 auto;font-size:11px;color:rgba(190,188,182,.58);
-    border:1px solid rgba(220,190,150,.18);border-radius:999px;padding:4px 9px;line-height:1;
+    flex:0 0 auto;font-size:11px;color:var(--muted);
+    border:1px solid rgba(245,244,240,.14);border-radius:999px;padding:4px 9px;line-height:1;
   }
   body.archive-active-v316 .archive-section-card{
-    border:1px solid rgba(220,190,150,.14);border-radius:22px;
-    background:rgba(18,20,24,.34);
+    border:1px solid rgba(239,203,170,.16);border-radius:22px;
+    background:rgba(13,16,19,.42);
     backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
     overflow:hidden;
   }
@@ -90,7 +90,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.archive-active-v316 .archive-row:last-child{border-bottom:0}
   body.archive-active-v316 .archive-row-victory{
-    background:rgba(132,189,145,.035);
+    background:rgba(132,189,145,.04);
   }
   body.archive-active-v316 .archive-row-name{
     font-size:16px;font-weight:650;letter-spacing:-.02em;color:rgba(236,232,224,.84);
@@ -98,24 +98,24 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.archive-active-v316 .archive-row-meta{
     margin-top:5px;font-size:13px;line-height:1.45;color:var(--muted);
   }
-  body.archive-active-v316 .archive-row-meta-sage{color:rgba(132,189,145,.82)}
+  body.archive-active-v316 .archive-row-meta-sage{color:var(--green)}
   body.archive-active-v316 .archive-actions{
     display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap;
   }
   body.archive-active-v316 .archive-btn-restore{
-    border:0;border-radius:999px;padding:8px 14px;
-    background:rgba(132,189,145,.22);color:rgba(201,222,207,.95);
+    border:1px solid rgba(132,189,145,.42);border-radius:999px;padding:8px 14px;
+    background:rgba(13,16,19,.32);color:var(--green);
     font-size:12px;font-weight:650;cursor:pointer;-webkit-tap-highlight-color:transparent;
   }
   body.archive-active-v316 .archive-btn-delete{
-    border:1px solid rgba(245,244,240,.16);border-radius:999px;padding:8px 14px;
-    background:transparent;color:rgba(190,188,182,.72);
+    border:1px solid rgba(245,244,240,.14);border-radius:999px;padding:8px 14px;
+    background:rgba(13,16,19,.24);color:var(--muted);
     font-size:12px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;
   }
   body.archive-active-v316 .archive-btn-restore:active,
   body.archive-active-v316 .archive-btn-delete:active{transform:scale(.98)}
   body.archive-active-v316 .archive-footer-note{
-    margin:26px 0 0;text-align:center;color:rgba(153,155,164,.72);
+    margin:26px 0 0;text-align:center;color:var(--muted);
     font-size:12px;line-height:1.55;padding:0 8px;
   }
 
@@ -1359,7 +1359,8 @@ const FREEDOM_WALLPAPERS={
   overview:"./overview-wallpaper.png",
   journey:"./journey-wallpaper.png",
   goals:"./goals-wallpaper.png",
-  pension:"./pension-wallpaper.png"
+  pension:"./pension-wallpaper.png",
+  archive:"./archive-wallpaper.png"
 };
 const freedomWallpapers={
   preload(pageId){
@@ -1369,7 +1370,7 @@ const freedomWallpapers={
     if("decoding" in img)img.decoding="async";
     img.src=url;
   },
-  preloadAll(){Object.keys(FREEDOM_WALLPAPERS).forEach(id=>this.preload(id));}
+  preloadAll(){["overview","journey","goals","pension"].forEach(id=>this.preload(id));}
 };
 freedomWallpapers.preloadAll();
 const HOUSE_POCKET_START=1000;
@@ -1621,6 +1622,7 @@ function page(id){
   document.body.classList.toggle("archive-active-v316",id==="archive");
   document.body.classList.remove("overview-active");
   if(["overview","journey","goals","pension"].includes(id))freedomWallpapers.preload(id);
+  if(id==="archive")freedomWallpapers.preload("archive");
   if(id==="pension" && typeof closeAddPensionForm==="function") closeAddPensionForm();
   history.replaceState(null,"","#"+id);
   window.scrollTo(0,0);
