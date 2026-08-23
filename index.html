@@ -769,6 +769,52 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.goals-active-v314 #goals .goal-field input.goal-field-value:focus{
     border-color:rgba(231,207,99,.20);box-shadow:none;
   }
+  body.goals-active-v314 #goals .goal-plan-label{
+    font-size:12px;color:rgba(190,188,182,.58);margin-top:4px;
+  }
+  body.goals-active-v314 #goals .goal-plan-switch{
+    display:flex;gap:6px;margin:10px 0 12px;
+  }
+  body.goals-active-v314 #goals .goal-plan-btn{
+    flex:1;border:1px solid rgba(220,190,150,.22);
+    background:rgba(18,20,24,.20);color:rgba(190,188,182,.72);
+    border-radius:999px;padding:8px 10px;font-size:11px;font-weight:650;
+    cursor:pointer;-webkit-tap-highlight-color:transparent;
+  }
+  body.goals-active-v314 #goals .goal-plan-btn.active{
+    border-color:rgba(201,160,122,.45);background:rgba(201,160,122,.18);
+    color:rgba(236,232,224,.88);
+  }
+  body.goals-active-v314 #goals .goal-plan-panel[hidden]{display:none!important}
+  body.goals-active-v314 #goals .goal-plan-panel{min-width:0}
+  body.goals-active-v314 #goals .goal-plan-stat{
+    border:1px solid rgba(220,190,150,.12);border-radius:14px;
+    background:rgba(18,20,24,.22);padding:12px 13px;margin-bottom:10px;
+  }
+  body.goals-active-v314 #goals .goal-plan-stat small{
+    display:block;color:rgba(190,188,182,.58);font-size:11px;margin-bottom:5px;
+  }
+  body.goals-active-v314 #goals .goal-plan-stat strong{
+    font-size:16px;font-weight:650;color:rgba(236,232,224,.82);
+  }
+  body.goals-active-v314 #goals .goal-plan-stat strong.goal-plan-estimate{
+    color:rgba(132,189,145,.88);
+  }
+  body.goals-active-v314 #goals .goal-plan-stat.goal-plan-forecast{
+    border-color:rgba(132,189,145,.24);
+  }
+  body.goals-active-v314 #goals .goal-plan-stat input.goal-plan-value{
+    width:100%;margin:0;padding:0;border:0;border-radius:0;
+    background:transparent;font-size:16px;font-weight:650;
+    color:rgba(236,232,224,.82);outline:none;
+  }
+  body.goals-active-v314 #goals .goal-plan-stat input.goal-plan-value:focus{box-shadow:none;outline:none}
+  body.goals-active-v314 #goals .goal-plan-date-estimate{
+    display:block;font-size:12px;color:rgba(132,189,145,.88);margin-top:2px;font-weight:500;
+  }
+  body.goals-active-v314 #goals .goal-plan-estimate-note{
+    display:block;font-size:10px;color:rgba(190,188,182,.48);margin-top:4px;line-height:1.4;font-weight:500;
+  }
   body.goals-active-v314 #goals .goal-life-happens-wrap{
     margin-top:4px;
   }
@@ -1487,8 +1533,19 @@ Object.keys(builtInGoalDefaultTargets).forEach(k=>{
 if(Array.isArray(state.customGoals)){
   state.customGoals.forEach(g=>{
     if(g&&g.hasTarget===undefined)g.hasTarget=(Number(g.target)||0)>0;
+    if(g&&!g.planMode)g.planMode="monthly";
+    if(g&&g.plannedMonthly===undefined)g.plannedMonthly=0;
+    if(g&&g.goalDate===undefined)g.goalDate=null;
   });
 }
+if(!state.goalPlanMode)state.goalPlanMode={};
+if(!state.goalPlannedMonthly)state.goalPlannedMonthly={};
+if(!state.goalDate)state.goalDate={};
+["houseFund","holidayFund","personalSavings"].forEach(k=>{
+  if(state.goalPlanMode[k]===undefined)state.goalPlanMode[k]="monthly";
+  if(state.goalPlannedMonthly[k]===undefined)state.goalPlannedMonthly[k]=0;
+  if(state.goalDate[k]===undefined)state.goalDate[k]=null;
+});
 if(!state.goalLifetimeAdded)state.goalLifetimeAdded={};
 if(!state.goalLifeHappensTotal)state.goalLifeHappensTotal={};
 if(!state.goalLastLifeHappens)state.goalLastLifeHappens={};
@@ -1868,9 +1925,14 @@ function saveGoal(key){
     const targetEl=byId(`goalTarget_custom_${i}`);
     const addEl=byId(`goalAdd_custom_${i}`);
     const hasTargetEl=byId(`goalHasTarget_custom_${i}`);
+    const plannedEl=byId(`goalPlanned_custom_${i}`);
+    const dateEl=byId(`goalDate_custom_${i}`);
     if(nameEl){const n=nameEl.value.trim();if(n)g.name=n;}
     if(hasTargetEl)g.hasTarget=!!hasTargetEl.checked;
     if(g.hasTarget&&targetEl)g.target=Math.max(0,Number(targetEl.value)||0);
+    if(plannedEl)g.plannedMonthly=Math.max(0,Number(plannedEl.value)||0);
+    if(dateEl)g.goalDate=dateEl.value||null;
+    if(!g.planMode)g.planMode="monthly";
     const add=addEl?Math.max(0,Number(addEl.value)||0):0;
     if(add>0){g.current=Math.round((g.current+add)*100)/100;bumpGoalLifetimeAdded(key,add);}
   }else{
@@ -1880,6 +1942,8 @@ function saveGoal(key){
     const targetEl=byId(`goalTarget_${key}`);
     const addEl=byId(`goalAdd_${key}`);
     const hasTargetEl=byId(`goalHasTarget_${key}`);
+    const plannedEl=byId(`goalPlanned_${key}`);
+    const dateEl=byId(`goalDate_${key}`);
     if(nameEl){
       const n=nameEl.value.trim();
       if(n){
@@ -1892,10 +1956,123 @@ function saveGoal(key){
       state.goalHasTarget[key]=!!hasTargetEl.checked;
     }
     if(goalUsesTarget(key)&&targetEl)state.goalTargets[key]=Math.max(0,Number(targetEl.value)||0);
+    if(plannedEl)setGoalPlannedMonthly(key,plannedEl.value);
+    if(dateEl)setGoalDate(key,dateEl.value||null);
     const add=addEl?Math.max(0,Number(addEl.value)||0):0;
     if(add>0){state[m.valueKey]=Math.round((state[m.valueKey]+add)*100)/100;bumpGoalLifetimeAdded(key,add);}
   }
   persist(); render();
+}
+function refreshGoalPlanForecast(key,card){
+  card=card||document.querySelector(`#goalsList .goal-card[data-goal-key="${CSS.escape(key)}"]`);
+  if(!card)return;
+  const targetEl=card.querySelector(`#${CSS.escape(key.startsWith("custom:")?`goalTarget_custom_${Number(key.slice(7))}`:`goalTarget_${key}`)}`);
+  const plannedEl=card.querySelector(`[data-goal-planned="${CSS.escape(key)}"]`);
+  const dateEl=card.querySelector(`[data-goal-date="${CSS.escape(key)}"]`);
+  const target=Math.max(0,Number(targetEl&&targetEl.value)||getGoalTargetAmount(key));
+  const current=getGoalCurrentBalance(key);
+  const remaining=Math.max(0,target-current);
+  const planned=Math.max(0,Number(plannedEl&&plannedEl.value)||0);
+  const goalDate=dateEl?dateEl.value:"";
+  const forecast=goalSavingsForecast(remaining,planned);
+  const lineEl=card.querySelector(`[data-goal-forecast-line="${CSS.escape(key)}"]`);
+  const dateOut=card.querySelector(`[data-goal-forecast-date="${CSS.escape(key)}"]`);
+  const neededEl=card.querySelector(`[data-goal-needed="${CSS.escape(key)}"]`);
+  if(lineEl)lineEl.textContent=forecast.line1;
+  if(dateOut)dateOut.textContent=forecast.line2;
+  if(neededEl)neededEl.textContent=formatGoalMonthlyNeeded(remaining,goalDate);
+}
+function getGoalPlanMode(key){
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    return g&&g.planMode==="date"?"date":"monthly";
+  }
+  if(!state.goalPlanMode)state.goalPlanMode={};
+  return state.goalPlanMode[key]==="date"?"date":"monthly";
+}
+function setGoalPlanMode(key,mode){
+  const m=mode==="date"?"date":"monthly";
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    if(g)g.planMode=m;
+  }else{
+    if(!state.goalPlanMode)state.goalPlanMode={};
+    state.goalPlanMode[key]=m;
+  }
+}
+function getGoalPlannedMonthly(key){
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    return Math.max(0,Number(g&&g.plannedMonthly)||0);
+  }
+  if(!state.goalPlannedMonthly)state.goalPlannedMonthly={};
+  return Math.max(0,Number(state.goalPlannedMonthly[key])||0);
+}
+function setGoalPlannedMonthly(key,amount){
+  const v=Math.max(0,Number(amount)||0);
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    if(g)g.plannedMonthly=v;
+  }else{
+    if(!state.goalPlannedMonthly)state.goalPlannedMonthly={};
+    state.goalPlannedMonthly[key]=v;
+  }
+}
+function getGoalDate(key){
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    return g&&g.goalDate?g.goalDate:null;
+  }
+  if(!state.goalDate)state.goalDate={};
+  return state.goalDate[key]||null;
+}
+function setGoalDate(key,value){
+  const v=value||null;
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    if(g)g.goalDate=v;
+  }else{
+    if(!state.goalDate)state.goalDate={};
+    state.goalDate[key]=v;
+  }
+}
+function getGoalTargetAmount(key){
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    return Math.max(0,Number(g&&g.target)||0);
+  }
+  return Math.max(0,Number(state.goalTargets&&state.goalTargets[key])||0);
+}
+function goalRemainingToTarget(key){
+  return Math.max(0,getGoalTargetAmount(key)-getGoalCurrentBalance(key));
+}
+function goalSavingsForecast(remaining,plannedMonthly){
+  const r=Number(remaining)||0,p=Number(plannedMonthly)||0;
+  if(r<=0)return{line1:"Goal reached",line2:""};
+  if(!p)return{line1:"Monthly saving not set",line2:""};
+  const m=Math.ceil(r/p);
+  if(!isFinite(m)||m<=0)return{line1:"Monthly saving not set",line2:""};
+  const line1=m===1?"About 1 month":`About ${m} months`;
+  const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+m);
+  const line2=d.toLocaleDateString("en-IE",{month:"long",year:"numeric"});
+  return{line1,line2};
+}
+function formatGoalMonthlyNeeded(remaining,goalDateStr){
+  const r=Number(remaining)||0;
+  if(r<=0)return"Goal reached";
+  const amt=estimatedMonthlyNeeded(r,goalDateStr);
+  if(amt===null||!isFinite(amt)||amt<=0)return"Choose a goal date";
+  return`${euro2(amt)} / month`;
+}
+function goalPlanFieldsHtml(key,current,target,ids){
+  const remaining=Math.max(0,(Number(target)||0)-(Number(current)||0));
+  const mode=getGoalPlanMode(key);
+  const planned=getGoalPlannedMonthly(key);
+  const goalDate=freedomDateInputValue(getGoalDate(key));
+  const forecast=goalSavingsForecast(remaining,planned);
+  const needed=formatGoalMonthlyNeeded(remaining,goalDate);
+  const plannedVal=planned>0?planned:"";
+  return `<div class="goal-plan-wrap" data-goal-plan="${esc(key)}"><div class="goal-plan-label">Plan my goal by</div><div class="goal-plan-switch"><button class="goal-plan-btn${mode==="monthly"?" active":""}" type="button" data-goal-plan-mode="${esc(key)}" data-mode="monthly">Monthly saving</button><button class="goal-plan-btn${mode==="date"?" active":""}" type="button" data-goal-plan-mode="${esc(key)}" data-mode="date">Goal date</button></div><div class="goal-plan-panel" data-goal-plan-panel="monthly"${mode!=="monthly"?" hidden":""}><div class="goal-plan-stat"><small>Planned monthly saving</small><input class="goal-plan-value" id="${ids.plannedId}" data-goal-planned="${esc(key)}" inputmode="decimal" type="number" min="0" step="0.01" value="${plannedVal}" placeholder="0.00" aria-label="Planned monthly saving"></div><div class="goal-plan-stat goal-plan-forecast"><small>Estimated goal date</small><strong class="goal-plan-estimate" data-goal-forecast-line="${esc(key)}">${esc(forecast.line1)}</strong><span class="goal-plan-date-estimate" data-goal-forecast-date="${esc(key)}">${esc(forecast.line2)}</span></div></div><div class="goal-plan-panel" data-goal-plan-panel="date"${mode!=="date"?" hidden":""}><div class="goal-plan-stat"><small>I want this saved by</small><input class="goal-plan-value" id="${ids.dateId}" data-goal-date="${esc(key)}" type="month" value="${goalDate}" aria-label="Goal date"></div><div class="goal-plan-stat goal-plan-forecast"><small>Estimated monthly saving needed</small><strong class="goal-plan-estimate" data-goal-needed="${esc(key)}">${esc(needed)}</strong><span class="goal-plan-estimate-note">Estimate only</span></div></div></div>`;
 }
 function goalSavingsFieldIds(key,customIndex){
   const isCustom=key.startsWith("custom:");
@@ -1903,21 +2080,25 @@ function goalSavingsFieldIds(key,customIndex){
     targetId:isCustom?`goalTarget_custom_${customIndex}`:`goalTarget_${key}`,
     addId:isCustom?`goalAdd_custom_${customIndex}`:`goalAdd_${key}`,
     lifeId:goalLifeHappensInputId(key),
-    hasTargetId:isCustom?`goalHasTarget_custom_${customIndex}`:`goalHasTarget_${key}`
+    hasTargetId:isCustom?`goalHasTarget_custom_${customIndex}`:`goalHasTarget_${key}`,
+    plannedId:isCustom?`goalPlanned_custom_${customIndex}`:`goalPlanned_${key}`,
+    dateId:isCustom?`goalDate_custom_${customIndex}`:`goalDate_${key}`
   };
 }
-function goalTargetAddFundsRowHtml(usesTarget,target,ids){
-  if(usesTarget){
-    return `<div class="goal-field-row"><div class="goal-field goal-field-target"><label for="${ids.targetId}">Target</label><input class="goal-field-value" id="${ids.targetId}" inputmode="decimal" type="number" min="0" step="1" value="${target||""}" placeholder="0"></div><div class="goal-field goal-field-add"><label for="${ids.addId}">Add funds</label><input class="goal-field-value goal-field-add-value" id="${ids.addId}" inputmode="decimal" type="number" min="0" step="1" value="" placeholder="0"></div></div>`;
-  }
+function goalTargetRowHtml(usesTarget,target,ids){
+  if(!usesTarget) return "";
+  return `<div class="goal-field-row goal-field-row-single"><div class="goal-field goal-field-target"><label for="${ids.targetId}">Target</label><input class="goal-field-value" id="${ids.targetId}" data-goal-target-input="${ids.targetId}" inputmode="decimal" type="number" min="0" step="1" value="${target||""}" placeholder="0"></div></div>`;
+}
+function goalAddFundsRowHtml(ids){
   return `<div class="goal-field-row goal-field-row-single"><div class="goal-field goal-field-add"><label for="${ids.addId}">Add funds</label><input class="goal-field-value goal-field-add-value" id="${ids.addId}" inputmode="decimal" type="number" min="0" step="1" value="" placeholder="0"></div></div>`;
 }
 function goalLifeHappensFieldsHtml(key,lifeId,lifeOpen){
   return `<div class="goal-life-happens-wrap"><button class="goal-life-happens-btn" type="button" data-life-happens-toggle="${esc(key)}">− Life happens</button><p class="goal-life-happens-note">Sometimes the money needs to do something else.</p><div class="goal-life-happens-expand card-body-wrap${lifeOpen?"":" is-collapsed"}"><div class="goal-life-happens-panel journey-card-body"><p class="goal-life-happens-panel-prompt">How much do you need to take from this goal?</p><div class="goal-field-row goal-life-happens-row"><div class="goal-field goal-field-life-amount"><input class="goal-field-value" id="${lifeId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Amount"></div><button class="goal-life-happens-take" type="button" data-life-happens-take="${esc(key)}">− Take from goal</button></div><p class="goal-life-happens-msg" data-life-happens-msg="${esc(key)}" hidden></p></div></div></div>`;
 }
-function goalSavingsExpandedFieldsHtml(key,usesTarget,target,customIndex){
+function goalSavingsExpandedFieldsHtml(key,usesTarget,target,current,customIndex){
   const ids=goalSavingsFieldIds(key,customIndex);
-  return `<div class="goal-fields">${goalTargetAddFundsRowHtml(usesTarget,target,ids)}${goalLifeHappensFieldsHtml(key,ids.lifeId,!!goalLifeHappensOpen[key])}</div>`;
+  const planHtml=usesTarget?goalPlanFieldsHtml(key,current,target,ids):"";
+  return `<div class="goal-fields">${goalTargetRowHtml(usesTarget,target,ids)}${planHtml}${goalAddFundsRowHtml(ids)}${goalLifeHappensFieldsHtml(key,ids.lifeId,!!goalLifeHappensOpen[key])}</div>`;
 }
 function renderSavingsGoalCard(key){
   let name,current,target,barId,isCustom=false,customIndex;
@@ -1951,7 +2132,7 @@ function renderSavingsGoalCard(key){
   const progressHtml=collapsed&&usesTarget?goalProgressBlock(current,target,barId):"";
   const ids=goalSavingsFieldIds(key,isCustom?customIndex:null);
   const hasTargetChecked=usesTarget?" checked":"";
-  const fieldsHtml=goalSavingsExpandedFieldsHtml(key,usesTarget,target,isCustom?customIndex:null);
+  const fieldsHtml=goalSavingsExpandedFieldsHtml(key,usesTarget,target,current,isCustom?customIndex:null);
   const toggleHtml=`<div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="${ids.hasTargetId}" data-goal-has-target="${esc(key)}"${hasTargetChecked} aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div>`;
   const progressBody=usesTarget?goalProgressBlock(current,target,barId):"";
   const actions=isCustom
@@ -2002,7 +2183,7 @@ function renderGoals(){
     else if(builtInGoalMeta[key]||key.startsWith("custom:")) card=renderSavingsGoalCard(key);
     if(card){freedomMotion.decorateNewCard(card,"goals",key);list.appendChild(card);}
   });
-  const skipToggle=el=>el.closest("input,textarea,select,a,.goal-toggle,.journey-chevron,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,button[data-save-goal],button[data-life-happens-toggle],button[data-life-happens-take],.save-btn");
+  const skipToggle=el=>el.closest("input,textarea,select,a,.goal-toggle,.journey-chevron,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,button[data-save-goal],button[data-life-happens-toggle],button[data-life-happens-take],button[data-goal-plan-mode],[data-goal-planned],[data-goal-date],.save-btn");
   list.querySelectorAll("[data-goal-chevron]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     if(goalDragJustEnded) return;
@@ -2063,6 +2244,35 @@ function renderGoals(){
   list.querySelectorAll("[data-save-goal]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     saveGoal(btn.dataset.saveGoal);
+  }));
+  list.querySelectorAll("[data-goal-plan-mode]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const key=btn.dataset.goalPlanMode,mode=btn.dataset.mode;
+    setGoalPlanMode(key,mode);
+    const wrap=btn.closest(".goal-plan-wrap");
+    if(wrap){
+      wrap.querySelectorAll("[data-goal-plan-mode]").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+      wrap.querySelectorAll("[data-goal-plan-panel]").forEach(p=>{p.hidden=p.dataset.goalPlanPanel!==mode;});
+      refreshGoalPlanForecast(key,btn.closest(".goal-card"));
+    }else{
+      persist();renderGoals();
+    }
+  }));
+  list.querySelectorAll("[data-goal-planned]").forEach(inp=>inp.addEventListener("input",e=>{
+    const key=inp.dataset.goalPlanned;
+    setGoalPlannedMonthly(key,inp.value);
+    refreshGoalPlanForecast(key,inp.closest(".goal-card"));
+  }));
+  list.querySelectorAll("[data-goal-date]").forEach(inp=>inp.addEventListener("input",e=>{
+    const key=inp.dataset.goalDate;
+    setGoalDate(key,inp.value||null);
+    refreshGoalPlanForecast(key,inp.closest(".goal-card"));
+  }));
+  list.querySelectorAll("input[id^=\"goalTarget_\"]").forEach(inp=>inp.addEventListener("input",e=>{
+    const card=inp.closest(".goal-card");
+    const key=card&&card.dataset.goalKey;
+    if(!key)return;
+    refreshGoalPlanForecast(key,card);
   }));
   list.querySelectorAll("[data-life-happens-toggle]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
@@ -2760,7 +2970,7 @@ function renderArchive(){
     const i=Number(e.currentTarget.dataset.restoreGoal),item=state.archivedGoals[i];
     if(!item)return;
     const hasTarget=item.hasTarget!==undefined?!!item.hasTarget:(Number(item.target)||0)>0;
-    state.customGoals.push({name:item.name,current:item.current,target:item.target,hasTarget,lifetimeAdded:item.lifetimeAdded!=null?item.lifetimeAdded:item.current,lifeHappensTotal:item.lifeHappensTotal||0,lastLifeHappensAmount:item.lastLifeHappensAmount,lastLifeHappensDate:item.lastLifeHappensDate});
+    state.customGoals.push({name:item.name,current:item.current,target:item.target,hasTarget,lifetimeAdded:item.lifetimeAdded!=null?item.lifetimeAdded:item.current,lifeHappensTotal:item.lifeHappensTotal||0,lastLifeHappensAmount:item.lastLifeHappensAmount,lastLifeHappensDate:item.lastLifeHappensDate,planMode:item.planMode==="date"?"date":"monthly",plannedMonthly:Math.max(0,Number(item.plannedMonthly)||0),goalDate:item.goalDate||null});
     state.archivedGoals.splice(i,1);persist();render();
   }));
   wrap.querySelectorAll("[data-delete-archived-goal]").forEach(btn=>btn.addEventListener("click",e=>{
@@ -2864,7 +3074,7 @@ byId("addGoal").addEventListener("click",()=>{
   const hasTarget=!!byId("newGoalHasTarget").checked;
   const target=hasTarget?Math.max(0,Number(byId("newGoalTarget").value)||0):0;
   if(!name){byId("newGoalName").focus();return}
-  state.customGoals.push({name,current,target,hasTarget,lifetimeAdded:current,lifeHappensTotal:0});
+  state.customGoals.push({name,current,target,hasTarget,lifetimeAdded:current,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:0,goalDate:null});
   freedomMotion.markNew("goals","custom:"+(state.customGoals.length-1));
   persist();
   byId("newGoalName").value="";
