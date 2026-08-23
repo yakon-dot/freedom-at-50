@@ -400,11 +400,18 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.journey-active-v313 #journey .loan-stat strong{
     font-size:16px;font-weight:650;color:rgba(236,232,224,.82);
   }
+  body.journey-active-v313 #journey .loan-stat strong.journey-returned-value{
+    font-size:14px;white-space:nowrap;letter-spacing:-.01em;
+  }
   body.journey-active-v313 #journey .loan-stat strong.freedom-estimate{
     color:rgba(132,189,145,.88);
   }
   body.journey-active-v313 #journey .loan-stat strong.freedom-estimate-needed{
     color:rgba(132,189,145,.88);
+  }
+  body.journey-active-v313 #journey .loan-stat.loan-stat-forecast{
+    margin-top:14px;
+    border-color:rgba(132,189,145,.24);
   }
   body.journey-active-v313 #journey .loan-stat input.loan-stat-value{
     width:100%;margin:0;padding:0;border:0;border-radius:0;
@@ -473,7 +480,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     font-size:12px;color:rgba(190,188,182,.58);margin-bottom:10px;
   }
   body.journey-active-v313 #journey .journey-add-repayment{
-    margin-top:10px;width:100%;
+    display:block;margin-top:10px;margin-left:auto;
+    width:48%;min-width:148px;max-width:220px;
+    padding:9px 18px;border-radius:999px;
+    font-size:13px;font-weight:760;
   }
   body.journey-active-v313 #journey .journey-last-repayment{
     margin-top:10px;font-size:12px;color:rgba(190,188,182,.58);line-height:1.45;
@@ -1372,7 +1382,7 @@ function buildLoanExpandedBody(i,loan){
   const lastRepay=loan.lastRepaymentAmount!=null&&loan.lastRepaymentDate
     ?`<strong>${euro2(loan.lastRepaymentAmount)} · ${formatRepaymentDate(loan.lastRepaymentDate)}</strong>`
     :`<span>—</span>`;
-  return `<div class="journey-status"><div class="loan-summary"><div class="loan-stat"><small>Current balance</small><input class="loan-stat-value" data-loan="${i}" data-field="current" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.current}" aria-label="Current balance"></div><div class="loan-stat"><small>Money returned</small><strong data-returned-for="${i}">${euro2(returned)} · ${pct.toFixed(1)}%</strong></div></div><div class="journey-plan-label">Plan my payoff by</div><div class="journey-mode-switch"><button class="journey-mode-btn${mode==="monthly"?" active":""}" type="button" data-loan-mode="${i}" data-mode="monthly">Monthly repayment</button><button class="journey-mode-btn${mode==="date"?" active":""}" type="button" data-loan-mode="${i}" data-mode="date">Freedom date</button></div><div class="journey-mode-panel" data-mode-panel="monthly"${mode!=="monthly"?" hidden":""}><div class="loan-stat"><small>Planned monthly repayment</small><input class="loan-stat-value" data-loan="${i}" data-field="payment" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.payment}" aria-label="Planned monthly repayment"></div><div class="loan-stat"><small>Estimated freedom</small><strong class="freedom-estimate" data-freedom-for="${i}">${esc(forecast.line1)}</strong><span class="freedom-date-estimate" data-freedom-date-for="${i}">${esc(forecast.line2)}</span></div></div><div class="journey-mode-panel" data-mode-panel="date"${mode!=="date"?" hidden":""}><div class="journey-field"><label for="loanFreedomDate_${i}">I want this gone by</label><input class="journey-field-value" id="loanFreedomDate_${i}" data-loan="${i}" data-field="freedomDate" type="month" value="${dateVal}" aria-label="Freedom date"></div><div class="loan-stat"><small>Estimated monthly repayment needed</small><strong class="freedom-estimate-needed" data-needed-for="${i}">${esc(needed)}</strong><span class="journey-estimate-note">Estimate only — excludes interest and charges</span></div></div></div><div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div><div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">Archive journey</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button><button class="save-btn" data-save-loan="${i}" type="button">Save</button></div>`;
+  return `<div class="journey-status"><div class="loan-summary"><div class="loan-stat"><small>Current balance</small><input class="loan-stat-value" data-loan="${i}" data-field="current" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.current}" aria-label="Current balance"></div><div class="loan-stat"><small>Money returned</small><strong class="journey-returned-value" data-returned-for="${i}">${euro2(returned)} · ${pct.toFixed(1)}%</strong></div></div><div class="journey-plan-label">Plan my payoff by</div><div class="journey-mode-switch"><button class="journey-mode-btn${mode==="monthly"?" active":""}" type="button" data-loan-mode="${i}" data-mode="monthly">Monthly repayment</button><button class="journey-mode-btn${mode==="date"?" active":""}" type="button" data-loan-mode="${i}" data-mode="date">Freedom date</button></div><div class="journey-mode-panel" data-mode-panel="monthly"${mode!=="monthly"?" hidden":""}><div class="loan-stat"><small>Planned monthly repayment</small><input class="loan-stat-value" data-loan="${i}" data-field="payment" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.payment}" aria-label="Planned monthly repayment"></div><div class="loan-stat loan-stat-forecast"><small>Estimated freedom</small><strong class="freedom-estimate" data-freedom-for="${i}">${esc(forecast.line1)}</strong><span class="freedom-date-estimate" data-freedom-date-for="${i}">${esc(forecast.line2)}</span></div></div><div class="journey-mode-panel" data-mode-panel="date"${mode!=="date"?" hidden":""}><div class="journey-field"><label for="loanFreedomDate_${i}">I want this gone by</label><input class="journey-field-value" id="loanFreedomDate_${i}" data-loan="${i}" data-field="freedomDate" type="month" value="${dateVal}" aria-label="Freedom date"></div><div class="loan-stat loan-stat-forecast"><small>Estimated monthly repayment needed</small><strong class="freedom-estimate-needed" data-needed-for="${i}">${esc(needed)}</strong><span class="journey-estimate-note">Estimate only — excludes interest and charges</span></div></div></div><div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div><div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">Archive journey</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button><button class="save-btn" data-save-loan="${i}" type="button">Save</button></div>`;
 }
 
 function wrapCardBody(html,collapsed){return `<div class="card-body-wrap${collapsed?" is-collapsed":""}"><div class="journey-card-body">${html}</div></div>`;}
