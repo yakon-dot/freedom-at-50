@@ -6,8 +6,10 @@
 <meta name="theme-color" content="#0b0c0e">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
+<link rel="preload" as="image" href="./overview-wallpaper.png">
 <link rel="preload" as="image" href="./journey-wallpaper.png">
 <link rel="preload" as="image" href="./goals-wallpaper.png">
+<link rel="preload" as="image" href="./pension-wallpaper.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Freedom at 50 — Web app v1.8.6.2.2.2</title>
@@ -1005,7 +1007,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 </head>
-<body class="home183 overview-active-v300">
+<body class="home183">
 <button class="demo183" id="demo183" type="button" aria-label="Demo Mode">DEMO MODE</button>
 
 <div class="mobile183" id="mobile183" aria-hidden="false">
@@ -1175,9 +1177,35 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 (function(){
 "use strict";
 const KEY="freedom50-mobile-v1";
-(function preloadJourneyWallpaper(){const img=new Image();img.src="./journey-wallpaper.png";})();
-(function preloadGoalsWallpaper(){const img=new Image();img.src="./goals-wallpaper.png";})();
-(function preloadPensionWallpaper(){const img=new Image();img.src="./pension-wallpaper.png";})();
+const FREEDOM_WALLPAPERS={
+  overview:"./overview-wallpaper.png",
+  journey:"./journey-wallpaper.png",
+  goals:"./goals-wallpaper.png",
+  pension:"./pension-wallpaper.png"
+};
+const freedomWallpapers={
+  _promises:new Map(),
+  preload(pageId){
+    const url=FREEDOM_WALLPAPERS[pageId];
+    if(!url)return Promise.resolve(false);
+    if(this._promises.has(pageId))return this._promises.get(pageId);
+    const p=new Promise(resolve=>{
+      const img=new Image();
+      if("decoding" in img)img.decoding="async";
+      const done=ok=>resolve(!!ok);
+      img.onload=()=>{
+        if(img.decode)img.decode().then(()=>done(true)).catch(()=>done(true));
+        else done(true);
+      };
+      img.onerror=()=>done(false);
+      img.src=url;
+    });
+    this._promises.set(pageId,p);
+    return p;
+  },
+  preloadAll(){return Promise.all(Object.keys(FREEDOM_WALLPAPERS).map(id=>this.preload(id)));}
+};
+freedomWallpapers.preloadAll();
 const HOUSE_POCKET_START=1000;
 const defaults={archivedJourneys:[],archivedGoals:[],archivedPensions:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},goalTargets:{houseFund:50000,holidayFund:0,personalSavings:5000},goalHasTarget:{houseFund:true,holidayFund:false,personalSavings:true},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensions:[{id:"pension-1",name:"Pension",value:48951.79,personal:342.50,employer:242.50,collapsed:false,showInOverview:true}]};
 let state;try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");state=saved&&saved.loans?Object.assign({},defaults,saved):JSON.parse(JSON.stringify(defaults));}catch(e){state=JSON.parse(JSON.stringify(defaults));}
@@ -1354,19 +1382,29 @@ function page(id){
   if(typeof window.hideHome==="function")window.hideHome();
   document.querySelectorAll(".page").forEach(el=>el.classList.toggle("active",el.id===id));
   document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.page===id));
-  document.body.classList.toggle("overview-active-v300",id==="overview");
-  document.body.classList.toggle("journey-active-v313",id==="journey");
-  document.body.classList.toggle("goals-active-v314",id==="goals");
-  document.body.classList.toggle("pension-active-v315",id==="pension");
-  document.body.classList.remove("overview-active");
-  if(id==="pension" && typeof closeAddPensionForm==="function") closeAddPensionForm();
-  history.replaceState(null,"","#"+id);
-  window.scrollTo(0,0);
-  if(["overview","journey","goals","pension"].includes(id)){
-    if(freedomMotion.activePage!==id){
-      freedomMotion.activePage=id;
-      requestAnimationFrame(()=>freedomMotion.pageEnter(id));
+  document.body.classList.remove("overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315","overview-active");
+  const applyWallpaperClasses=id=>{
+    document.body.classList.toggle("overview-active-v300",id==="overview");
+    document.body.classList.toggle("journey-active-v313",id==="journey");
+    document.body.classList.toggle("goals-active-v314",id==="goals");
+    document.body.classList.toggle("pension-active-v315",id==="pension");
+  };
+  const finishPage=()=>{
+    applyWallpaperClasses(id);
+    if(id==="pension" && typeof closeAddPensionForm==="function") closeAddPensionForm();
+    history.replaceState(null,"","#"+id);
+    window.scrollTo(0,0);
+    if(["overview","journey","goals","pension"].includes(id)){
+      if(freedomMotion.activePage!==id){
+        freedomMotion.activePage=id;
+        requestAnimationFrame(()=>freedomMotion.pageEnter(id));
+      }
     }
+  };
+  if(["overview","journey","goals","pension"].includes(id)){
+    freedomWallpapers.preload(id).then(finishPage);
+  }else{
+    finishPage();
   }
 }
 window.page=page;
@@ -2221,7 +2259,7 @@ byId("addGoal").addEventListener("click",()=>{
 byId("toggleArchiveList").addEventListener("click",()=>{const list=byId("archiveList");list.hidden=!list.hidden;byId("toggleArchiveList").textContent=list.hidden?"View archived items":"Hide archived items"});
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
-document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){freedomMotion.activePage=boot;requestAnimationFrame(()=>freedomMotion.pageEnter(boot));}}
+document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){freedomWallpapers.preload(boot).then(()=>{document.body.classList.toggle("overview-active-v300",boot==="overview");document.body.classList.toggle("journey-active-v313",boot==="journey");document.body.classList.toggle("goals-active-v314",boot==="goals");document.body.classList.toggle("pension-active-v315",boot==="pension");freedomMotion.activePage=boot;requestAnimationFrame(()=>freedomMotion.pageEnter(boot));});}}
 })();
 
 
@@ -2312,7 +2350,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1863",
+        "./service-worker.js?v=1864",
         { updateViaCache: "none" }
       );
 
@@ -2343,7 +2381,7 @@ if ("serviceWorker" in navigator) {
       }
 
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        const key = "freedom50-sw-reloaded-v1863";
+        const key = "freedom50-sw-reloaded-v1864";
         if (sessionStorage.getItem(key)) return;
         sessionStorage.setItem(key, "1");
         window.location.reload();
