@@ -763,7 +763,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.goals-active-v314 #goals .goal-life-happens-btn:active{transform:scale(.98)}
   body.goals-active-v314 #goals .goal-life-happens-note{
-    margin:7px 0 0;font-size:11px;line-height:1.45;color:var(--muted);
+    margin:7px 0 0;font-size:11px;line-height:1.45;color:#efcbaa;
   }
   body.goals-active-v314 #goals .goal-life-happens-expand{
     margin-top:0;
@@ -2036,7 +2036,6 @@ function renderGoals(){
           panel.classList.add("freedom-body-reveal");
           setTimeout(()=>panel.classList.remove("freedom-body-reveal"),420);
         }
-        if(inp)inp.focus();
       }else{
         if(inp)inp.value="";
         if(msgEl){msgEl.textContent="";msgEl.hidden=true;}
