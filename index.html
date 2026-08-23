@@ -752,6 +752,40 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.goals-active-v314 #goals .goal-field input.goal-field-value:focus{
     border-color:rgba(231,207,99,.20);box-shadow:none;
   }
+  body.goals-active-v314 #goals .goal-life-happens-wrap{
+    margin-top:4px;
+  }
+  body.goals-active-v314 #goals .goal-life-happens-btn{
+    border:1px solid rgba(239,203,170,.28);border-radius:999px;padding:8px 14px;
+    background:rgba(13,16,19,.28);color:#efcbaa;
+    font-size:12px;font-weight:650;cursor:pointer;width:auto;
+    -webkit-tap-highlight-color:transparent;
+  }
+  body.goals-active-v314 #goals .goal-life-happens-btn:active{transform:scale(.98)}
+  body.goals-active-v314 #goals .goal-life-happens-note{
+    margin:7px 0 0;font-size:11px;line-height:1.45;color:var(--muted);
+  }
+  body.goals-active-v314 #goals .goal-life-happens-panel{
+    margin-top:12px;padding-top:12px;border-top:1px solid rgba(220,190,150,.08);
+  }
+  body.goals-active-v314 #goals .goal-life-happens-panel[hidden]{display:none!important}
+  body.goals-active-v314 #goals .goal-life-happens-panel-title{
+    margin:0 0 4px;font-size:12px;font-weight:650;color:#efcbaa;
+  }
+  body.goals-active-v314 #goals .goal-life-happens-panel-prompt{
+    margin:0 0 10px;font-size:11px;line-height:1.45;color:var(--muted);
+  }
+  body.goals-active-v314 #goals .goal-life-happens-take{
+    margin-top:10px;border:1px solid rgba(239,203,170,.24);border-radius:999px;padding:8px 14px;
+    background:rgba(13,16,19,.24);color:#efcbaa;
+    font-size:12px;font-weight:650;cursor:pointer;width:auto;
+    -webkit-tap-highlight-color:transparent;
+  }
+  body.goals-active-v314 #goals .goal-life-happens-take:active{transform:scale(.98)}
+  body.goals-active-v314 #goals .goal-life-happens-msg{
+    margin:8px 0 0;font-size:11px;line-height:1.45;color:var(--muted);
+  }
+  body.goals-active-v314 #goals .goal-life-happens-msg[hidden]{display:none!important}
   body.goals-active-v314 #goals .journey-card-body .goal-progress-block{margin-top:16px}
   body.goals-active-v314 #goals .goal-summary{
     display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;
@@ -1428,6 +1462,19 @@ if(Array.isArray(state.customGoals)){
     if(g&&g.hasTarget===undefined)g.hasTarget=(Number(g.target)||0)>0;
   });
 }
+if(!state.goalLifetimeAdded)state.goalLifetimeAdded={};
+if(!state.goalLifeHappensTotal)state.goalLifeHappensTotal={};
+if(!state.goalLastLifeHappens)state.goalLastLifeHappens={};
+["houseFund","holidayFund","personalSavings"].forEach(k=>{
+  const bal=Number(state[k])||0;
+  if(state.goalLifetimeAdded[k]===undefined)state.goalLifetimeAdded[k]=bal;
+  if(state.goalLifeHappensTotal[k]===undefined)state.goalLifeHappensTotal[k]=0;
+});
+state.customGoals.forEach(g=>{
+  if(!g)return;
+  if(g.lifetimeAdded===undefined)g.lifetimeAdded=Number(g.current)||0;
+  if(g.lifeHappensTotal===undefined)g.lifeHappensTotal=0;
+});
 if(Array.isArray(state.loans)){
   state.loans.forEach(loan=>{
     if(loan.collapsed===undefined)loan.collapsed=true;
@@ -1664,6 +1711,52 @@ const builtInGoalMeta={
   holidayFund:{name:"Holiday Fund",valueKey:"holidayFund",cardId:"holidayFundCard",overviewId:"overviewHolidayCard"},
   personalSavings:{name:"Personal Savings",valueKey:"personalSavings",cardId:"personalSavingsCard",overviewId:"overviewSavingsCard"}
 };
+const goalLifeHappensOpen={};
+function getGoalCurrentBalance(key){
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    return g?Number(g.current)||0:0;
+  }
+  const m=builtInGoalMeta[key];
+  return m?Number(state[m.valueKey])||0:0;
+}
+function bumpGoalLifetimeAdded(key,amount){
+  if(amount<=0)return;
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    if(!g)return;
+    g.lifetimeAdded=Math.round(((Number(g.lifetimeAdded)||Number(g.current)||0)+amount)*100)/100;
+  }else{
+    const base=Number(state.goalLifetimeAdded[key]);
+    state.goalLifetimeAdded[key]=Math.round(((Number.isFinite(base)?base:getGoalCurrentBalance(key))+amount)*100)/100;
+  }
+}
+function applyLifeHappens(key,amount){
+  const current=getGoalCurrentBalance(key);
+  if(amount<=0)return{ok:false,reason:"empty"};
+  if(amount>current+0.001)return{ok:false,reason:"over"};
+  const next=Math.round((current-amount)*100)/100;
+  const now=new Date().toISOString();
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    if(!g)return{ok:false};
+    g.current=next;
+    g.lifeHappensTotal=Math.round(((Number(g.lifeHappensTotal)||0)+amount)*100)/100;
+    g.lastLifeHappensAmount=amount;
+    g.lastLifeHappensDate=now;
+  }else{
+    const m=builtInGoalMeta[key];
+    if(!m)return{ok:false};
+    state[m.valueKey]=next;
+    state.goalLifeHappensTotal[key]=Math.round(((Number(state.goalLifeHappensTotal[key])||0)+amount)*100)/100;
+    state.goalLastLifeHappens[key]={amount,date:now};
+  }
+  goalLifeHappensOpen[key]=false;
+  return{ok:true};
+}
+function goalLifeHappensInputId(key){
+  return key.startsWith("custom:")?`goalLife_custom_${Number(key.slice(7))}`:`goalLife_${key}`;
+}
 function goalDisplayName(key){
   if(key.startsWith("custom:")){
     const g=state.customGoals[Number(key.slice(7))];
@@ -1752,7 +1845,7 @@ function saveGoal(key){
     if(hasTargetEl)g.hasTarget=!!hasTargetEl.checked;
     if(g.hasTarget&&targetEl)g.target=Math.max(0,Number(targetEl.value)||0);
     const add=addEl?Math.max(0,Number(addEl.value)||0):0;
-    if(add>0)g.current=Math.round((g.current+add)*100)/100;
+    if(add>0){g.current=Math.round((g.current+add)*100)/100;bumpGoalLifetimeAdded(key,add);}
   }else{
     const m=builtInGoalMeta[key];
     if(!m) return;
@@ -1773,7 +1866,7 @@ function saveGoal(key){
     }
     if(goalUsesTarget(key)&&targetEl)state.goalTargets[key]=Math.max(0,Number(targetEl.value)||0);
     const add=addEl?Math.max(0,Number(addEl.value)||0):0;
-    if(add>0)state[m.valueKey]=Math.round((state[m.valueKey]+add)*100)/100;
+    if(add>0){state[m.valueKey]=Math.round((state[m.valueKey]+add)*100)/100;bumpGoalLifetimeAdded(key,add);}
   }
   persist(); render();
 }
@@ -1809,12 +1902,14 @@ function renderSavingsGoalCard(key){
   const progressHtml=collapsed&&usesTarget?goalProgressBlock(current,target,barId):"";
   const targetId=isCustom?`goalTarget_custom_${customIndex}`:`goalTarget_${key}`;
   const addId=isCustom?`goalAdd_custom_${customIndex}`:`goalAdd_${key}`;
+  const lifeId=goalLifeHappensInputId(key);
   const hasTargetId=isCustom?`goalHasTarget_custom_${customIndex}`:`goalHasTarget_${key}`;
   const hasTargetChecked=usesTarget?" checked":"";
   const targetFieldHtml=usesTarget
     ? `<div class="goal-field"><label for="${targetId}">Target</label><input class="goal-field-value" id="${targetId}" inputmode="decimal" type="number" min="0" step="1" value="${target||""}" placeholder="0"></div>`
     : "";
-  const fieldsHtml=`<div class="goal-fields">${targetFieldHtml}<div class="goal-field"><label for="${addId}">Add funds</label><input class="goal-field-value" id="${addId}" inputmode="decimal" type="number" min="0" step="1" value="" placeholder="0"></div></div>`;
+  const lifeOpen=!!goalLifeHappensOpen[key];
+  const fieldsHtml=`<div class="goal-fields">${targetFieldHtml}<div class="goal-field"><label for="${addId}">Add funds</label><input class="goal-field-value" id="${addId}" inputmode="decimal" type="number" min="0" step="1" value="" placeholder="0"></div><div class="goal-life-happens-wrap"><button class="goal-life-happens-btn" type="button" data-life-happens-toggle="${esc(key)}">− Life happens</button><p class="goal-life-happens-note">Sometimes the money needs to do something else.</p><div class="goal-life-happens-panel${lifeOpen?" freedom-body-reveal":""}" data-life-happens-panel="${esc(key)}"${lifeOpen?"":" hidden"}><p class="goal-life-happens-panel-title">Life happens</p><p class="goal-life-happens-panel-prompt">How much do you need to take from this goal?</p><div class="goal-field"><label for="${lifeId}">Amount</label><input class="goal-field-value" id="${lifeId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00"></div><p class="goal-life-happens-msg" data-life-happens-msg="${esc(key)}" hidden></p><button class="goal-life-happens-take" type="button" data-life-happens-take="${esc(key)}">− Take from goal</button></div></div></div>`;
   const toggleHtml=`<div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="${hasTargetId}" data-goal-has-target="${esc(key)}"${hasTargetChecked} aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div>`;
   const progressBody=usesTarget?goalProgressBlock(current,target,barId):"";
   const actions=isCustom
@@ -1865,7 +1960,7 @@ function renderGoals(){
     else if(builtInGoalMeta[key]||key.startsWith("custom:")) card=renderSavingsGoalCard(key);
     if(card){freedomMotion.decorateNewCard(card,"goals",key);list.appendChild(card);}
   });
-  const skipToggle=el=>el.closest("input,textarea,select,a,.goal-toggle,.journey-chevron,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,button[data-save-goal],.save-btn");
+  const skipToggle=el=>el.closest("input,textarea,select,a,.goal-toggle,.journey-chevron,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,button[data-save-goal],button[data-life-happens-toggle],button[data-life-happens-take],.save-btn");
   list.querySelectorAll("[data-goal-chevron]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     if(goalDragJustEnded) return;
@@ -1926,6 +2021,42 @@ function renderGoals(){
   list.querySelectorAll("[data-save-goal]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     saveGoal(btn.dataset.saveGoal);
+  }));
+  list.querySelectorAll("[data-life-happens-toggle]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const key=btn.dataset.lifeHappensToggle;
+    goalLifeHappensOpen[key]=!goalLifeHappensOpen[key];
+    renderGoals();
+    if(goalLifeHappensOpen[key]){
+      requestAnimationFrame(()=>{
+        const panel=list.querySelector(`[data-life-happens-panel="${CSS.escape(key)}"]`);
+        if(panel&&!freedomMotion.reduced){
+          panel.classList.add("freedom-body-reveal");
+          setTimeout(()=>panel.classList.remove("freedom-body-reveal"),420);
+        }
+        const inp=byId(goalLifeHappensInputId(key));
+        if(inp)inp.focus();
+      });
+    }
+  }));
+  list.querySelectorAll("[data-life-happens-take]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const key=btn.dataset.lifeHappensTake;
+    const amountEl=byId(goalLifeHappensInputId(key));
+    const msgEl=list.querySelector(`[data-life-happens-msg="${CSS.escape(key)}"]`);
+    const amount=Math.max(0,Number(amountEl?.value)||0);
+    if(!amount){amountEl?.focus();return}
+    const result=applyLifeHappens(key,amount);
+    if(!result.ok){
+      if(result.reason==="over"&&msgEl){
+        msgEl.textContent="That's more than is currently in this goal.";
+        msgEl.hidden=false;
+      }
+      amountEl?.focus();
+      return;
+    }
+    if(amountEl)amountEl.value="";
+    persist();render();
   }));
   setupGoalReorder(list);
   const overview=byId("overviewCustomGoals");
@@ -2581,7 +2712,7 @@ function renderArchive(){
     const i=Number(e.currentTarget.dataset.restoreGoal),item=state.archivedGoals[i];
     if(!item)return;
     const hasTarget=item.hasTarget!==undefined?!!item.hasTarget:(Number(item.target)||0)>0;
-    state.customGoals.push({name:item.name,current:item.current,target:item.target,hasTarget});
+    state.customGoals.push({name:item.name,current:item.current,target:item.target,hasTarget,lifetimeAdded:item.lifetimeAdded!=null?item.lifetimeAdded:item.current,lifeHappensTotal:item.lifeHappensTotal||0,lastLifeHappensAmount:item.lastLifeHappensAmount,lastLifeHappensDate:item.lastLifeHappensDate});
     state.archivedGoals.splice(i,1);persist();render();
   }));
   wrap.querySelectorAll("[data-delete-archived-goal]").forEach(btn=>btn.addEventListener("click",e=>{
@@ -2685,7 +2816,7 @@ byId("addGoal").addEventListener("click",()=>{
   const hasTarget=!!byId("newGoalHasTarget").checked;
   const target=hasTarget?Math.max(0,Number(byId("newGoalTarget").value)||0):0;
   if(!name){byId("newGoalName").focus();return}
-  state.customGoals.push({name,current,target,hasTarget});
+  state.customGoals.push({name,current,target,hasTarget,lifetimeAdded:current,lifeHappensTotal:0});
   freedomMotion.markNew("goals","custom:"+(state.customGoals.length-1));
   persist();
   byId("newGoalName").value="";
