@@ -1007,7 +1007,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 </style>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 </head>
-<body class="home183">
+<body class="home183 overview-active-v300">
 <button class="demo183" id="demo183" type="button" aria-label="Demo Mode">DEMO MODE</button>
 
 <div class="mobile183" id="mobile183" aria-hidden="false">
@@ -1184,26 +1184,14 @@ const FREEDOM_WALLPAPERS={
   pension:"./pension-wallpaper.png"
 };
 const freedomWallpapers={
-  _promises:new Map(),
   preload(pageId){
     const url=FREEDOM_WALLPAPERS[pageId];
-    if(!url)return Promise.resolve(false);
-    if(this._promises.has(pageId))return this._promises.get(pageId);
-    const p=new Promise(resolve=>{
-      const img=new Image();
-      if("decoding" in img)img.decoding="async";
-      const done=ok=>resolve(!!ok);
-      img.onload=()=>{
-        if(img.decode)img.decode().then(()=>done(true)).catch(()=>done(true));
-        else done(true);
-      };
-      img.onerror=()=>done(false);
-      img.src=url;
-    });
-    this._promises.set(pageId,p);
-    return p;
+    if(!url)return;
+    const img=new Image();
+    if("decoding" in img)img.decoding="async";
+    img.src=url;
   },
-  preloadAll(){return Promise.all(Object.keys(FREEDOM_WALLPAPERS).map(id=>this.preload(id)));}
+  preloadAll(){Object.keys(FREEDOM_WALLPAPERS).forEach(id=>this.preload(id));}
 };
 freedomWallpapers.preloadAll();
 const HOUSE_POCKET_START=1000;
@@ -1382,29 +1370,20 @@ function page(id){
   if(typeof window.hideHome==="function")window.hideHome();
   document.querySelectorAll(".page").forEach(el=>el.classList.toggle("active",el.id===id));
   document.querySelectorAll(".nav-btn").forEach(el=>el.classList.toggle("active",el.dataset.page===id));
-  document.body.classList.remove("overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315","overview-active");
-  const applyWallpaperClasses=id=>{
-    document.body.classList.toggle("overview-active-v300",id==="overview");
-    document.body.classList.toggle("journey-active-v313",id==="journey");
-    document.body.classList.toggle("goals-active-v314",id==="goals");
-    document.body.classList.toggle("pension-active-v315",id==="pension");
-  };
-  const finishPage=()=>{
-    applyWallpaperClasses(id);
-    if(id==="pension" && typeof closeAddPensionForm==="function") closeAddPensionForm();
-    history.replaceState(null,"","#"+id);
-    window.scrollTo(0,0);
-    if(["overview","journey","goals","pension"].includes(id)){
-      if(freedomMotion.activePage!==id){
-        freedomMotion.activePage=id;
-        requestAnimationFrame(()=>freedomMotion.pageEnter(id));
-      }
-    }
-  };
+  document.body.classList.toggle("overview-active-v300",id==="overview");
+  document.body.classList.toggle("journey-active-v313",id==="journey");
+  document.body.classList.toggle("goals-active-v314",id==="goals");
+  document.body.classList.toggle("pension-active-v315",id==="pension");
+  document.body.classList.remove("overview-active");
+  if(["overview","journey","goals","pension"].includes(id))freedomWallpapers.preload(id);
+  if(id==="pension" && typeof closeAddPensionForm==="function") closeAddPensionForm();
+  history.replaceState(null,"","#"+id);
+  window.scrollTo(0,0);
   if(["overview","journey","goals","pension"].includes(id)){
-    freedomWallpapers.preload(id).then(finishPage);
-  }else{
-    finishPage();
+    if(freedomMotion.activePage!==id){
+      freedomMotion.activePage=id;
+      requestAnimationFrame(()=>freedomMotion.pageEnter(id));
+    }
   }
 }
 window.page=page;
@@ -2259,7 +2238,7 @@ byId("addGoal").addEventListener("click",()=>{
 byId("toggleArchiveList").addEventListener("click",()=>{const list=byId("archiveList");list.hidden=!list.hidden;byId("toggleArchiveList").textContent=list.hidden?"View archived items":"Hide archived items"});
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
-document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){freedomWallpapers.preload(boot).then(()=>{document.body.classList.toggle("overview-active-v300",boot==="overview");document.body.classList.toggle("journey-active-v313",boot==="journey");document.body.classList.toggle("goals-active-v314",boot==="goals");document.body.classList.toggle("pension-active-v315",boot==="pension");freedomMotion.activePage=boot;requestAnimationFrame(()=>freedomMotion.pageEnter(boot));});}}
+document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){freedomMotion.activePage=boot;requestAnimationFrame(()=>freedomMotion.pageEnter(boot));}}
 })();
 
 
@@ -2350,7 +2329,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1864",
+        "./service-worker.js?v=1865",
         { updateViaCache: "none" }
       );
 
@@ -2381,7 +2360,7 @@ if ("serviceWorker" in navigator) {
       }
 
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        const key = "freedom50-sw-reloaded-v1864";
+        const key = "freedom50-sw-reloaded-v1865";
         if (sessionStorage.getItem(key)) return;
         sessionStorage.setItem(key, "1");
         window.location.reload();
