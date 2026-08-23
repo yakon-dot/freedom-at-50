@@ -454,6 +454,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     color:rgba(236,232,224,.88);
   }
   body.journey-active-v313 #journey .journey-mode-panel[hidden]{display:none!important}
+  body.journey-active-v313 #journey .journey-mode-panel{min-width:0}
   body.journey-active-v313 #journey .freedom-date-estimate{
     display:block;font-size:12px;color:rgba(132,189,145,.88);margin-top:2px;font-weight:500;
   }
@@ -463,10 +464,15 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.journey-active-v313 #journey .journey-field label{
     display:block;color:rgba(190,188,182,.50);font-size:11px;font-weight:500;margin-bottom:3px;
   }
+  body.journey-active-v313 #journey .journey-field{
+    min-width:0;width:100%;
+  }
   body.journey-active-v313 #journey .journey-field-value{
-    width:100%;margin:0;padding:7px 10px;border:1px solid rgba(220,190,150,.09);
+    display:block;width:100%;max-width:100%;min-width:0;
+    margin:0;padding:7px 10px;border:1px solid rgba(220,190,150,.09);
     border-radius:11px;background:rgba(18,20,24,.20);
     backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    box-sizing:border-box;
     font-size:15px;font-weight:500;letter-spacing:-.01em;
     color:rgba(236,232,224,.72);outline:none;min-height:40px;
   }
@@ -480,10 +486,11 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     font-size:12px;color:rgba(190,188,182,.58);margin-bottom:10px;
   }
   body.journey-active-v313 #journey .journey-add-repayment{
-    display:block;margin-top:10px;margin-left:auto;
-    width:48%;min-width:148px;max-width:220px;
-    padding:9px 18px;border-radius:999px;
-    font-size:13px;font-weight:760;
+    display:block;margin:10px auto 0;
+    width:220px;max-width:calc(100% - 4px);
+    padding:9px 14px;border-radius:999px;
+    font-size:12px;font-weight:760;white-space:nowrap;
+    box-sizing:border-box;
   }
   body.journey-active-v313 #journey .journey-last-repayment{
     margin-top:10px;font-size:12px;color:rgba(190,188,182,.58);line-height:1.45;
