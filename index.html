@@ -859,6 +859,30 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     margin:8px 0 0;font-size:11px;line-height:1.45;color:var(--muted);
   }
   body.goals-active-v314 #goals .goal-life-happens-msg[hidden]{display:none!important}
+  body.goals-active-v314 #goals .goal-correct-wrap{margin-top:10px}
+  body.goals-active-v314 #goals .goal-correct-btn{
+    border:0;padding:0;background:transparent;color:rgba(190,188,182,.52);
+    font-size:11px;font-weight:600;cursor:pointer;width:auto;
+    -webkit-tap-highlight-color:transparent;text-decoration:underline;text-underline-offset:2px;
+  }
+  body.goals-active-v314 #goals .goal-correct-btn:active{transform:scale(.98)}
+  body.goals-active-v314 #goals .goal-correct-expand{margin-top:0}
+  body.goals-active-v314 #goals .goal-correct-panel{
+    padding-top:10px;border-top:1px solid rgba(220,190,150,.06);margin-top:10px;
+  }
+  body.goals-active-v314 #goals .goal-correct-label{
+    margin:0 0 8px;font-size:11px;line-height:1.45;color:rgba(190,188,182,.58);font-weight:600;
+  }
+  body.goals-active-v314 #goals .goal-correct-note{
+    margin:8px 0 0;font-size:10px;line-height:1.45;color:rgba(190,188,182,.48);
+  }
+  body.goals-active-v314 #goals .goal-correct-save{
+    margin-top:10px;border:1px solid rgba(220,190,150,.14);border-radius:11px;padding:8px 14px;
+    background:rgba(13,16,19,.18);color:rgba(190,188,182,.68);
+    font-size:11px;font-weight:650;cursor:pointer;width:auto;
+    -webkit-tap-highlight-color:transparent;
+  }
+  body.goals-active-v314 #goals .goal-correct-save:active{transform:scale(.98)}
   body.goals-active-v314 #goals .journey-card-body .goal-progress-block{margin-top:16px}
   body.goals-active-v314 #goals .goal-summary{
     display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px;
@@ -966,6 +990,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.pension-active-v315 #pension #pensionList{margin-top:clamp(18px,3.5vh,32px);gap:18px}
   body.pension-active-v315 #pension #toggleAddPension{
     border-color:rgba(218,167,128,.42);background:rgba(16,18,20,.30);
+    color:rgba(231,177,137,.88);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
     backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   }
   body.pension-active-v315 #pension .stack{gap:18px}
@@ -1263,6 +1288,7 @@ body.home183 .demo183{
 @keyframes freedomBodyIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes freedomValueFade{0%{opacity:.58}100%{opacity:1}}
 .page.freedom-page-enter{animation:freedomPageEnter var(--motion-page) var(--motion-ease) both}
+.freedom-card-pre-enter{opacity:0;transform:translateY(10px);will-change:opacity,transform}
 .freedom-card-enter{animation:freedomCardEnter var(--motion-enter) var(--motion-ease) both;animation-delay:var(--motion-delay,0ms)}
 .freedom-card-new{animation:freedomCardNew var(--motion-new) var(--motion-ease) both}
 .freedom-card-exit{overflow:hidden;pointer-events:none;animation:freedomCardExit var(--motion-exit) var(--motion-ease) forwards}
@@ -1433,7 +1459,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   </div>
 </section>
 <section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
-<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Current amount</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
+<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
@@ -1549,15 +1575,19 @@ if(!state.goalDate)state.goalDate={};
 if(!state.goalLifetimeAdded)state.goalLifetimeAdded={};
 if(!state.goalLifeHappensTotal)state.goalLifeHappensTotal={};
 if(!state.goalLastLifeHappens)state.goalLastLifeHappens={};
+if(!state.goalStartingBalance)state.goalStartingBalance={};
+if(!state.goalLastBalanceCorrection)state.goalLastBalanceCorrection={};
 ["houseFund","holidayFund","personalSavings"].forEach(k=>{
   const bal=Number(state[k])||0;
   if(state.goalLifetimeAdded[k]===undefined)state.goalLifetimeAdded[k]=bal;
   if(state.goalLifeHappensTotal[k]===undefined)state.goalLifeHappensTotal[k]=0;
+  if(state.goalStartingBalance[k]===undefined)state.goalStartingBalance[k]=bal;
 });
 state.customGoals.forEach(g=>{
   if(!g)return;
   if(g.lifetimeAdded===undefined)g.lifetimeAdded=Number(g.current)||0;
   if(g.lifeHappensTotal===undefined)g.lifeHappensTotal=0;
+  if(g.startingBalance===undefined)g.startingBalance=Number(g.current)||0;
 });
 if(Array.isArray(state.loans)){
   state.loans.forEach(loan=>{
@@ -1660,26 +1690,48 @@ const freedomMotion={
     const map={overview:"#overview .overview-card",journey:"#loanList > .loan-card",goals:"#goalsList > .goal-card",pension:"#pensionList > .pension-card"};
     const sel=map[pageId];return sel?document.querySelectorAll(sel):[];
   },
-  pageEnter(pageId){
-    if(this.reduced||this.skipPageEnter){this.skipPageEnter=false;return}
-    const pageEl=byId(pageId);if(!pageEl)return;
-    pageEl.classList.remove("freedom-page-enter");void pageEl.offsetWidth;pageEl.classList.add("freedom-page-enter");
-    setTimeout(()=>pageEl.classList.remove("freedom-page-enter"),280);
+  prepareCards(pageId){
+    if(this.reduced)return;
+    this.pageCards(pageId).forEach(card=>{
+      if(card.classList.contains("freedom-card-new"))return;
+      card.classList.remove("freedom-card-enter");
+      card.style.removeProperty("--motion-delay");
+      card.classList.add("freedom-card-pre-enter");
+    });
+  },
+  runCardEnter(pageId){
     const cards=this.pageCards(pageId);
     const enterMs=this.enterDuration();
     cards.forEach((card,i)=>{
       if(card.classList.contains("freedom-card-new"))return;
       const delay=this.staggerDelay(i);
-      card.classList.remove("freedom-card-enter");card.style.setProperty("--motion-delay",delay+"ms");
-      void card.offsetWidth;card.classList.add("freedom-card-enter");
+      card.classList.remove("freedom-card-pre-enter","freedom-card-enter");
+      card.style.setProperty("--motion-delay",delay+"ms");
+      void card.offsetWidth;
+      card.classList.add("freedom-card-enter");
       setTimeout(()=>{card.classList.remove("freedom-card-enter");card.style.removeProperty("--motion-delay")},enterMs+delay+80);
     });
-    pageEl.querySelectorAll(".progress span").forEach(span=>{
-      const target=this.parsePct(span);
-      if(target>0)span.dataset.progressTarget=String(target);
-      span.classList.add("freedom-progress-snap");span.style.width="0%";
+  },
+  pageEnter(pageId){
+    if(this.reduced||this.skipPageEnter){
+      this.pageCards(pageId).forEach(card=>{card.classList.remove("freedom-card-pre-enter","freedom-card-enter");card.style.removeProperty("--motion-delay")});
+      this.skipPageEnter=false;
+      return;
+    }
+    const pageEl=byId(pageId);if(!pageEl)return;
+    this.prepareCards(pageId);
+    void pageEl.offsetWidth;
+    requestAnimationFrame(()=>{
+      pageEl.classList.remove("freedom-page-enter");void pageEl.offsetWidth;pageEl.classList.add("freedom-page-enter");
+      setTimeout(()=>pageEl.classList.remove("freedom-page-enter"),280);
+      this.runCardEnter(pageId);
+      pageEl.querySelectorAll(".progress span").forEach(span=>{
+        const target=this.parsePct(span);
+        if(target>0)span.dataset.progressTarget=String(target);
+        span.classList.add("freedom-progress-snap");span.style.width="0%";
+      });
+      requestAnimationFrame(()=>this.animateProgress(pageEl,{entrance:true}));
     });
-    requestAnimationFrame(()=>this.animateProgress(pageEl,{entrance:true}));
   },
   decorateNewCard(card,type,id){
     if(card&&this.takeNew(type,id)) card.classList.add("freedom-card-new");
@@ -1763,6 +1815,14 @@ function page(id){
     renderArchive();
     if(freedomMotion.activePage!=="archive"){
       freedomMotion.activePage="archive";
+      const pageEl=byId("archive");
+      if(pageEl&&!freedomMotion.reduced){
+        pageEl.querySelectorAll(".archive-section").forEach(sec=>{
+          sec.classList.remove("freedom-card-enter");
+          sec.classList.add("freedom-card-pre-enter");
+        });
+        void pageEl.offsetWidth;
+      }
       requestAnimationFrame(()=>{
         const pageEl=byId("archive");
         if(!pageEl||freedomMotion.reduced)return;
@@ -1771,8 +1831,10 @@ function page(id){
         pageEl.querySelectorAll(".archive-section").forEach((sec,i)=>{
           if(freedomMotion.reduced)return;
           const delay=freedomMotion.staggerDelay(i);
-          sec.classList.remove("freedom-card-enter");sec.style.setProperty("--motion-delay",delay+"ms");
-          void sec.offsetWidth;sec.classList.add("freedom-card-enter");
+          sec.classList.remove("freedom-card-pre-enter","freedom-card-enter");
+          sec.style.setProperty("--motion-delay",delay+"ms");
+          void sec.offsetWidth;
+          sec.classList.add("freedom-card-enter");
           setTimeout(()=>{sec.classList.remove("freedom-card-enter");sec.style.removeProperty("--motion-delay")},freedomMotion.enterDuration()+delay+80);
         });
       });
@@ -1782,7 +1844,7 @@ function page(id){
   if(["overview","journey","goals","pension"].includes(id)){
     if(freedomMotion.activePage!==id){
       freedomMotion.activePage=id;
-      requestAnimationFrame(()=>freedomMotion.pageEnter(id));
+      freedomMotion.pageEnter(id);
     }
   }
 }
@@ -1796,6 +1858,7 @@ const builtInGoalMeta={
   personalSavings:{name:"Personal Savings",valueKey:"personalSavings",cardId:"personalSavingsCard",overviewId:"overviewSavingsCard"}
 };
 const goalLifeHappensOpen={};
+const goalCorrectBalanceOpen={};
 function getGoalCurrentBalance(key){
   if(key.startsWith("custom:")){
     const g=state.customGoals[Number(key.slice(7))];
@@ -1840,6 +1903,30 @@ function applyLifeHappens(key,amount){
 }
 function goalLifeHappensInputId(key){
   return key.startsWith("custom:")?`goalLife_custom_${Number(key.slice(7))}`:`goalLife_${key}`;
+}
+function goalCorrectBalanceInputId(key){
+  return key.startsWith("custom:")?`goalCorrect_custom_${Number(key.slice(7))}`:`goalCorrect_${key}`;
+}
+function applyBalanceCorrection(key,correctedAmount){
+  const prev=getGoalCurrentBalance(key);
+  const next=Math.round(Math.max(0,Number(correctedAmount)||0)*100)/100;
+  if(Math.abs(next-prev)<0.001)return{ok:false,reason:"same"};
+  const now=new Date().toISOString();
+  if(key.startsWith("custom:")){
+    const g=state.customGoals[Number(key.slice(7))];
+    if(!g)return{ok:false};
+    g.current=next;
+    g.lastBalanceCorrectionAmount=next;
+    g.lastBalanceCorrectionDate=now;
+    g.lastBalanceCorrectionPrevious=prev;
+  }else{
+    const m=builtInGoalMeta[key];
+    if(!m)return{ok:false};
+    state[m.valueKey]=next;
+    state.goalLastBalanceCorrection[key]={amount:next,date:now,previous:prev};
+  }
+  goalCorrectBalanceOpen[key]=false;
+  return{ok:true};
 }
 function goalDisplayName(key){
   if(key.startsWith("custom:")){
@@ -2082,7 +2169,8 @@ function goalSavingsFieldIds(key,customIndex){
     lifeId:goalLifeHappensInputId(key),
     hasTargetId:isCustom?`goalHasTarget_custom_${customIndex}`:`goalHasTarget_${key}`,
     plannedId:isCustom?`goalPlanned_custom_${customIndex}`:`goalPlanned_${key}`,
-    dateId:isCustom?`goalDate_custom_${customIndex}`:`goalDate_${key}`
+    dateId:isCustom?`goalDate_custom_${customIndex}`:`goalDate_${key}`,
+    correctId:goalCorrectBalanceInputId(key)
   };
 }
 function goalTargetRowHtml(usesTarget,target,ids){
@@ -2095,10 +2183,13 @@ function goalAddFundsRowHtml(ids){
 function goalLifeHappensFieldsHtml(key,lifeId,lifeOpen){
   return `<div class="goal-life-happens-wrap"><button class="goal-life-happens-btn" type="button" data-life-happens-toggle="${esc(key)}">− Life happens</button><p class="goal-life-happens-note">Sometimes the money needs to do something else.</p><div class="goal-life-happens-expand card-body-wrap${lifeOpen?"":" is-collapsed"}"><div class="goal-life-happens-panel journey-card-body"><p class="goal-life-happens-panel-prompt">How much do you need to take from this goal?</p><div class="goal-field-row goal-life-happens-row"><div class="goal-field goal-field-life-amount"><input class="goal-field-value" id="${lifeId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Amount"></div><button class="goal-life-happens-take" type="button" data-life-happens-take="${esc(key)}">− Take from goal</button></div><p class="goal-life-happens-msg" data-life-happens-msg="${esc(key)}" hidden></p></div></div></div>`;
 }
+function goalCorrectBalanceFieldsHtml(key,correctId,correctOpen){
+  return `<div class="goal-correct-wrap"><button class="goal-correct-btn" type="button" data-correct-balance-toggle="${esc(key)}">Correct balance</button><div class="goal-correct-expand card-body-wrap${correctOpen?"":" is-collapsed"}"><div class="goal-correct-panel journey-card-body"><p class="goal-correct-label">Correct balance</p><div class="goal-field"><label for="${correctId}">Actual balance</label><input class="goal-field-value" id="${correctId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Actual balance"></div><p class="goal-correct-note">Use this only to correct the recorded amount.</p><button class="goal-correct-save" type="button" data-correct-balance-save="${esc(key)}">Save correction</button></div></div></div>`;
+}
 function goalSavingsExpandedFieldsHtml(key,usesTarget,target,current,customIndex){
   const ids=goalSavingsFieldIds(key,customIndex);
   const planHtml=usesTarget?goalPlanFieldsHtml(key,current,target,ids):"";
-  return `<div class="goal-fields">${goalTargetRowHtml(usesTarget,target,ids)}${planHtml}${goalAddFundsRowHtml(ids)}${goalLifeHappensFieldsHtml(key,ids.lifeId,!!goalLifeHappensOpen[key])}</div>`;
+  return `<div class="goal-fields">${goalTargetRowHtml(usesTarget,target,ids)}${planHtml}${goalAddFundsRowHtml(ids)}${goalLifeHappensFieldsHtml(key,ids.lifeId,!!goalLifeHappensOpen[key])}${goalCorrectBalanceFieldsHtml(key,ids.correctId,!!goalCorrectBalanceOpen[key])}</div>`;
 }
 function renderSavingsGoalCard(key){
   let name,current,target,barId,isCustom=false,customIndex;
@@ -2183,7 +2274,7 @@ function renderGoals(){
     else if(builtInGoalMeta[key]||key.startsWith("custom:")) card=renderSavingsGoalCard(key);
     if(card){freedomMotion.decorateNewCard(card,"goals",key);list.appendChild(card);}
   });
-  const skipToggle=el=>el.closest("input,textarea,select,a,.goal-toggle,.journey-chevron,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,button[data-save-goal],button[data-life-happens-toggle],button[data-life-happens-take],button[data-goal-plan-mode],[data-goal-planned],[data-goal-date],.save-btn");
+  const skipToggle=el=>el.closest("input,textarea,select,a,.goal-toggle,.journey-chevron,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,button[data-save-goal],button[data-life-happens-toggle],button[data-life-happens-take],button[data-correct-balance-toggle],button[data-correct-balance-save],button[data-goal-plan-mode],[data-goal-planned],[data-goal-date],.save-btn");
   list.querySelectorAll("[data-goal-chevron]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     if(goalDragJustEnded) return;
@@ -2314,6 +2405,41 @@ function renderGoals(){
       return;
     }
     if(amountEl)amountEl.value="";
+    persist();render();
+  }));
+  list.querySelectorAll("[data-correct-balance-toggle]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const key=btn.dataset.correctBalanceToggle;
+    const wrap=btn.closest(".goal-correct-wrap")?.querySelector(".goal-correct-expand");
+    goalCorrectBalanceOpen[key]=!goalCorrectBalanceOpen[key];
+    if(wrap){
+      wrap.classList.toggle("is-collapsed",!goalCorrectBalanceOpen[key]);
+      const panel=wrap.querySelector(".goal-correct-panel");
+      const inp=byId(goalCorrectBalanceInputId(key));
+      if(goalCorrectBalanceOpen[key]){
+        if(panel&&!freedomMotion.reduced){
+          panel.classList.add("freedom-body-reveal");
+          setTimeout(()=>panel.classList.remove("freedom-body-reveal"),420);
+        }
+      }else if(inp){
+        inp.value="";
+      }
+      return;
+    }
+    renderGoals();
+  }));
+  list.querySelectorAll("[data-correct-balance-save]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const key=btn.dataset.correctBalanceSave;
+    const inp=byId(goalCorrectBalanceInputId(key));
+    const raw=inp?.value?.trim();
+    if(!raw){inp?.focus();return}
+    const result=applyBalanceCorrection(key,Number(raw)||0);
+    if(!result.ok){
+      if(result.reason==="same"){inp?.focus();return}
+      return;
+    }
+    if(inp)inp.value="";
     persist();render();
   }));
   setupGoalReorder(list);
@@ -2970,7 +3096,7 @@ function renderArchive(){
     const i=Number(e.currentTarget.dataset.restoreGoal),item=state.archivedGoals[i];
     if(!item)return;
     const hasTarget=item.hasTarget!==undefined?!!item.hasTarget:(Number(item.target)||0)>0;
-    state.customGoals.push({name:item.name,current:item.current,target:item.target,hasTarget,lifetimeAdded:item.lifetimeAdded!=null?item.lifetimeAdded:item.current,lifeHappensTotal:item.lifeHappensTotal||0,lastLifeHappensAmount:item.lastLifeHappensAmount,lastLifeHappensDate:item.lastLifeHappensDate,planMode:item.planMode==="date"?"date":"monthly",plannedMonthly:Math.max(0,Number(item.plannedMonthly)||0),goalDate:item.goalDate||null});
+    state.customGoals.push({name:item.name,current:item.current,startingBalance:item.startingBalance!=null?item.startingBalance:item.current,target:item.target,hasTarget,lifetimeAdded:item.lifetimeAdded!=null?item.lifetimeAdded:0,lifeHappensTotal:item.lifeHappensTotal||0,lastLifeHappensAmount:item.lastLifeHappensAmount,lastLifeHappensDate:item.lastLifeHappensDate,lastBalanceCorrectionAmount:item.lastBalanceCorrectionAmount,lastBalanceCorrectionDate:item.lastBalanceCorrectionDate,lastBalanceCorrectionPrevious:item.lastBalanceCorrectionPrevious,planMode:item.planMode==="date"?"date":"monthly",plannedMonthly:Math.max(0,Number(item.plannedMonthly)||0),goalDate:item.goalDate||null});
     state.archivedGoals.splice(i,1);persist();render();
   }));
   wrap.querySelectorAll("[data-delete-archived-goal]").forEach(btn=>btn.addEventListener("click",e=>{
@@ -3074,7 +3200,7 @@ byId("addGoal").addEventListener("click",()=>{
   const hasTarget=!!byId("newGoalHasTarget").checked;
   const target=hasTarget?Math.max(0,Number(byId("newGoalTarget").value)||0):0;
   if(!name){byId("newGoalName").focus();return}
-  state.customGoals.push({name,current,target,hasTarget,lifetimeAdded:current,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:0,goalDate:null});
+  state.customGoals.push({name,current,startingBalance:current,target,hasTarget,lifetimeAdded:0,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:0,goalDate:null});
   freedomMotion.markNew("goals","custom:"+(state.customGoals.length-1));
   persist();
   byId("newGoalName").value="";
@@ -3087,7 +3213,7 @@ byId("addGoal").addEventListener("click",()=>{
 });
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:null,lastRepaymentDate:null});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
-document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more","archive"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){freedomMotion.activePage=boot;requestAnimationFrame(()=>freedomMotion.pageEnter(boot));}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}}
+document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more","archive"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}}
 })();
 
 
