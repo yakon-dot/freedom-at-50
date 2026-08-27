@@ -439,6 +439,26 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     border-color:rgba(218,167,128,.42);background:rgba(16,18,20,.30);
     color:rgba(231,177,137,.88);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
   }
+  body.journey-active-v313 #journey .monthly-summary-card{
+    margin:clamp(10px,1.6vh,14px) 0 0;
+    padding:14px 16px 13px;
+    border:1px solid rgba(220,190,150,.18);
+    border-radius:22px;
+    background:rgba(18,20,24,.08);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:none;
+    text-align:center;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  body.journey-active-v313 #journey .monthly-summary-card::before{display:none}
+  body.journey-active-v313 #journey .monthly-summary-amount{
+    margin:0;font-size:28px;line-height:1.05;font-weight:720;
+    letter-spacing:-.03em;color:#efcbaa;
+  }
+  body.journey-active-v313 #journey .monthly-summary-label{
+    margin:6px 0 0;font-size:13px;line-height:1.4;font-weight:500;
+    color:rgba(236,232,224,.78);
+  }
   body.journey-active-v313 #journey .stack{gap:18px}
   body.journey-active-v313 #journey .card.loan-card,
   body.journey-active-v313 #journey .card.add-journey-card{
@@ -662,6 +682,26 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.goals-active-v314 #goals #toggleAddGoal{
     border-color:rgba(218,167,128,.42);background:rgba(16,18,20,.30);
     color:rgba(231,177,137,.88);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  body.goals-active-v314 #goals .monthly-summary-card{
+    margin:clamp(10px,1.6vh,14px) 0 0;
+    padding:14px 16px 13px;
+    border:1px solid rgba(220,190,150,.18);
+    border-radius:22px;
+    background:rgba(18,20,24,.06);
+    backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    box-shadow:none;
+    text-align:center;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+  }
+  body.goals-active-v314 #goals .monthly-summary-card::before{display:none}
+  body.goals-active-v314 #goals .monthly-summary-amount{
+    margin:0;font-size:28px;line-height:1.05;font-weight:720;
+    letter-spacing:-.03em;color:#efcbaa;
+  }
+  body.goals-active-v314 #goals .monthly-summary-label{
+    margin:6px 0 0;font-size:13px;line-height:1.4;font-weight:500;
+    color:rgba(236,232,224,.78);
   }
   body.goals-active-v314 #goals .stack{gap:18px}
   body.goals-active-v314 #goals .card.goal-card,
@@ -1458,8 +1498,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     </div>
   </div>
 </section>
-<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
-<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
+<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><div class="stack" id="loanList"></div></section>
+<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><div class="stack" id="goalsList"></div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
@@ -2068,6 +2108,7 @@ function refreshGoalPlanForecast(key,card){
   if(lineEl)lineEl.textContent=forecast.line1;
   if(dateOut)dateOut.textContent=forecast.line2;
   if(neededEl)neededEl.textContent=formatGoalMonthlyNeeded(remaining,goalDate);
+  updateMonthlySummaryCards();
 }
 function getGoalPlanMode(key){
   if(key.startsWith("custom:")){
@@ -2150,6 +2191,34 @@ function formatGoalMonthlyNeeded(remaining,goalDateStr){
   const amt=estimatedMonthlyNeeded(r,goalDateStr);
   if(amt===null||!isFinite(amt)||amt<=0)return"Choose a goal date";
   return`${euro2(amt)} / month`;
+}
+function journeyMonthlyCommitmentsTotal(){
+  return state.loans.reduce((sum,loan)=>{
+    if((Number(loan.current)||0)<=0)return sum;
+    return sum+Math.max(0,Number(loan.payment)||0);
+  },0);
+}
+function goalsMonthlyNeededTotal(){
+  let total=0;
+  visibleGoalKeys().forEach(key=>{
+    if(key==="housePocket"||key==="housePocketDone")return;
+    if(!(builtInGoalMeta[key]||key.startsWith("custom:")))return;
+    if(!goalUsesTarget(key))return;
+    const remaining=goalRemainingToTarget(key);
+    if(remaining<=0)return;
+    const date=getGoalDate(key);
+    if(!date)return;
+    const amt=estimatedMonthlyNeeded(remaining,date);
+    if(amt===null||!isFinite(amt)||amt<=0)return;
+    total+=amt;
+  });
+  return total;
+}
+function updateMonthlySummaryCards(){
+  const journeyEl=byId("journeyMonthlyAmount");
+  if(journeyEl)journeyEl.textContent=`${euro0(journeyMonthlyCommitmentsTotal())}/month`;
+  const goalsEl=byId("goalsMonthlyAmount");
+  if(goalsEl)goalsEl.textContent=`${euro0(goalsMonthlyNeededTotal())}/month`;
 }
 function goalPlanFieldsHtml(key,current,target,ids){
   const remaining=Math.max(0,(Number(target)||0)-(Number(current)||0));
@@ -2363,6 +2432,14 @@ function renderGoals(){
     const card=inp.closest(".goal-card");
     const key=card&&card.dataset.goalKey;
     if(!key)return;
+    const target=Math.max(0,Number(inp.value)||0);
+    if(key.startsWith("custom:")){
+      const g=state.customGoals[Number(key.slice(7))];
+      if(g)g.target=target;
+    }else{
+      if(!state.goalTargets)state.goalTargets={};
+      state.goalTargets[key]=target;
+    }
     refreshGoalPlanForecast(key,card);
   }));
   list.querySelectorAll("[data-life-happens-toggle]").forEach(btn=>btn.addEventListener("click",e=>{
@@ -2627,6 +2704,7 @@ function renderLoans(){
       if(el)el.textContent=fc.line1;
       if(dateEl)dateEl.textContent=fc.line2;
     }
+    updateMonthlySummaryCards();
   }
   list.querySelectorAll("input[data-loan]").forEach(input=>{
     input.addEventListener("input",e=>{
@@ -3176,6 +3254,7 @@ if(hp>0){
 }
 if(hp>0){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="House Pocket";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent=next.name;if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else{if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="All clear";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
 renderLoans();renderGoals();renderPensions();renderArchive();
+updateMonthlySummaryCards();
 if(freedomMotion.activePage){
   const activePage=document.querySelector(".page.active")?.id;
   if(activePage==="overview")freedomMotion.animateProgress(byId("overview"));
