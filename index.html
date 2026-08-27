@@ -3570,7 +3570,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1865",
+        "./service-worker.js?v=1866",
         { updateViaCache: "none" }
       );
 
@@ -3601,7 +3601,7 @@ if ("serviceWorker" in navigator) {
       }
 
       navigator.serviceWorker.addEventListener("controllerchange", () => {
-        const key = "freedom50-sw-reloaded-v1865";
+        const key = "freedom50-sw-reloaded-v1866";
         if (sessionStorage.getItem(key)) return;
         sessionStorage.setItem(key, "1");
         window.location.reload();
