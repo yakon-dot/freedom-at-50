@@ -855,68 +855,6 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.goals-active-v314 #goals .goal-plan-estimate-note{
     display:block;font-size:10px;color:rgba(190,188,182,.48);margin-top:4px;line-height:1.4;font-weight:500;
   }
-  body.goals-active-v314 #goals .goal-section{
-    border-radius:14px;padding:10px 12px 9px;margin-top:2px;
-  }
-  body.goals-active-v314 #goals .goal-section-plan{
-    border:1px solid rgba(132,189,145,.22);
-    background:rgba(132,189,145,.045);
-  }
-  body.goals-active-v314 #goals .goal-section-money{
-    border:1px solid rgba(239,203,170,.20);
-    background:rgba(239,203,170,.04);
-  }
-  body.goals-active-v314 #goals .goal-section-head{
-    display:flex;align-items:flex-start;gap:8px;width:100%;
-    margin:0;padding:0;border:0;background:transparent;text-align:left;
-    cursor:pointer;color:inherit;-webkit-tap-highlight-color:transparent;
-  }
-  body.goals-active-v314 #goals .goal-section-head-main{min-width:0;flex:1}
-  body.goals-active-v314 #goals .goal-section-title{
-    font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;
-    line-height:1.2;
-  }
-  body.goals-active-v314 #goals .goal-section-plan .goal-section-title{color:rgba(132,189,145,.88)}
-  body.goals-active-v314 #goals .goal-section-money .goal-section-title{color:rgba(239,203,170,.82)}
-  body.goals-active-v314 #goals .goal-section-summary{
-    margin-top:6px;display:grid;gap:2px;
-  }
-  body.goals-active-v314 #goals .goal-section:not(.is-collapsed) .goal-section-summary{display:none}
-  body.goals-active-v314 #goals .goal-section-summary-line{
-    font-size:12px;line-height:1.35;font-weight:500;
-    color:rgba(236,232,224,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
-  body.goals-active-v314 #goals .goal-section-plan .goal-section-summary-line{color:rgba(190,210,195,.78)}
-  body.goals-active-v314 #goals .goal-section-money .goal-section-summary-line{color:rgba(220,200,180,.72)}
-  body.goals-active-v314 #goals .goal-section-chevron{
-    display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;margin-top:0;
-    border:1px solid rgba(220,190,150,.18);border-radius:50%;
-    background:rgba(18,20,24,.18);color:rgba(220,200,180,.72);
-    transition:transform var(--motion-chevron) var(--motion-ease);
-  }
-  body.goals-active-v314 #goals .goal-section-plan .goal-section-chevron{
-    border-color:rgba(132,189,145,.28);color:rgba(132,189,145,.82);
-    background:rgba(132,189,145,.06);
-  }
-  body.goals-active-v314 #goals .goal-section-money .goal-section-chevron{
-    border-color:rgba(239,203,170,.26);color:rgba(239,203,170,.82);
-    background:rgba(239,203,170,.05);
-  }
-  body.goals-active-v314 #goals .goal-section-chevron svg{
-    width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;
-    stroke-linecap:round;stroke-linejoin:round;
-  }
-  body.goals-active-v314 #goals .goal-section:not(.is-collapsed) .goal-section-chevron{transform:rotate(180deg)}
-  body.goals-active-v314 #goals .goal-section-body{margin-top:0}
-  body.goals-active-v314 #goals .goal-section:not(.is-collapsed) .goal-section-body{margin-top:10px}
-  body.goals-active-v314 #goals .goal-section-body > .journey-card-body{
-    padding-top:2px;
-  }
-  body.goals-active-v314 #goals .goal-section-plan .goal-plan-wrap{margin:0}
-  body.goals-active-v314 #goals .goal-section-plan .goal-plan-label{margin-top:0}
-  body.goals-active-v314 #goals .goal-section-money .goal-field-row{margin:0}
-  body.goals-active-v314 #goals .goal-section-money .goal-life-happens-wrap{margin-top:10px}
-  body.goals-active-v314 #goals .goal-section-money .goal-correct-wrap{margin-top:10px}
   body.goals-active-v314 #goals .goal-life-happens-wrap{
     margin-top:4px;
   }
@@ -1369,6 +1307,68 @@ body.home183 .demo183{
 }
 @media(min-width:821px){.demo183{display:none!important}}
 @media(min-width:821px){.mobile183{display:none!important}}
+
+/* Goal card collapsible sections — Your Plan / Money Movements */
+#goals .goal-section{
+  border-radius:14px;padding:10px 12px 9px;margin-top:2px;
+}
+#goals .goal-section-plan{
+  border:1px solid rgba(132,189,145,.22);
+  background:rgba(132,189,145,.045);
+}
+#goals .goal-section-money{
+  border:1px solid rgba(239,203,170,.20);
+  background:rgba(239,203,170,.04);
+}
+#goals .goal-section-head{
+  display:flex;align-items:flex-start;gap:8px;width:100%;
+  margin:0;padding:0;border:0;background:transparent;text-align:left;
+  cursor:pointer;color:inherit;font:inherit;
+  -webkit-appearance:none;appearance:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#goals .goal-section-head-main{min-width:0;flex:1}
+#goals .goal-section-title{
+  font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;
+  line-height:1.2;
+}
+#goals .goal-section-plan .goal-section-title{color:rgba(132,189,145,.88)}
+#goals .goal-section-money .goal-section-title{color:rgba(239,203,170,.82)}
+#goals .goal-section-summary{margin-top:6px;display:grid;gap:2px}
+#goals .goal-section:not(.is-collapsed) .goal-section-summary{display:none}
+#goals .goal-section-summary-line{
+  font-size:12px;line-height:1.35;font-weight:500;
+  color:rgba(236,232,224,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#goals .goal-section-plan .goal-section-summary-line{color:rgba(190,210,195,.78)}
+#goals .goal-section-money .goal-section-summary-line{color:rgba(220,200,180,.72)}
+#goals .goal-section-chevron{
+  display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;margin-top:0;
+  border:1px solid rgba(220,190,150,.18);border-radius:50%;
+  background:rgba(18,20,24,.18);color:rgba(220,200,180,.72);
+  transition:transform var(--motion-chevron,200ms) var(--motion-ease,cubic-bezier(0.25,0.1,0.25,1));
+}
+#goals .goal-section-plan .goal-section-chevron{
+  border-color:rgba(132,189,145,.28);color:rgba(132,189,145,.82);
+  background:rgba(132,189,145,.06);
+}
+#goals .goal-section-money .goal-section-chevron{
+  border-color:rgba(239,203,170,.26);color:rgba(239,203,170,.82);
+  background:rgba(239,203,170,.05);
+}
+#goals .goal-section-chevron svg{
+  width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+#goals .goal-section:not(.is-collapsed) .goal-section-chevron{transform:rotate(180deg)}
+#goals .goal-section-body{margin-top:0}
+#goals .goal-section:not(.is-collapsed) .goal-section-body{margin-top:10px}
+#goals .goal-section-body > .journey-card-body{padding-top:2px}
+#goals .goal-section-plan .goal-plan-wrap{margin:0}
+#goals .goal-section-plan .goal-plan-label{margin-top:0}
+#goals .goal-section-money .goal-field-row{margin:0}
+#goals .goal-section-money .goal-life-happens-wrap{margin-top:10px}
+#goals .goal-section-money .goal-correct-wrap{margin-top:10px}
 
 /* ===== Freedom motion pass (v316) — interaction only ===== */
 :root{
