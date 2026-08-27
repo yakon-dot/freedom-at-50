@@ -1308,6 +1308,68 @@ body.home183 .demo183{
 @media(min-width:821px){.demo183{display:none!important}}
 @media(min-width:821px){.mobile183{display:none!important}}
 
+/* Goal card collapsible sections — Your Plan / Money Movements */
+#goals .goal-section{
+  border-radius:14px;padding:10px 12px 9px;margin-top:2px;
+}
+#goals .goal-section-plan{
+  border:1px solid rgba(132,189,145,.22);
+  background:rgba(132,189,145,.045);
+}
+#goals .goal-section-money{
+  border:1px solid rgba(239,203,170,.20);
+  background:rgba(239,203,170,.04);
+}
+#goals .goal-section-head{
+  display:flex;align-items:flex-start;gap:8px;width:100%;
+  margin:0;padding:0;border:0;background:transparent;text-align:left;
+  cursor:pointer;color:inherit;font:inherit;
+  -webkit-appearance:none;appearance:none;
+  -webkit-tap-highlight-color:transparent;
+}
+#goals .goal-section-head-main{min-width:0;flex:1}
+#goals .goal-section-title{
+  font-size:11px;font-weight:750;letter-spacing:.08em;text-transform:uppercase;
+  line-height:1.2;
+}
+#goals .goal-section-plan .goal-section-title{color:rgba(132,189,145,.88)}
+#goals .goal-section-money .goal-section-title{color:rgba(239,203,170,.82)}
+#goals .goal-section-summary{margin-top:6px;display:grid;gap:2px}
+#goals .goal-section:not(.is-collapsed) .goal-section-summary{display:none}
+#goals .goal-section-summary-line{
+  font-size:12px;line-height:1.35;font-weight:500;
+  color:rgba(236,232,224,.72);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+#goals .goal-section-plan .goal-section-summary-line{color:rgba(190,210,195,.78)}
+#goals .goal-section-money .goal-section-summary-line{color:rgba(220,200,180,.72)}
+#goals .goal-section-chevron{
+  display:grid;place-items:center;flex:0 0 26px;width:26px;height:26px;margin-top:0;
+  border:1px solid rgba(220,190,150,.18);border-radius:50%;
+  background:rgba(18,20,24,.18);color:rgba(220,200,180,.72);
+  transition:transform var(--motion-chevron,200ms) var(--motion-ease,cubic-bezier(0.25,0.1,0.25,1));
+}
+#goals .goal-section-plan .goal-section-chevron{
+  border-color:rgba(132,189,145,.28);color:rgba(132,189,145,.82);
+  background:rgba(132,189,145,.06);
+}
+#goals .goal-section-money .goal-section-chevron{
+  border-color:rgba(239,203,170,.26);color:rgba(239,203,170,.82);
+  background:rgba(239,203,170,.05);
+}
+#goals .goal-section-chevron svg{
+  width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+#goals .goal-section:not(.is-collapsed) .goal-section-chevron{transform:rotate(180deg)}
+#goals .goal-section-body{margin-top:0}
+#goals .goal-section:not(.is-collapsed) .goal-section-body{margin-top:10px}
+#goals .goal-section-body > .journey-card-body{padding-top:2px}
+#goals .goal-section-plan .goal-plan-wrap{margin:0}
+#goals .goal-section-plan .goal-plan-label{margin-top:0}
+#goals .goal-section-money .goal-field-row{margin:0}
+#goals .goal-section-money .goal-life-happens-wrap{margin-top:10px}
+#goals .goal-section-money .goal-correct-wrap{margin-top:10px}
+
 /* ===== Freedom motion pass (v316) — interaction only ===== */
 :root{
   --motion-enter:580ms;--motion-stagger:120ms;--motion-stagger-cap:7;--motion-expand:380ms;--motion-chevron:200ms;
@@ -1846,6 +1908,7 @@ function page(id){
   document.body.classList.toggle("pension-active-v315",id==="pension");
   document.body.classList.toggle("archive-active-v316",id==="archive");
   document.body.classList.remove("overview-active");
+  if(id!=="goals")resetGoalSectionUiState();
   if(["overview","journey","goals","pension"].includes(id))freedomWallpapers.preload(id);
   if(id==="archive")freedomWallpapers.preload("archive");
   if(id==="pension" && typeof closeAddPensionForm==="function") closeAddPensionForm();
@@ -1899,6 +1962,14 @@ const builtInGoalMeta={
 };
 const goalLifeHappensOpen={};
 const goalCorrectBalanceOpen={};
+const goalPlanSectionOpen={};
+const goalMoneySectionOpen={};
+function resetGoalSectionUiState(){
+  Object.keys(goalPlanSectionOpen).forEach(k=>delete goalPlanSectionOpen[k]);
+  Object.keys(goalMoneySectionOpen).forEach(k=>delete goalMoneySectionOpen[k]);
+  Object.keys(goalLifeHappensOpen).forEach(k=>delete goalLifeHappensOpen[k]);
+  Object.keys(goalCorrectBalanceOpen).forEach(k=>delete goalCorrectBalanceOpen[k]);
+}
 function getGoalCurrentBalance(key){
   if(key.startsWith("custom:")){
     const g=state.customGoals[Number(key.slice(7))];
@@ -2108,6 +2179,7 @@ function refreshGoalPlanForecast(key,card){
   if(lineEl)lineEl.textContent=forecast.line1;
   if(dateOut)dateOut.textContent=forecast.line2;
   if(neededEl)neededEl.textContent=formatGoalMonthlyNeeded(remaining,goalDate);
+  refreshGoalPlanSummary(key,card);
   updateMonthlySummaryCards();
 }
 function getGoalPlanMode(key){
@@ -2220,6 +2292,78 @@ function updateMonthlySummaryCards(){
   const goalsEl=byId("goalsMonthlyAmount");
   if(goalsEl)goalsEl.textContent=`${euro0(goalsMonthlyNeededTotal())}/month`;
 }
+function formatGoalMonthLabel(dateStr){
+  const val=freedomDateInputValue(dateStr);
+  if(!val)return"";
+  const parts=val.split("-");
+  const d=new Date(Number(parts[0]),Number(parts[1])-1,1);
+  if(isNaN(d.getTime()))return"";
+  return d.toLocaleDateString("en-IE",{month:"short",year:"numeric"});
+}
+function goalForecastShortDate(remaining,plannedMonthly){
+  const r=Number(remaining)||0,p=Number(plannedMonthly)||0;
+  if(r<=0||!p)return"";
+  const m=Math.ceil(r/p);
+  if(!isFinite(m)||m<=0)return"";
+  const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+m);
+  return d.toLocaleDateString("en-IE",{month:"short",year:"numeric"});
+}
+function goalHasPlanningConfigured(key){
+  if(!goalUsesTarget(key))return false;
+  if(getGoalPlanMode(key)==="date")return !!freedomDateInputValue(getGoalDate(key));
+  return getGoalPlannedMonthly(key)>0;
+}
+function isGoalPlanSectionOpen(key){
+  if(goalPlanSectionOpen[key]!==undefined)return !!goalPlanSectionOpen[key];
+  return goalUsesTarget(key)&&!goalHasPlanningConfigured(key);
+}
+function isGoalMoneySectionOpen(key){
+  if(goalMoneySectionOpen[key]!==undefined)return !!goalMoneySectionOpen[key];
+  return false;
+}
+function goalSectionChevronHtml(){
+  return `<span class="goal-section-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></span>`;
+}
+function goalPlanSummaryHtml(key,current,target){
+  const remaining=Math.max(0,(Number(target)||0)-(Number(current)||0));
+  const mode=getGoalPlanMode(key);
+  if(mode==="date"){
+    const date=getGoalDate(key);
+    const label=formatGoalMonthLabel(date);
+    const amt=estimatedMonthlyNeeded(remaining,date);
+    const line1=label?`Goal date · ${label}`:"Goal date not set";
+    let line2="Choose a goal date";
+    if(remaining<=0)line2="Goal reached";
+    else if(amt!==null&&isFinite(amt)&&amt>0)line2=`${euro2(amt)}/month needed`;
+    return `<div class="goal-section-summary-line">${esc(line1)}</div><div class="goal-section-summary-line">${esc(line2)}</div>`;
+  }
+  const planned=getGoalPlannedMonthly(key);
+  const shortDate=goalForecastShortDate(remaining,planned);
+  const line1=planned>0?`Monthly saving · ${euro0(planned)}`:"Monthly saving not set";
+  let line2="Set a monthly saving";
+  if(remaining<=0)line2="Goal reached";
+  else if(shortDate)line2=`Estimated goal date · ${shortDate}`;
+  return `<div class="goal-section-summary-line">${esc(line1)}</div><div class="goal-section-summary-line">${esc(line2)}</div>`;
+}
+function refreshGoalPlanSummary(key,card){
+  card=card||document.querySelector(`#goalsList .goal-card[data-goal-key="${CSS.escape(key)}"]`);
+  if(!card)return;
+  const sum=card.querySelector(`[data-goal-plan-summary="${CSS.escape(key)}"]`);
+  if(!sum)return;
+  const targetEl=card.querySelector(`#${CSS.escape(key.startsWith("custom:")?`goalTarget_custom_${Number(key.slice(7))}`:`goalTarget_${key}`)}`);
+  const target=Math.max(0,Number(targetEl&&targetEl.value)||getGoalTargetAmount(key));
+  sum.innerHTML=goalPlanSummaryHtml(key,getGoalCurrentBalance(key),target);
+}
+function goalPlanSectionHtml(key,current,target,ids){
+  const open=isGoalPlanSectionOpen(key);
+  const summary=goalPlanSummaryHtml(key,current,target);
+  const body=goalPlanFieldsHtml(key,current,target,ids);
+  return `<div class="goal-section goal-section-plan${open?"":" is-collapsed"}" data-goal-section-plan="${esc(key)}"><button class="goal-section-head" type="button" data-goal-plan-section="${esc(key)}" aria-expanded="${open?"true":"false"}"><div class="goal-section-head-main"><div class="goal-section-title">Your plan</div><div class="goal-section-summary" data-goal-plan-summary="${esc(key)}">${summary}</div></div>${goalSectionChevronHtml()}</button><div class="goal-section-body card-body-wrap${open?"":" is-collapsed"}"><div class="journey-card-body">${body}</div></div></div>`;
+}
+function goalMoneySectionHtml(key,ids){
+  const open=isGoalMoneySectionOpen(key);
+  return `<div class="goal-section goal-section-money${open?"":" is-collapsed"}" data-goal-section-money="${esc(key)}"><button class="goal-section-head" type="button" data-goal-money-section="${esc(key)}" aria-expanded="${open?"true":"false"}"><div class="goal-section-head-main"><div class="goal-section-title">Money movements</div><div class="goal-section-summary"><div class="goal-section-summary-line">Add funds · Life happens</div></div></div>${goalSectionChevronHtml()}</button><div class="goal-section-body card-body-wrap${open?"":" is-collapsed"}"><div class="journey-card-body">${goalAddFundsRowHtml(ids)}${goalLifeHappensFieldsHtml(key,ids.lifeId,!!goalLifeHappensOpen[key])}${goalCorrectBalanceFieldsHtml(key,ids.correctId,!!goalCorrectBalanceOpen[key])}</div></div></div>`;
+}
 function goalPlanFieldsHtml(key,current,target,ids){
   const remaining=Math.max(0,(Number(target)||0)-(Number(current)||0));
   const mode=getGoalPlanMode(key);
@@ -2257,8 +2401,8 @@ function goalCorrectBalanceFieldsHtml(key,correctId,correctOpen){
 }
 function goalSavingsExpandedFieldsHtml(key,usesTarget,target,current,customIndex){
   const ids=goalSavingsFieldIds(key,customIndex);
-  const planHtml=usesTarget?goalPlanFieldsHtml(key,current,target,ids):"";
-  return `<div class="goal-fields">${goalTargetRowHtml(usesTarget,target,ids)}${planHtml}${goalAddFundsRowHtml(ids)}${goalLifeHappensFieldsHtml(key,ids.lifeId,!!goalLifeHappensOpen[key])}${goalCorrectBalanceFieldsHtml(key,ids.correctId,!!goalCorrectBalanceOpen[key])}</div>`;
+  const planHtml=usesTarget?goalPlanSectionHtml(key,current,target,ids):"";
+  return `<div class="goal-fields">${goalTargetRowHtml(usesTarget,target,ids)}${planHtml}${goalMoneySectionHtml(key,ids)}</div>`;
 }
 function renderSavingsGoalCard(key){
   let name,current,target,barId,isCustom=false,customIndex;
@@ -2343,7 +2487,7 @@ function renderGoals(){
     else if(builtInGoalMeta[key]||key.startsWith("custom:")) card=renderSavingsGoalCard(key);
     if(card){freedomMotion.decorateNewCard(card,"goals",key);list.appendChild(card);}
   });
-  const skipToggle=el=>el.closest("input,textarea,select,a,.goal-toggle,.journey-chevron,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,button[data-save-goal],button[data-life-happens-toggle],button[data-life-happens-take],button[data-correct-balance-toggle],button[data-correct-balance-save],button[data-goal-plan-mode],[data-goal-planned],[data-goal-date],.save-btn");
+  const skipToggle=el=>el.closest("input,textarea,select,a,.goal-toggle,.journey-chevron,.goal-section-head,button[data-archive-built-in],button[data-delete-built-in],button[data-archive-goal],button[data-delete-goal],button#recordHousePocket,button#archiveHousePocket,button[data-save-goal],button[data-life-happens-toggle],button[data-life-happens-take],button[data-correct-balance-toggle],button[data-correct-balance-save],button[data-goal-plan-section],button[data-goal-money-section],button[data-goal-plan-mode],[data-goal-planned],[data-goal-date],.save-btn");
   list.querySelectorAll("[data-goal-chevron]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     if(goalDragJustEnded) return;
@@ -2357,6 +2501,7 @@ function renderGoals(){
     e.stopPropagation();
     const key=inp.dataset.goalHasTarget;
     setGoalUsesTarget(key,inp.checked);
+    delete goalPlanSectionOpen[key];
     persist();
     renderGoals();
   }));
@@ -2404,6 +2549,51 @@ function renderGoals(){
   list.querySelectorAll("[data-save-goal]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     saveGoal(btn.dataset.saveGoal);
+  }));
+  function toggleGoalSection(key,kind){
+    const isPlan=kind==="plan";
+    const openMap=isPlan?goalPlanSectionOpen:goalMoneySectionOpen;
+    const currently=isPlan?isGoalPlanSectionOpen(key):isGoalMoneySectionOpen(key);
+    const next=!currently;
+    openMap[key]=next;
+    const sel=isPlan?`[data-goal-section-plan="${CSS.escape(key)}"]`:`[data-goal-section-money="${CSS.escape(key)}"]`;
+    const section=list.querySelector(sel);
+    if(!section){renderGoals();return}
+    section.classList.toggle("is-collapsed",!next);
+    const wrap=section.querySelector(".goal-section-body");
+    if(wrap)wrap.classList.toggle("is-collapsed",!next);
+    const head=section.querySelector(".goal-section-head");
+    if(head)head.setAttribute("aria-expanded",next?"true":"false");
+    if(next){
+      const panel=wrap?.querySelector(":scope > .journey-card-body");
+      if(panel&&!freedomMotion.reduced){
+        panel.classList.add("freedom-body-reveal");
+        setTimeout(()=>panel.classList.remove("freedom-body-reveal"),420);
+      }
+    }else if(isPlan){
+      refreshGoalPlanSummary(key,section.closest(".goal-card"));
+    }else{
+      goalLifeHappensOpen[key]=false;
+      goalCorrectBalanceOpen[key]=false;
+      const lifeWrap=section.querySelector(".goal-life-happens-expand");
+      if(lifeWrap)lifeWrap.classList.add("is-collapsed");
+      const correctWrap=section.querySelector(".goal-correct-expand");
+      if(correctWrap)correctWrap.classList.add("is-collapsed");
+      const lifeInp=byId(goalLifeHappensInputId(key));
+      if(lifeInp)lifeInp.value="";
+      const correctInp=byId(goalCorrectBalanceInputId(key));
+      if(correctInp)correctInp.value="";
+      const msgEl=section.querySelector(`[data-life-happens-msg="${CSS.escape(key)}"]`);
+      if(msgEl){msgEl.textContent="";msgEl.hidden=true;}
+    }
+  }
+  list.querySelectorAll("[data-goal-plan-section]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    toggleGoalSection(btn.dataset.goalPlanSection,"plan");
+  }));
+  list.querySelectorAll("[data-goal-money-section]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    toggleGoalSection(btn.dataset.goalMoneySection,"money");
   }));
   list.querySelectorAll("[data-goal-plan-mode]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
