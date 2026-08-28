@@ -485,7 +485,35 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.journey-active-v313 #journey .loan-title-input:focus{
     box-shadow:none;outline:none;
   }
-  body.journey-active-v313 #journey .journey-card-head .pill{flex-shrink:0}
+  body.journey-active-v313 #journey .journey-card-head{align-items:flex-start}
+  body.journey-active-v313 #journey .loan-summary-single{grid-template-columns:1fr}
+  body.journey-active-v313 #journey .journey-head-main{min-width:0;flex:1}
+  body.journey-active-v313 #journey .loan-amount{
+    margin-top:8px;font-size:28px;line-height:1;font-weight:720;
+    letter-spacing:-.03em;color:rgba(236,232,224,.82);
+  }
+  body.journey-active-v313 #journey .journey-head-main .goal-correct-wrap{margin-top:4px}
+  body.journey-active-v313 #journey .goal-correct-btn{
+    border:0;padding:0;background:transparent;color:rgba(239,203,170,.58);
+    font-size:11px;font-weight:600;cursor:pointer;width:auto;
+    -webkit-tap-highlight-color:transparent;text-decoration:underline;text-underline-offset:2px;
+  }
+  body.journey-active-v313 #journey .goal-correct-btn:active{transform:scale(.98)}
+  body.journey-active-v313 #journey .goal-correct-expand{margin-top:0}
+  body.journey-active-v313 #journey .goal-correct-panel{
+    padding-top:10px;border-top:1px solid rgba(220,190,150,.06);margin-top:8px;
+  }
+  body.journey-active-v313 #journey .goal-correct-note{
+    margin:0 0 8px;font-size:11px;line-height:1.45;color:rgba(190,188,182,.58);
+  }
+  body.journey-active-v313 #journey .goal-correct-save{
+    margin-top:10px;border:1px solid rgba(220,190,150,.14);border-radius:11px;padding:8px 14px;
+    background:rgba(13,16,19,.18);color:rgba(190,188,182,.68);
+    font-size:11px;font-weight:650;cursor:pointer;width:auto;
+    -webkit-tap-highlight-color:transparent;
+  }
+  body.journey-active-v313 #journey .goal-correct-save:active{transform:scale(.98)}
+  body.journey-active-v313 #journey .journey-card-head .pill{flex-shrink:0;margin-top:2px}
   body.journey-active-v313 #journey .journey-card-head .journey-chevron{flex-shrink:0}
   body.journey-active-v313 #journey .loan-stat{
     background:rgba(18,20,24,.58);
@@ -899,22 +927,19 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     margin:8px 0 0;font-size:11px;line-height:1.45;color:var(--muted);
   }
   body.goals-active-v314 #goals .goal-life-happens-msg[hidden]{display:none!important}
-  body.goals-active-v314 #goals .goal-correct-wrap{margin-top:10px}
+  body.goals-active-v314 #goals .goal-head-main .goal-correct-wrap{margin-top:4px}
   body.goals-active-v314 #goals .goal-correct-btn{
-    border:0;padding:0;background:transparent;color:rgba(190,188,182,.52);
+    border:0;padding:0;background:transparent;color:rgba(239,203,170,.58);
     font-size:11px;font-weight:600;cursor:pointer;width:auto;
     -webkit-tap-highlight-color:transparent;text-decoration:underline;text-underline-offset:2px;
   }
   body.goals-active-v314 #goals .goal-correct-btn:active{transform:scale(.98)}
   body.goals-active-v314 #goals .goal-correct-expand{margin-top:0}
   body.goals-active-v314 #goals .goal-correct-panel{
-    padding-top:10px;border-top:1px solid rgba(220,190,150,.06);margin-top:10px;
-  }
-  body.goals-active-v314 #goals .goal-correct-label{
-    margin:0 0 8px;font-size:11px;line-height:1.45;color:rgba(190,188,182,.58);font-weight:600;
+    padding-top:10px;border-top:1px solid rgba(220,190,150,.06);margin-top:8px;
   }
   body.goals-active-v314 #goals .goal-correct-note{
-    margin:8px 0 0;font-size:10px;line-height:1.45;color:rgba(190,188,182,.48);
+    margin:0 0 8px;font-size:11px;line-height:1.45;color:rgba(190,188,182,.58);
   }
   body.goals-active-v314 #goals .goal-correct-save{
     margin-top:10px;border:1px solid rgba(220,190,150,.14);border-radius:11px;padding:8px 14px;
@@ -1368,7 +1393,6 @@ body.home183 .demo183{
 #goals .goal-section-plan .goal-plan-label{margin-top:0}
 #goals .goal-section-money .goal-field-row{margin:0}
 #goals .goal-section-money .goal-life-happens-wrap{margin-top:10px}
-#goals .goal-section-money .goal-correct-wrap{margin-top:10px}
 
 /* ===== Freedom motion pass (v316) — interaction only ===== */
 :root{
@@ -1759,7 +1783,7 @@ function buildLoanExpandedBody(i,loan){
   const lastRepay=loan.lastRepaymentAmount!=null&&loan.lastRepaymentDate
     ?`<strong>${euro2(loan.lastRepaymentAmount)} · ${formatRepaymentDate(loan.lastRepaymentDate)}</strong>`
     :`<span>—</span>`;
-  return `<div class="journey-status"><div class="loan-summary"><div class="loan-stat"><small>Current balance</small><input class="loan-stat-value" data-loan="${i}" data-field="current" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.current}" aria-label="Current balance"></div><div class="loan-stat"><small>Money returned</small><strong class="journey-returned-value" data-returned-for="${i}">${euro2(returned)} · ${pct.toFixed(1)}%</strong></div></div><div class="journey-plan-label">Plan my payoff by</div><div class="journey-mode-switch"><button class="journey-mode-btn${mode==="monthly"?" active":""}" type="button" data-loan-mode="${i}" data-mode="monthly">Monthly repayment</button><button class="journey-mode-btn${mode==="date"?" active":""}" type="button" data-loan-mode="${i}" data-mode="date">Freedom date</button></div><div class="journey-mode-panel" data-mode-panel="monthly"${mode!=="monthly"?" hidden":""}><div class="loan-stat"><small>Planned monthly repayment</small><input class="loan-stat-value" data-loan="${i}" data-field="payment" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.payment}" aria-label="Planned monthly repayment"></div><div class="loan-stat loan-stat-forecast"><small>Estimated freedom</small><strong class="freedom-estimate" data-freedom-for="${i}">${esc(forecast.line1)}</strong><span class="freedom-date-estimate" data-freedom-date-for="${i}">${esc(forecast.line2)}</span></div></div><div class="journey-mode-panel" data-mode-panel="date"${mode!=="date"?" hidden":""}><div class="loan-stat journey-freedom-date-stat"><small>I want this gone by</small><input class="loan-stat-value journey-freedom-date-input" id="loanFreedomDate_${i}" data-loan="${i}" data-field="freedomDate" type="month" value="${dateVal}" aria-label="Freedom date"></div><div class="loan-stat loan-stat-forecast"><small>Estimated monthly repayment needed</small><strong class="freedom-estimate-needed" data-needed-for="${i}">${esc(needed)}</strong><span class="journey-estimate-note">Estimate only — excludes interest and charges</span></div></div></div><div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div><div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">Archive journey</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button><button class="save-btn" data-save-loan="${i}" type="button">Save</button></div>`;
+  return `<div class="journey-status"><div class="loan-summary loan-summary-single"><div class="loan-stat"><small>Money returned</small><strong class="journey-returned-value" data-returned-for="${i}">${euro2(returned)} · ${pct.toFixed(1)}%</strong></div></div><div class="journey-plan-label">Plan my payoff by</div><div class="journey-mode-switch"><button class="journey-mode-btn${mode==="monthly"?" active":""}" type="button" data-loan-mode="${i}" data-mode="monthly">Monthly repayment</button><button class="journey-mode-btn${mode==="date"?" active":""}" type="button" data-loan-mode="${i}" data-mode="date">Freedom date</button></div><div class="journey-mode-panel" data-mode-panel="monthly"${mode!=="monthly"?" hidden":""}><div class="loan-stat"><small>Planned monthly repayment</small><input class="loan-stat-value" data-loan="${i}" data-field="payment" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.payment}" aria-label="Planned monthly repayment"></div><div class="loan-stat loan-stat-forecast"><small>Estimated freedom</small><strong class="freedom-estimate" data-freedom-for="${i}">${esc(forecast.line1)}</strong><span class="freedom-date-estimate" data-freedom-date-for="${i}">${esc(forecast.line2)}</span></div></div><div class="journey-mode-panel" data-mode-panel="date"${mode!=="date"?" hidden":""}><div class="loan-stat journey-freedom-date-stat"><small>I want this gone by</small><input class="loan-stat-value journey-freedom-date-input" id="loanFreedomDate_${i}" data-loan="${i}" data-field="freedomDate" type="month" value="${dateVal}" aria-label="Freedom date"></div><div class="loan-stat loan-stat-forecast"><small>Estimated monthly repayment needed</small><strong class="freedom-estimate-needed" data-needed-for="${i}">${esc(needed)}</strong><span class="journey-estimate-note">Estimate only — excludes interest and charges</span></div></div></div><div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div><div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">Archive journey</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button><button class="save-btn" data-save-loan="${i}" type="button">Save</button></div>`;
 }
 
 function wrapCardBody(html,collapsed){return `<div class="card-body-wrap${collapsed?" is-collapsed":""}"><div class="journey-card-body">${html}</div></div>`;}
@@ -1909,6 +1933,7 @@ function page(id){
   document.body.classList.toggle("archive-active-v316",id==="archive");
   document.body.classList.remove("overview-active");
   if(id!=="goals")resetGoalSectionUiState();
+  if(id!=="journey")resetLoanCorrectBalanceUiState();
   if(["overview","journey","goals","pension"].includes(id))freedomWallpapers.preload(id);
   if(id==="archive")freedomWallpapers.preload("archive");
   if(id==="pension" && typeof closeAddPensionForm==="function") closeAddPensionForm();
@@ -1962,6 +1987,7 @@ const builtInGoalMeta={
 };
 const goalLifeHappensOpen={};
 const goalCorrectBalanceOpen={};
+const loanCorrectBalanceOpen={};
 const goalPlanSectionOpen={};
 const goalMoneySectionOpen={};
 function resetGoalSectionUiState(){
@@ -1969,6 +1995,9 @@ function resetGoalSectionUiState(){
   Object.keys(goalMoneySectionOpen).forEach(k=>delete goalMoneySectionOpen[k]);
   Object.keys(goalLifeHappensOpen).forEach(k=>delete goalLifeHappensOpen[k]);
   Object.keys(goalCorrectBalanceOpen).forEach(k=>delete goalCorrectBalanceOpen[k]);
+}
+function resetLoanCorrectBalanceUiState(){
+  Object.keys(loanCorrectBalanceOpen).forEach(k=>delete loanCorrectBalanceOpen[k]);
 }
 function getGoalCurrentBalance(key){
   if(key.startsWith("custom:")){
@@ -2017,6 +2046,19 @@ function goalLifeHappensInputId(key){
 }
 function goalCorrectBalanceInputId(key){
   return key.startsWith("custom:")?`goalCorrect_custom_${Number(key.slice(7))}`:`goalCorrect_${key}`;
+}
+function loanCorrectBalanceInputId(i){
+  return `loanCorrect_${i}`;
+}
+function correctBalanceFieldsHtml(opts){
+  const {toggleAttr,toggleVal,saveAttr,saveVal,correctId,correctOpen}=opts;
+  return `<div class="goal-correct-wrap"><button class="goal-correct-btn" type="button" ${toggleAttr}="${esc(toggleVal)}">Correct balance</button><div class="goal-correct-expand card-body-wrap${correctOpen?"":" is-collapsed"}"><div class="goal-correct-panel journey-card-body"><p class="goal-correct-note">Use this if your balance doesn't match your actual savings.</p><div class="goal-field"><label for="${correctId}">Actual balance</label><input class="goal-field-value" id="${correctId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Actual balance"></div><button class="goal-correct-save" type="button" ${saveAttr}="${esc(saveVal)}">Save correction</button></div></div></div>`;
+}
+function goalCorrectBalanceFieldsHtml(key,correctId,correctOpen){
+  return correctBalanceFieldsHtml({toggleAttr:"data-correct-balance-toggle",toggleVal:key,saveAttr:"data-correct-balance-save",saveVal:key,correctId,correctOpen});
+}
+function loanCorrectBalanceFieldsHtml(i,correctId,correctOpen){
+  return correctBalanceFieldsHtml({toggleAttr:"data-loan-correct-balance-toggle",toggleVal:String(i),saveAttr:"data-loan-correct-balance-save",saveVal:String(i),correctId,correctOpen});
 }
 function applyBalanceCorrection(key,correctedAmount){
   const prev=getGoalCurrentBalance(key);
@@ -2072,6 +2114,7 @@ function goalCollapsed(key){if(state.goalCollapsed[key]===undefined) return true
 function toggleGoalCollapsed(key){
   const wasCollapsed=goalCollapsed(key);
   if(!wasCollapsed){
+    goalCorrectBalanceOpen[key]=false;
     const card=document.querySelector(`#goalsList > .goal-card[data-goal-key="${CSS.escape(key)}"]`);
     const wrap=card?.querySelector(".card-body-wrap");
     if(wrap&&!freedomMotion.reduced){
@@ -2362,7 +2405,7 @@ function goalPlanSectionHtml(key,current,target,ids){
 }
 function goalMoneySectionHtml(key,ids){
   const open=isGoalMoneySectionOpen(key);
-  return `<div class="goal-section goal-section-money${open?"":" is-collapsed"}" data-goal-section-money="${esc(key)}"><button class="goal-section-head" type="button" data-goal-money-section="${esc(key)}" aria-expanded="${open?"true":"false"}"><div class="goal-section-head-main"><div class="goal-section-title">Money movements</div><div class="goal-section-summary"><div class="goal-section-summary-line">Add funds · Life happens</div></div></div>${goalSectionChevronHtml()}</button><div class="goal-section-body card-body-wrap${open?"":" is-collapsed"}"><div class="journey-card-body">${goalAddFundsRowHtml(ids)}${goalLifeHappensFieldsHtml(key,ids.lifeId,!!goalLifeHappensOpen[key])}${goalCorrectBalanceFieldsHtml(key,ids.correctId,!!goalCorrectBalanceOpen[key])}</div></div></div>`;
+  return `<div class="goal-section goal-section-money${open?"":" is-collapsed"}" data-goal-section-money="${esc(key)}"><button class="goal-section-head" type="button" data-goal-money-section="${esc(key)}" aria-expanded="${open?"true":"false"}"><div class="goal-section-head-main"><div class="goal-section-title">Money movements</div><div class="goal-section-summary"><div class="goal-section-summary-line">Add funds · Life happens</div></div></div>${goalSectionChevronHtml()}</button><div class="goal-section-body card-body-wrap${open?"":" is-collapsed"}"><div class="journey-card-body">${goalAddFundsRowHtml(ids)}${goalLifeHappensFieldsHtml(key,ids.lifeId,!!goalLifeHappensOpen[key])}</div></div></div>`;
 }
 function goalPlanFieldsHtml(key,current,target,ids){
   const remaining=Math.max(0,(Number(target)||0)-(Number(current)||0));
@@ -2396,9 +2439,6 @@ function goalAddFundsRowHtml(ids){
 function goalLifeHappensFieldsHtml(key,lifeId,lifeOpen){
   return `<div class="goal-life-happens-wrap"><button class="goal-life-happens-btn" type="button" data-life-happens-toggle="${esc(key)}">− Life happens</button><p class="goal-life-happens-note">Sometimes the money needs to do something else.</p><div class="goal-life-happens-expand card-body-wrap${lifeOpen?"":" is-collapsed"}"><div class="goal-life-happens-panel journey-card-body"><p class="goal-life-happens-panel-prompt">How much do you need to take from this goal?</p><div class="goal-field-row goal-life-happens-row"><div class="goal-field goal-field-life-amount"><input class="goal-field-value" id="${lifeId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Amount"></div><button class="goal-life-happens-take" type="button" data-life-happens-take="${esc(key)}">− Take from goal</button></div><p class="goal-life-happens-msg" data-life-happens-msg="${esc(key)}" hidden></p></div></div></div>`;
 }
-function goalCorrectBalanceFieldsHtml(key,correctId,correctOpen){
-  return `<div class="goal-correct-wrap"><button class="goal-correct-btn" type="button" data-correct-balance-toggle="${esc(key)}">Correct balance</button><div class="goal-correct-expand card-body-wrap${correctOpen?"":" is-collapsed"}"><div class="goal-correct-panel journey-card-body"><p class="goal-correct-label">Correct balance</p><div class="goal-field"><label for="${correctId}">Actual balance</label><input class="goal-field-value" id="${correctId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Actual balance"></div><p class="goal-correct-note">Use this only to correct the recorded amount.</p><button class="goal-correct-save" type="button" data-correct-balance-save="${esc(key)}">Save correction</button></div></div></div>`;
-}
 function goalSavingsExpandedFieldsHtml(key,usesTarget,target,current,customIndex){
   const ids=goalSavingsFieldIds(key,customIndex);
   const planHtml=usesTarget?goalPlanSectionHtml(key,current,target,ids):"";
@@ -2421,6 +2461,7 @@ function renderSavingsGoalCard(key){
   }
   const usesTarget=goalUsesTarget(key);
   const collapsed=goalCollapsed(key);
+  const ids=goalSavingsFieldIds(key,isCustom?customIndex:null);
   const card=document.createElement("article");
   card.className="card goal-card"+(collapsed?" is-collapsed":"");
   card.dataset.goalKey=key;
@@ -2430,11 +2471,10 @@ function renderSavingsGoalCard(key){
       ? `<input class="goal-title-input" data-goal-name="${customIndex}" type="text" value="${esc(name)}" aria-label="Goal name">`
       : `<input class="goal-title-input" data-goal-name-built="${key}" type="text" value="${esc(name)}" aria-label="Goal name">`)
     : `<div class="goal-title">${esc(name)}</div>`;
-  const amountHtml=`<div class="goal-amount">${euro0(current)}</div>`;
+  const amountHtml=`<div class="goal-amount">${euro0(current)}</div>${goalCorrectBalanceFieldsHtml(key,ids.correctId,!!goalCorrectBalanceOpen[key])}`;
   const collapsedTargetHtml=collapsed&&usesTarget&&target>0?`<div class="goal-target">Target ${euro0(target)}</div>`:"";
   const head=goalCardHead(key,titleHtml,amountHtml,collapsedTargetHtml,name);
   const progressHtml=collapsed&&usesTarget?goalProgressBlock(current,target,barId):"";
-  const ids=goalSavingsFieldIds(key,isCustom?customIndex:null);
   const hasTargetChecked=usesTarget?" checked":"";
   const fieldsHtml=goalSavingsExpandedFieldsHtml(key,usesTarget,target,current,isCustom?customIndex:null);
   const toggleHtml=`<div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="${ids.hasTargetId}" data-goal-has-target="${esc(key)}"${hasTargetChecked} aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div>`;
@@ -2574,15 +2614,10 @@ function renderGoals(){
       refreshGoalPlanSummary(key,section.closest(".goal-card"));
     }else{
       goalLifeHappensOpen[key]=false;
-      goalCorrectBalanceOpen[key]=false;
       const lifeWrap=section.querySelector(".goal-life-happens-expand");
       if(lifeWrap)lifeWrap.classList.add("is-collapsed");
-      const correctWrap=section.querySelector(".goal-correct-expand");
-      if(correctWrap)correctWrap.classList.add("is-collapsed");
       const lifeInp=byId(goalLifeHappensInputId(key));
       if(lifeInp)lifeInp.value="";
-      const correctInp=byId(goalCorrectBalanceInputId(key));
-      if(correctInp)correctInp.value="";
       const msgEl=section.querySelector(`[data-life-happens-msg="${CSS.escape(key)}"]`);
       if(msgEl){msgEl.textContent="";msgEl.hidden=true;}
     }
@@ -2824,15 +2859,16 @@ function renderLoans(){
     const card=document.createElement("article");
     card.className="card loan-card"+(loan.collapsed?" is-collapsed":"")+(loan.current<=0?" completed":"");
     card.dataset.loanIndex=String(i);
-    card.innerHTML=`<div class="journey-card-head" data-toggle-loan="${i}">${titleHtml}<div class="pill ${loan.current<=0?"complete":""}">${loan.current<=0?"Complete ✓":pct.toFixed(1)+"% returned"}</div><button class="journey-chevron" type="button" aria-label="Toggle ${esc(loan.name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div><div class="progress"><span data-progress-key="loan-${i}" style="width:${pct}%"></span></div>${wrapCardBody(buildLoanExpandedBody(i,loan),loan.collapsed)}`;
+    card.innerHTML=`<div class="journey-card-head" data-toggle-loan="${i}"><div class="journey-head-main">${titleHtml}<div class="loan-amount" data-loan-amount-for="${i}">${euro2(loan.current)}</div>${loanCorrectBalanceFieldsHtml(i,loanCorrectBalanceInputId(i),!!loanCorrectBalanceOpen[i])}</div><div class="pill ${loan.current<=0?"complete":""}">${loan.current<=0?"Complete ✓":pct.toFixed(1)+"% returned"}</div><button class="journey-chevron" type="button" aria-label="Toggle ${esc(loan.name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div><div class="progress"><span data-progress-key="loan-${i}" style="width:${pct}%"></span></div>${wrapCardBody(buildLoanExpandedBody(i,loan),loan.collapsed)}`;
     freedomMotion.decorateNewCard(card,"journey",i);list.appendChild(card);
   });
-  const skipToggle=el=>el.closest("input,button[data-archive-loan],button[data-delete-loan],button[data-save-loan],button[data-add-repayment],button[data-loan-mode],.save-btn,.journey-mode-btn");
+  const skipToggle=el=>el.closest("input,button[data-archive-loan],button[data-delete-loan],button[data-save-loan],button[data-add-repayment],button[data-loan-mode],button[data-loan-correct-balance-toggle],button[data-loan-correct-balance-save],.save-btn,.journey-mode-btn,.goal-correct-btn,.goal-correct-save");
   list.querySelectorAll("[data-toggle-loan]").forEach(head=>head.addEventListener("click",e=>{
     if(journeyDragJustEnded||skipToggle(e.target))return;
     const i=Number(head.dataset.toggleLoan);
     const wasCollapsed=state.loans[i].collapsed;
     if(!wasCollapsed){
+      loanCorrectBalanceOpen[i]=false;
       const card=head.closest(".loan-card");
       const wrap=card?.querySelector(".card-body-wrap");
       if(wrap&&!freedomMotion.reduced){
@@ -2871,6 +2907,8 @@ function renderLoans(){
     const pct=loanReturnedPct(loan);
     const returnedEl=card.querySelector(`[data-returned-for="${i}"]`);
     if(returnedEl)returnedEl.textContent=`${euro2(returned)} · ${pct.toFixed(1)}%`;
+    const amountEl=card.querySelector(`[data-loan-amount-for="${i}"]`);
+    if(amountEl)amountEl.textContent=euro2(loan.current);
     const prog=card.querySelector(`[data-progress-key="loan-${i}"]`);
     if(prog)prog.style.width=pct+"%";
     const pill=card.querySelector(".journey-card-head .pill");
@@ -2918,6 +2956,43 @@ function renderLoans(){
     card.querySelectorAll("[data-mode-panel]").forEach(p=>{p.hidden=p.dataset.modePanel!==mode;});
     refreshLoanForecast(i,loan,card);
   }));
+  list.querySelectorAll("[data-loan-correct-balance-toggle]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const i=Number(btn.dataset.loanCorrectBalanceToggle);
+    const wrap=btn.closest(".goal-correct-wrap")?.querySelector(".goal-correct-expand");
+    loanCorrectBalanceOpen[i]=!loanCorrectBalanceOpen[i];
+    if(wrap){
+      wrap.classList.toggle("is-collapsed",!loanCorrectBalanceOpen[i]);
+      const panel=wrap.querySelector(".goal-correct-panel");
+      const inp=byId(loanCorrectBalanceInputId(i));
+      if(loanCorrectBalanceOpen[i]){
+        if(panel&&!freedomMotion.reduced){
+          panel.classList.add("freedom-body-reveal");
+          setTimeout(()=>panel.classList.remove("freedom-body-reveal"),420);
+        }
+      }else if(inp){
+        inp.value="";
+      }
+      return;
+    }
+    renderLoans();
+  }));
+  list.querySelectorAll("[data-loan-correct-balance-save]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const i=Number(btn.dataset.loanCorrectBalanceSave);
+    const loan=state.loans[i];
+    if(!loan)return;
+    const inp=byId(loanCorrectBalanceInputId(i));
+    const raw=inp?.value?.trim();
+    if(!raw){inp?.focus();return;}
+    const prev=loan.current;
+    const next=Math.round(Math.max(0,Number(raw)||0)*100)/100;
+    if(Math.abs(next-prev)<0.001){inp?.focus();return;}
+    applyLoanField(i,"current",next);
+    loanCorrectBalanceOpen[i]=false;
+    if(inp)inp.value="";
+    persist();render();
+  }));
   list.querySelectorAll("[data-add-repayment]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const i=Number(btn.dataset.addRepayment);
@@ -2938,7 +3013,6 @@ function renderLoans(){
     if(!loan)return;
     const card=btn.closest(".loan-card");
     const nameEl=card?.querySelector(`input[data-loan="${i}"][data-field="name"]`);
-    const currentEl=card?.querySelector(`input[data-loan="${i}"][data-field="current"]`);
     const paymentEl=card?.querySelector(`input[data-loan="${i}"][data-field="payment"]`);
     const dateEl=card?.querySelector(`input[data-loan="${i}"][data-field="freedomDate"]`);
     if(nameEl&&!applyLoanField(i,"name",nameEl.value)){
@@ -2946,7 +3020,6 @@ function renderLoans(){
       nameEl.focus();
       return;
     }
-    if(currentEl)applyLoanField(i,"current",currentEl.value);
     if(paymentEl)applyLoanField(i,"payment",paymentEl.value);
     if(dateEl)applyLoanField(i,"freedomDate",dateEl.value);
     persist();render();
