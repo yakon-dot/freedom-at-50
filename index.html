@@ -1361,6 +1361,15 @@ body.home183 .demo183{
   font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
   font-size:26px;line-height:1;color:rgba(239,203,170,.78);
   transform:rotate(-7.5deg);transform-origin:100% 100%;
+  clip-path:inset(0 100% 0 0);
+}
+.freedom-landscape-sign.is-writing{
+  animation:freedomLandscapeSignWrite 900ms var(--motion-ease) forwards;
+}
+@media (prefers-reduced-motion:reduce){
+  .freedom-landscape-sign.is-writing{
+    animation:none;clip-path:inset(0 0 0 0);
+  }
 }
 @media (orientation:landscape) and (hover:none) and (pointer:coarse){
   .freedom-landscape{display:flex}
@@ -1447,6 +1456,7 @@ body.home183 .demo183{
 @keyframes freedomCardNew{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes freedomCardExit{from{opacity:1;transform:translateY(0);max-height:900px;margin-bottom:14px}to{opacity:0;transform:translateY(-8px);max-height:0;margin-bottom:0;padding-top:0;padding-bottom:0}}
 @keyframes freedomPageEnter{from{opacity:.92;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes freedomLandscapeSignWrite{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 @keyframes freedomBodyIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes freedomValueFade{0%{opacity:.58}100%{opacity:1}}
 .page.freedom-page-enter{animation:freedomPageEnter var(--motion-page) var(--motion-ease) both}
@@ -3682,9 +3692,28 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
   });
   const landscapeMq=window.matchMedia("(orientation: landscape) and (hover: none) and (pointer: coarse)");
   const overlay=document.getElementById("freedomLandscape");
+  const sign=overlay?.querySelector(".freedom-landscape-sign");
+  const signDelayMs=800;
+  let signDelayTimer=null;
+  function resetSignAnimation(){
+    if(signDelayTimer){clearTimeout(signDelayTimer);signDelayTimer=null}
+    if(sign)sign.classList.remove("is-writing");
+  }
+  function scheduleSignAnimation(){
+    resetSignAnimation();
+    if(!landscapeMq.matches||!sign)return;
+    signDelayTimer=setTimeout(()=>{
+      signDelayTimer=null;
+      if(!landscapeMq.matches||!sign)return;
+      sign.classList.add("is-writing");
+    },signDelayMs);
+  }
   function syncLandscapeOverlay(){
     if(!overlay)return;
-    overlay.setAttribute("aria-hidden",landscapeMq.matches?"false":"true");
+    const on=landscapeMq.matches;
+    overlay.setAttribute("aria-hidden",on?"false":"true");
+    if(on)scheduleSignAnimation();
+    else resetSignAnimation();
   }
   syncLandscapeOverlay();
   landscapeMq.addEventListener("change",syncLandscapeOverlay);
