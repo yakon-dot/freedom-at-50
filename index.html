@@ -1345,7 +1345,18 @@ body.home183 .demo183{
   font-size:42px;line-height:1;color:#efcbaa;
 }
 .freedom-landscape-msg{
-  margin:0 auto;max-width:280px;font-size:16px;line-height:1.55;color:rgba(190,188,182,.72);
+  margin:0 auto;max-width:280px;
+}
+.freedom-landscape-msg-line{
+  margin:0;font-size:16px;line-height:1.55;color:rgba(190,188,182,.78);font-weight:500;
+}
+.freedom-landscape-msg-line-sub{
+  margin:4px 0 0;font-weight:400;color:rgba(190,188,182,.58);
+}
+.freedom-landscape-sign{
+  margin:24px 0 0 12px;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:19px;line-height:1;color:rgba(239,203,170,.78);
+  transform:rotate(-1.2deg);
 }
 @media (orientation:landscape) and (hover:none) and (pointer:coarse){
   .freedom-landscape{display:flex}
@@ -1470,7 +1481,11 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 <div class="freedom-landscape" id="freedomLandscape" aria-hidden="true">
   <div>
     <div class="freedom-landscape-brand">Freedom</div>
-    <p class="freedom-landscape-msg">Turn your phone to continue.</p>
+    <div class="freedom-landscape-msg">
+      <p class="freedom-landscape-msg-line">Freedom supports many things.</p>
+      <p class="freedom-landscape-msg-line freedom-landscape-msg-line-sub">Neck strain isn't one of them.</p>
+    </div>
+    <p class="freedom-landscape-sign">xo Patricia</p>
   </div>
 </div>
 <button class="demo183" id="demo183" type="button" aria-label="Demo Mode">DEMO MODE</button>
