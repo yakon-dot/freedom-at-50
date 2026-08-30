@@ -2363,11 +2363,18 @@ function formatGoalMonthlyNeeded(remaining,goalDateStr){
   if(amt===null||!isFinite(amt)||amt<=0)return"Choose a goal date";
   return`${euro2(amt)} / month`;
 }
+function journeyMonthlyCommitment(loan){
+  if(!loan||(Number(loan.current)||0)<=0)return 0;
+  if(loan.payoffMode==="date"){
+    const amt=estimatedMonthlyNeeded(loan.current,loan.freedomDate);
+    if(amt===null||!isFinite(amt)||amt<=0)return 0;
+    return amt;
+  }
+  const payment=Math.max(0,Number(loan.payment)||0);
+  return payment>0?payment:0;
+}
 function journeyMonthlyCommitmentsTotal(){
-  return state.loans.reduce((sum,loan)=>{
-    if((Number(loan.current)||0)<=0)return sum;
-    return sum+Math.max(0,Number(loan.payment)||0);
-  },0);
+  return state.loans.reduce((sum,loan)=>sum+journeyMonthlyCommitment(loan),0);
 }
 function goalsMonthlyNeededTotal(){
   let total=0;
