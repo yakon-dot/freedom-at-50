@@ -2376,19 +2376,53 @@ function journeyMonthlyCommitment(loan){
 function journeyMonthlyCommitmentsTotal(){
   return state.loans.reduce((sum,loan)=>sum+journeyMonthlyCommitment(loan),0);
 }
+function getGoalLivePlanningValues(key){
+  const card=document.querySelector(`#goalsList .goal-card[data-goal-key="${CSS.escape(key)}"]`);
+  let usesTarget=goalUsesTarget(key);
+  if(card){
+    const hasTargetEl=card.querySelector(`[data-goal-has-target="${CSS.escape(key)}"]`);
+    if(hasTargetEl)usesTarget=!!hasTargetEl.checked;
+  }
+  const targetId=key.startsWith("custom:")?`goalTarget_custom_${Number(key.slice(7))}`:`goalTarget_${key}`;
+  let target=getGoalTargetAmount(key);
+  let plannedMonthly=getGoalPlannedMonthly(key);
+  let goalDate=getGoalDate(key);
+  if(card){
+    const targetEl=byId(targetId);
+    if(targetEl)target=Math.max(0,Number(targetEl.value)||0);
+    const plannedEl=card.querySelector(`[data-goal-planned="${CSS.escape(key)}"]`);
+    if(plannedEl)plannedMonthly=Math.max(0,Number(plannedEl.value)||0);
+    const dateEl=card.querySelector(`[data-goal-date="${CSS.escape(key)}"]`);
+    if(dateEl)goalDate=dateEl.value||null;
+  }
+  return{
+    usesTarget,
+    target,
+    plannedMonthly,
+    goalDate,
+    current:getGoalCurrentBalance(key),
+    planMode:getGoalPlanMode(key)
+  };
+}
+function goalMonthlyContribution(key){
+  const v=getGoalLivePlanningValues(key);
+  if(!v.usesTarget)return 0;
+  const remaining=Math.max(0,v.target-v.current);
+  if(remaining<=0)return 0;
+  if(v.planMode==="date"){
+    const amt=estimatedMonthlyNeeded(remaining,v.goalDate);
+    if(amt===null||!isFinite(amt)||amt<=0)return 0;
+    return amt;
+  }
+  const planned=Math.max(0,Number(v.plannedMonthly)||0);
+  return planned>0?planned:0;
+}
 function goalsMonthlyNeededTotal(){
   let total=0;
   visibleGoalKeys().forEach(key=>{
     if(key==="housePocket"||key==="housePocketDone")return;
     if(!(builtInGoalMeta[key]||key.startsWith("custom:")))return;
-    if(!goalUsesTarget(key))return;
-    const remaining=goalRemainingToTarget(key);
-    if(remaining<=0)return;
-    const date=getGoalDate(key);
-    if(!date)return;
-    const amt=estimatedMonthlyNeeded(remaining,date);
-    if(amt===null||!isFinite(amt)||amt<=0)return;
-    total+=amt;
+    total+=goalMonthlyContribution(key);
   });
   return total;
 }
@@ -2813,6 +2847,7 @@ function renderGoals(){
     overview.innerHTML=state.customGoals.map(g=>`<article class="card mini-card tap-card" data-page-link="goals"><div class="label">${esc(g.name)}</div><div class="value">${euro0(g.current)}</div></article>`).join("");
     overview.querySelectorAll("[data-page-link]").forEach(el=>el.addEventListener("click",()=>page(el.dataset.pageLink)));
   }
+  updateMonthlySummaryCards();
 }
 function setupGoalReorder(list){
   if(!list||window.matchMedia("(min-width:821px)").matches) return;
