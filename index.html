@@ -1375,7 +1375,8 @@ body.home183 .patricia-note-layer{
   justify-content:flex-start;gap:2px;overflow:hidden;
 }
 body.home183 .patricia-note-body{
-  inset:14% 14% 22% 12%;gap:4px;justify-content:center;
+  inset:13% 2% 17% 2%;gap:3px;justify-content:flex-start;
+  transform:rotate(-3.5deg);transform-origin:50% 38%;
 }
 .patricia-note-text{
   margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
@@ -1383,7 +1384,14 @@ body.home183 .patricia-note-body{
   color:#5c3a2e;text-align:left;
 }
 body.home183 .patricia-note-text{
-  font-size:clamp(18px,5vw,23px);line-height:1.22;
+  font-size:clamp(22px,6vw,24px);line-height:1.12;
+}
+body.home183 .patricia-note-footer{
+  display:flex;align-items:flex-end;gap:4px;margin-top:2px;
+}
+body.home183 .patricia-note-footer .patricia-note-text{flex:0 1 auto;margin:0}
+body.home183 .patricia-note-doodle{
+  width:min(22%,46px);height:auto;align-self:flex-end;margin:0 0 1px;flex-shrink:0;
 }
 .patricia-note-doodle{width:min(30%,54px);height:auto;align-self:flex-start;margin-top:3px;flex-shrink:0}
 .patricia-note-close{
@@ -1391,6 +1399,9 @@ body.home183 .patricia-note-text{
   color:#5c3a2e;font-size:19px;font-weight:650;line-height:1;
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
   cursor:pointer;-webkit-tap-highlight-color:transparent;padding:0;
+}
+body.home183 .patricia-note-close{
+  top:0.2%;right:2.5%;transform:rotate(-3.5deg);transform-origin:50% 50%;
 }
 .patricia-note-close:active{opacity:.62}
 .freedom-confetti-canvas{
@@ -1997,9 +2008,18 @@ function renderPatriciaNote(note){
   const wrap=document.createElement("div");
   wrap.className="patricia-note";
   wrap.dataset.noteId=note.id;
-  const textHtml=note.text.split("\n").map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
-  const doodleHtml=note.doodle?`<img class="patricia-note-doodle" src="./${note.doodle}" alt="">`:"";
-  wrap.innerHTML=`<button class="patricia-note-close" type="button" aria-label="Dismiss note">&times;</button><img class="patricia-note-paper" src="./sticky-note.png" alt=""><div class="patricia-note-body">${textHtml}${doodleHtml}</div>`;
+  const lines=note.text.split("\n");
+  let bodyHtml;
+  if(note.id==="home"&&note.doodle&&lines.length>1){
+    const lead=lines.slice(0,-1).map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
+    const last=lines[lines.length-1];
+    bodyHtml=`${lead}<div class="patricia-note-footer"><p class="patricia-note-text">${esc(last)}</p><img class="patricia-note-doodle" src="./${note.doodle}" alt=""></div>`;
+  }else{
+    const textHtml=lines.map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
+    const doodleHtml=note.doodle?`<img class="patricia-note-doodle" src="./${note.doodle}" alt="">`:"";
+    bodyHtml=`${textHtml}${doodleHtml}`;
+  }
+  wrap.innerHTML=`<button class="patricia-note-close" type="button" aria-label="Dismiss note">&times;</button><img class="patricia-note-paper" src="./sticky-note.png" alt=""><div class="patricia-note-body">${bodyHtml}</div>`;
   wrap.querySelector(".patricia-note-close").addEventListener("click",()=>dismissPatriciaNote(note.id));
   layer.appendChild(wrap);
   layer.hidden=false;
