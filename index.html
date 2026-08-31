@@ -1359,26 +1359,31 @@ body.home183 .demo-menu{
   padding:calc(72px + env(safe-area-inset-top,0px)) 18px 18px;
 }
 body.home183 .patricia-note-layer{
+  align-items:center;
   justify-content:center;
-  padding:calc(108px + env(safe-area-inset-top,0px)) 20px 24px 20px;
+  padding:calc(150px + env(safe-area-inset-top,0px)) 20px calc(130px + env(safe-area-inset-bottom,0px));
 }
 .patricia-note-layer[hidden]{display:none!important}
 .patricia-note{
   position:relative;width:min(68vw,268px);max-width:calc(100% - 40px);pointer-events:auto;
+  transform:rotate(5deg);transform-origin:50% 50%;
   filter:drop-shadow(0 10px 22px rgba(0,0,0,.36));
-}
-body.home183 .patricia-note-layer .patricia-note{
-  margin-left:-6px;
 }
 .patricia-note-paper{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
 .patricia-note-body{
   position:absolute;inset:13% 16% 26% 13%;display:flex;flex-direction:column;
   justify-content:flex-start;gap:2px;overflow:hidden;
 }
+body.home183 .patricia-note-body{
+  inset:14% 14% 22% 12%;gap:4px;justify-content:center;
+}
 .patricia-note-text{
   margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
   font-size:clamp(14px,3.65vw,17px);line-height:1.18;font-weight:500;
   color:#5c3a2e;text-align:left;
+}
+body.home183 .patricia-note-text{
+  font-size:clamp(18px,5vw,23px);line-height:1.22;
 }
 .patricia-note-doodle{width:min(30%,54px);height:auto;align-self:flex-start;margin-top:3px;flex-shrink:0}
 .patricia-note-close{
@@ -1401,12 +1406,12 @@ body.home183 .patricia-note-layer .patricia-note{
   100%{transform:scale(.72) translateZ(0);opacity:0;filter:blur(8px)}
 }
 @media (prefers-reduced-motion:reduce){
-  .demo183.is-demo-active{animation:none}
+  .demo183.is-demo-active,.demo183.is-demo-active.demo183{animation:none!important}
   .freedom-victory-dispersed{animation:freedomVictoryDispersedReduced 260ms ease forwards}
 }
 @keyframes demo183Breathe{
-  0%,100%{opacity:.88;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.015)}
+  0%,100%{opacity:.78;border-color:rgba(239,203,170,.16);box-shadow:0 4px 14px rgba(0,0,0,.12)}
+  50%{opacity:1;border-color:rgba(239,203,170,.46);box-shadow:0 4px 22px rgba(239,203,170,.24)}
 }
 @keyframes freedomVictoryDispersedReduced{
   from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.92)}
@@ -1426,13 +1431,18 @@ body.home183 .patricia-note-layer .patricia-note{
   min-height:42px;padding:0 14px;border-radius:14px;
   border-color:rgba(239,203,170,.22);background:rgba(18,22,27,.38);
   color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em;
-  animation:demo183Breathe 3.6s ease-in-out infinite;
+  animation:demo183Breathe 3.2s ease-in-out infinite;
+  will-change:opacity,box-shadow;
 }
 body.home183 .demo183{
   top:calc(52px + env(safe-area-inset-top,0px));right:28px;
   min-height:36px;padding:0 12px;border-radius:14px;
   border-color:rgba(239,203,170,.22);background:rgba(18,22,27,.38);
   color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em
+}
+body.home183 .demo183.is-demo-active{
+  animation:demo183Breathe 3.2s ease-in-out infinite;
+  will-change:opacity,box-shadow;
 }
 @media(min-width:821px){.demo183{display:none!important}}
 @media(min-width:821px){.mobile183{display:none!important}}
