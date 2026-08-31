@@ -1372,13 +1372,13 @@ body.home183 .demo183-wrap{
   opacity:0;
 }
 #demoWelcomeOverlay.is-entering .demo-welcome-line-row:nth-child(1){
-  animation:demoWelcomeLineFade 1100ms ease-out forwards;
+  animation:demoWelcomeLineFade 935ms ease-out forwards;
 }
 #demoWelcomeOverlay.is-entering .demo-welcome-line-row:nth-child(2){
-  animation:demoWelcomeLineFade 1100ms ease-out 1300ms forwards;
+  animation:demoWelcomeLineFade 935ms ease-out 1105ms forwards;
 }
 #demoWelcomeOverlay.is-entering .demo-welcome-line-row:nth-child(3){
-  animation:demoWelcomeLineFade 1100ms ease-out 2600ms forwards;
+  animation:demoWelcomeLineFade 935ms ease-out 2210ms forwards;
 }
 @keyframes demoWelcomeLineFade{
   from{opacity:0}
@@ -1393,7 +1393,7 @@ body.home183 .demo183-wrap{
   padding:10px 26px;background:transparent;color:#fff;font-size:14px;font-weight:650;
   letter-spacing:.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;
   opacity:0;visibility:hidden;pointer-events:none;
-  transition:opacity 1100ms ease-out;
+  transition:opacity 935ms ease-out;
 }
 .demo-welcome-btn.is-visible{visibility:visible;opacity:1}
 .demo-welcome-btn.is-active{pointer-events:auto}
@@ -2251,7 +2251,7 @@ function showDemoWelcomeOverlay(){
     requestAnimationFrame(()=>{
       overlay.classList.add("is-entering");
       if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){revealDemoWelcomeButton(btn);return;}
-      demoWelcomeBtnTimer=setTimeout(()=>revealDemoWelcomeButton(btn),4300);
+      demoWelcomeBtnTimer=setTimeout(()=>revealDemoWelcomeButton(btn),3655);
     });
   });
 }
