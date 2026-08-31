@@ -1313,6 +1313,106 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em
 }
 .demo-banner[hidden]{display:none}
+.demo-banner.is-active{
+  cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+  animation:demoBannerBreathe 3.6s ease-in-out infinite;
+}
+@keyframes demoBannerBreathe{
+  0%,100%{opacity:.88;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.015)}
+}
+.demo-menu{
+  position:fixed;top:calc(58px + env(safe-area-inset-top,0px));right:16px;z-index:965;
+  min-width:190px;padding:8px;border:1px solid rgba(239,203,170,.18);border-radius:16px;
+  background:rgba(13,16,19,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:0 16px 36px rgba(0,0,0,.28);
+}
+.demo-menu[hidden]{display:none!important}
+.demo-menu-btn{
+  display:block;width:100%;border:0;border-radius:12px;padding:12px 14px;margin:0;
+  background:transparent;color:rgba(236,232,224,.86);font-size:14px;font-weight:650;
+  text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.demo-menu-btn+.demo-menu-btn{margin-top:4px}
+.demo-menu-btn:active{background:rgba(239,203,170,.08)}
+body.demo-mode-active .demo183{display:none!important}
+body.demo-mode-active .demo-entry183{display:none!important}
+body.demo-mode-active .demo-banner.is-active{display:flex!important}
+.demo-entry183{
+  display:block;width:100%;margin-top:18px;border:1px solid rgba(239,203,170,.24);
+  border-radius:18px;padding:14px 16px;background:rgba(13,16,19,.24);
+  color:#efcbaa;font-size:15px;font-weight:650;text-align:left;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.demo-entry183:active{transform:scale(.99)}
+.demo-overlay{
+  position:fixed;inset:0;z-index:9800;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:rgba(7,8,9,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.demo-overlay[hidden]{display:none!important}
+.demo-entry-card,.demo-welcome-card{
+  width:min(100%,320px);padding:24px 22px;border:1px solid rgba(239,203,170,.18);
+  border-radius:22px;background:rgba(13,16,19,.88);text-align:center;
+  box-shadow:0 18px 42px rgba(0,0,0,.32);
+}
+.demo-entry-card p,.demo-welcome-card p{
+  margin:0 0 12px;font-size:15px;line-height:1.55;color:rgba(236,232,224,.82);
+}
+.demo-entry-card p:last-of-type{margin-bottom:20px;color:rgba(190,188,182,.68)}
+.demo-welcome-line{
+  margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:28px;line-height:1.25;color:#efcbaa;
+}
+.demo-enter-btn,.demo-welcome-btn{
+  width:100%;border:0;border-radius:14px;padding:13px 16px;
+  background:rgba(201,160,122,.78);color:#17150b;font-size:14px;font-weight:760;cursor:pointer;
+}
+.patricia-note-layer{
+  position:fixed;inset:0;z-index:9700;pointer-events:none;
+  display:flex;align-items:flex-start;justify-content:center;
+  padding:calc(72px + env(safe-area-inset-top,0px)) 18px 18px;
+}
+.patricia-note-layer[hidden]{display:none!important}
+.patricia-note{
+  position:relative;width:min(100%,300px);pointer-events:auto;
+  transform:rotate(-6deg);transform-origin:50% 50%;
+  filter:drop-shadow(0 14px 28px rgba(0,0,0,.42));
+}
+.patricia-note-paper{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
+.patricia-note-body{
+  position:absolute;inset:8% 10% 16% 11%;display:flex;flex-direction:column;
+  justify-content:flex-start;gap:10px;transform:rotate(0deg);
+}
+.patricia-note-text{
+  margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:clamp(18px,4.8vw,22px);line-height:1.28;font-weight:500;
+  color:#5c3a2e;text-align:left;
+}
+.patricia-note-doodle{width:min(42%,110px);height:auto;align-self:flex-start;margin-top:2px}
+.patricia-note-close{
+  position:absolute;top:4%;right:6%;z-index:2;border:0;background:transparent;
+  color:rgba(92,58,46,.72);font-size:22px;line-height:1;width:34px;height:34px;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.freedom-confetti-canvas{
+  position:fixed;inset:0;z-index:9750;pointer-events:none;
+}
+.freedom-victory-dispersed{
+  animation:freedomVictoryDispersed 950ms cubic-bezier(0.25,0.1,0.25,1) forwards;
+  transform-origin:center center;will-change:transform,opacity,filter;
+}
+@keyframes freedomVictoryDispersed{
+  0%{transform:scale(1) translateZ(0);opacity:1;filter:blur(0)}
+  18%{transform:scale(.94) translateZ(0);opacity:.96;filter:blur(0)}
+  100%{transform:scale(.72) translateZ(0);opacity:0;filter:blur(8px)}
+}
+@media (prefers-reduced-motion:reduce){
+  .demo-banner.is-active{animation:none}
+  .freedom-victory-dispersed{animation:freedomVictoryDispersedReduced 260ms ease forwards}
+}
+@keyframes freedomVictoryDispersedReduced{
+  from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.92)}
+}
 
 /* Demo Mode — always available; stronger on Home, subtler elsewhere */
 .demo183{
@@ -1542,6 +1642,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
         <button class="sub183" type="button" data-more183="companion">Companion</button>
       </div>
     </nav>
+    <button class="demo-entry183" id="demoEntry183" type="button">Demo Mode</button>
   </div>
 </div>
 
@@ -1552,6 +1653,24 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 <div class="demo-banner" id="demoBanner" hidden>
   <span>DEMO MODE</span>
 </div>
+<div class="demo-menu" id="demoMenu" hidden>
+  <button class="demo-menu-btn" type="button" data-demo-action="exit">Exit Demo Mode</button>
+  <button class="demo-menu-btn" type="button" data-demo-action="share">Share Freedom</button>
+</div>
+<div class="demo-overlay" id="demoEntryOverlay" hidden>
+  <div class="demo-entry-card">
+    <p>Showing this to someone? Good choice.</p>
+    <p>Your real numbers will stay safely tucked away.</p>
+    <button class="demo-enter-btn" id="demoEnterBtn" type="button">Enter Demo Mode</button>
+  </div>
+</div>
+<div class="demo-overlay" id="demoWelcomeOverlay" hidden>
+  <div class="demo-welcome-card">
+    <p class="demo-welcome-line">Come in. Have a look around. I've tidied.</p>
+    <button class="demo-welcome-btn" id="demoWelcomeContinue" type="button">Continue</button>
+  </div>
+</div>
+<div class="patricia-note-layer" id="patriciaNoteLayer" hidden></div>
 <div class="app">
 <header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.6.2.2.2</div></div><div class="tagline">Small wins become big freedom.</div></header>
 <main>
@@ -1672,6 +1791,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 (function(){
 "use strict";
 const KEY="freedom50-mobile-v1";
+const DEMO_SESSION_KEY="freedom50-demo-session-v1";
+const FREEDOM_SHARE_URL=location.origin+location.pathname.replace(/[^/]*$/,"");
 const FREEDOM_WALLPAPERS={
   overview:"./overview-wallpaper.png",
   journey:"./journey-wallpaper.png",
@@ -1696,17 +1817,55 @@ let state;try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");state=sa
 let demoMode=false;
 let realStateSnapshot=null;
 let journeyDragJustEnded=false;
-const demoDefaults={
-  archivedJourneys:[],archivedGoals:[],customGoals:[{name:"Japan 2028",current:3200,target:5000,hasTarget:true},{name:"Garden Room",current:1850,target:9000,hasTarget:true}],
-  hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
-  goalTargets:{houseFund:50000,holidayFund:8000,personalSavings:5000},
-  goalHasTarget:{houseFund:true,holidayFund:true,personalSavings:true},
-  loans:[{name:"Car Loan",starting:12000,current:4800,payment:320},{name:"Kitchen Finance",starting:6000,current:1650,payment:250}],
-  housePocket:0,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:"2026-06-01T00:00:00.000Z",
-  houseFund:14250,holidayFund:3200,holidayMonthly:300,personalSavings:2650,
-  pensions:[{id:"pension-demo-1",name:"Irish Life",value:61200,personal:400,employer:300,collapsed:false,showInOverview:true}],
-  archivedPensions:[]
-};
+let demoSession={dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};
+function demoDaysAgoISO(days){const d=new Date();d.setDate(d.getDate()-days);return d.toISOString();}
+function demoMonthOffsetStr(months){
+  const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+months);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+}
+function buildCanonicalDemoState(){
+  const freedomDate=`${demoMonthOffsetStr(24)}-01`;
+  const goalDate=demoMonthOffsetStr(24);
+  return JSON.parse(JSON.stringify({
+    archivedJourneys:[{
+      name:"Phone Loan",starting:1200,current:0,payment:0,collapsed:true,payoffMode:"monthly",freedomDate:null,
+      lastRepaymentAmount:1200,lastRepaymentDate:demoDaysAgoISO(45),archivedAt:demoDaysAgoISO(30)
+    }],
+    archivedGoals:[{
+      name:"Festival Weekend",type:"custom",current:350,target:1000,hasTarget:true,startingBalance:350,
+      lifetimeAdded:350,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:0,goalDate:null,archivedAt:demoDaysAgoISO(60)
+    }],
+    archivedPensions:[],
+    customGoals:[
+      {name:"House Deposit",current:10000,target:40000,hasTarget:true,startingBalance:10000,lifetimeAdded:10000,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:300,goalDate:null},
+      {name:"Runaway Money",current:1000,target:10000,hasTarget:true,startingBalance:1000,lifetimeAdded:1000,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:100,goalDate:null},
+      {name:"Trip to Japan",current:0,target:5500,hasTarget:true,startingBalance:0,lifetimeAdded:0,lifeHappensTotal:0,planMode:"date",plannedMonthly:0,goalDate:goalDate}
+    ],
+    hiddenBuiltInGoals:{houseFund:true,holidayFund:true,personalSavings:true},
+    deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+    goalNames:{},goalTargets:{},goalHasTarget:{},goalPlanMode:{},goalPlannedMonthly:{},goalDate:{},
+    goalLifetimeAdded:{},goalLifeHappensTotal:{},goalLastLifeHappens:{},goalStartingBalance:{},goalLastBalanceCorrection:{},
+    goalCollapsed:{"custom:0":true,"custom:1":false,"custom:2":true},
+    goalOrder:["custom:0","custom:1","custom:2"],
+    loans:[
+      {name:"Credit Card",starting:3000,current:200,payment:100,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:100,lastRepaymentDate:demoDaysAgoISO(10)},
+      {name:"Car Loan",starting:15000,current:7500,payment:0,collapsed:true,payoffMode:"date",freedomDate:freedomDate,lastRepaymentAmount:312.5,lastRepaymentDate:demoDaysAgoISO(21)},
+      {name:"Long Story",starting:6000,current:4500,payment:150,collapsed:false,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:150,lastRepaymentDate:demoDaysAgoISO(5)}
+    ],
+    housePocket:0,housePocketMonthly:0,housePocketArchived:true,housePocketCompletedAt:null,housePocketArchiveRemoved:true,
+    houseFund:0,holidayFund:0,holidayMonthly:0,personalSavings:0,
+    pensions:[{id:"pension-demo-1",name:"Workplace Pension",value:12000,personal:200,employer:200,collapsed:false,showInOverview:true}]
+  }));
+}
+try{
+  const demoSaved=JSON.parse(sessionStorage.getItem(DEMO_SESSION_KEY)||"null");
+  if(demoSaved&&demoSaved.demoMode&&demoSaved.state&&demoSaved.state.loans){
+    realStateSnapshot=JSON.parse(JSON.stringify(state));
+    state=demoSaved.state;
+    demoSession=Object.assign({dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}},demoSaved.demoSession||{});
+    demoMode=true;
+  }
+}catch(e){}
 if(!Array.isArray(state.archivedJourneys))state.archivedJourneys=[];
 if(!Array.isArray(state.archivedGoals))state.archivedGoals=[];
 if(!Array.isArray(state.archivedPensions))state.archivedPensions=[];
@@ -1784,7 +1943,196 @@ if(Array.isArray(state.loans)){
 if(state.housePocketArchiveRemoved===undefined)state.housePocketArchiveRemoved=false;
 if(state.housePocketArchived===undefined)state.housePocketArchived=false;
 const euro0=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Number(n)||0);const euro2=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);const byId=id=>document.getElementById(id);const number=id=>Math.max(0,Number(byId(id).value)||0);
-function showSaved(){const note=byId("saveNote");note.classList.add("show");clearTimeout(showSaved.timer);showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200)}function persist(){if(demoMode)return;localStorage.setItem(KEY,JSON.stringify(state));showSaved()}
+function showSaved(){const note=byId("saveNote");note.classList.add("show");clearTimeout(showSaved.timer);showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200)}
+function persistDemoSession(){sessionStorage.setItem(DEMO_SESSION_KEY,JSON.stringify({demoMode:true,state,demoSession}));}
+function persist(){if(demoMode){persistDemoSession();return;}localStorage.setItem(KEY,JSON.stringify(state));showSaved();}
+const PATRICIA_NOTE_COPY={
+  home:{id:"home",text:"That credit card has €200 left.\nI'm just saying.",doodle:"patricia-eyes.png"},
+  journeyFirst:{id:"journeyFirst",text:"This is where we keep the things we're getting rid of.\nFinancially speaking. I'm not running a skip."},
+  goalsFirst:{id:"goalsFirst",text:"This is where the good stuff lives.\nHouses. Japan. Runaway money.\nPersonally, I'd add a frozen cocktail machine."},
+  creditCardComplete:{id:"creditCardComplete",text:"YES! You did it! That credit card is officially history.\nI'd suggest a moment of silence, but I prefer frozen cocktails.",doodle:"patricia-celebration.png"},
+  lifeHappens:{id:"lifeHappens",text:"Life happens. Sometimes the plan needs a little detour.\nWe're flexible. My knees, less so."},
+  runawayMoney:{id:"runawayMoney",text:"Runaway Money just got bigger.\nNot suggesting anything. Just admiring the options.",doodle:"patricia-eyes.png"}
+};
+function resetDemoSession(){demoSession={dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};}
+function syncDemoUi(){
+  document.body.classList.toggle("demo-mode-active",demoMode);
+  const banner=byId("demoBanner");
+  if(banner){
+    banner.hidden=!demoMode;
+    banner.classList.toggle("is-active",demoMode);
+  }
+  closeDemoMenu();
+}
+function closeDemoMenu(){const menu=byId("demoMenu");if(menu)menu.hidden=true;}
+function toggleDemoMenu(){const menu=byId("demoMenu");if(menu)menu.hidden=!menu.hidden;}
+function dismissAllPatriciaNotes(){
+  const layer=byId("patriciaNoteLayer");
+  if(layer){layer.innerHTML="";layer.hidden=true;}
+}
+function dismissPatriciaNote(id){
+  demoSession.dismissedNotes[id]=true;
+  if(demoMode)persistDemoSession();
+  const layer=byId("patriciaNoteLayer");
+  const note=layer?.querySelector(`[data-note-id="${id}"]`);
+  if(note)note.remove();
+  if(layer&&!layer.children.length)layer.hidden=true;
+}
+function renderPatriciaNote(note){
+  if(!note||demoSession.dismissedNotes[note.id])return;
+  const layer=byId("patriciaNoteLayer");
+  if(!layer)return;
+  if(layer.querySelector(`[data-note-id="${note.id}"]`))return;
+  const wrap=document.createElement("div");
+  wrap.className="patricia-note";
+  wrap.dataset.noteId=note.id;
+  const textHtml=note.text.split("\n").map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
+  const doodleHtml=note.doodle?`<img class="patricia-note-doodle" src="./${note.doodle}" alt="">`:"";
+  wrap.innerHTML=`<button class="patricia-note-close" type="button" aria-label="Dismiss note">&times;</button><img class="patricia-note-paper" src="./sticky-note.png" alt=""><div class="patricia-note-body">${textHtml}${doodleHtml}</div>`;
+  wrap.querySelector(".patricia-note-close").addEventListener("click",()=>dismissPatriciaNote(note.id));
+  layer.appendChild(wrap);
+  layer.hidden=false;
+}
+function showPatriciaNoteIfNeeded(key){
+  if(!demoMode)return;
+  const note=PATRICIA_NOTE_COPY[key];
+  if(!note||demoSession.dismissedNotes[note.id])return;
+  renderPatriciaNote(note);
+}
+function handleDemoPageVisit(id){
+  if(!demoMode)return;
+  if(id==="journey"&&!demoSession.visited.journey){
+    demoSession.visited.journey=true;
+    persistDemoSession();
+    setTimeout(()=>showPatriciaNoteIfNeeded("journeyFirst"),420);
+  }
+  if(id==="goals"&&!demoSession.visited.goals){
+    demoSession.visited.goals=true;
+    persistDemoSession();
+    setTimeout(()=>showPatriciaNoteIfNeeded("goalsFirst"),420);
+  }
+}
+function handleDemoHomeShown(){
+  if(!demoMode)return;
+  setTimeout(()=>showPatriciaNoteIfNeeded("home"),320);
+}
+function checkJourneyCompletionCelebration(loan,prevCurrent){
+  if(prevCurrent<=0||loan.current>0)return;
+  launchConfetti();
+  if(!demoMode||demoSession.triggered.creditCardComplete||loan.name!=="Credit Card")return;
+  demoSession.triggered.creditCardComplete=true;
+  persistDemoSession();
+  setTimeout(()=>showPatriciaNoteIfNeeded("creditCardComplete"),650);
+}
+function checkDemoLifeHappensNote(){
+  if(!demoMode||demoSession.triggered.lifeHappens)return;
+  demoSession.triggered.lifeHappens=true;
+  persistDemoSession();
+  setTimeout(()=>showPatriciaNoteIfNeeded("lifeHappens"),420);
+}
+function checkDemoRunawayMoneyNote(key,amount){
+  if(!demoMode||demoSession.triggered.runawayMoney||amount<=0||!key.startsWith("custom:"))return;
+  const g=state.customGoals[Number(key.slice(7))];
+  if(!g||g.name!=="Runaway Money")return;
+  demoSession.triggered.runawayMoney=true;
+  persistDemoSession();
+  setTimeout(()=>showPatriciaNoteIfNeeded("runawayMoney"),420);
+}
+function launchConfetti(){
+  if(freedomMotion.reduced)return;
+  let canvas=document.querySelector(".freedom-confetti-canvas");
+  if(!canvas){
+    canvas=document.createElement("canvas");
+    canvas.className="freedom-confetti-canvas";
+    document.body.appendChild(canvas);
+  }
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  canvas.width=Math.floor(window.innerWidth*dpr);
+  canvas.height=Math.floor(window.innerHeight*dpr);
+  canvas.style.width=window.innerWidth+"px";
+  canvas.style.height=window.innerHeight+"px";
+  const ctx=canvas.getContext("2d");
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  const colors=["#efcbaa","#84bd91","#e7cf63","#c5a069","#f5f4f0","#aa8fc9"];
+  const pieces=Array.from({length:90},()=>({
+    x:Math.random()*window.innerWidth,
+    y:-20-Math.random()*120,
+    w:5+Math.random()*7,
+    h:3+Math.random()*5,
+    color:colors[Math.floor(Math.random()*colors.length)],
+    vx:(Math.random()-.5)*4,
+    vy:2+Math.random()*5,
+    rot:Math.random()*360,
+    vr:(Math.random()-.5)*10
+  }));
+  let frame=0,raf=0;
+  const draw=()=>{
+    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+    let alive=false;
+    pieces.forEach(p=>{
+      p.x+=p.vx;p.y+=p.vy;p.vy+=0.09;p.rot+=p.vr;
+      if(p.y<window.innerHeight+30){alive=true;ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot*Math.PI/180);ctx.fillStyle=p.color;ctx.globalAlpha=.92;ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);ctx.restore();}
+    });
+    frame++;
+    if(alive&&frame<220)raf=requestAnimationFrame(draw);
+    else canvas.remove();
+  };
+  draw();
+  setTimeout(()=>{cancelAnimationFrame(raf);canvas.remove();},4200);
+}
+function shareFreedom(){
+  closeDemoMenu();
+  const payload={title:"Freedom at 50",text:"Small wins become big freedom.",url:FREEDOM_SHARE_URL};
+  if(navigator.share){
+    navigator.share(payload).catch(()=>{});
+    return;
+  }
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(FREEDOM_SHARE_URL).then(()=>alert("Freedom link copied.")).catch(()=>{prompt("Copy this link:",FREEDOM_SHARE_URL);});
+    return;
+  }
+  prompt("Copy this link:",FREEDOM_SHARE_URL);
+}
+function openDemoEntryFlow(){
+  if(demoMode)return;
+  byId("demoEntryOverlay").hidden=false;
+}
+function confirmEnterDemo(){
+  byId("demoEntryOverlay").hidden=true;
+  byId("demoWelcomeOverlay").hidden=false;
+}
+function enterDemo(){
+  if(demoMode)return;
+  realStateSnapshot=JSON.parse(JSON.stringify(state));
+  resetDemoSession();
+  state=buildCanonicalDemoState();
+  demoMode=true;
+  persistDemoSession();
+  syncDemoUi();
+  dismissAllPatriciaNotes();
+  if(typeof window.showHome==="function")window.showHome();
+  render();
+  handleDemoHomeShown();
+}
+function exitDemo(){
+  if(!demoMode)return;
+  demoMode=false;
+  sessionStorage.removeItem(DEMO_SESSION_KEY);
+  if(realStateSnapshot)state=realStateSnapshot;
+  realStateSnapshot=null;
+  resetDemoSession();
+  dismissAllPatriciaNotes();
+  byId("demoEntryOverlay").hidden=true;
+  byId("demoWelcomeOverlay").hidden=true;
+  syncDemoUi();
+  if(typeof window.showHome==="function")window.showHome();
+  render();
+}
+function continueFromWelcome(){
+  byId("demoWelcomeOverlay").hidden=true;
+  enterDemo();
+}
+window.freedomDemo={openEntry:openDemoEntryFlow,exit:exitDemo,onHomeShown:handleDemoHomeShown,isActive:()=>demoMode};
 function monthsText(balance,payment){if(balance<=0)return"Complete";if(!payment)return"Repayment not set";const m=Math.ceil(balance/payment);return m===1?"About 1 month":`About ${m} months`}
 function loanReturned(loan){return Math.max(0,(Number(loan.starting)||0)-(Number(loan.current)||0));}
 function loanReturnedPct(loan){const s=Number(loan.starting)||0;if(!s)return 0;return Math.min(100,Math.max(0,loanReturned(loan)/s*100));}
@@ -1925,6 +2273,45 @@ const freedomMotion={
     card.addEventListener("animationend",finish,{once:true});
     setTimeout(finish,320);
   },
+  exitCompletedVictory(card,done){
+    if(!card){done();return}
+    if(this.reduced){
+      card.classList.add("freedom-victory-dispersed");
+      let finished=false;const finish=()=>{if(finished)return;finished=true;done()};
+      card.addEventListener("animationend",finish,{once:true});
+      setTimeout(finish,280);
+      return;
+    }
+    card.style.willChange="transform,opacity,filter";
+    card.style.transition="transform 180ms cubic-bezier(0.25,0.1,0.25,1)";
+    card.style.transform="scale(0.94)";
+    const rect=card.getBoundingClientRect();
+    const layer=document.createElement("div");
+    layer.style.cssText="position:fixed;inset:0;pointer-events:none;z-index:9400;";
+    const palette=["rgba(132,189,145,.85)","rgba(239,203,170,.78)","rgba(236,232,224,.72)"];
+    const particles=Array.from({length:28},(_,idx)=>{
+      const el=document.createElement("span");
+      const size=4+Math.random()*7;
+      el.style.cssText=`position:absolute;left:${rect.left+Math.random()*rect.width}px;top:${rect.top+Math.random()*rect.height}px;width:${size}px;height:${size}px;border-radius:${Math.random()>.45?"50%":"2px"};background:${palette[idx%palette.length]};opacity:.95;transform:translate(0,0);`;
+      layer.appendChild(el);
+      return{el,dx:(Math.random()-.5)*90,dy:(Math.random()-.5)*70-24};
+    });
+    document.body.appendChild(layer);
+    requestAnimationFrame(()=>{
+      card.style.transition="transform 720ms cubic-bezier(0.25,0.1,0.25,1),opacity 720ms ease,filter 720ms ease";
+      card.style.transform="scale(0.72)";
+      card.style.opacity="0";
+      card.style.filter="blur(8px)";
+      particles.forEach((p,i)=>{
+        p.el.style.transition=`transform 720ms cubic-bezier(0.25,0.1,0.25,1) ${40+(i%6)*18}ms,opacity 720ms ease ${40+(i%6)*18}ms`;
+        p.el.style.transform=`translate(${p.dx}px,${p.dy}px)`;
+        p.el.style.opacity="0";
+      });
+    });
+    let finished=false;const finish=()=>{if(finished)return;finished=true;layer.remove();done()};
+    card.addEventListener("transitionend",finish,{once:true});
+    setTimeout(finish,980);
+  },
   parsePct(el){
     if(!el)return 0;
     if(el.dataset.progressTarget!==undefined)return parseFloat(el.dataset.progressTarget)||0;
@@ -2031,6 +2418,7 @@ function page(id){
       freedomMotion.pageEnter(id);
     }
   }
+  handleDemoPageVisit(id);
 }
 window.page=page;
 document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>page(btn.dataset.page)));document.querySelectorAll("[data-page-link]").forEach(card=>card.addEventListener("click",()=>page(card.dataset.pageLink)));
@@ -2231,7 +2619,7 @@ function saveGoal(key){
     if(dateEl)g.goalDate=dateEl.value||null;
     if(!g.planMode)g.planMode="monthly";
     const add=addEl?Math.max(0,Number(addEl.value)||0):0;
-    if(add>0){g.current=Math.round((g.current+add)*100)/100;bumpGoalLifetimeAdded(key,add);}
+    if(add>0){g.current=Math.round((g.current+add)*100)/100;bumpGoalLifetimeAdded(key,add);checkDemoRunawayMoneyNote(key,add);}
   }else{
     const m=builtInGoalMeta[key];
     if(!m) return;
@@ -2804,6 +3192,7 @@ function renderGoals(){
       return;
     }
     if(amountEl)amountEl.value="";
+    checkDemoLifeHappensNote();
     persist();render();
   }));
   list.querySelectorAll("[data-correct-balance-toggle]").forEach(btn=>btn.addEventListener("click",e=>{
@@ -3087,6 +3476,7 @@ function renderLoans(){
     const next=Math.round(Math.max(0,Number(raw)||0)*100)/100;
     if(Math.abs(next-prev)<0.001){inp?.focus();return;}
     applyLoanField(i,"current",next);
+    checkJourneyCompletionCelebration(loan,prev);
     loanCorrectBalanceOpen[i]=false;
     if(inp)inp.value="";
     persist();render();
@@ -3099,9 +3489,11 @@ function renderLoans(){
     const input=byId(`loanRepayment_${i}`);
     const amount=Math.max(0,Number(input?.value)||0);
     if(!amount){input?.focus();return;}
+    const prevCurrent=loan.current;
     loan.current=Math.max(0,Math.round((loan.current-amount)*100)/100);
     loan.lastRepaymentAmount=amount;
     loan.lastRepaymentDate=new Date().toISOString();
+    checkJourneyCompletionCelebration(loan,prevCurrent);
     persist();render();
   }));
   list.querySelectorAll("[data-save-loan]").forEach(btn=>btn.addEventListener("click",e=>{
@@ -3134,10 +3526,14 @@ function renderLoans(){
   list.querySelectorAll("[data-delete-loan]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const i=Number(e.currentTarget.dataset.deleteLoan);
-    if(!state.loans[i])return;
-    if(!confirm("Delete this journey?"))return;
+    const loan=state.loans[i];
+    if(!loan)return;
+    const completed=loan.current<=0;
+    if(!confirm(completed?"Delete this completed victory permanently?":"Delete this journey?"))return;
     const card=e.currentTarget.closest(".loan-card");
-    freedomMotion.exitCard(card,()=>{state.loans.splice(i,1);persist();render();});
+    const remove=()=>{state.loans.splice(i,1);persist();render();};
+    if(completed)freedomMotion.exitCompletedVictory(card,remove);
+    else freedomMotion.exitCard(card,remove);
   }));
   setupLoanReorder(list);
 }
@@ -3653,7 +4049,24 @@ byId("addGoal").addEventListener("click",()=>{
 });
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:null,lastRepaymentDate:null});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
-document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more","archive"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}}
+document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));
+if(demoMode)syncDemoUi();
+byId("demoEntry183")?.addEventListener("click",openDemoEntryFlow);
+byId("demo183")?.addEventListener("click",openDemoEntryFlow);
+byId("demoEnterBtn")?.addEventListener("click",confirmEnterDemo);
+byId("demoWelcomeContinue")?.addEventListener("click",continueFromWelcome);
+byId("demoBanner")?.addEventListener("click",toggleDemoMenu);
+byId("demoMenu")?.querySelectorAll("[data-demo-action]").forEach(btn=>btn.addEventListener("click",()=>{
+  const action=btn.dataset.demoAction;
+  if(action==="exit")exitDemo();
+  else if(action==="share")shareFreedom();
+}));
+document.addEventListener("click",e=>{
+  if(!demoMode||byId("demoMenu")?.hidden)return;
+  if(e.target.closest("#demoMenu")||e.target.closest("#demoBanner"))return;
+  closeDemoMenu();
+});
+fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more","archive"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}}
 })();
 
 
@@ -3675,6 +4088,7 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
     closeMore();
     document.body.classList.add("home183");
     if(home)home.setAttribute("aria-hidden","false");
+    if(window.freedomDemo&&typeof window.freedomDemo.onHomeShown==="function")window.freedomDemo.onHomeShown();
   }
   function hideHome(){
     document.body.classList.remove("home183");
