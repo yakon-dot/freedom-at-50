@@ -1355,6 +1355,10 @@ body.home183 .demo-menu{
 .demo-welcome-line{
   margin:0 0 38px;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
   font-size:clamp(36px,10vw,44px);line-height:1.18;font-weight:500;color:#efcbaa;
+  opacity:0;transform:translateY(6px);
+}
+#demoWelcomeOverlay.is-entering .demo-welcome-line{
+  animation:demoWelcomeLineEnter 600ms ease-out forwards;
 }
 .demo-enter-btn{
   width:100%;border:0;border-radius:14px;padding:13px 16px;
@@ -1364,8 +1368,22 @@ body.home183 .demo-menu{
   width:auto;min-width:128px;border:1px solid rgba(255,255,255,.82);border-radius:999px;
   padding:10px 26px;background:transparent;color:#fff;font-size:14px;font-weight:650;
   letter-spacing:.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  opacity:0;visibility:hidden;pointer-events:none;
 }
+#demoWelcomeOverlay.is-entering .demo-welcome-btn{
+  visibility:visible;
+  animation:demoWelcomeBtnEnter 350ms ease-out 1100ms forwards;
+}
+#demoWelcomeOverlay.is-entering .demo-welcome-btn.is-active{pointer-events:auto}
 .demo-welcome-btn:active{opacity:.72}
+@keyframes demoWelcomeLineEnter{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes demoWelcomeBtnEnter{
+  from{opacity:0}
+  to{opacity:1}
+}
 .patricia-note-layer{
   position:fixed;inset:0;z-index:9700;pointer-events:none;
   display:flex;align-items:flex-start;justify-content:center;
@@ -1630,6 +1648,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 @media (prefers-reduced-motion:reduce){
   .page.freedom-page-enter,.freedom-card-enter,.freedom-card-new,.freedom-card-exit,.card-body-wrap:not(.is-collapsed)>.journey-card-body.freedom-body-reveal,.freedom-value-flash{animation:none!important}
   body.home183 .patricia-note[data-note-id="home"]{animation:none!important;opacity:1!important;transform:none!important}
+  #demoWelcomeOverlay .demo-welcome-line,#demoWelcomeOverlay.is-entering .demo-welcome-line{animation:none!important;opacity:1!important;transform:none!important}
+  #demoWelcomeOverlay .demo-welcome-btn,#demoWelcomeOverlay.is-entering .demo-welcome-btn{animation:none!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important}
   .card-body-wrap,.card-body-wrap>.journey-card-body,.progress span,.loan-card.is-dragging,.goal-card.is-dragging,.pension-card.is-dragging{transition:none!important}
   .save-btn:active,.mini-btn:active,.nav-btn:active,.update-btn:active,.archive-toggle:active,.tap-card:active{transform:none}
 }
@@ -2163,9 +2183,35 @@ function handleDemo183Click(e){
   if(demoMode)toggleDemoMenu();
   else openDemoEntryFlow();
 }
+function showDemoWelcomeOverlay(){
+  const overlay=byId("demoWelcomeOverlay");
+  const btn=byId("demoWelcomeContinue");
+  if(!overlay)return;
+  overlay.hidden=false;
+  overlay.classList.remove("is-entering");
+  btn?.classList.remove("is-active");
+  requestAnimationFrame(()=>{requestAnimationFrame(()=>{overlay.classList.add("is-entering");});});
+  if(!btn)return;
+  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){btn.classList.add("is-active");return;}
+  const onBtnEnterEnd=(e)=>{
+    if(e.target!==btn||e.animationName!=="demoWelcomeBtnEnter")return;
+    btn.classList.add("is-active");
+    btn.removeEventListener("animationend",onBtnEnterEnd);
+  };
+  btn.addEventListener("animationend",onBtnEnterEnd);
+}
+function hideDemoWelcomeOverlay(){
+  const overlay=byId("demoWelcomeOverlay");
+  const btn=byId("demoWelcomeContinue");
+  if(overlay){
+    overlay.hidden=true;
+    overlay.classList.remove("is-entering");
+  }
+  btn?.classList.remove("is-active");
+}
 function confirmEnterDemo(){
   byId("demoEntryOverlay").hidden=true;
-  byId("demoWelcomeOverlay").hidden=false;
+  showDemoWelcomeOverlay();
 }
 function enterDemo(){
   if(demoMode)return;
@@ -2189,13 +2235,13 @@ function exitDemo(){
   resetDemoSession();
   dismissAllPatriciaNotes();
   byId("demoEntryOverlay").hidden=true;
-  byId("demoWelcomeOverlay").hidden=true;
+  hideDemoWelcomeOverlay();
   syncDemoUi();
   if(typeof window.showHome==="function")window.showHome();
   render();
 }
 function continueFromWelcome(){
-  byId("demoWelcomeOverlay").hidden=true;
+  hideDemoWelcomeOverlay();
   enterDemo();
 }
 window.freedomDemo={openEntry:openDemoEntryFlow,exit:exitDemo,onHomeShown:handleDemoHomeShown,isActive:()=>demoMode};
