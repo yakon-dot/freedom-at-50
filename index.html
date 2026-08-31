@@ -1305,27 +1305,16 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   @keyframes fade183{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 }
 .demo-banner{
-  position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:16px;z-index:950;
-  display:flex;align-items:center;justify-content:center;min-height:42px;padding:0 14px;
-  border:1px solid rgba(239,203,170,.22);border-radius:14px;
-  background:rgba(18,22,27,.38);backdrop-filter:blur(16px);
-  -webkit-backdrop-filter:blur(16px);box-shadow:0 10px 28px rgba(0,0,0,.18);
-  color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em
-}
-.demo-banner[hidden]{display:none}
-.demo-banner.is-active{
-  cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
-  animation:demoBannerBreathe 3.6s ease-in-out infinite;
-}
-@keyframes demoBannerBreathe{
-  0%,100%{opacity:.88;transform:scale(1)}
-  50%{opacity:1;transform:scale(1.015)}
+  display:none!important;
 }
 .demo-menu{
   position:fixed;top:calc(58px + env(safe-area-inset-top,0px));right:16px;z-index:965;
   min-width:190px;padding:8px;border:1px solid rgba(239,203,170,.18);border-radius:16px;
   background:rgba(13,16,19,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
   box-shadow:0 16px 36px rgba(0,0,0,.28);
+}
+body.home183 .demo-menu{
+  top:calc(98px + env(safe-area-inset-top,0px));right:28px;
 }
 .demo-menu[hidden]{display:none!important}
 .demo-menu-btn{
@@ -1335,26 +1324,23 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 }
 .demo-menu-btn+.demo-menu-btn{margin-top:4px}
 .demo-menu-btn:active{background:rgba(239,203,170,.08)}
-body.demo-mode-active .demo183{display:none!important}
-body.demo-mode-active .demo-entry183{display:none!important}
-body.demo-mode-active .demo-banner.is-active{display:flex!important}
-.demo-entry183{
-  display:block;width:100%;margin-top:18px;border:1px solid rgba(239,203,170,.24);
-  border-radius:18px;padding:14px 16px;background:rgba(13,16,19,.24);
-  color:#efcbaa;font-size:15px;font-weight:650;text-align:left;cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
-.demo-entry183:active{transform:scale(.99)}
 .demo-overlay{
   position:fixed;inset:0;z-index:9800;display:flex;align-items:center;justify-content:center;
   padding:24px;background:rgba(7,8,9,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
 .demo-overlay[hidden]{display:none!important}
 .demo-entry-card,.demo-welcome-card{
-  width:min(100%,320px);padding:24px 22px;border:1px solid rgba(239,203,170,.18);
+  position:relative;width:min(100%,320px);padding:24px 22px;border:1px solid rgba(239,203,170,.18);
   border-radius:22px;background:rgba(13,16,19,.88);text-align:center;
   box-shadow:0 18px 42px rgba(0,0,0,.32);
 }
+.demo-entry-close{
+  position:absolute;top:8px;right:8px;z-index:2;border:0;background:transparent;
+  color:rgba(236,232,224,.78);font-size:24px;line-height:1;
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.demo-entry-close:active{color:rgba(239,203,170,.95)}
 .demo-entry-card p,.demo-welcome-card p{
   margin:0 0 12px;font-size:15px;line-height:1.55;color:rgba(236,232,224,.82);
 }
@@ -1407,8 +1393,12 @@ body.demo-mode-active .demo-banner.is-active{display:flex!important}
   100%{transform:scale(.72) translateZ(0);opacity:0;filter:blur(8px)}
 }
 @media (prefers-reduced-motion:reduce){
-  .demo-banner.is-active{animation:none}
+  .demo183.is-demo-active{animation:none}
   .freedom-victory-dispersed{animation:freedomVictoryDispersedReduced 260ms ease forwards}
+}
+@keyframes demo183Breathe{
+  0%,100%{opacity:.88;transform:scale(1)}
+  50%{opacity:1;transform:scale(1.015)}
 }
 @keyframes freedomVictoryDispersedReduced{
   from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.92)}
@@ -1424,6 +1414,12 @@ body.demo-mode-active .demo-banner.is-active{display:flex!important}
   cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent
 }
 .demo183:active{opacity:.55}
+.demo183.is-demo-active{
+  min-height:42px;padding:0 14px;border-radius:14px;
+  border-color:rgba(239,203,170,.22);background:rgba(18,22,27,.38);
+  color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em;
+  animation:demo183Breathe 3.6s ease-in-out infinite;
+}
 body.home183 .demo183{
   top:calc(52px + env(safe-area-inset-top,0px));right:28px;
   min-height:36px;padding:0 12px;border-radius:14px;
@@ -1473,7 +1469,7 @@ body.home183 .demo183{
 }
 @media (orientation:landscape) and (hover:none) and (pointer:coarse){
   .freedom-landscape{display:flex}
-  .app,.bottom-nav,.mobile183,.demo183,.demo-banner,.update-banner,.save-note{
+  .app,.bottom-nav,.mobile183,.demo183,.update-banner,.save-note{
     visibility:hidden!important;pointer-events:none!important;
   }
 }
@@ -1642,7 +1638,6 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
         <button class="sub183" type="button" data-more183="companion">Companion</button>
       </div>
     </nav>
-    <button class="demo-entry183" id="demoEntry183" type="button">Demo Mode</button>
   </div>
 </div>
 
@@ -1659,6 +1654,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 </div>
 <div class="demo-overlay" id="demoEntryOverlay" hidden>
   <div class="demo-entry-card">
+    <button class="demo-entry-close" id="demoEntryClose" type="button" aria-label="Close">&times;</button>
     <p>Showing this to someone? Good choice.</p>
     <p>Your real numbers will stay safely tucked away.</p>
     <button class="demo-enter-btn" id="demoEnterBtn" type="button">Enter Demo Mode</button>
@@ -1957,11 +1953,8 @@ const PATRICIA_NOTE_COPY={
 function resetDemoSession(){demoSession={dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};}
 function syncDemoUi(){
   document.body.classList.toggle("demo-mode-active",demoMode);
-  const banner=byId("demoBanner");
-  if(banner){
-    banner.hidden=!demoMode;
-    banner.classList.toggle("is-active",demoMode);
-  }
+  const btn=byId("demo183");
+  if(btn)btn.classList.toggle("is-demo-active",demoMode);
   closeDemoMenu();
 }
 function closeDemoMenu(){const menu=byId("demoMenu");if(menu)menu.hidden=true;}
@@ -2095,7 +2088,16 @@ function shareFreedom(){
 }
 function openDemoEntryFlow(){
   if(demoMode)return;
+  closeDemoMenu();
   byId("demoEntryOverlay").hidden=false;
+}
+function closeDemoEntryFlow(){
+  byId("demoEntryOverlay").hidden=true;
+}
+function handleDemo183Click(e){
+  e.stopPropagation();
+  if(demoMode)toggleDemoMenu();
+  else openDemoEntryFlow();
 }
 function confirmEnterDemo(){
   byId("demoEntryOverlay").hidden=true;
@@ -4051,11 +4053,10 @@ byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourn
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:null,lastRepaymentDate:null});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
 document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));
 if(demoMode)syncDemoUi();
-byId("demoEntry183")?.addEventListener("click",openDemoEntryFlow);
-byId("demo183")?.addEventListener("click",openDemoEntryFlow);
+byId("demo183")?.addEventListener("click",handleDemo183Click);
 byId("demoEnterBtn")?.addEventListener("click",confirmEnterDemo);
+byId("demoEntryClose")?.addEventListener("click",closeDemoEntryFlow);
 byId("demoWelcomeContinue")?.addEventListener("click",continueFromWelcome);
-byId("demoBanner")?.addEventListener("click",toggleDemoMenu);
 byId("demoMenu")?.querySelectorAll("[data-demo-action]").forEach(btn=>btn.addEventListener("click",()=>{
   const action=btn.dataset.demoAction;
   if(action==="exit")exitDemo();
@@ -4063,7 +4064,7 @@ byId("demoMenu")?.querySelectorAll("[data-demo-action]").forEach(btn=>btn.addEve
 }));
 document.addEventListener("click",e=>{
   if(!demoMode||byId("demoMenu")?.hidden)return;
-  if(e.target.closest("#demoMenu")||e.target.closest("#demoBanner"))return;
+  if(e.target.closest("#demoMenu")||e.target.closest("#demo183"))return;
   closeDemoMenu();
 });
 fillForm();render();const initial=location.hash.slice(1);if(["overview","journey","goals","pension","more","archive"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}}
