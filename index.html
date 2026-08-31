@@ -1397,6 +1397,7 @@ body.home183 .patricia-note-layer{
   align-items:center;
   justify-content:center;
   padding:calc(150px + env(safe-area-inset-top,0px)) 20px calc(130px + env(safe-area-inset-bottom,0px));
+  overflow:hidden;
 }
 .patricia-note-layer[hidden]{display:none!important}
 .patricia-note{
@@ -1437,15 +1438,16 @@ body.home183 .patricia-note-doodle{
 body.home183 .patricia-note-close{
   top:3%;right:7%;
 }
-@keyframes patriciaNoteHomeEnter{
-  from{opacity:0;transform:translateY(6px)}
-  to{opacity:1;transform:translateY(0)}
+@keyframes patriciaNoteHomeSlideIn{
+  0%{transform:translateX(calc(100vw + 100%))}
+  82%{transform:translateX(-4px)}
+  100%{transform:translateX(0)}
 }
 body.home183 .patricia-note[data-note-id="home"]{
-  opacity:0;transform:translateY(6px);
+  opacity:1;transform:translateX(calc(100vw + 100%));
 }
 body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
-  animation:patriciaNoteHomeEnter 450ms ease-out forwards;
+  animation:patriciaNoteHomeSlideIn 650ms ease-out forwards;
 }
 .patricia-note-close:active{opacity:.62}
 .freedom-confetti-canvas{
@@ -2099,7 +2101,7 @@ function handleDemoPageVisit(id){
 }
 function handleDemoHomeShown(){
   if(!demoMode)return;
-  setTimeout(()=>showPatriciaNoteIfNeeded("home"),320);
+  setTimeout(()=>showPatriciaNoteIfNeeded("home"),2200);
 }
 function checkJourneyCompletionCelebration(loan,prevCurrent){
   if(prevCurrent<=0||loan.current>0)return;
