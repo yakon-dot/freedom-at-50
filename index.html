@@ -1358,28 +1358,36 @@ body.home183 .demo-menu{
   display:flex;align-items:flex-start;justify-content:center;
   padding:calc(72px + env(safe-area-inset-top,0px)) 18px 18px;
 }
+body.home183 .patricia-note-layer{
+  justify-content:center;
+  padding:calc(108px + env(safe-area-inset-top,0px)) 20px 24px 20px;
+}
 .patricia-note-layer[hidden]{display:none!important}
 .patricia-note{
-  position:relative;width:min(100%,300px);pointer-events:auto;
-  transform:rotate(-6deg);transform-origin:50% 50%;
-  filter:drop-shadow(0 14px 28px rgba(0,0,0,.42));
+  position:relative;width:min(68vw,268px);max-width:calc(100% - 40px);pointer-events:auto;
+  filter:drop-shadow(0 10px 22px rgba(0,0,0,.36));
+}
+body.home183 .patricia-note-layer .patricia-note{
+  margin-left:-6px;
 }
 .patricia-note-paper{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
 .patricia-note-body{
-  position:absolute;inset:8% 10% 16% 11%;display:flex;flex-direction:column;
-  justify-content:flex-start;gap:10px;transform:rotate(0deg);
+  position:absolute;inset:13% 16% 26% 13%;display:flex;flex-direction:column;
+  justify-content:flex-start;gap:2px;overflow:hidden;
 }
 .patricia-note-text{
   margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
-  font-size:clamp(18px,4.8vw,22px);line-height:1.28;font-weight:500;
+  font-size:clamp(14px,3.65vw,17px);line-height:1.18;font-weight:500;
   color:#5c3a2e;text-align:left;
 }
-.patricia-note-doodle{width:min(42%,110px);height:auto;align-self:flex-start;margin-top:2px}
+.patricia-note-doodle{width:min(30%,54px);height:auto;align-self:flex-start;margin-top:3px;flex-shrink:0}
 .patricia-note-close{
-  position:absolute;top:4%;right:6%;z-index:2;border:0;background:transparent;
-  color:rgba(92,58,46,.72);font-size:22px;line-height:1;width:34px;height:34px;
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
+  position:absolute;top:6%;right:8%;z-index:3;border:0;background:transparent;
+  color:#5c3a2e;font-size:19px;font-weight:650;line-height:1;
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;padding:0;
 }
+.patricia-note-close:active{opacity:.62}
 .freedom-confetti-canvas{
   position:fixed;inset:0;z-index:9750;pointer-events:none;
 }
