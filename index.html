@@ -1366,8 +1366,6 @@ body.home183 .patricia-note-layer{
 .patricia-note-layer[hidden]{display:none!important}
 .patricia-note{
   position:relative;width:min(68vw,268px);max-width:calc(100% - 40px);pointer-events:auto;
-  transform:rotate(5deg);transform-origin:50% 50%;
-  filter:drop-shadow(0 10px 22px rgba(0,0,0,.36));
 }
 .patricia-note-paper{display:block;width:100%;height:auto;user-select:none;-webkit-user-drag:none}
 .patricia-note-body{
@@ -1375,8 +1373,8 @@ body.home183 .patricia-note-layer{
   justify-content:flex-start;gap:2px;overflow:hidden;
 }
 body.home183 .patricia-note-body{
-  inset:13% 2% 17% 2%;gap:3px;justify-content:flex-start;
-  transform:rotate(-3.5deg);transform-origin:50% 38%;
+  inset:18% 8% 24% 10%;gap:3px;justify-content:center;
+  transform:rotate(-2deg);transform-origin:50% 50%;
 }
 .patricia-note-text{
   margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
@@ -1384,14 +1382,15 @@ body.home183 .patricia-note-body{
   color:#5c3a2e;text-align:left;
 }
 body.home183 .patricia-note-text{
-  font-size:clamp(22px,6vw,24px);line-height:1.12;
+  font-size:clamp(21px,5.9vw,23px);line-height:1.12;text-align:center;
 }
+body.home183 .patricia-note-body > .patricia-note-text{max-width:90%;align-self:center}
 body.home183 .patricia-note-footer{
-  display:flex;align-items:flex-end;gap:4px;margin-top:2px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;margin-top:2px;
 }
 body.home183 .patricia-note-footer .patricia-note-text{flex:0 1 auto;margin:0}
 body.home183 .patricia-note-doodle{
-  width:min(22%,46px);height:auto;align-self:flex-end;margin:0 0 1px;flex-shrink:0;
+  width:min(22%,46px);height:auto;align-self:center;margin:0;flex-shrink:0;
 }
 .patricia-note-doodle{width:min(30%,54px);height:auto;align-self:flex-start;margin-top:3px;flex-shrink:0}
 .patricia-note-close{
@@ -1401,7 +1400,7 @@ body.home183 .patricia-note-doodle{
   cursor:pointer;-webkit-tap-highlight-color:transparent;padding:0;
 }
 body.home183 .patricia-note-close{
-  top:0.2%;right:2.5%;transform:rotate(-3.5deg);transform-origin:50% 50%;
+  top:3%;right:7%;
 }
 .patricia-note-close:active{opacity:.62}
 .freedom-confetti-canvas{
@@ -1972,7 +1971,7 @@ function showSaved(){const note=byId("saveNote");note.classList.add("show");clea
 function persistDemoSession(){sessionStorage.setItem(DEMO_SESSION_KEY,JSON.stringify({demoMode:true,state,demoSession}));}
 function persist(){if(demoMode){persistDemoSession();return;}localStorage.setItem(KEY,JSON.stringify(state));showSaved();}
 const PATRICIA_NOTE_COPY={
-  home:{id:"home",text:"That credit card has €200 left.\nI'm just saying.",doodle:"patricia-eyes.png"},
+  home:{id:"home",text:"That credit card has €200 left.\njust saying...",doodle:"patricia-eyes.png"},
   journeyFirst:{id:"journeyFirst",text:"This is where we keep the things we're getting rid of.\nFinancially speaking. I'm not running a skip."},
   goalsFirst:{id:"goalsFirst",text:"This is where the good stuff lives.\nHouses. Japan. Runaway money.\nPersonally, I'd add a frozen cocktail machine."},
   creditCardComplete:{id:"creditCardComplete",text:"YES! You did it! That credit card is officially history.\nI'd suggest a moment of silence, but I prefer frozen cocktails.",doodle:"patricia-celebration.png"},
