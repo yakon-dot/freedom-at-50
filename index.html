@@ -1308,22 +1308,32 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   display:none!important;
 }
 .demo-menu{
-  position:fixed;top:calc(58px + env(safe-area-inset-top,0px));right:16px;z-index:965;
-  min-width:190px;padding:8px;border:1px solid rgba(239,203,170,.18);border-radius:16px;
-  background:rgba(13,16,19,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
-  box-shadow:0 16px 36px rgba(0,0,0,.28);
+  display:none!important;
 }
-body.home183 .demo-menu{
-  top:calc(98px + env(safe-area-inset-top,0px));right:28px;
+.demo183-wrap{
+  position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:16px;z-index:960;
+  display:flex;flex-direction:column;align-items:flex-end;gap:0;max-width:min(72vw,240px);
 }
-.demo-menu[hidden]{display:none!important}
-.demo-menu-btn{
+body.home183 .demo183-wrap{
+  top:calc(52px + env(safe-area-inset-top,0px));right:28px;
+}
+.demo-subwrap183{
+  width:100%;max-height:0;overflow:hidden;pointer-events:none;
+  transition:max-height .48s cubic-bezier(.22,.61,.36,1);
+}
+.demo-subwrap183.open{max-height:120px;pointer-events:auto}
+.demo-sub183{
   display:block;width:100%;border:0;border-radius:12px;padding:12px 14px;margin:0;
   background:transparent;color:rgba(236,232,224,.86);font-size:14px;font-weight:650;
-  text-align:left;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  text-align:right;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  opacity:0;transform:translateY(-8px);
+  transition:opacity .22s ease,transform .28s cubic-bezier(.22,.61,.36,1);
 }
-.demo-menu-btn+.demo-menu-btn{margin-top:4px}
-.demo-menu-btn:active{background:rgba(239,203,170,.08)}
+.demo-sub183+.demo-sub183{margin-top:4px}
+.demo-sub183:active{background:rgba(239,203,170,.08)}
+.demo-subwrap183.open .demo-sub183{opacity:1;transform:translateY(0)}
+.demo-subwrap183.open .demo-sub183:nth-child(1){transition-delay:.05s}
+.demo-subwrap183.open .demo-sub183:nth-child(2){transition-delay:.13s}
 .demo-overlay{
   position:fixed;inset:0;z-index:9800;display:flex;align-items:center;justify-content:center;
   padding:24px;background:rgba(7,8,9,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
@@ -1464,11 +1474,17 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
 }
 @media (prefers-reduced-motion:reduce){
   .demo183.is-demo-active,.demo183.is-demo-active.demo183{animation:none!important}
+  .demo-subwrap183,.demo-sub183{transition:none!important}
+  .demo-subwrap183.open .demo-sub183{opacity:1!important;transform:none!important}
   .freedom-victory-dispersed{animation:freedomVictoryDispersedReduced 260ms ease forwards}
 }
 @keyframes demo183Breathe{
   0%,100%{opacity:.78;border-color:rgba(239,203,170,.16);box-shadow:0 4px 14px rgba(0,0,0,.12)}
   50%{opacity:1;border-color:rgba(239,203,170,.46);box-shadow:0 4px 22px rgba(239,203,170,.24)}
+}
+@keyframes demo183BreatheActive{
+  0%,100%{opacity:.9;box-shadow:0 4px 14px rgba(23,21,11,.1)}
+  50%{opacity:1;box-shadow:0 4px 22px rgba(132,189,145,.34)}
 }
 @keyframes freedomVictoryDispersedReduced{
   from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.92)}
@@ -1476,8 +1492,7 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
 
 /* Demo Mode — always available; stronger on Home, subtler elsewhere */
 .demo183{
-  position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:16px;z-index:960;
-  display:flex;align-items:center;justify-content:center;min-height:30px;padding:0 10px;
+  position:relative;display:flex;align-items:center;justify-content:center;min-height:30px;padding:0 10px;
   border:1px solid rgba(239,203,170,.16);border-radius:12px;
   background:rgba(18,22,27,.28);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   color:rgba(239,233,224,.72);font-size:9px;font-weight:750;letter-spacing:.12em;
@@ -1486,22 +1501,24 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
 .demo183:active{opacity:.55}
 .demo183.is-demo-active{
   min-height:42px;padding:0 14px;border-radius:14px;
-  border-color:rgba(239,203,170,.22);background:rgba(18,22,27,.38);
-  color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em;
-  animation:demo183Breathe 3.2s ease-in-out infinite;
+  border-color:rgba(132,189,145,.42);background:#b0cdb8;
+  color:#17150b;font-size:10px;font-weight:800;letter-spacing:.13em;
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  animation:demo183BreatheActive 3.2s ease-in-out infinite;
   will-change:opacity,box-shadow;
 }
 body.home183 .demo183{
-  top:calc(52px + env(safe-area-inset-top,0px));right:28px;
   min-height:36px;padding:0 12px;border-radius:14px;
   border-color:rgba(239,203,170,.22);background:rgba(18,22,27,.38);
   color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em
 }
 body.home183 .demo183.is-demo-active{
-  animation:demo183Breathe 3.2s ease-in-out infinite;
+  border-color:rgba(132,189,145,.42);background:#b0cdb8;color:#17150b;
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  animation:demo183BreatheActive 3.2s ease-in-out infinite;
   will-change:opacity,box-shadow;
 }
-@media(min-width:821px){.demo183{display:none!important}}
+@media(min-width:821px){.demo183-wrap{display:none!important}}
 @media(min-width:821px){.mobile183{display:none!important}}
 
 /* ===== Freedom mobile zoom + portrait-only landscape fallback ===== */
@@ -1544,7 +1561,7 @@ body.home183 .demo183.is-demo-active{
 }
 @media (orientation:landscape) and (hover:none) and (pointer:coarse){
   .freedom-landscape{display:flex}
-  .app,.bottom-nav,.mobile183,.demo183,.update-banner,.save-note{
+  .app,.bottom-nav,.mobile183,.demo183-wrap,.update-banner,.save-note{
     visibility:hidden!important;pointer-events:none!important;
   }
 }
@@ -1676,7 +1693,13 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     <p class="freedom-landscape-sign">xo Patricia</p>
   </div>
 </div>
-<button class="demo183" id="demo183" type="button" aria-label="Demo Mode">DEMO MODE</button>
+<div class="demo183-wrap" id="demo183Wrap">
+  <button class="demo183" id="demo183" type="button" aria-label="Demo Mode" aria-expanded="false">DEMO MODE</button>
+  <div class="demo-subwrap183" id="demoMenu" aria-hidden="true">
+    <button class="demo-sub183" type="button" data-demo-action="exit">Exit Demo Mode</button>
+    <button class="demo-sub183" type="button" data-demo-action="share">Share Freedom</button>
+  </div>
+</div>
 
 <div class="mobile183" id="mobile183" aria-hidden="false">
   <div class="inner183">
@@ -1725,10 +1748,6 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 </div>
 <div class="demo-banner" id="demoBanner" hidden>
   <span>DEMO MODE</span>
-</div>
-<div class="demo-menu" id="demoMenu" hidden>
-  <button class="demo-menu-btn" type="button" data-demo-action="exit">Exit Demo Mode</button>
-  <button class="demo-menu-btn" type="button" data-demo-action="share">Share Freedom</button>
 </div>
 <div class="demo-overlay" id="demoEntryOverlay" hidden>
   <div class="demo-entry-card">
@@ -2039,8 +2058,20 @@ function syncDemoUi(){
   if(btn)btn.classList.toggle("is-demo-active",demoMode);
   closeDemoMenu();
 }
-function closeDemoMenu(){const menu=byId("demoMenu");if(menu)menu.hidden=true;}
-function toggleDemoMenu(){const menu=byId("demoMenu");if(menu)menu.hidden=!menu.hidden;}
+function closeDemoMenu(){
+  const menu=byId("demoMenu");
+  const btn=byId("demo183");
+  if(menu){menu.classList.remove("open");menu.setAttribute("aria-hidden","true");}
+  if(btn)btn.setAttribute("aria-expanded","false");
+}
+function toggleDemoMenu(){
+  const menu=byId("demoMenu");
+  const btn=byId("demo183");
+  if(!menu||!btn)return;
+  const open=menu.classList.toggle("open");
+  menu.setAttribute("aria-hidden",open?"false":"true");
+  btn.setAttribute("aria-expanded",open?"true":"false");
+}
 function dismissAllPatriciaNotes(){
   const layer=byId("patriciaNoteLayer");
   if(layer){layer.innerHTML="";layer.hidden=true;}
@@ -4198,7 +4229,7 @@ byId("demoMenu")?.querySelectorAll("[data-demo-action]").forEach(btn=>btn.addEve
   else if(action==="share")shareFreedom();
 }));
 document.addEventListener("click",e=>{
-  if(!demoMode||byId("demoMenu")?.hidden)return;
+  if(!demoMode||!byId("demoMenu")?.classList.contains("open"))return;
   if(e.target.closest("#demoMenu")||e.target.closest("#demo183"))return;
   closeDemoMenu();
 });
