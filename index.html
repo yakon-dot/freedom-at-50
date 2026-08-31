@@ -1282,28 +1282,27 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   .chev183{margin-left:auto;width:9px;height:9px;border-right:1.5px solid #f2f0eb;border-bottom:1.5px solid #f2f0eb;transform:rotate(225deg);transition:transform .18s ease}
   .morebtn183[aria-expanded="false"] .chev183{transform:rotate(45deg)}
 
-  .subwrap183{
-    margin-left:34px;border-left:1px solid rgba(239,203,170,.18);padding-left:19px;
-    max-height:0;overflow:hidden;pointer-events:none;
-    transition:max-height .48s cubic-bezier(.22,.61,.36,1)
-  }
-  .subwrap183.open{max-height:190px;pointer-events:auto}
-  .sub183{
-    display:block;width:100%;border:0;background:transparent;color:#dedad3;text-align:left;
-    padding:7px 0;font-size:13.5px;font-weight:450;cursor:pointer;touch-action:manipulation;
-    -webkit-tap-highlight-color:transparent;opacity:0;transform:translateY(-8px);
-    transition:opacity .22s ease,transform .28s cubic-bezier(.22,.61,.36,1)
-  }
-  .subwrap183.open .sub183{opacity:1;transform:translateY(0)}
-  .subwrap183.open .sub183:nth-child(1){transition-delay:.05s}
-  .subwrap183.open .sub183:nth-child(2){transition-delay:.13s}
-  .subwrap183.open .sub183:nth-child(3){transition-delay:.21s}
-
 
   body.home183 .brand183{animation:fade183 .45s ease both}
   body.home183 .nav183{animation:fade183 .62s .08s ease both}
   @keyframes fade183{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 }
+.subwrap183{
+  margin-left:34px;border-left:1px solid rgba(239,203,170,.18);padding-left:19px;
+  max-height:0;overflow:hidden;pointer-events:none;
+  transition:max-height .48s cubic-bezier(.22,.61,.36,1)
+}
+.subwrap183.open{max-height:190px;pointer-events:auto}
+.sub183{
+  display:block;width:100%;border:0;background:transparent;color:#dedad3;text-align:left;
+  padding:7px 0;font-size:13.5px;font-weight:450;cursor:pointer;touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;opacity:0;transform:translateY(-8px);
+  transition:opacity .22s ease,transform .28s cubic-bezier(.22,.61,.36,1)
+}
+.subwrap183.open .sub183{opacity:1;transform:translateY(0)}
+.subwrap183.open .sub183:nth-child(1){transition-delay:.05s}
+.subwrap183.open .sub183:nth-child(2){transition-delay:.13s}
+.subwrap183.open .sub183:nth-child(3){transition-delay:.21s}
 .demo-banner{
   display:none!important;
 }
@@ -1312,20 +1311,12 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 }
 .demo183-wrap{
   position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:16px;z-index:960;
-  display:flex;flex-direction:column;align-items:flex-end;gap:0;max-width:min(72vw,240px);
+  display:flex;flex-direction:column;align-items:stretch;gap:0;width:fit-content;
 }
 body.home183 .demo183-wrap{
   top:calc(52px + env(safe-area-inset-top,0px));right:28px;
 }
-.demo-subwrap183{
-  width:100%;max-height:0;overflow:hidden;pointer-events:none;
-  transition:max-height .48s cubic-bezier(.22,.61,.36,1);
-}
-.demo-subwrap183.open{max-height:120px;pointer-events:auto}
-.demo-subwrap183 .sub183{text-align:right}
-.demo-subwrap183.open .sub183{opacity:1;transform:translateY(0)}
-.demo-subwrap183.open .sub183:nth-child(1){transition-delay:.05s}
-.demo-subwrap183.open .sub183:nth-child(2){transition-delay:.13s}
+.demo183-wrap .subwrap183{margin-left:0;width:100%}
 .demo-overlay{
   position:fixed;inset:0;z-index:9800;display:flex;align-items:center;justify-content:center;
   padding:24px;background:rgba(7,8,9,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
@@ -1466,9 +1457,9 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
   100%{transform:scale(.72) translateZ(0);opacity:0;filter:blur(8px)}
 }
 @media (prefers-reduced-motion:reduce){
-  .demo183.is-demo-active,.demo183.is-demo-active.demo183{animation:none!important}
-  .demo-subwrap183,.demo-subwrap183 .sub183{transition:none!important}
-  .demo-subwrap183.open .sub183{opacity:1!important;transform:none!important}
+  .demo183.is-demo-active,.demo183.is-demo-active.demo183,.demo183[data-demo-active="true"]{animation:none!important}
+  .demo183-wrap .subwrap183,.demo183-wrap .subwrap183 .sub183{transition:none!important}
+  .demo183-wrap .subwrap183.open .sub183{opacity:1!important;transform:none!important}
   .freedom-victory-dispersed{animation:freedomVictoryDispersedReduced 260ms ease forwards}
 }
 @keyframes demo183Breathe{
@@ -1489,13 +1480,12 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
   border:1px solid rgba(239,203,170,.16);border-radius:12px;
   background:rgba(18,22,27,.28);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
   color:rgba(239,233,224,.72);font-size:9px;font-weight:750;letter-spacing:.12em;
-  cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent
-}
-.demo183:not(.is-demo-active){
+  cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent;
   animation:none;opacity:1;will-change:auto;box-shadow:none;
 }
 .demo183:not(.is-demo-active):active{opacity:.55}
-.demo183.is-demo-active{
+.demo183.is-demo-active,
+.demo183[data-demo-active="true"]{
   min-height:42px;padding:0 14px;border-radius:14px;
   border-color:rgba(132,189,145,.42);background:#b0cdb8;
   color:#17150b;font-size:10px;font-weight:800;letter-spacing:.13em;
@@ -1506,9 +1496,11 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
 body.home183 .demo183{
   min-height:36px;padding:0 12px;border-radius:14px;
   border-color:rgba(239,203,170,.22);background:rgba(18,22,27,.38);
-  color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em
+  color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em;
+  animation:none;opacity:1;box-shadow:none;
 }
-body.home183 .demo183.is-demo-active{
+body.home183 .demo183.is-demo-active,
+body.home183 .demo183[data-demo-active="true"]{
   border-color:rgba(132,189,145,.42);background:#b0cdb8;color:#17150b;
   backdrop-filter:none;-webkit-backdrop-filter:none;
   animation:demo183BreatheActive 1.5s ease-in-out infinite;
@@ -1691,7 +1683,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 </div>
 <div class="demo183-wrap" id="demo183Wrap">
   <button class="demo183" id="demo183" type="button" aria-label="Demo Mode" aria-expanded="false">DEMO MODE</button>
-  <div class="demo-subwrap183" id="demoMenu" aria-hidden="true">
+  <div class="subwrap183" id="demoMenu" aria-hidden="true">
     <button class="sub183" type="button" data-demo-action="exit">Exit Demo Mode</button>
     <button class="sub183" type="button" data-demo-action="share">Share Freedom</button>
   </div>
@@ -2048,12 +2040,24 @@ const PATRICIA_NOTE_COPY={
   runawayMoney:{id:"runawayMoney",text:"Runaway Money just got bigger.\nNot suggesting anything. Just admiring the options.",doodle:"patricia-eyes.png"}
 };
 function resetDemoSession(){demoSession={dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};}
-function resetDemoButtonInactive(btn){
+function applyDemoButtonState(btn){
   if(!btn)return;
+  if(demoMode){
+    btn.dataset.demoActive="true";
+    btn.classList.add("is-demo-active");
+    btn.style.removeProperty("animation");
+    btn.style.removeProperty("opacity");
+    btn.style.removeProperty("box-shadow");
+    btn.style.removeProperty("transform");
+    btn.style.removeProperty("will-change");
+    return;
+  }
+  btn.dataset.demoActive="false";
   btn.classList.remove("is-demo-active");
+  if(typeof btn.getAnimations==="function")btn.getAnimations().forEach(a=>a.cancel());
   btn.style.animation="none";
   btn.style.opacity="1";
-  btn.style.boxShadow="";
+  btn.style.boxShadow="none";
   btn.style.transform="";
   btn.style.willChange="auto";
   void btn.offsetHeight;
@@ -2065,11 +2069,7 @@ function resetDemoButtonInactive(btn){
 }
 function syncDemoUi(){
   document.body.classList.toggle("demo-mode-active",demoMode);
-  const btn=byId("demo183");
-  if(btn){
-    if(demoMode)btn.classList.add("is-demo-active");
-    else resetDemoButtonInactive(btn);
-  }
+  applyDemoButtonState(byId("demo183"));
   closeDemoMenu();
 }
 function closeDemoMenu(){
@@ -2299,7 +2299,6 @@ function enterDemo(){
 function exitDemo(){
   if(!demoMode)return;
   demoMode=false;
-  resetDemoButtonInactive(byId("demo183"));
   sessionStorage.removeItem(DEMO_SESSION_KEY);
   if(realStateSnapshot)state=realStateSnapshot;
   realStateSnapshot=null;
