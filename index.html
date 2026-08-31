@@ -1402,6 +1402,13 @@ body.home183 .patricia-note-doodle{
 body.home183 .patricia-note-close{
   top:5%;right:8%;transform:rotate(-2deg);transform-origin:50% 50%;
 }
+@keyframes patriciaNoteHomeEnter{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
+}
+body.home183 .patricia-note[data-note-id="home"]{
+  animation:patriciaNoteHomeEnter 450ms ease-out both;
+}
 .patricia-note-close:active{opacity:.62}
 .freedom-confetti-canvas{
   position:fixed;inset:0;z-index:9750;pointer-events:none;
@@ -1606,6 +1613,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 .freedom-value-flash{animation:freedomValueFade 220ms ease-out}
 @media (prefers-reduced-motion:reduce){
   .page.freedom-page-enter,.freedom-card-enter,.freedom-card-new,.freedom-card-exit,.card-body-wrap:not(.is-collapsed)>.journey-card-body.freedom-body-reveal,.freedom-value-flash{animation:none!important}
+  body.home183 .patricia-note[data-note-id="home"]{animation:none!important}
   .card-body-wrap,.card-body-wrap>.journey-card-body,.progress span,.loan-card.is-dragging,.goal-card.is-dragging,.pension-card.is-dragging{transition:none!important}
   .save-btn:active,.mini-btn:active,.nav-btn:active,.update-btn:active,.archive-toggle:active,.tap-card:active{transform:none}
 }
