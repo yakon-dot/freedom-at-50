@@ -1329,10 +1329,17 @@ body.home183 .demo-menu{
   padding:24px;background:rgba(7,8,9,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
 }
 .demo-overlay[hidden]{display:none!important}
-.demo-entry-card,.demo-welcome-card{
+.demo-entry-card{
   position:relative;width:min(100%,320px);padding:24px 22px;border:1px solid rgba(239,203,170,.18);
   border-radius:22px;background:rgba(13,16,19,.88);text-align:center;
   box-shadow:0 18px 42px rgba(0,0,0,.32);
+}
+#demoWelcomeOverlay.demo-overlay{
+  background:#0b0c0e;backdrop-filter:none;-webkit-backdrop-filter:none;
+}
+.demo-welcome-content{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;width:min(100%,320px);padding:0 28px;
 }
 .demo-entry-close{
   position:absolute;top:8px;right:8px;z-index:2;border:0;background:transparent;
@@ -1341,18 +1348,24 @@ body.home183 .demo-menu{
   cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 .demo-entry-close:active{color:rgba(239,203,170,.95)}
-.demo-entry-card p,.demo-welcome-card p{
+.demo-entry-card p{
   margin:0 0 12px;font-size:15px;line-height:1.55;color:rgba(236,232,224,.82);
 }
 .demo-entry-card p:last-of-type{margin-bottom:20px;color:rgba(190,188,182,.68)}
 .demo-welcome-line{
-  margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
-  font-size:28px;line-height:1.25;color:#efcbaa;
+  margin:0 0 38px;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:clamp(36px,10vw,44px);line-height:1.18;font-weight:500;color:#efcbaa;
 }
-.demo-enter-btn,.demo-welcome-btn{
+.demo-enter-btn{
   width:100%;border:0;border-radius:14px;padding:13px 16px;
   background:rgba(201,160,122,.78);color:#17150b;font-size:14px;font-weight:760;cursor:pointer;
 }
+.demo-welcome-btn{
+  width:auto;min-width:128px;border:1px solid rgba(255,255,255,.82);border-radius:999px;
+  padding:10px 26px;background:transparent;color:#fff;font-size:14px;font-weight:650;
+  letter-spacing:.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.demo-welcome-btn:active{opacity:.72}
 .patricia-note-layer{
   position:fixed;inset:0;z-index:9700;pointer-events:none;
   display:flex;align-items:flex-start;justify-content:center;
@@ -1700,7 +1713,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   </div>
 </div>
 <div class="demo-overlay" id="demoWelcomeOverlay" hidden>
-  <div class="demo-welcome-card">
+  <div class="demo-welcome-content">
     <p class="demo-welcome-line">Come in. Have a look around. I've tidied.</p>
     <button class="demo-welcome-btn" id="demoWelcomeContinue" type="button">Continue</button>
   </div>
