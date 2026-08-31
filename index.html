@@ -1352,10 +1352,27 @@ body.home183 .demo-menu{
   margin:0 0 12px;font-size:15px;line-height:1.55;color:rgba(236,232,224,.82);
 }
 .demo-entry-card p:last-of-type{margin-bottom:20px;color:rgba(190,188,182,.68)}
-.demo-welcome-line{
-  margin:0 0 38px;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
-  font-size:clamp(36px,10vw,44px);line-height:1.18;font-weight:500;color:#efcbaa;
+.demo-welcome-lines{
+  margin:0 0 38px;display:flex;flex-direction:column;align-items:center;gap:0.08em;
   max-width:100%;
+}
+.demo-welcome-line-row{
+  margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:clamp(36px,10vw,44px);line-height:1.18;font-weight:500;color:#efcbaa;
+  opacity:0;
+}
+#demoWelcomeOverlay.is-entering .demo-welcome-line-row:nth-child(1){
+  animation:demoWelcomeLineFade 1100ms ease-out forwards;
+}
+#demoWelcomeOverlay.is-entering .demo-welcome-line-row:nth-child(2){
+  animation:demoWelcomeLineFade 1100ms ease-out 1300ms forwards;
+}
+#demoWelcomeOverlay.is-entering .demo-welcome-line-row:nth-child(3){
+  animation:demoWelcomeLineFade 1100ms ease-out 2600ms forwards;
+}
+@keyframes demoWelcomeLineFade{
+  from{opacity:0}
+  to{opacity:1}
 }
 .demo-enter-btn{
   width:100%;border:0;border-radius:14px;padding:13px 16px;
@@ -1366,7 +1383,7 @@ body.home183 .demo-menu{
   padding:10px 26px;background:transparent;color:#fff;font-size:14px;font-weight:650;
   letter-spacing:.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;
   opacity:0;visibility:hidden;pointer-events:none;
-  transition:opacity 550ms ease-out;
+  transition:opacity 1100ms ease-out;
 }
 .demo-welcome-btn.is-visible{visibility:visible;opacity:1}
 .demo-welcome-btn.is-active{pointer-events:auto}
@@ -1635,6 +1652,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 @media (prefers-reduced-motion:reduce){
   .page.freedom-page-enter,.freedom-card-enter,.freedom-card-new,.freedom-card-exit,.card-body-wrap:not(.is-collapsed)>.journey-card-body.freedom-body-reveal,.freedom-value-flash{animation:none!important}
   body.home183 .patricia-note[data-note-id="home"]{animation:none!important;opacity:1!important;transform:none!important}
+  #demoWelcomeOverlay .demo-welcome-line-row,#demoWelcomeOverlay.is-entering .demo-welcome-line-row{animation:none!important;opacity:1!important}
   #demoWelcomeOverlay .demo-welcome-btn,#demoWelcomeOverlay .demo-welcome-btn.is-visible{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transition:none!important}
   .card-body-wrap,.card-body-wrap>.journey-card-body,.progress span,.loan-card.is-dragging,.goal-card.is-dragging,.pension-card.is-dragging{transition:none!important}
   .save-btn:active,.mini-btn:active,.nav-btn:active,.update-btn:active,.archive-toggle:active,.tap-card:active{transform:none}
@@ -1720,7 +1738,11 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 </div>
 <div class="demo-overlay" id="demoWelcomeOverlay" hidden>
   <div class="demo-welcome-content">
-    <p class="demo-welcome-line">Come in. Have a look around. I've tidied.</p>
+    <div class="demo-welcome-lines">
+      <p class="demo-welcome-line-row">Come in.</p>
+      <p class="demo-welcome-line-row">Have a look around.</p>
+      <p class="demo-welcome-line-row">I've tidied up.</p>
+    </div>
     <button class="demo-welcome-btn" id="demoWelcomeContinue" type="button">Continue</button>
   </div>
 </div>
@@ -2169,13 +2191,9 @@ function handleDemo183Click(e){
   if(demoMode)toggleDemoMenu();
   else openDemoEntryFlow();
 }
-const DEMO_WELCOME_TEXT="Come in. Have a look around. I've tidied.";
-let demoWelcomeTypeTimer=null;
-function clearDemoWelcomeTypewriter(){
-  if(demoWelcomeTypeTimer){clearTimeout(demoWelcomeTypeTimer);demoWelcomeTypeTimer=null;}
-}
-function buildDemoWelcomeLine(line){
-  if(line)line.textContent="";
+let demoWelcomeBtnTimer=null;
+function clearDemoWelcomeTimers(){
+  if(demoWelcomeBtnTimer){clearTimeout(demoWelcomeBtnTimer);demoWelcomeBtnTimer=null;}
 }
 function revealDemoWelcomeButton(btn){
   if(!btn)return;
@@ -2188,49 +2206,26 @@ function revealDemoWelcomeButton(btn){
   };
   btn.addEventListener("transitionend",onFadeEnd);
 }
-function startDemoWelcomeTypewriter(line,btn){
-  clearDemoWelcomeTypewriter();
-  buildDemoWelcomeLine(line);
-  if(!line){revealDemoWelcomeButton(btn);return;}
-  if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-    line.textContent=DEMO_WELCOME_TEXT;
-    revealDemoWelcomeButton(btn);
-    return;
-  }
-  let i=0;
-  const step=()=>{
-    if(i<DEMO_WELCOME_TEXT.length){
-      line.textContent+=DEMO_WELCOME_TEXT[i++];
-      demoWelcomeTypeTimer=setTimeout(step,54);
-    }else{
-      demoWelcomeTypeTimer=null;
-      setTimeout(()=>revealDemoWelcomeButton(btn),350);
-    }
-  };
-  step();
-}
 function showDemoWelcomeOverlay(){
   const overlay=byId("demoWelcomeOverlay");
   const btn=byId("demoWelcomeContinue");
-  const line=overlay?.querySelector(".demo-welcome-line");
   if(!overlay)return;
-  clearDemoWelcomeTypewriter();
+  clearDemoWelcomeTimers();
   overlay.hidden=false;
   overlay.classList.remove("is-entering");
   btn?.classList.remove("is-active","is-visible");
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
       overlay.classList.add("is-entering");
-      startDemoWelcomeTypewriter(line,btn);
+      if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){revealDemoWelcomeButton(btn);return;}
+      demoWelcomeBtnTimer=setTimeout(()=>revealDemoWelcomeButton(btn),4300);
     });
   });
 }
 function hideDemoWelcomeOverlay(){
   const overlay=byId("demoWelcomeOverlay");
   const btn=byId("demoWelcomeContinue");
-  const line=overlay?.querySelector(".demo-welcome-line");
-  clearDemoWelcomeTypewriter();
-  if(line)line.textContent=DEMO_WELCOME_TEXT;
+  clearDemoWelcomeTimers();
   if(overlay){
     overlay.hidden=true;
     overlay.classList.remove("is-entering");
