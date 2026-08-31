@@ -1407,7 +1407,10 @@ body.home183 .patricia-note-close{
   to{opacity:1;transform:translateY(0)}
 }
 body.home183 .patricia-note[data-note-id="home"]{
-  animation:patriciaNoteHomeEnter 450ms ease-out both;
+  opacity:0;transform:translateY(6px);
+}
+body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
+  animation:patriciaNoteHomeEnter 450ms ease-out forwards;
 }
 .patricia-note-close:active{opacity:.62}
 .freedom-confetti-canvas{
@@ -1613,7 +1616,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 .freedom-value-flash{animation:freedomValueFade 220ms ease-out}
 @media (prefers-reduced-motion:reduce){
   .page.freedom-page-enter,.freedom-card-enter,.freedom-card-new,.freedom-card-exit,.card-body-wrap:not(.is-collapsed)>.journey-card-body.freedom-body-reveal,.freedom-value-flash{animation:none!important}
-  body.home183 .patricia-note[data-note-id="home"]{animation:none!important}
+  body.home183 .patricia-note[data-note-id="home"]{animation:none!important;opacity:1!important;transform:none!important}
   .card-body-wrap,.card-body-wrap>.journey-card-body,.progress span,.loan-card.is-dragging,.goal-card.is-dragging,.pension-card.is-dragging{transition:none!important}
   .save-btn:active,.mini-btn:active,.nav-btn:active,.update-btn:active,.archive-toggle:active,.tap-card:active{transform:none}
 }
@@ -2030,6 +2033,9 @@ function renderPatriciaNote(note){
   wrap.querySelector(".patricia-note-close").addEventListener("click",()=>dismissPatriciaNote(note.id));
   layer.appendChild(wrap);
   layer.hidden=false;
+  if(note.id==="home"){
+    requestAnimationFrame(()=>{requestAnimationFrame(()=>{wrap.classList.add("patricia-note-enter");});});
+  }
 }
 function showPatriciaNoteIfNeeded(key){
   if(!demoMode)return;
