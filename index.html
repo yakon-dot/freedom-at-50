@@ -1323,9 +1323,11 @@ body.home183 .demo183-wrap{
 }
 .demo-overlay[hidden]{display:none!important}
 .demo-entry-card{
-  position:relative;width:min(100%,320px);padding:24px 22px;border:1px solid rgba(239,203,170,.18);
+  position:relative;width:min(100%,320px);padding:24px 22px;border:0;
   border-radius:22px;background:rgba(13,16,19,.88);text-align:center;
   box-shadow:0 18px 42px rgba(0,0,0,.32);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  display:flex;flex-direction:column;align-items:center;
 }
 #demoWelcomeOverlay.demo-overlay{
   background:#0b0c0e;backdrop-filter:none;-webkit-backdrop-filter:none;
@@ -1342,9 +1344,16 @@ body.home183 .demo183-wrap{
 }
 .demo-entry-close:active{color:rgba(239,203,170,.95)}
 .demo-entry-card p{
-  margin:0 0 12px;font-size:15px;line-height:1.55;color:rgba(236,232,224,.82);
+  margin:0 0 12px;width:100%;font-size:15px;line-height:1.55;color:rgba(236,232,224,.82);
 }
-.demo-entry-card p:last-of-type{margin-bottom:20px;color:rgba(190,188,182,.68)}
+.demo-entry-headline-line{display:block}
+.demo-entry-card p:last-of-type{margin-bottom:18px;color:rgba(190,188,182,.68)}
+.demo-enter-btn{
+  width:auto;border:0;border-radius:10px;padding:9px 18px;
+  background:#efcbaa;color:#17150b;font-size:13px;font-weight:700;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.demo-enter-btn:active{opacity:.82}
 .demo-welcome-lines{
   margin:0 0 38px;display:flex;flex-direction:column;align-items:center;gap:0.08em;
   max-width:100%;
@@ -1367,10 +1376,6 @@ body.home183 .demo183-wrap{
 @keyframes demoWelcomeLineFade{
   from{opacity:0;transform:translateY(3px)}
   to{opacity:1;transform:translateY(0)}
-}
-.demo-enter-btn{
-  width:100%;border:0;border-radius:14px;padding:13px 16px;
-  background:rgba(201,160,122,.78);color:#17150b;font-size:14px;font-weight:760;cursor:pointer;
 }
 .demo-welcome-btn{
   width:auto;min-width:128px;border:1px solid rgba(255,255,255,.82);border-radius:999px;
@@ -1748,7 +1753,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 <div class="demo-overlay" id="demoEntryOverlay" hidden>
   <div class="demo-entry-card">
     <button class="demo-entry-close" id="demoEntryClose" type="button" aria-label="Close">&times;</button>
-    <p>Showing this to someone? Good choice.</p>
+    <p class="demo-entry-headline"><span class="demo-entry-headline-line">Showing this to someone?</span><span class="demo-entry-headline-line">Good choice.</span></p>
     <p>Your real numbers will stay safely tucked away.</p>
     <button class="demo-enter-btn" id="demoEnterBtn" type="button">Enter Demo Mode</button>
   </div>
