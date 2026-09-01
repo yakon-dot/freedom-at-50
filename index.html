@@ -2173,7 +2173,7 @@ function handleDemoPageVisit(id){
 }
 function handleDemoHomeShown(){
   if(!demoMode)return;
-  showPatriciaNoteIfNeeded("home");
+  setTimeout(()=>showPatriciaNoteIfNeeded("home"),1000);
 }
 function checkJourneyCompletionCelebration(loan,prevCurrent){
   if(prevCurrent<=0||loan.current>0)return;
