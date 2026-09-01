@@ -1348,6 +1348,7 @@ body.home183 .demo183-wrap{
 .demo-welcome-lines{
   margin:0 0 38px;display:flex;flex-direction:column;align-items:center;gap:0.08em;
   max-width:100%;
+  --demo-welcome-fade:470ms;--demo-welcome-gap:553ms;
 }
 .demo-welcome-line-row{
   margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
@@ -1355,17 +1356,17 @@ body.home183 .demo183-wrap{
   opacity:0;
 }
 #demoWelcomeOverlay.is-entering .demo-welcome-line-row:nth-child(1){
-  animation:demoWelcomeLineFade 935ms ease-out forwards;
+  animation:demoWelcomeLineFade var(--demo-welcome-fade) ease-out forwards;
 }
 #demoWelcomeOverlay.is-entering .demo-welcome-line-row:nth-child(2){
-  animation:demoWelcomeLineFade 935ms ease-out 1105ms forwards;
+  animation:demoWelcomeLineFade var(--demo-welcome-fade) ease-out var(--demo-welcome-gap) forwards;
 }
 #demoWelcomeOverlay.is-entering .demo-welcome-line-row:nth-child(3){
-  animation:demoWelcomeLineFade 935ms ease-out 2210ms forwards;
+  animation:demoWelcomeLineFade var(--demo-welcome-fade) ease-out calc(var(--demo-welcome-gap) * 2) forwards;
 }
 @keyframes demoWelcomeLineFade{
-  from{opacity:0}
-  to{opacity:1}
+  from{opacity:0;transform:translateY(3px)}
+  to{opacity:1;transform:translateY(0)}
 }
 .demo-enter-btn{
   width:100%;border:0;border-radius:14px;padding:13px 16px;
@@ -1376,7 +1377,7 @@ body.home183 .demo183-wrap{
   padding:10px 26px;background:transparent;color:#fff;font-size:14px;font-weight:650;
   letter-spacing:.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;
   opacity:0;visibility:hidden;pointer-events:none;
-  transition:opacity 935ms ease-out;
+  transition:opacity 470ms ease-out;
 }
 .demo-welcome-btn.is-visible{visibility:visible;opacity:1}
 .demo-welcome-btn.is-active{pointer-events:auto}
@@ -1624,9 +1625,9 @@ body.home183 .demo183.is-demo-active{
 
 /* ===== Freedom motion pass (v316) — interaction only ===== */
 :root{
-  --motion-enter:200ms;--motion-stagger:38ms;--motion-stagger-cap:7;--motion-expand:380ms;--motion-chevron:200ms;
-  --motion-progress:500ms;--motion-progress-enter:800ms;--motion-press:130ms;--motion-toggle:210ms;--motion-new:200ms;
-  --motion-exit:300ms;--motion-page:190ms;--motion-ease:cubic-bezier(0.22,0.61,0.36,1);--motion-enter-ease:cubic-bezier(0.16,1,0.3,1);
+  --motion-enter:580ms;--motion-stagger:120ms;--motion-stagger-cap:7;--motion-expand:380ms;--motion-chevron:200ms;
+  --motion-progress:500ms;--motion-progress-enter:800ms;--motion-press:130ms;--motion-toggle:210ms;--motion-new:580ms;
+  --motion-exit:300ms;--motion-page:190ms;--motion-ease:cubic-bezier(0.25,0.1,0.25,1);
 }
 @media (prefers-reduced-motion:reduce){
   :root{
@@ -1635,23 +1636,17 @@ body.home183 .demo183.is-demo-active{
     --motion-exit:0ms;--motion-page:0ms;
   }
 }
-@keyframes freedomCardEnter{
-  0%{opacity:0;transform:translateY(4px)}
-  100%{opacity:1;transform:translateY(0)}
-}
-@keyframes freedomCardNew{
-  0%{opacity:0;transform:translateY(4px)}
-  100%{opacity:1;transform:translateY(0)}
-}
+@keyframes freedomCardEnter{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes freedomCardNew{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes freedomCardExit{from{opacity:1;transform:translateY(0);max-height:900px;margin-bottom:14px}to{opacity:0;transform:translateY(-8px);max-height:0;margin-bottom:0;padding-top:0;padding-bottom:0}}
 @keyframes freedomPageEnter{from{opacity:.92;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 @keyframes freedomLandscapeSignWrite{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 @keyframes freedomBodyIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes freedomValueFade{0%{opacity:.58}100%{opacity:1}}
 .page.freedom-page-enter{animation:freedomPageEnter var(--motion-page) var(--motion-ease) both}
-.freedom-card-pre-enter{opacity:0;transform:translateY(4px);will-change:opacity,transform}
-.freedom-card-enter{animation:freedomCardEnter var(--motion-enter) var(--motion-enter-ease) both;animation-delay:var(--motion-delay,0ms)}
-.freedom-card-new{animation:freedomCardNew var(--motion-new) var(--motion-enter-ease) both}
+.freedom-card-pre-enter{opacity:0;transform:translateY(10px);will-change:opacity,transform}
+.freedom-card-enter{animation:freedomCardEnter var(--motion-enter) var(--motion-ease) both;animation-delay:var(--motion-delay,0ms)}
+.freedom-card-new{animation:freedomCardNew var(--motion-new) var(--motion-ease) both}
 .freedom-card-exit{overflow:hidden;pointer-events:none;animation:freedomCardExit var(--motion-exit) var(--motion-ease) forwards}
 .card-body-wrap{display:grid;grid-template-rows:1fr;transition:grid-template-rows var(--motion-expand) var(--motion-ease)}
 .card-body-wrap.is-collapsed{grid-template-rows:0fr}
@@ -2287,7 +2282,7 @@ function showDemoWelcomeOverlay(){
     requestAnimationFrame(()=>{
       overlay.classList.add("is-entering");
       if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){revealDemoWelcomeButton(btn);return;}
-      demoWelcomeBtnTimer=setTimeout(()=>revealDemoWelcomeButton(btn),3655);
+      demoWelcomeBtnTimer=setTimeout(()=>revealDemoWelcomeButton(btn),1828);
     });
   });
 }
@@ -2415,11 +2410,11 @@ const freedomMotion={
   },
   staggerDelay(i){
     const cap=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--motion-stagger-cap"),10)||7;
-    const step=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--motion-stagger"),10)||38;
+    const step=parseInt(getComputedStyle(document.documentElement).getPropertyValue("--motion-stagger"),10)||120;
     return Math.min(i,cap)*step;
   },
   enterDuration(){
-    return parseInt(getComputedStyle(document.documentElement).getPropertyValue("--motion-enter"),10)||200;
+    return parseInt(getComputedStyle(document.documentElement).getPropertyValue("--motion-enter"),10)||580;
   },
   pageCards(pageId){
     const map={overview:"#overview .overview-card",journey:"#loanList > .loan-card",goals:"#goalsList > .goal-card",pension:"#pensionList > .pension-card"};
