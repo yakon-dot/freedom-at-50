@@ -1435,16 +1435,21 @@ body.home183 .patricia-note-doodle{
 body.home183 .patricia-note-close{
   top:3%;right:7%;
 }
-@keyframes patriciaNoteHomeLand{
-  0%{opacity:0;transform:scale(1.14) translateY(-8px)}
-  50%{opacity:1}
-  100%{opacity:1;transform:scale(1) translateY(0)}
+@keyframes patriciaNoteHomeMaterialise{
+  0%{opacity:0;filter:blur(5px)}
+  100%{opacity:1;filter:blur(0)}
 }
 body.home183 .patricia-note[data-note-id="home"]{
-  opacity:0;transform:scale(1.14) translateY(-8px);transform-origin:center center;
+  opacity:0;filter:blur(5px);
 }
 body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
-  animation:patriciaNoteHomeLand 450ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation:patriciaNoteHomeMaterialise 2200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+body.home183 .patricia-note[data-note-id="home"].patricia-note-enter .patricia-note-close{
+  pointer-events:none;
+}
+body.home183 .patricia-note[data-note-id="home"].patricia-note-close-ready .patricia-note-close{
+  pointer-events:auto;
 }
 .patricia-note-close:active{opacity:.62}
 .freedom-confetti-canvas{
@@ -1668,7 +1673,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 .freedom-value-flash{animation:freedomValueFade 220ms ease-out}
 @media (prefers-reduced-motion:reduce){
   .page.freedom-page-enter,.freedom-card-enter,.freedom-card-new,.freedom-card-exit,.card-body-wrap:not(.is-collapsed)>.journey-card-body.freedom-body-reveal,.freedom-value-flash{animation:none!important}
-  body.home183 .patricia-note[data-note-id="home"]{animation:none!important;opacity:1!important;transform:none!important}
+  body.home183 .patricia-note[data-note-id="home"]{animation:none!important;opacity:1!important;filter:none!important}
   #demoWelcomeOverlay .demo-welcome-line-row,#demoWelcomeOverlay.is-entering .demo-welcome-line-row{animation:none!important;opacity:1!important}
   #demoWelcomeOverlay .demo-welcome-btn,#demoWelcomeOverlay .demo-welcome-btn.is-visible{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transition:none!important}
   .card-body-wrap,.card-body-wrap>.journey-card-body,.progress span,.loan-card.is-dragging,.goal-card.is-dragging,.pension-card.is-dragging{transition:none!important}
@@ -2141,7 +2146,10 @@ function renderPatriciaNote(note){
   layer.appendChild(wrap);
   layer.hidden=false;
   if(note.id==="home"){
-    requestAnimationFrame(()=>{requestAnimationFrame(()=>{wrap.classList.add("patricia-note-enter");});});
+    requestAnimationFrame(()=>{requestAnimationFrame(()=>{
+      wrap.classList.add("patricia-note-enter");
+      setTimeout(()=>wrap.classList.add("patricia-note-close-ready"),1000);
+    });});
   }
 }
 function showPatriciaNoteIfNeeded(key){
@@ -2165,7 +2173,7 @@ function handleDemoPageVisit(id){
 }
 function handleDemoHomeShown(){
   if(!demoMode)return;
-  setTimeout(()=>showPatriciaNoteIfNeeded("home"),150);
+  showPatriciaNoteIfNeeded("home");
 }
 function checkJourneyCompletionCelebration(loan,prevCurrent){
   if(prevCurrent<=0||loan.current>0)return;
