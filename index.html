@@ -1457,17 +1457,10 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
   100%{transform:scale(.72) translateZ(0);opacity:0;filter:blur(8px)}
 }
 @media (prefers-reduced-motion:reduce){
-  .demo183.is-demo-active,.demo183.is-demo-active.demo183,.demo183[data-demo-active="true"]{animation:none!important}
-  .demo183:not(.is-demo-active):not([data-demo-active="true"]),
-  .demo183:not(.is-demo-active):not([data-demo-active="true"])::before,
-  .demo183:not(.is-demo-active):not([data-demo-active="true"])::after{animation:none!important;box-shadow:none!important}
+  .demo183.is-demo-active,.demo183.is-demo-active.demo183{animation:none!important}
   .demo183-wrap .subwrap183,.demo183-wrap .subwrap183 .sub183{transition:none!important}
   .demo183-wrap .subwrap183.open .sub183{opacity:1!important;transform:none!important}
   .freedom-victory-dispersed{animation:freedomVictoryDispersedReduced 260ms ease forwards}
-}
-@keyframes demo183Breathe{
-  0%,100%{opacity:.78;border-color:rgba(239,203,170,.16);box-shadow:0 4px 14px rgba(0,0,0,.12)}
-  50%{opacity:1;border-color:rgba(239,203,170,.46);box-shadow:0 4px 22px rgba(239,203,170,.24)}
 }
 @keyframes demo183BreatheActive{
   0%,100%{opacity:1}
@@ -1488,16 +1481,10 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
 }
 .demo183::before,.demo183::after{
   content:none;position:absolute;inset:0;border-radius:inherit;pointer-events:none;
-  animation:none!important;box-shadow:none!important;border:0;
-}
-.demo183:not(.is-demo-active):not([data-demo-active="true"]),
-.demo183:not(.is-demo-active):not([data-demo-active="true"])::before,
-.demo183:not(.is-demo-active):not([data-demo-active="true"])::after{
-  animation:none!important;box-shadow:none!important;
+  animation:none;box-shadow:none;border:0;
 }
 .demo183:not(.is-demo-active):active{opacity:.55}
-.demo183.is-demo-active,
-.demo183[data-demo-active="true"]{
+.demo183.is-demo-active{
   min-height:42px;padding:0 14px;border-radius:14px;
   border-color:rgba(132,189,145,.42);background:#b0cdb8;
   color:#17150b;font-size:10px;font-weight:800;letter-spacing:.13em;
@@ -1511,14 +1498,7 @@ body.home183 .demo183{
   color:#efe9e0;font-size:10px;font-weight:800;letter-spacing:.13em;
   animation:none;opacity:1;box-shadow:none;
 }
-body.home183 .demo183:not(.is-demo-active):not([data-demo-active="true"]),
-body.home183 .demo183:not(.is-demo-active):not([data-demo-active="true"])::before,
-body.home183 .demo183:not(.is-demo-active):not([data-demo-active="true"])::after{
-  animation:none!important;box-shadow:none!important;
-  border-color:rgba(239,203,170,.22);
-}
-body.home183 .demo183.is-demo-active,
-body.home183 .demo183[data-demo-active="true"]{
+body.home183 .demo183.is-demo-active{
   border-color:rgba(132,189,145,.42);background:#b0cdb8;color:#17150b;
   backdrop-filter:none;-webkit-backdrop-filter:none;
   animation:demo183BreatheActive 1.5s ease-in-out infinite;
@@ -2058,36 +2038,27 @@ const PATRICIA_NOTE_COPY={
   runawayMoney:{id:"runawayMoney",text:"Runaway Money just got bigger.\nNot suggesting anything. Just admiring the options.",doodle:"patricia-eyes.png"}
 };
 function resetDemoSession(){demoSession={dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};}
+const DEMO_BTN_CLASS="demo183";
+function cancelDemoButtonAnimations(btn){
+  const wrap=byId("demo183Wrap");
+  [btn,wrap].filter(Boolean).forEach(el=>{
+    if(typeof el.getAnimations==="function")el.getAnimations({subtree:true}).forEach(a=>a.cancel());
+  });
+}
 function applyDemoButtonState(btn){
   if(!btn)return;
-  const onHome=document.body.classList.contains("home183");
-  const inactiveBorder=onHome?"rgba(239, 203, 170, 0.22)":"rgba(239, 203, 170, 0.16)";
   if(demoMode){
-    btn.dataset.demoActive="true";
+    btn.className=DEMO_BTN_CLASS;
     btn.classList.add("is-demo-active");
-    btn.style.removeProperty("animation");
-    btn.style.removeProperty("opacity");
-    btn.style.removeProperty("box-shadow");
-    btn.style.removeProperty("border-color");
-    btn.style.removeProperty("transform");
-    btn.style.removeProperty("will-change");
+    btn.removeAttribute("data-demo-active");
+    btn.style.cssText="";
     return;
   }
-  btn.classList.remove("is-demo-active");
-  btn.dataset.demoActive="false";
-  if(typeof btn.getAnimations==="function")btn.getAnimations().forEach(a=>a.cancel());
-  btn.style.setProperty("animation","none","important");
-  btn.style.setProperty("opacity","1","important");
-  btn.style.setProperty("box-shadow","none","important");
-  btn.style.setProperty("border-color",inactiveBorder,"important");
-  btn.style.setProperty("will-change","auto","important");
+  cancelDemoButtonAnimations(btn);
+  btn.className=DEMO_BTN_CLASS;
+  btn.removeAttribute("data-demo-active");
+  btn.style.cssText="";
   void btn.offsetHeight;
-  btn.style.removeProperty("animation");
-  btn.style.removeProperty("opacity");
-  btn.style.removeProperty("box-shadow");
-  btn.style.removeProperty("border-color");
-  btn.style.removeProperty("transform");
-  btn.style.removeProperty("will-change");
 }
 function syncDemoUi(){
   document.body.classList.toggle("demo-mode-active",demoMode);
@@ -2331,6 +2302,7 @@ function exitDemo(){
   syncDemoUi();
   if(typeof window.showHome==="function")window.showHome();
   render();
+  applyDemoButtonState(byId("demo183"));
 }
 function continueFromWelcome(){
   hideDemoWelcomeOverlay();
@@ -4401,7 +4373,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1867",
+        "./service-worker.js?v=1868",
         { updateViaCache: "none" }
       );
 
