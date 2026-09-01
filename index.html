@@ -1348,12 +1348,13 @@ body.home183 .demo183-wrap{
 }
 .demo-entry-headline-line{display:block}
 .demo-entry-card p:last-of-type{margin-bottom:18px;color:rgba(190,188,182,.68)}
-.demo-enter-btn{
-  width:auto;border:0;border-radius:10px;padding:9px 18px;
-  background:#efcbaa;color:#17150b;font-size:13px;font-weight:700;cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
+.demo-outline-btn{
+  width:auto;min-width:128px;border:1px solid rgba(255,255,255,.82);border-radius:999px;
+  padding:10px 26px;background:transparent;color:#fff;font-size:14px;font-weight:650;
+  letter-spacing:.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
-.demo-enter-btn:active{opacity:.82}
+.demo-outline-btn:active{opacity:.72}
+.demo-enter-btn{border-color:rgba(239,203,170,.82);color:#efcbaa}
 .demo-welcome-lines{
   margin:0 0 38px;display:flex;flex-direction:column;align-items:center;gap:0.08em;
   max-width:100%;
@@ -1378,15 +1379,11 @@ body.home183 .demo183-wrap{
   to{opacity:1;transform:translateY(0)}
 }
 .demo-welcome-btn{
-  width:auto;min-width:128px;border:1px solid rgba(255,255,255,.82);border-radius:999px;
-  padding:10px 26px;background:transparent;color:#fff;font-size:14px;font-weight:650;
-  letter-spacing:.02em;cursor:pointer;-webkit-tap-highlight-color:transparent;
   opacity:0;visibility:hidden;pointer-events:none;
   transition:opacity 470ms ease-out;
 }
 .demo-welcome-btn.is-visible{visibility:visible;opacity:1}
 .demo-welcome-btn.is-active{pointer-events:auto}
-.demo-welcome-btn:active{opacity:.72}
 .patricia-note-layer{
   position:fixed;inset:0;z-index:9700;pointer-events:none;
   display:flex;align-items:flex-start;justify-content:center;
@@ -1755,7 +1752,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     <button class="demo-entry-close" id="demoEntryClose" type="button" aria-label="Close">&times;</button>
     <p class="demo-entry-headline"><span class="demo-entry-headline-line">Showing this to someone?</span><span class="demo-entry-headline-line">Good choice.</span></p>
     <p>Your real numbers will stay safely tucked away.</p>
-    <button class="demo-enter-btn" id="demoEnterBtn" type="button">Enter Demo Mode</button>
+    <button class="demo-outline-btn demo-enter-btn" id="demoEnterBtn" type="button">Enter Demo Mode</button>
   </div>
 </div>
 <div class="demo-overlay" id="demoWelcomeOverlay" hidden>
@@ -1765,7 +1762,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       <p class="demo-welcome-line-row">Have a look around.</p>
       <p class="demo-welcome-line-row">I've tidied up.</p>
     </div>
-    <button class="demo-welcome-btn" id="demoWelcomeContinue" type="button">Continue</button>
+    <button class="demo-outline-btn demo-welcome-btn" id="demoWelcomeContinue" type="button">Continue</button>
   </div>
 </div>
 <div class="patricia-note-layer" id="patriciaNoteLayer" hidden></div>
