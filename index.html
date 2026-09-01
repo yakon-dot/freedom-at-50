@@ -1458,6 +1458,7 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
 }
 @media (prefers-reduced-motion:reduce){
   .demo183.is-demo-active,.demo183.is-demo-active.demo183{animation:none!important}
+  .demo183.is-demo-active::before,.demo183.is-demo-active .demo183-pulse{animation:none!important}
   .demo183-wrap .subwrap183,.demo183-wrap .subwrap183 .sub183{transition:none!important}
   .demo183-wrap .subwrap183.open .sub183{opacity:1!important;transform:none!important}
   .freedom-victory-dispersed{animation:freedomVictoryDispersedReduced 260ms ease forwards}
@@ -1486,9 +1487,18 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
 .demo183:not(.is-demo-active):active{opacity:.55}
 .demo183.is-demo-active{
   min-height:42px;padding:0 14px;border-radius:14px;
-  border-color:rgba(132,189,145,.42);background:#b0cdb8;
+  border-color:rgba(132,189,145,.42);background:transparent;
   color:#17150b;font-size:10px;font-weight:800;letter-spacing:.13em;
   backdrop-filter:none;-webkit-backdrop-filter:none;
+  animation:none;opacity:1;will-change:auto;
+}
+.demo183.is-demo-active::before{
+  content:"";z-index:0;background:#b0cdb8;
+  animation:demo183BreatheActive 1.5s ease-in-out infinite;
+  will-change:opacity;
+}
+.demo183.is-demo-active .demo183-pulse{
+  position:relative;z-index:1;
   animation:demo183BreatheActive 1.5s ease-in-out infinite;
   will-change:opacity;
 }
@@ -1499,10 +1509,9 @@ body.home183 .demo183{
   animation:none;opacity:1;box-shadow:none;
 }
 body.home183 .demo183.is-demo-active{
-  border-color:rgba(132,189,145,.42);background:#b0cdb8;color:#17150b;
+  border-color:rgba(132,189,145,.42);background:transparent;color:#17150b;
   backdrop-filter:none;-webkit-backdrop-filter:none;
-  animation:demo183BreatheActive 1.5s ease-in-out infinite;
-  will-change:opacity;
+  animation:none;opacity:1;will-change:auto;
 }
 @media(min-width:821px){.demo183-wrap{display:none!important}}
 @media(min-width:821px){.mobile183{display:none!important}}
@@ -1680,7 +1689,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   </div>
 </div>
 <div class="demo183-wrap" id="demo183Wrap">
-  <button class="demo183" id="demo183" type="button" aria-label="Demo Mode" aria-expanded="false">DEMO MODE</button>
+  <button class="demo183" id="demo183" type="button" aria-label="Demo Mode" aria-expanded="false"><span class="demo183-pulse">DEMO MODE</span></button>
   <div class="subwrap183" id="demoMenu" aria-hidden="true">
     <button class="sub183" type="button" data-demo-action="exit">Exit Demo Mode</button>
     <button class="sub183" type="button" data-demo-action="share">Share Freedom</button>
@@ -2039,6 +2048,19 @@ const PATRICIA_NOTE_COPY={
 };
 function resetDemoSession(){demoSession={dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};}
 const DEMO_BTN_CLASS="demo183";
+const DEMO_BTN_LABEL="DEMO MODE";
+function ensureDemoButtonLabel(btn){
+  if(!btn)return null;
+  let pulse=btn.querySelector(".demo183-pulse");
+  if(!pulse){
+    pulse=document.createElement("span");
+    pulse.className="demo183-pulse";
+    pulse.textContent=DEMO_BTN_LABEL;
+    btn.textContent="";
+    btn.appendChild(pulse);
+  }
+  return pulse;
+}
 function cancelDemoButtonAnimations(btn){
   const wrap=byId("demo183Wrap");
   [btn,wrap].filter(Boolean).forEach(el=>{
@@ -2047,6 +2069,7 @@ function cancelDemoButtonAnimations(btn){
 }
 function applyDemoButtonState(btn){
   if(!btn)return;
+  ensureDemoButtonLabel(btn);
   if(demoMode){
     btn.className=DEMO_BTN_CLASS;
     btn.classList.add("is-demo-active");
@@ -4373,7 +4396,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1868",
+        "./service-worker.js?v=1869",
         { updateViaCache: "none" }
       );
 
