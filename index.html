@@ -1395,7 +1395,8 @@ body.home183 .demo183-wrap{
   display:flex;align-items:flex-start;justify-content:center;
   padding:calc(72px + env(safe-area-inset-top,0px)) 18px 18px;
 }
-body.home183 .patricia-note-layer{
+body.home183 .patricia-note-layer,
+.patricia-note-layer.is-sticky-centered{
   align-items:center;
   justify-content:center;
   padding:calc(150px + env(safe-area-inset-top,0px)) 20px calc(130px + env(safe-area-inset-bottom,0px));
@@ -1410,7 +1411,8 @@ body.home183 .patricia-note-layer{
   position:absolute;inset:13% 16% 26% 13%;display:flex;flex-direction:column;
   justify-content:flex-start;gap:2px;overflow:hidden;
 }
-body.home183 .patricia-note-body{
+body.home183 .patricia-note-body,
+.patricia-note.is-demo-sticky .patricia-note-body{
   inset:18% 8% 24% 10%;gap:3px;justify-content:center;
   transform:rotate(-2deg);transform-origin:50% 50%;
 }
@@ -1419,15 +1421,27 @@ body.home183 .patricia-note-body{
   font-size:clamp(14px,3.65vw,17px);line-height:1.18;font-weight:500;
   color:#5c3a2e;text-align:left;
 }
-body.home183 .patricia-note-text{
+body.home183 .patricia-note-text,
+.patricia-note.is-demo-sticky .patricia-note-text{
   font-size:clamp(21px,5.9vw,23px);line-height:1.12;text-align:center;
 }
-body.home183 .patricia-note-body > .patricia-note-text{max-width:90%;align-self:center}
-body.home183 .patricia-note-footer{
+/* Journey: same Caveat family; slightly roomier now that eyes are Home-only */
+.patricia-note.is-demo-sticky[data-note-id="journeyFirst"] .patricia-note-body{
+  inset:20% 9% 26% 10%;gap:4px;justify-content:center;
+}
+.patricia-note.is-demo-sticky[data-note-id="journeyFirst"] .patricia-note-text{
+  font-size:clamp(19px,5.3vw,21px);line-height:1.14;
+}
+body.home183 .patricia-note-body > .patricia-note-text,
+.patricia-note.is-demo-sticky .patricia-note-body > .patricia-note-text{max-width:90%;align-self:center}
+body.home183 .patricia-note-footer,
+.patricia-note.is-demo-sticky .patricia-note-footer{
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;margin-top:2px;
 }
-body.home183 .patricia-note-footer .patricia-note-text{flex:0 1 auto;margin:0}
-body.home183 .patricia-note-doodle{
+body.home183 .patricia-note-footer .patricia-note-text,
+.patricia-note.is-demo-sticky .patricia-note-footer .patricia-note-text{flex:0 1 auto;margin:0}
+body.home183 .patricia-note-doodle,
+.patricia-note.is-demo-sticky .patricia-note-doodle{
   width:min(22%,46px);height:auto;align-self:center;margin:0;flex-shrink:0;
 }
 .patricia-note-doodle{width:min(30%,54px);height:auto;align-self:flex-start;margin-top:3px;flex-shrink:0}
@@ -1437,26 +1451,32 @@ body.home183 .patricia-note-doodle{
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
   cursor:pointer;-webkit-tap-highlight-color:transparent;padding:0;
 }
-body.home183 .patricia-note-close{
+body.home183 .patricia-note-close,
+.patricia-note.is-demo-sticky .patricia-note-close{
   top:3%;right:7%;
 }
 @keyframes patriciaNoteHomeMaterialise{
   0%{opacity:0;filter:blur(5px)}
   100%{opacity:1;filter:blur(0)}
 }
-body.home183 .patricia-note[data-note-id="home"]{
+body.home183 .patricia-note[data-note-id="home"],
+.patricia-note.is-demo-sticky{
   opacity:0;filter:blur(5px);
 }
-body.home183 .patricia-note[data-note-id="home"].patricia-note-preparing{
+body.home183 .patricia-note[data-note-id="home"].patricia-note-preparing,
+.patricia-note.is-demo-sticky.patricia-note-preparing{
   will-change:opacity,filter;transform:translateZ(0);
 }
-body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
+body.home183 .patricia-note[data-note-id="home"].patricia-note-enter,
+.patricia-note.is-demo-sticky.patricia-note-enter{
   animation:patriciaNoteHomeMaterialise 2200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
-body.home183 .patricia-note[data-note-id="home"].patricia-note-enter .patricia-note-close{
+body.home183 .patricia-note[data-note-id="home"].patricia-note-enter .patricia-note-close,
+.patricia-note.is-demo-sticky.patricia-note-enter .patricia-note-close{
   pointer-events:none;
 }
-body.home183 .patricia-note[data-note-id="home"].patricia-note-close-ready .patricia-note-close{
+body.home183 .patricia-note[data-note-id="home"].patricia-note-close-ready .patricia-note-close,
+.patricia-note.is-demo-sticky.patricia-note-close-ready .patricia-note-close{
   pointer-events:auto;
 }
 .patricia-note-close:active{opacity:.62}
@@ -1681,7 +1701,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 .freedom-value-flash{animation:freedomValueFade 220ms ease-out}
 @media (prefers-reduced-motion:reduce){
   .page.freedom-page-enter,.freedom-card-enter,.freedom-card-new,.freedom-card-exit,.card-body-wrap:not(.is-collapsed)>.journey-card-body.freedom-body-reveal,.freedom-value-flash{animation:none!important}
-  body.home183 .patricia-note[data-note-id="home"]{animation:none!important;opacity:1!important;filter:none!important}
+  body.home183 .patricia-note[data-note-id="home"],
+  .patricia-note.is-demo-sticky{animation:none!important;opacity:1!important;filter:none!important}
   #demoWelcomeOverlay .demo-welcome-line-row,#demoWelcomeOverlay.is-entering .demo-welcome-line-row{animation:none!important;opacity:1!important}
   #demoWelcomeOverlay .demo-welcome-btn,#demoWelcomeOverlay .demo-welcome-btn.is-visible{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transition:none!important}
   .card-body-wrap,.card-body-wrap>.journey-card-body,.progress span,.loan-card.is-dragging,.goal-card.is-dragging,.pension-card.is-dragging{transition:none!important}
@@ -2055,8 +2076,8 @@ function showSaved(){const note=byId("saveNote");note.classList.add("show");clea
 function persistDemoSession(){sessionStorage.setItem(DEMO_SESSION_KEY,JSON.stringify({demoMode:true,state,demoSession}));}
 function persist(){if(demoMode){persistDemoSession();return;}localStorage.setItem(KEY,JSON.stringify(state));showSaved();}
 const PATRICIA_NOTE_COPY={
-  home:{id:"home",text:"That credit card has €200 left.\njust saying...",doodle:"patricia-eyes.png"},
-  journeyFirst:{id:"journeyFirst",text:"This is where we keep the things we're getting rid of.\nFinancially speaking. I'm not running a skip."},
+  home:{id:"home",text:"That credit card has €200 left.\njust saying...",doodle:"patricia-eyes.png",sticky:true},
+  journeyFirst:{id:"journeyFirst",text:"This is where we keep the\nthings we're getting rid of.\nFinancially speaking.\nI'm not running a skip.",sticky:true},
   goalsFirst:{id:"goalsFirst",text:"This is where the good stuff lives.\nHouses. Japan. Runaway money.\nPersonally, I'd add a frozen cocktail machine."},
   creditCardComplete:{id:"creditCardComplete",text:"YES! You did it! That credit card is officially history.\nI'd suggest a moment of silence, but I prefer frozen cocktails.",doodle:"patricia-celebration.png"},
   lifeHappens:{id:"lifeHappens",text:"Life happens. Sometimes the plan needs a little detour.\nWe're flexible. My knees, less so."},
@@ -2120,10 +2141,12 @@ function toggleDemoMenu(){
 }
 const DEMO_HOME_NOTE_ASSETS=["./sticky-note.png","./patricia-eyes.png"];
 let demoHomeAssetsPromise=null;
-let homeNoteCloseReadyTimer=null;
-function clearHomeNoteAnimationTimers(){
-  if(homeNoteCloseReadyTimer){clearTimeout(homeNoteCloseReadyTimer);homeNoteCloseReadyTimer=null;}
+let patriciaNoteCloseReadyTimer=null;
+let journeyNoteShowToken=0;
+function clearPatriciaNoteAnimationTimers(){
+  if(patriciaNoteCloseReadyTimer){clearTimeout(patriciaNoteCloseReadyTimer);patriciaNoteCloseReadyTimer=null;}
 }
+function clearHomeNoteAnimationTimers(){clearPatriciaNoteAnimationTimers();}
 function decodeDemoImage(url){
   return new Promise(resolve=>{
     const img=new Image();
@@ -2144,6 +2167,7 @@ function prepareDemoHomeAssets(){
   const fontReady=(document.fonts&&document.fonts.load)
     ? Promise.all([
         document.fonts.load("500 23px Caveat"),
+        document.fonts.load("500 20px Caveat"),
         document.fonts.load("400 39px Caveat"),
         document.fonts.ready
       ]).catch(()=>{})
@@ -2168,24 +2192,46 @@ function startHomePatriciaNoteAnimation(wrap){
   };
   wrap.addEventListener("animationend",onEnd);
   wrap.classList.add("patricia-note-enter");
-  clearHomeNoteAnimationTimers();
-  homeNoteCloseReadyTimer=setTimeout(()=>wrap.classList.add("patricia-note-close-ready"),1000);
+  clearPatriciaNoteAnimationTimers();
+  patriciaNoteCloseReadyTimer=setTimeout(()=>wrap.classList.add("patricia-note-close-ready"),1000);
+}
+function syncPatriciaStickyLayerClass(){
+  const layer=byId("patriciaNoteLayer");
+  if(!layer)return;
+  const hasSticky=!!layer.querySelector(".patricia-note.is-demo-sticky");
+  layer.classList.toggle("is-sticky-centered",hasSticky);
 }
 function dismissAllPatriciaNotes(){
-  clearHomeNoteAnimationTimers();
+  journeyNoteShowToken++;
+  clearPatriciaNoteAnimationTimers();
   const layer=byId("patriciaNoteLayer");
-  if(layer){layer.innerHTML="";layer.hidden=true;}
+  if(layer){layer.innerHTML="";layer.hidden=true;layer.classList.remove("is-sticky-centered");}
+}
+function hidePatriciaNote(id){
+  const layer=byId("patriciaNoteLayer");
+  const note=layer?.querySelector(`[data-note-id="${id}"]`);
+  if(!note)return;
+  if(note.classList.contains("is-demo-sticky"))clearPatriciaNoteAnimationTimers();
+  note.remove();
+  syncPatriciaStickyLayerClass();
+  if(layer&&!layer.children.length){layer.hidden=true;layer.classList.remove("is-sticky-centered");}
+}
+function hideOtherPatriciaNotes(keepId){
+  const layer=byId("patriciaNoteLayer");
+  if(!layer)return;
+  [...layer.querySelectorAll(".patricia-note")].forEach(el=>{
+    if(el.dataset.noteId===keepId)return;
+    if(el.classList.contains("is-demo-sticky"))clearPatriciaNoteAnimationTimers();
+    el.remove();
+  });
+  syncPatriciaStickyLayerClass();
+  if(!layer.children.length){layer.hidden=true;layer.classList.remove("is-sticky-centered");}
 }
 function dismissPatriciaNote(id){
   demoSession.dismissedNotes[id]=true;
   if(demoMode)persistDemoSession();
-  const layer=byId("patriciaNoteLayer");
-  const note=layer?.querySelector(`[data-note-id="${id}"]`);
-  if(note){
-    if(note.dataset.noteId==="home")clearHomeNoteAnimationTimers();
-    note.remove();
-  }
-  if(layer&&!layer.children.length)layer.hidden=true;
+  if(id==="journeyFirst")journeyNoteShowToken++;
+  hidePatriciaNote(id);
 }
 function renderPatriciaNote(note,options){
   if(!note||demoSession.dismissedNotes[note.id])return null;
@@ -2194,15 +2240,19 @@ function renderPatriciaNote(note,options){
   const existing=layer.querySelector(`[data-note-id="${note.id}"]`);
   if(existing)return existing;
   const deferEnter=!!(options&&options.deferEnter);
+  const sticky=!!note.sticky;
   const wrap=document.createElement("div");
-  wrap.className="patricia-note";
+  wrap.className="patricia-note"+(sticky?" is-demo-sticky":"");
   wrap.dataset.noteId=note.id;
   const lines=note.text.split("\n");
   let bodyHtml;
+  // Eyes/doodle footer is Home-only — not part of the default sticky layout.
   if(note.id==="home"&&note.doodle&&lines.length>1){
     const lead=lines.slice(0,-1).map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
     const last=lines[lines.length-1];
     bodyHtml=`${lead}<div class="patricia-note-footer"><p class="patricia-note-text">${esc(last)}</p><img class="patricia-note-doodle" src="./${note.doodle}" alt="" decoding="async"></div>`;
+  }else if(sticky){
+    bodyHtml=lines.map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
   }else{
     const textHtml=lines.map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
     const doodleHtml=note.doodle?`<img class="patricia-note-doodle" src="./${note.doodle}" alt="" decoding="async">`:"";
@@ -2210,13 +2260,14 @@ function renderPatriciaNote(note,options){
   }
   wrap.innerHTML=`<button class="patricia-note-close" type="button" aria-label="Dismiss note">&times;</button><img class="patricia-note-paper" src="./sticky-note.png" alt="" decoding="async"><div class="patricia-note-body">${bodyHtml}</div>`;
   wrap.querySelector(".patricia-note-close").addEventListener("click",()=>dismissPatriciaNote(note.id));
-  if(note.id==="home"&&deferEnter){
+  if(sticky&&deferEnter){
     wrap.classList.add("patricia-note-preparing");
     wrap.style.willChange="opacity,filter";
   }
   layer.appendChild(wrap);
   layer.hidden=false;
-  if(note.id==="home"&&!deferEnter){
+  syncPatriciaStickyLayerClass();
+  if(sticky&&!deferEnter){
     waitTwoAnimationFrames().then(()=>startHomePatriciaNoteAnimation(wrap));
   }
   return wrap;
@@ -2226,19 +2277,6 @@ function showPatriciaNoteIfNeeded(key){
   const note=PATRICIA_NOTE_COPY[key];
   if(!note||demoSession.dismissedNotes[note.id])return;
   renderPatriciaNote(note);
-}
-function handleDemoPageVisit(id){
-  if(!demoMode)return;
-  if(id==="journey"&&!demoSession.visited.journey){
-    demoSession.visited.journey=true;
-    persistDemoSession();
-    setTimeout(()=>showPatriciaNoteIfNeeded("journeyFirst"),420);
-  }
-  if(id==="goals"&&!demoSession.visited.goals){
-    demoSession.visited.goals=true;
-    persistDemoSession();
-    setTimeout(()=>showPatriciaNoteIfNeeded("goalsFirst"),420);
-  }
 }
 function decodeMountedNoteImages(wrap){
   if(!wrap)return Promise.resolve();
@@ -2257,9 +2295,7 @@ function decodeMountedNoteImages(wrap){
     return Promise.resolve();
   }));
 }
-function handleDemoHomeShown(){
-  if(!demoMode)return;
-  const note=PATRICIA_NOTE_COPY.home;
+function scheduleStickyPatriciaNote(note,guard){
   if(!note||demoSession.dismissedNotes[note.id])return;
   prepareDemoHomeAssets();
   const wrap=renderPatriciaNote(note,{deferEnter:true});
@@ -2272,9 +2308,45 @@ function handleDemoHomeShown(){
   ]);
   const delayReady=new Promise(resolve=>setTimeout(resolve,1000));
   Promise.all([assetsReady,delayReady]).then(()=>waitTwoAnimationFrames()).then(()=>{
-    if(!demoMode||!wrap.isConnected||demoSession.dismissedNotes.home)return;
+    if(!demoMode||!wrap.isConnected||demoSession.dismissedNotes[note.id])return;
+    if(typeof guard==="function"&&!guard())return;
     startHomePatriciaNoteAnimation(wrap);
   });
+}
+function handleDemoHomeShown(){
+  if(!demoMode)return;
+  journeyNoteShowToken++;
+  hideOtherPatriciaNotes("home");
+  const note=PATRICIA_NOTE_COPY.home;
+  if(!note||demoSession.dismissedNotes[note.id])return;
+  scheduleStickyPatriciaNote(note,()=>document.body.classList.contains("home183"));
+}
+function handleDemoJourneyShown(){
+  if(!demoMode)return;
+  const note=PATRICIA_NOTE_COPY.journeyFirst;
+  if(!note||demoSession.dismissedNotes[note.id])return;
+  hideOtherPatriciaNotes("journeyFirst");
+  const token=++journeyNoteShowToken;
+  scheduleStickyPatriciaNote(note,()=>token===journeyNoteShowToken&&!!byId("journey")?.classList.contains("active")&&!document.body.classList.contains("home183"));
+}
+function handleDemoPageVisit(id){
+  if(!demoMode)return;
+  if(id!=="journey"){
+    journeyNoteShowToken++;
+    hidePatriciaNote("journeyFirst");
+  }
+  if(id==="journey"){
+    if(!demoSession.visited.journey){
+      demoSession.visited.journey=true;
+      persistDemoSession();
+    }
+    handleDemoJourneyShown();
+  }
+  if(id==="goals"&&!demoSession.visited.goals){
+    demoSession.visited.goals=true;
+    persistDemoSession();
+    setTimeout(()=>showPatriciaNoteIfNeeded("goalsFirst"),420);
+  }
 }
 function checkJourneyCompletionCelebration(loan,prevCurrent){
   if(prevCurrent<=0||loan.current>0)return;
@@ -2678,6 +2750,8 @@ window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change",
 
 function page(id){
   if(id==="home"){
+    journeyNoteShowToken++;
+    hidePatriciaNote("journeyFirst");
     if(typeof window.showHome==="function"){window.showHome();return}
   }
   if(typeof window.hideHome==="function")window.hideHome();
@@ -2724,6 +2798,7 @@ function page(id){
         });
       });
     }
+    handleDemoPageVisit(id);
     return;
   }
   if(["overview","journey","goals","pension"].includes(id)){
@@ -4516,7 +4591,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1872",
+        "./service-worker.js?v=1873",
         { updateViaCache: "none" }
       );
 
