@@ -1442,6 +1442,9 @@ body.home183 .patricia-note-close{
 body.home183 .patricia-note[data-note-id="home"]{
   opacity:0;filter:blur(5px);
 }
+body.home183 .patricia-note[data-note-id="home"].patricia-note-preparing{
+  will-change:opacity,filter;transform:translateZ(0);
+}
 body.home183 .patricia-note[data-note-id="home"].patricia-note-enter{
   animation:patriciaNoteHomeMaterialise 2200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -2110,7 +2113,61 @@ function toggleDemoMenu(){
   menu.setAttribute("aria-hidden",open?"false":"true");
   btn.setAttribute("aria-expanded",open?"true":"false");
 }
+const DEMO_HOME_NOTE_ASSETS=["./sticky-note.png","./patricia-eyes.png"];
+let demoHomeAssetsPromise=null;
+let homeNoteCloseReadyTimer=null;
+function clearHomeNoteAnimationTimers(){
+  if(homeNoteCloseReadyTimer){clearTimeout(homeNoteCloseReadyTimer);homeNoteCloseReadyTimer=null;}
+}
+function decodeDemoImage(url){
+  return new Promise(resolve=>{
+    const img=new Image();
+    if("decoding" in img)img.decoding="async";
+    const finish=()=>resolve(img);
+    img.onerror=finish;
+    img.onload=()=>{
+      if(typeof img.decode==="function"){
+        img.decode().then(finish).catch(finish);
+      }else finish();
+    };
+    img.src=url;
+  });
+}
+function prepareDemoHomeAssets(){
+  if(demoHomeAssetsPromise)return demoHomeAssetsPromise;
+  const imageReady=Promise.all(DEMO_HOME_NOTE_ASSETS.map(decodeDemoImage));
+  const fontReady=(document.fonts&&document.fonts.load)
+    ? Promise.all([
+        document.fonts.load("500 23px Caveat"),
+        document.fonts.load("400 39px Caveat"),
+        document.fonts.ready
+      ]).catch(()=>{})
+    : Promise.resolve();
+  demoHomeAssetsPromise=Promise.all([imageReady,fontReady]).catch(()=>{});
+  return demoHomeAssetsPromise;
+}
+function waitTwoAnimationFrames(){
+  return new Promise(resolve=>{
+    requestAnimationFrame(()=>{requestAnimationFrame(()=>resolve());});
+  });
+}
+function startHomePatriciaNoteAnimation(wrap){
+  if(!wrap||wrap.classList.contains("patricia-note-enter"))return;
+  wrap.classList.add("patricia-note-preparing");
+  wrap.style.willChange="opacity,filter";
+  const onEnd=e=>{
+    if(e.target!==wrap||e.animationName!=="patriciaNoteHomeMaterialise")return;
+    wrap.style.willChange="";
+    wrap.classList.remove("patricia-note-preparing");
+    wrap.removeEventListener("animationend",onEnd);
+  };
+  wrap.addEventListener("animationend",onEnd);
+  wrap.classList.add("patricia-note-enter");
+  clearHomeNoteAnimationTimers();
+  homeNoteCloseReadyTimer=setTimeout(()=>wrap.classList.add("patricia-note-close-ready"),1000);
+}
 function dismissAllPatriciaNotes(){
+  clearHomeNoteAnimationTimers();
   const layer=byId("patriciaNoteLayer");
   if(layer){layer.innerHTML="";layer.hidden=true;}
 }
@@ -2119,14 +2176,19 @@ function dismissPatriciaNote(id){
   if(demoMode)persistDemoSession();
   const layer=byId("patriciaNoteLayer");
   const note=layer?.querySelector(`[data-note-id="${id}"]`);
-  if(note)note.remove();
+  if(note){
+    if(note.dataset.noteId==="home")clearHomeNoteAnimationTimers();
+    note.remove();
+  }
   if(layer&&!layer.children.length)layer.hidden=true;
 }
-function renderPatriciaNote(note){
-  if(!note||demoSession.dismissedNotes[note.id])return;
+function renderPatriciaNote(note,options){
+  if(!note||demoSession.dismissedNotes[note.id])return null;
   const layer=byId("patriciaNoteLayer");
-  if(!layer)return;
-  if(layer.querySelector(`[data-note-id="${note.id}"]`))return;
+  if(!layer)return null;
+  const existing=layer.querySelector(`[data-note-id="${note.id}"]`);
+  if(existing)return existing;
+  const deferEnter=!!(options&&options.deferEnter);
   const wrap=document.createElement("div");
   wrap.className="patricia-note";
   wrap.dataset.noteId=note.id;
@@ -2135,22 +2197,24 @@ function renderPatriciaNote(note){
   if(note.id==="home"&&note.doodle&&lines.length>1){
     const lead=lines.slice(0,-1).map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
     const last=lines[lines.length-1];
-    bodyHtml=`${lead}<div class="patricia-note-footer"><p class="patricia-note-text">${esc(last)}</p><img class="patricia-note-doodle" src="./${note.doodle}" alt=""></div>`;
+    bodyHtml=`${lead}<div class="patricia-note-footer"><p class="patricia-note-text">${esc(last)}</p><img class="patricia-note-doodle" src="./${note.doodle}" alt="" decoding="async"></div>`;
   }else{
     const textHtml=lines.map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
-    const doodleHtml=note.doodle?`<img class="patricia-note-doodle" src="./${note.doodle}" alt="">`:"";
+    const doodleHtml=note.doodle?`<img class="patricia-note-doodle" src="./${note.doodle}" alt="" decoding="async">`:"";
     bodyHtml=`${textHtml}${doodleHtml}`;
   }
-  wrap.innerHTML=`<button class="patricia-note-close" type="button" aria-label="Dismiss note">&times;</button><img class="patricia-note-paper" src="./sticky-note.png" alt=""><div class="patricia-note-body">${bodyHtml}</div>`;
+  wrap.innerHTML=`<button class="patricia-note-close" type="button" aria-label="Dismiss note">&times;</button><img class="patricia-note-paper" src="./sticky-note.png" alt="" decoding="async"><div class="patricia-note-body">${bodyHtml}</div>`;
   wrap.querySelector(".patricia-note-close").addEventListener("click",()=>dismissPatriciaNote(note.id));
+  if(note.id==="home"&&deferEnter){
+    wrap.classList.add("patricia-note-preparing");
+    wrap.style.willChange="opacity,filter";
+  }
   layer.appendChild(wrap);
   layer.hidden=false;
-  if(note.id==="home"){
-    requestAnimationFrame(()=>{requestAnimationFrame(()=>{
-      wrap.classList.add("patricia-note-enter");
-      setTimeout(()=>wrap.classList.add("patricia-note-close-ready"),1000);
-    });});
+  if(note.id==="home"&&!deferEnter){
+    waitTwoAnimationFrames().then(()=>startHomePatriciaNoteAnimation(wrap));
   }
+  return wrap;
 }
 function showPatriciaNoteIfNeeded(key){
   if(!demoMode)return;
@@ -2171,9 +2235,41 @@ function handleDemoPageVisit(id){
     setTimeout(()=>showPatriciaNoteIfNeeded("goalsFirst"),420);
   }
 }
+function decodeMountedNoteImages(wrap){
+  if(!wrap)return Promise.resolve();
+  const imgs=[...wrap.querySelectorAll("img")];
+  return Promise.all(imgs.map(img=>{
+    if(img.complete&&typeof img.decode==="function"){
+      return img.decode().catch(()=>{});
+    }
+    if(typeof img.decode==="function"){
+      return new Promise(resolve=>{
+        const done=()=>img.decode().then(resolve).catch(resolve);
+        if(img.complete)done();
+        else{img.addEventListener("load",done,{once:true});img.addEventListener("error",resolve,{once:true});}
+      });
+    }
+    return Promise.resolve();
+  }));
+}
 function handleDemoHomeShown(){
   if(!demoMode)return;
-  setTimeout(()=>showPatriciaNoteIfNeeded("home"),1000);
+  const note=PATRICIA_NOTE_COPY.home;
+  if(!note||demoSession.dismissedNotes[note.id])return;
+  prepareDemoHomeAssets();
+  const wrap=renderPatriciaNote(note,{deferEnter:true});
+  if(!wrap)return;
+  // Force layout + layer creation during the delay, not at animation start.
+  void wrap.offsetWidth;
+  const assetsReady=Promise.all([
+    prepareDemoHomeAssets(),
+    decodeMountedNoteImages(wrap)
+  ]);
+  const delayReady=new Promise(resolve=>setTimeout(resolve,1000));
+  Promise.all([assetsReady,delayReady]).then(()=>waitTwoAnimationFrames()).then(()=>{
+    if(!demoMode||!wrap.isConnected||demoSession.dismissedNotes.home)return;
+    startHomePatriciaNoteAnimation(wrap);
+  });
 }
 function checkJourneyCompletionCelebration(loan,prevCurrent){
   if(prevCurrent<=0||loan.current>0)return;
@@ -2255,6 +2351,7 @@ function shareFreedom(){
 function openDemoEntryFlow(){
   if(demoMode)return;
   closeDemoMenu();
+  prepareDemoHomeAssets();
   byId("demoEntryOverlay").hidden=false;
 }
 function closeDemoEntryFlow(){
@@ -2284,6 +2381,7 @@ function showDemoWelcomeOverlay(){
   const overlay=byId("demoWelcomeOverlay");
   const btn=byId("demoWelcomeContinue");
   if(!overlay)return;
+  prepareDemoHomeAssets();
   clearDemoWelcomeTimers();
   overlay.hidden=false;
   overlay.classList.remove("is-entering");
@@ -2308,6 +2406,7 @@ function hideDemoWelcomeOverlay(){
 }
 function confirmEnterDemo(){
   byId("demoEntryOverlay").hidden=true;
+  prepareDemoHomeAssets();
   showDemoWelcomeOverlay();
 }
 function enterDemo(){
