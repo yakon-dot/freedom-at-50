@@ -1294,7 +1294,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   max-height:0;overflow:hidden;pointer-events:none;
   transition:max-height .48s cubic-bezier(.22,.61,.36,1)
 }
-.subwrap183.open{max-height:190px;pointer-events:auto}
+.subwrap183.open{max-height:56px;pointer-events:auto}
 .sub183{
   display:block;width:100%;border:0;background:transparent;color:#dedad3;text-align:left;
   padding:7px 0;font-size:13.5px;font-weight:450;cursor:pointer;touch-action:manipulation;
@@ -1305,6 +1305,9 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .subwrap183.open .sub183:nth-child(1){transition-delay:.05s}
 .subwrap183.open .sub183:nth-child(2){transition-delay:.13s}
 .subwrap183.open .sub183:nth-child(3){transition-delay:.21s}
+/* Companion is not ready yet — keep markup for later, hide from More submenu */
+.sub183[data-more183="companion"],
+.sub183[hidden]{display:none!important;opacity:0!important;pointer-events:none!important;padding:0!important;margin:0!important;height:0!important;overflow:hidden!important}
 .demo-banner{
   display:none!important;
 }
@@ -1744,7 +1747,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 
       <div class="subwrap183" id="sub183">
         <button class="sub183" type="button" data-more183="archive">Archive</button>
-        <button class="sub183" type="button" data-more183="companion">Companion</button>
+        <button class="sub183" type="button" data-more183="companion" hidden aria-hidden="true" tabindex="-1">Companion</button>
       </div>
     </nav>
   </div>
@@ -4432,9 +4435,14 @@ fillForm();render();const initial=location.hash.slice(1);if(["overview","journey
         if(typeof window.page==="function")window.page("archive");
         return;
       }
+      // Companion is not available yet — do not open the unrelated More/"plan behind the numbers" screen.
+      if(key==="companion"){
+        showHome();
+        return;
+      }
       if(typeof window.page==="function")window.page("more");
       setTimeout(()=>{
-        const destinations={companion:"moreCompanion",more:"more"};
+        const destinations={more:"more"};
         const el=document.getElementById(destinations[key]||"more");
         if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
       },60);
@@ -4508,7 +4516,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1871",
+        "./service-worker.js?v=1872",
         { updateViaCache: "none" }
       );
 
