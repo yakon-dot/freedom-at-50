@@ -1432,6 +1432,16 @@ body.home183 .patricia-note-text,
 .patricia-note.is-demo-sticky[data-note-id="journeyFirst"] .patricia-note-text{
   font-size:clamp(19px,5.3vw,21px);line-height:1.14;
 }
+/* Goals: longest of the three — keep three sections, largest readable Caveat that fits */
+.patricia-note.is-demo-sticky[data-note-id="goalsFirst"] .patricia-note-body{
+  inset:18% 8% 24% 9%;gap:2px;justify-content:center;
+}
+.patricia-note.is-demo-sticky[data-note-id="goalsFirst"] .patricia-note-text{
+  font-size:clamp(17.5px,4.6vw,18.5px);line-height:1.12;
+}
+.patricia-note.is-demo-sticky[data-note-id="goalsFirst"] .patricia-note-gap{
+  height:7px;margin:0;padding:0;flex-shrink:0;
+}
 body.home183 .patricia-note-body > .patricia-note-text,
 .patricia-note.is-demo-sticky .patricia-note-body > .patricia-note-text{max-width:90%;align-self:center}
 body.home183 .patricia-note-footer,
@@ -2078,7 +2088,7 @@ function persist(){if(demoMode){persistDemoSession();return;}localStorage.setIte
 const PATRICIA_NOTE_COPY={
   home:{id:"home",text:"That credit card has €200 left.\njust saying...",doodle:"patricia-eyes.png",sticky:true},
   journeyFirst:{id:"journeyFirst",text:"This is where we keep the\nthings we're getting rid of.\nFinancially speaking.\nI'm not running a skip.",sticky:true},
-  goalsFirst:{id:"goalsFirst",text:"This is where the good stuff lives.\nHouses. Japan. Runaway money.\nPersonally, I'd add a frozen cocktail machine."},
+  goalsFirst:{id:"goalsFirst",text:"This is where the good\nstuff lives.\n\nHouses. Japan. Runaway money.\n\nPersonally, I'd add a\nfrozen cocktail machine.",sticky:true},
   creditCardComplete:{id:"creditCardComplete",text:"YES! You did it! That credit card is officially history.\nI'd suggest a moment of silence, but I prefer frozen cocktails.",doodle:"patricia-celebration.png"},
   lifeHappens:{id:"lifeHappens",text:"Life happens. Sometimes the plan needs a little detour.\nWe're flexible. My knees, less so."},
   runawayMoney:{id:"runawayMoney",text:"Runaway Money just got bigger.\nNot suggesting anything. Just admiring the options.",doodle:"patricia-eyes.png"}
@@ -2143,6 +2153,7 @@ const DEMO_HOME_NOTE_ASSETS=["./sticky-note.png","./patricia-eyes.png"];
 let demoHomeAssetsPromise=null;
 let patriciaNoteCloseReadyTimer=null;
 let journeyNoteShowToken=0;
+let goalsNoteShowToken=0;
 function clearPatriciaNoteAnimationTimers(){
   if(patriciaNoteCloseReadyTimer){clearTimeout(patriciaNoteCloseReadyTimer);patriciaNoteCloseReadyTimer=null;}
 }
@@ -2168,6 +2179,7 @@ function prepareDemoHomeAssets(){
     ? Promise.all([
         document.fonts.load("500 23px Caveat"),
         document.fonts.load("500 20px Caveat"),
+        document.fonts.load("500 18px Caveat"),
         document.fonts.load("400 39px Caveat"),
         document.fonts.ready
       ]).catch(()=>{})
@@ -2203,6 +2215,7 @@ function syncPatriciaStickyLayerClass(){
 }
 function dismissAllPatriciaNotes(){
   journeyNoteShowToken++;
+  goalsNoteShowToken++;
   clearPatriciaNoteAnimationTimers();
   const layer=byId("patriciaNoteLayer");
   if(layer){layer.innerHTML="";layer.hidden=true;layer.classList.remove("is-sticky-centered");}
@@ -2231,6 +2244,7 @@ function dismissPatriciaNote(id){
   demoSession.dismissedNotes[id]=true;
   if(demoMode)persistDemoSession();
   if(id==="journeyFirst")journeyNoteShowToken++;
+  if(id==="goalsFirst")goalsNoteShowToken++;
   hidePatriciaNote(id);
 }
 function renderPatriciaNote(note,options){
@@ -2252,7 +2266,10 @@ function renderPatriciaNote(note,options){
     const last=lines[lines.length-1];
     bodyHtml=`${lead}<div class="patricia-note-footer"><p class="patricia-note-text">${esc(last)}</p><img class="patricia-note-doodle" src="./${note.doodle}" alt="" decoding="async"></div>`;
   }else if(sticky){
-    bodyHtml=lines.map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
+    bodyHtml=lines.map(line=>{
+      if(!line)return`<p class="patricia-note-gap" aria-hidden="true"></p>`;
+      return`<p class="patricia-note-text">${esc(line)}</p>`;
+    }).join("");
   }else{
     const textHtml=lines.map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
     const doodleHtml=note.doodle?`<img class="patricia-note-doodle" src="./${note.doodle}" alt="" decoding="async">`:"";
@@ -2316,6 +2333,7 @@ function scheduleStickyPatriciaNote(note,guard){
 function handleDemoHomeShown(){
   if(!demoMode)return;
   journeyNoteShowToken++;
+  goalsNoteShowToken++;
   hideOtherPatriciaNotes("home");
   const note=PATRICIA_NOTE_COPY.home;
   if(!note||demoSession.dismissedNotes[note.id])return;
@@ -2329,11 +2347,23 @@ function handleDemoJourneyShown(){
   const token=++journeyNoteShowToken;
   scheduleStickyPatriciaNote(note,()=>token===journeyNoteShowToken&&!!byId("journey")?.classList.contains("active")&&!document.body.classList.contains("home183"));
 }
+function handleDemoGoalsShown(){
+  if(!demoMode)return;
+  const note=PATRICIA_NOTE_COPY.goalsFirst;
+  if(!note||demoSession.dismissedNotes[note.id])return;
+  hideOtherPatriciaNotes("goalsFirst");
+  const token=++goalsNoteShowToken;
+  scheduleStickyPatriciaNote(note,()=>token===goalsNoteShowToken&&!!byId("goals")?.classList.contains("active")&&!document.body.classList.contains("home183"));
+}
 function handleDemoPageVisit(id){
   if(!demoMode)return;
   if(id!=="journey"){
     journeyNoteShowToken++;
     hidePatriciaNote("journeyFirst");
+  }
+  if(id!=="goals"){
+    goalsNoteShowToken++;
+    hidePatriciaNote("goalsFirst");
   }
   if(id==="journey"){
     if(!demoSession.visited.journey){
@@ -2342,10 +2372,12 @@ function handleDemoPageVisit(id){
     }
     handleDemoJourneyShown();
   }
-  if(id==="goals"&&!demoSession.visited.goals){
-    demoSession.visited.goals=true;
-    persistDemoSession();
-    setTimeout(()=>showPatriciaNoteIfNeeded("goalsFirst"),420);
+  if(id==="goals"){
+    if(!demoSession.visited.goals){
+      demoSession.visited.goals=true;
+      persistDemoSession();
+    }
+    handleDemoGoalsShown();
   }
 }
 function checkJourneyCompletionCelebration(loan,prevCurrent){
@@ -2751,7 +2783,9 @@ window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change",
 function page(id){
   if(id==="home"){
     journeyNoteShowToken++;
+    goalsNoteShowToken++;
     hidePatriciaNote("journeyFirst");
+    hidePatriciaNote("goalsFirst");
     if(typeof window.showHome==="function"){window.showHome();return}
   }
   if(typeof window.hideHome==="function")window.hideHome();
@@ -4591,7 +4625,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1873",
+        "./service-worker.js?v=1874",
         { updateViaCache: "none" }
       );
 
