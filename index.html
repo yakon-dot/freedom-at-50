@@ -14,20 +14,16 @@
 #freedomWelcome{
   position:fixed;inset:0;z-index:9950;box-sizing:border-box;
   display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
-  padding:calc(92px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
-  background:#0b0c0e url("./welcome-wallpaper.jpg") center center / cover no-repeat;
+  padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
+  background:#0b0c0e url("./welcome-wallpaper.jpg?v=2") center center / cover no-repeat;
   text-align:center;-webkit-tap-highlight-color:transparent;
 }
 #freedomWelcome[hidden]{display:none!important}
-.freedom-welcome-logo{
-  position:absolute;left:0;right:0;top:calc(92px + env(safe-area-inset-top,0px));
-  margin:0;
-  font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
-  font-size:clamp(48px,12vw,64px);font-weight:500;color:#efcbaa;line-height:1;
-}
 .freedom-welcome-inner{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   width:100%;max-width:22rem;flex:1 1 auto;
+  /* Lift the mid-screen copy/button group slightly above true centre */
+  transform:translateY(-7vh);
 }
 .freedom-welcome-headline{
   margin:0 0 14px;font-size:25px;line-height:1.1;letter-spacing:-.035em;font-weight:400;
@@ -44,7 +40,7 @@
 .freedom-welcome-arrow{
   width:16px;height:11px;flex:0 0 auto;display:block;
 }</style>
-<link rel="preload" as="image" href="./welcome-wallpaper.jpg">
+<link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -1768,7 +1764,6 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   <div class="freedom-splash-logo">Freedom</div>
 </div>
 <div id="freedomWelcome" class="freedom-welcome" hidden>
-  <div class="freedom-welcome-logo">Freedom</div>
   <div class="freedom-welcome-inner">
     <h1 class="freedom-welcome-headline">Your future.<br>A little more yours.</h1>
     <p class="freedom-welcome-support">A place to see what you're moving away from and what you're moving towards.</p>
@@ -4835,7 +4830,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1882",
+        "./service-worker.js?v=1884",
         { updateViaCache: "none" }
       );
 

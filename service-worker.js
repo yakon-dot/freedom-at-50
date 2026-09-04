@@ -1,17 +1,20 @@
 /* Freedom at 50 — wallpaper cache restored (render never gated on preload) */
-const CACHE_NAME = "freedom-at-50-v1.8.6.19";
-const WALLPAPER_CACHE = "freedom-wallpapers-v1";
+const CACHE_NAME = "freedom-at-50-v1.8.6.21";
+const WALLPAPER_CACHE = "freedom-wallpapers-v2";
 const WALLPAPERS = [
   "./overview-wallpaper.png",
   "./journey-wallpaper.png",
   "./goals-wallpaper.png",
   "./pension-wallpaper.png",
   "./archive-wallpaper.png",
-  "./welcome-wallpaper.jpg"
+  "./welcome-wallpaper.jpg?v=2"
 ];
 
 function isWallpaperRequest(url) {
-  return WALLPAPERS.some(path => url.pathname.endsWith(path.replace("./", "")));
+  return WALLPAPERS.some(path => {
+    const bare = path.replace("./", "").split("?")[0];
+    return url.pathname.endsWith(bare);
+  });
 }
 
 self.addEventListener("install", event => {
