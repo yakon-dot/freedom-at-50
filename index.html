@@ -69,8 +69,8 @@
 #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen{
   animation:freedomWelcomeComeInSheen 2.8s ease-in-out forwards;
 }
-#freedomWelcome.is-ready #freedomWelcomeComeIn .freedom-welcome-arrow{
-  animation:freedomWelcomeArrowNudge 1.7s ease-in-out 1.7s 1 both;
+#freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap{
+  animation:freedomWelcomeArrowNudge 1.65s ease-in-out .12s 1 both;
 }
 @keyframes freedomWelcomeComeInIn{
   from{opacity:0;transform:translateY(6px)}
@@ -84,7 +84,9 @@
 }
 @keyframes freedomWelcomeArrowNudge{
   0%,100%{transform:translateX(0)}
-  42%{transform:translateX(6px)}
+  35%{transform:translateX(7px)}
+  55%{transform:translateX(4px)}
+  75%{transform:translateX(7px)}
 }
 @media (prefers-reduced-motion:reduce){
   #freedomWelcomeComeIn.freedom-welcome-come-in{
@@ -92,10 +94,13 @@
   }
   #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
   #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
-  #freedomWelcome.is-ready #freedomWelcomeComeIn .freedom-welcome-arrow{animation:none}
+  #freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap{animation:none}
+}
+.freedom-welcome-arrow-wrap{
+  display:inline-flex;align-items:center;flex:0 0 auto;position:relative;z-index:2;
 }
 .freedom-welcome-arrow{
-  width:16px;height:11px;flex:0 0 auto;display:block;position:relative;z-index:2;
+  width:16px;height:11px;display:block;
 }</style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
@@ -1827,9 +1832,11 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     <button class="demo-outline-btn demo-enter-btn freedom-welcome-come-in" id="freedomWelcomeComeIn" type="button">
       <span class="freedom-welcome-sheen" aria-hidden="true"></span>
       Come in
-      <svg class="freedom-welcome-arrow" viewBox="0 0 18 12" aria-hidden="true" focusable="false">
-        <path d="M1.2 6H16.2M11.2 1.6 16.5 6 11.2 10.4" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
+      <span class="freedom-welcome-arrow-wrap">
+        <svg class="freedom-welcome-arrow" viewBox="0 0 18 12" aria-hidden="true" focusable="false">
+          <path d="M1.2 6H16.2M11.2 1.6 16.5 6 11.2 10.4" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
     </button>
   </div>
 </div>
@@ -4917,7 +4924,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1891",
+        "./service-worker.js?v=1893",
         { updateViaCache: "none" }
       );
 
