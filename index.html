@@ -2646,7 +2646,9 @@ function buildFreshUserState(){
     holidayFund:0,
     holidayMonthly:0,
     personalSavings:0,
-    pensions:[]
+    pensions:[],
+    // Clean-install marker: Overview must not treat absent House Pocket as €1,000 returned / 100% progress.
+    overviewExcludeHousePocket:true
   };
 }
 function resetFreedomFreshStart(){
@@ -4499,9 +4501,21 @@ function renderArchive(){
 }
 function fillForm(){const hp=byId("housePocketRemaining");if(hp)hp.value=state.housePocket}
 function nextLoan(){return state.loans.filter(x=>x.current>0).sort((a,b)=>a.current-b.current)[0]||null}
-function render(){const original=state.loans.reduce((s,x)=>s+x.starting,0);const current=state.loans.reduce((s,x)=>s+x.current,0);const loanReturned=Math.max(0,original-current);const hpReturned=Math.max(0,HOUSE_POCKET_START-state.housePocket);const totalOriginal=original+HOUSE_POCKET_START;const totalCurrent=current+state.housePocket;const pct=totalOriginal?Math.max(0,(totalOriginal-totalCurrent)/totalOriginal*100):0;const monthly=state.loans.reduce((s,x)=>s+x.payment,0)+(state.housePocket>0?(Number(state.housePocketMonthly)||0):0);
+function render(){
+  const original=state.loans.reduce((s,x)=>s+x.starting,0);
+  const current=state.loans.reduce((s,x)=>s+x.current,0);
+  const loanReturned=Math.max(0,original-current);
+  // Clean reset sets overviewExcludeHousePocket so absent House Pocket is not counted as €1,000 returned.
+  // Demo / normal seeded states omit this flag and keep existing House Pocket progress maths.
+  const countHousePocket=!state.overviewExcludeHousePocket;
+  const hpReturned=countHousePocket?Math.max(0,HOUSE_POCKET_START-state.housePocket):0;
+  const totalOriginal=original+(countHousePocket?HOUSE_POCKET_START:0);
+  const totalCurrent=current+(countHousePocket?state.housePocket:0);
+  const pct=totalOriginal?Math.max(0,(totalOriginal-totalCurrent)/totalOriginal*100):0;
+  const monthly=state.loans.reduce((s,x)=>s+x.payment,0)+((countHousePocket&&state.housePocket>0)?(Number(state.housePocketMonthly)||0):0);
 const overviewReturnedEl=byId("overviewReturned");const overviewProgressEl=byId("overviewProgress");if(overviewReturnedEl){const rv=euro0(loanReturned+hpReturned);if(overviewReturnedEl.textContent!==rv){freedomMotion.flashValue(overviewReturnedEl);overviewReturnedEl.textContent=rv;}}if(overviewProgressEl){const pv=Math.round(pct)+"%";if(overviewProgressEl.textContent!==pv){freedomMotion.flashValue(overviewProgressEl);overviewProgressEl.textContent=pv;}}if(byId("overviewProgressBar"))byId("overviewProgressBar").style.width=Math.min(100,pct)+"%";if(byId("overviewHouse"))byId("overviewHouse").textContent=euro0(state.houseFund);if(byId("overviewHoliday"))byId("overviewHoliday").textContent=euro0(state.holidayFund);if(byId("overviewSavings"))byId("overviewSavings").textContent=euro0(state.personalSavings);updateOverviewPensionCard();byId("monthlyFreedom").textContent=euro0(monthly);
 const hp=state.housePocket,hpm=state.housePocketMonthly;const hpProgress=Math.max(0,Math.min(100,(HOUSE_POCKET_START-hp)/HOUSE_POCKET_START*100));const next=nextLoan();
+const cleanEmptyOverview=!!state.overviewExcludeHousePocket&&!(state.loans&&state.loans.length);
 if(hp>0){
   byId("pocketBar").style.width=hpProgress+"%";
   byId("victoryLabel").textContent="First victory";
@@ -4531,6 +4545,15 @@ if(hp>0){
   byId("pocketOverview").textContent=euro0(next.current)+" remaining";
   byId("pocketMessage").textContent="This is your next finish line.";
   byId("pocketMonths").textContent=monthsText(next.current,next.payment);
+}else if(cleanEmptyOverview){
+  byId("pocketBar").style.width="0%";
+  byId("victoryLabel").textContent="Next victory";
+  byId("victoryName").textContent="No active journeys";
+  byId("victoryPill").hidden=false;byId("victoryPill").textContent="Queued up";
+  byId("victoryPill").classList.remove("complete");
+  byId("pocketOverview").textContent="€0 remaining";
+  byId("pocketMessage").textContent="This is your next finish line.";
+  byId("pocketMonths").textContent="";
 }else{
   byId("pocketBar").style.width="100%";
   byId("victoryLabel").textContent="Freedom milestone";
@@ -4541,7 +4564,7 @@ if(hp>0){
   byId("pocketMessage").textContent="Every listed commitment is complete.";
   byId("pocketMonths").textContent="You did it";
 }
-if(hp>0){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="House Pocket";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent=next.name;if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else{if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="All clear";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
+if(hp>0){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="House Pocket";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent=next.name;if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else if(cleanEmptyOverview){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="No active journeys";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=""}else{if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="All clear";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
 renderLoans();renderGoals();renderPensions();renderArchive();
 updateMonthlySummaryCards();
 if(freedomMotion.activePage){
@@ -4741,7 +4764,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1879",
+        "./service-worker.js?v=1880",
         { updateViaCache: "none" }
       );
 
