@@ -38,32 +38,37 @@
   display:inline-flex;align-items:center;justify-content:center;gap:18px;
   min-width:152px;padding:10px 22px 10px 26px;
   opacity:0;transform:translateY(6px);pointer-events:none;
-  transition:opacity .72s ease-out,transform .72s ease-out;
 }
 #freedomWelcomeComeIn.freedom-welcome-come-in::before{
-  content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
-  background:linear-gradient(105deg,transparent 38%,rgba(239,203,170,.3) 50%,transparent 62%);
+  content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;z-index:1;
+  background:linear-gradient(105deg,transparent 36%,rgba(239,203,170,.42) 50%,transparent 64%);
   transform:translateX(-130%);opacity:0;
 }
 #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in{
-  opacity:1;transform:translateY(0);pointer-events:auto;transition-delay:.48s;
+  pointer-events:auto;
+  animation:freedomWelcomeComeInIn .75s ease-out .5s forwards;
 }
 #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in::before{
-  animation:freedomWelcomeComeInSheen 1.15s ease-in-out 1.28s 1 forwards;
+  animation:freedomWelcomeComeInSheen 1.2s ease-in-out 1.4s 1 forwards;
+}
+@keyframes freedomWelcomeComeInIn{
+  from{opacity:0;transform:translateY(6px)}
+  to{opacity:1;transform:translateY(0)}
 }
 @keyframes freedomWelcomeComeInSheen{
   0%{transform:translateX(-130%);opacity:0}
-  18%{opacity:1}
+  20%{opacity:1}
   100%{transform:translateX(130%);opacity:0}
 }
 @media (prefers-reduced-motion:reduce){
   #freedomWelcomeComeIn.freedom-welcome-come-in{
-    opacity:1;transform:none;pointer-events:auto;transition:none;
+    opacity:1;transform:none;pointer-events:auto;
   }
+  #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
   #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in::before{animation:none}
 }
 .freedom-welcome-arrow{
-  width:16px;height:11px;flex:0 0 auto;display:block;position:relative;z-index:1;
+  width:16px;height:11px;flex:0 0 auto;display:block;position:relative;z-index:2;
 }</style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
@@ -1816,8 +1821,13 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   }
   function armWelcome(){
     if(!welcome||welcome.hidden||welcomeDone())return;
+    welcome.classList.remove("is-ready");
+    // Force a paint of the hidden button before starting entrance animation.
+    void welcome.offsetWidth;
     requestAnimationFrame(function(){
-      welcome.classList.add("is-ready");
+      requestAnimationFrame(function(){
+        welcome.classList.add("is-ready");
+      });
     });
   }
   function completeWelcome(){
@@ -4870,7 +4880,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1885",
+        "./service-worker.js?v=1886",
         { updateViaCache: "none" }
       );
 
