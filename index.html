@@ -40,31 +40,28 @@
   min-width:152px;padding:10px 22px 10px 26px;
   opacity:0;transform:translateY(6px);pointer-events:none;
 }
-/* Border-only sheen: highlight travels along the stroke, left → right */
-#freedomWelcomeComeIn.freedom-welcome-come-in::before{
-  content:"";position:absolute;inset:0;border-radius:inherit;box-sizing:border-box;
-  padding:1.35px;pointer-events:none;z-index:1;opacity:0;
-  background:linear-gradient(90deg,
-    transparent 0%,
-    rgba(255,236,214,0) 35%,
-    rgba(255,236,214,.95) 50%,
-    rgba(255,236,214,0) 65%,
-    transparent 100%);
-  background-size:55% 100%;
+/* Stroke-only sheen (Safari-safe border-box gradient, no mask-composite) */
+#freedomWelcomeComeIn .freedom-welcome-sheen{
+  position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;
+  border:1.5px solid transparent;box-sizing:border-box;opacity:0;
+  background:
+    linear-gradient(#0000,#0000) padding-box,
+    linear-gradient(90deg,
+      #0000 0%,
+      #0000 38%,
+      rgba(255,248,232,.95) 50%,
+      #0000 62%,
+      #0000 100%) border-box;
+  background-size:100% 100%, 220% 100%;
+  background-position:0 0, 100% 0;
   background-repeat:no-repeat;
-  background-position:-55% 0;
-  -webkit-mask:
-    linear-gradient(#fff 0 0) content-box,
-    linear-gradient(#fff 0 0);
-  -webkit-mask-composite:xor;
-  mask-composite:exclude;
 }
 #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in{
   pointer-events:auto;
   animation:freedomWelcomeComeInIn .75s ease-out .5s forwards;
 }
-#freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in::before{
-  animation:freedomWelcomeComeInSheen 2.8s ease-in-out 1.4s 1 forwards;
+#freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen{
+  animation:freedomWelcomeComeInSheen 2.8s ease-in-out forwards;
 }
 #freedomWelcome.is-ready #freedomWelcomeComeIn .freedom-welcome-arrow{
   animation:freedomWelcomeArrowNudge 1.7s ease-in-out 1.7s 1 both;
@@ -74,10 +71,10 @@
   to{opacity:1;transform:translateY(0)}
 }
 @keyframes freedomWelcomeComeInSheen{
-  0%{background-position:-55% 0;opacity:0}
-  8%{opacity:1}
-  92%{opacity:1}
-  100%{background-position:155% 0;opacity:0}
+  0%{background-position:0 0, 110% 0;opacity:0}
+  12%{opacity:1}
+  88%{opacity:1}
+  100%{background-position:0 0, -110% 0;opacity:0}
 }
 @keyframes freedomWelcomeArrowNudge{
   0%,100%{transform:translateX(0)}
@@ -88,7 +85,7 @@
     opacity:1;transform:none;pointer-events:auto;
   }
   #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
-  #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in::before,
+  #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
   #freedomWelcome.is-ready #freedomWelcomeComeIn .freedom-welcome-arrow{animation:none}
 }
 .freedom-welcome-arrow{
@@ -1822,6 +1819,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     <h1 class="freedom-welcome-headline">Your future.<br>A little more yours.</h1>
     <p class="freedom-welcome-support">A place to see what you're moving away from and what you're moving towards.</p>
     <button class="demo-outline-btn demo-enter-btn freedom-welcome-come-in" id="freedomWelcomeComeIn" type="button">
+      <span class="freedom-welcome-sheen" aria-hidden="true"></span>
       Come in
       <svg class="freedom-welcome-arrow" viewBox="0 0 18 12" aria-hidden="true" focusable="false">
         <path d="M1.2 6H16.2M11.2 1.6 16.5 6 11.2 10.4" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1846,6 +1844,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function armWelcome(){
     if(!welcome||welcome.hidden||welcomeDone())return;
     welcome.classList.remove("is-ready");
+    if(comeIn)comeIn.classList.remove("is-sheening");
     // Force a paint of the hidden button before starting entrance animation.
     void welcome.offsetWidth;
     requestAnimationFrame(function(){
@@ -1860,11 +1859,18 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       welcome.classList.remove("is-ready");
       welcome.hidden=true;
     }
+    if(comeIn)comeIn.classList.remove("is-sheening");
   }
   window.freedomWelcome={show:showWelcome,complete:completeWelcome,isDone:welcomeDone};
   if(comeIn){
     comeIn.addEventListener("click",function(){
       completeWelcome();
+    });
+    // Start stroke sheen only after the button has finished fading in.
+    comeIn.addEventListener("animationend",function(e){
+      if(e.target!==comeIn)return;
+      if(e.animationName!=="freedomWelcomeComeInIn")return;
+      comeIn.classList.add("is-sheening");
     });
   }
   // Stage Welcome under the splash immediately so Home never flashes through
@@ -4905,7 +4911,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1890",
+        "./service-worker.js?v=1891",
         { updateViaCache: "none" }
       );
 
