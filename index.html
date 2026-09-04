@@ -19,24 +19,31 @@
   text-align:center;-webkit-tap-highlight-color:transparent;
 }
 #freedomWelcome[hidden]{display:none!important}
-.freedom-welcome-inner{
-  display:flex;flex-direction:column;align-items:center;width:100%;max-width:22rem;flex:1 1 auto;
-}
 .freedom-welcome-logo{
-  margin:0 0 clamp(40px,8vh,64px);
+  position:absolute;left:0;right:0;top:calc(92px + env(safe-area-inset-top,0px));
+  margin:0;
   font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
   font-size:clamp(48px,12vw,64px);font-weight:500;color:#efcbaa;line-height:1;
+}
+.freedom-welcome-inner{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;max-width:22rem;flex:1 1 auto;
 }
 .freedom-welcome-headline{
   margin:0 0 14px;font-size:25px;line-height:1.1;letter-spacing:-.035em;font-weight:400;
   color:rgba(236,232,224,.78);
 }
 .freedom-welcome-support{
-  margin:0 auto clamp(42px,9vh,72px);max-width:18rem;
+  margin:0 auto 22px;max-width:18rem;
   font-size:14px;line-height:1.55;color:rgba(200,198,192,.55);
 }
-.freedom-welcome-inner > .demo-outline-btn{margin-top:auto}
-</style>
+#freedomWelcomeComeIn.freedom-welcome-come-in{
+  display:inline-flex;align-items:center;justify-content:center;gap:18px;
+  min-width:152px;padding:10px 22px 10px 26px;
+}
+.freedom-welcome-arrow{
+  width:16px;height:11px;flex:0 0 auto;display:block;
+}</style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 <link rel="manifest" href="./manifest.webmanifest">
@@ -1761,11 +1768,16 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   <div class="freedom-splash-logo">Freedom</div>
 </div>
 <div id="freedomWelcome" class="freedom-welcome" hidden>
+  <div class="freedom-welcome-logo">Freedom</div>
   <div class="freedom-welcome-inner">
-    <div class="freedom-welcome-logo">Freedom</div>
     <h1 class="freedom-welcome-headline">Your future.<br>A little more yours.</h1>
     <p class="freedom-welcome-support">A place to see what you're moving away from and what you're moving towards.</p>
-    <button class="demo-outline-btn demo-enter-btn" id="freedomWelcomeComeIn" type="button">Come in</button>
+    <button class="demo-outline-btn demo-enter-btn freedom-welcome-come-in" id="freedomWelcomeComeIn" type="button">
+      Come in
+      <svg class="freedom-welcome-arrow" viewBox="0 0 18 12" aria-hidden="true" focusable="false">
+        <path d="M1.2 6H16.2M11.2 1.6 16.5 6 11.2 10.4" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
   </div>
 </div>
 <script>
@@ -4823,7 +4835,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1881",
+        "./service-worker.js?v=1882",
         { updateViaCache: "none" }
       );
 
