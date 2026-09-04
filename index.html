@@ -2610,11 +2610,48 @@ function clearFreedomStorageKeys(){
     sessionKeys.forEach(k=>sessionStorage.removeItem(k));
   }catch(e){}
 }
+function buildFreshUserState(){
+  // Empty normal Freedom install — not the seeded defaults, and not Demo Mode data.
+  return {
+    archivedJourneys:[],
+    archivedGoals:[],
+    archivedPensions:[],
+    customGoals:[],
+    hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+    deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+    goalNames:{},
+    goalTargets:{houseFund:0,holidayFund:0,personalSavings:0},
+    goalHasTarget:{houseFund:false,holidayFund:false,personalSavings:false},
+    goalPlanMode:{},
+    goalPlannedMonthly:{},
+    goalDate:{},
+    goalLifetimeAdded:{},
+    goalLifeHappensTotal:{},
+    goalLastLifeHappens:{},
+    goalStartingBalance:{},
+    goalLastBalanceCorrection:{},
+    goalCollapsed:{},
+    goalOrder:[],
+    loans:[],
+    housePocket:0,
+    housePocketMonthly:0,
+    housePocketArchived:false,
+    housePocketCompletedAt:null,
+    housePocketArchiveRemoved:false,
+    houseFund:0,
+    holidayFund:0,
+    holidayMonthly:0,
+    personalSavings:0,
+    pensions:[]
+  };
+}
 function resetFreedomFreshStart(){
-  // Development/testing only: wipe local Freedom state and reload as a fresh install.
+  // Development/testing only: wipe user Freedom data and Demo session, then reload.
+  // Normal app becomes a clean empty install; Demo Mode still rebuilds from buildCanonicalDemoState().
   const ok=window.confirm("Reset Freedom to a fresh start?\n\nThis clears saved data on this device for testing. Demo Mode content is unchanged and still available from DEMO MODE.");
   if(!ok)return;
   clearFreedomStorageKeys();
+  try{localStorage.setItem(KEY,JSON.stringify(buildFreshUserState()));}catch(e){}
   location.replace(location.pathname+location.search);
 }
 window.freedomDemo={openEntry:openDemoEntryFlow,exit:exitDemo,onHomeShown:handleDemoHomeShown,isActive:()=>demoMode};
@@ -4700,7 +4737,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1877",
+        "./service-worker.js?v=1878",
         { updateViaCache: "none" }
       );
 
