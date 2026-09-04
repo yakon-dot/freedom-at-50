@@ -2611,33 +2611,37 @@ function clearFreedomStorageKeys(){
   }catch(e){}
 }
 function buildFreshUserState(){
-  // Empty normal Freedom install — not the seeded defaults, and not Demo Mode data.
+  // True clean normal install:
+  // - Do NOT fall back to seeded `defaults` loans/funds/pensions.
+  // - Fully archive/remove House Pocket so Overview/Goals cannot revive it.
+  // - Hide built-in House/Holiday/Savings goals so legacy cards cannot reappear.
+  // Demo Mode is separate and still rebuilds from buildCanonicalDemoState() on enter.
   return {
     archivedJourneys:[],
     archivedGoals:[],
     archivedPensions:[],
     customGoals:[],
-    hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+    hiddenBuiltInGoals:{houseFund:true,holidayFund:true,personalSavings:true},
     deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
     goalNames:{},
     goalTargets:{houseFund:0,holidayFund:0,personalSavings:0},
     goalHasTarget:{houseFund:false,holidayFund:false,personalSavings:false},
-    goalPlanMode:{},
-    goalPlannedMonthly:{},
-    goalDate:{},
-    goalLifetimeAdded:{},
-    goalLifeHappensTotal:{},
+    goalPlanMode:{houseFund:"monthly",holidayFund:"monthly",personalSavings:"monthly"},
+    goalPlannedMonthly:{houseFund:0,holidayFund:0,personalSavings:0},
+    goalDate:{houseFund:null,holidayFund:null,personalSavings:null},
+    goalLifetimeAdded:{houseFund:0,holidayFund:0,personalSavings:0},
+    goalLifeHappensTotal:{houseFund:0,holidayFund:0,personalSavings:0},
     goalLastLifeHappens:{},
-    goalStartingBalance:{},
+    goalStartingBalance:{houseFund:0,holidayFund:0,personalSavings:0},
     goalLastBalanceCorrection:{},
     goalCollapsed:{},
     goalOrder:[],
     loans:[],
     housePocket:0,
     housePocketMonthly:0,
-    housePocketArchived:false,
+    housePocketArchived:true,
     housePocketCompletedAt:null,
-    housePocketArchiveRemoved:false,
+    housePocketArchiveRemoved:true,
     houseFund:0,
     holidayFund:0,
     holidayMonthly:0,
@@ -2646,8 +2650,8 @@ function buildFreshUserState(){
   };
 }
 function resetFreedomFreshStart(){
-  // Development/testing only: wipe user Freedom data and Demo session, then reload.
-  // Normal app becomes a clean empty install; Demo Mode still rebuilds from buildCanonicalDemoState().
+  // Development/testing only: wipe all Freedom storage, write a clean empty user state,
+  // and reload. Demo session is cleared so the next Demo entry uses buildCanonicalDemoState().
   const ok=window.confirm("Reset Freedom to a fresh start?\n\nThis clears saved data on this device for testing. Demo Mode content is unchanged and still available from DEMO MODE.");
   if(!ok)return;
   clearFreedomStorageKeys();
@@ -4737,7 +4741,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1878",
+        "./service-worker.js?v=1879",
         { updateViaCache: "none" }
       );
 
