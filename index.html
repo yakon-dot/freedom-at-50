@@ -1301,7 +1301,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   max-height:0;overflow:hidden;pointer-events:none;
   transition:max-height .48s cubic-bezier(.22,.61,.36,1)
 }
-.subwrap183.open{max-height:56px;pointer-events:auto}
+.subwrap183.open{max-height:112px;pointer-events:auto}
 .sub183{
   display:block;width:100%;border:0;background:transparent;color:#dedad3;text-align:left;
   padding:7px 0;font-size:13.5px;font-weight:450;cursor:pointer;touch-action:manipulation;
@@ -1819,6 +1819,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       <div class="subwrap183" id="sub183">
         <button class="sub183" type="button" data-more183="archive">Archive</button>
         <button class="sub183" type="button" data-more183="companion" hidden aria-hidden="true" tabindex="-1">Companion</button>
+        <button class="sub183" type="button" data-more183="reset">Reset Freedom</button>
       </div>
     </nav>
   </div>
@@ -2590,7 +2591,34 @@ function continueFromWelcome(){
   hideDemoWelcomeOverlay();
   enterDemo();
 }
+function clearFreedomStorageKeys(){
+  const isFreedomKey=k=>!!k&&(k==="freedom50-mobile-v1"||k==="freedom50-demo-session-v1"||k.startsWith("freedom50-")||k.startsWith("freedom-"));
+  try{
+    const localKeys=[];
+    for(let i=0;i<localStorage.length;i++){
+      const k=localStorage.key(i);
+      if(isFreedomKey(k))localKeys.push(k);
+    }
+    localKeys.forEach(k=>localStorage.removeItem(k));
+  }catch(e){}
+  try{
+    const sessionKeys=[];
+    for(let i=0;i<sessionStorage.length;i++){
+      const k=sessionStorage.key(i);
+      if(isFreedomKey(k))sessionKeys.push(k);
+    }
+    sessionKeys.forEach(k=>sessionStorage.removeItem(k));
+  }catch(e){}
+}
+function resetFreedomFreshStart(){
+  // Development/testing only: wipe local Freedom state and reload as a fresh install.
+  const ok=window.confirm("Reset Freedom to a fresh start?\n\nThis clears saved data on this device for testing. Demo Mode content is unchanged and still available from DEMO MODE.");
+  if(!ok)return;
+  clearFreedomStorageKeys();
+  location.replace(location.pathname+location.search);
+}
 window.freedomDemo={openEntry:openDemoEntryFlow,exit:exitDemo,onHomeShown:handleDemoHomeShown,isActive:()=>demoMode};
+window.freedomDev={resetFreshStart:resetFreedomFreshStart};
 function monthsText(balance,payment){if(balance<=0)return"Complete";if(!payment)return"Repayment not set";const m=Math.ceil(balance/payment);return m===1?"About 1 month":`About ${m} months`}
 function loanReturned(loan){return Math.max(0,(Number(loan.starting)||0)-(Number(loan.current)||0));}
 function loanReturnedPct(loan){const s=Number(loan.starting)||0;if(!s)return 0;return Math.min(100,Math.max(0,loanReturned(loan)/s*100));}
@@ -4578,6 +4606,13 @@ fillForm();render();const initial=location.hash.slice(1);if(["overview","journey
   document.querySelectorAll("[data-more183]").forEach(btn=>{
     btn.addEventListener("click",()=>{
       const key=btn.getAttribute("data-more183");
+      if(key==="reset"){
+        closeMore();
+        if(window.freedomDev&&typeof window.freedomDev.resetFreshStart==="function"){
+          window.freedomDev.resetFreshStart();
+        }
+        return;
+      }
       hideHome();
       closeMore();
       if(key==="archive"){
@@ -4665,7 +4700,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1875",
+        "./service-worker.js?v=1876",
         { updateViaCache: "none" }
       );
 
