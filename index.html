@@ -34,11 +34,36 @@
   font-size:14px;line-height:1.55;color:rgba(200,198,192,.55);
 }
 #freedomWelcomeComeIn.freedom-welcome-come-in{
+  position:relative;overflow:hidden;
   display:inline-flex;align-items:center;justify-content:center;gap:18px;
   min-width:152px;padding:10px 22px 10px 26px;
+  opacity:0;transform:translateY(6px);pointer-events:none;
+  transition:opacity .72s ease-out,transform .72s ease-out;
+}
+#freedomWelcomeComeIn.freedom-welcome-come-in::before{
+  content:"";position:absolute;inset:-1px;border-radius:inherit;pointer-events:none;
+  background:linear-gradient(105deg,transparent 38%,rgba(239,203,170,.3) 50%,transparent 62%);
+  transform:translateX(-130%);opacity:0;
+}
+#freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in{
+  opacity:1;transform:translateY(0);pointer-events:auto;transition-delay:.48s;
+}
+#freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in::before{
+  animation:freedomWelcomeComeInSheen 1.15s ease-in-out 1.28s 1 forwards;
+}
+@keyframes freedomWelcomeComeInSheen{
+  0%{transform:translateX(-130%);opacity:0}
+  18%{opacity:1}
+  100%{transform:translateX(130%);opacity:0}
+}
+@media (prefers-reduced-motion:reduce){
+  #freedomWelcomeComeIn.freedom-welcome-come-in{
+    opacity:1;transform:none;pointer-events:auto;transition:none;
+  }
+  #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in::before{animation:none}
 }
 .freedom-welcome-arrow{
-  width:16px;height:11px;flex:0 0 auto;display:block;
+  width:16px;height:11px;flex:0 0 auto;display:block;position:relative;z-index:1;
 }</style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
@@ -1789,9 +1814,18 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     welcome.hidden=false;
     return true;
   }
+  function armWelcome(){
+    if(!welcome||welcome.hidden||welcomeDone())return;
+    requestAnimationFrame(function(){
+      welcome.classList.add("is-ready");
+    });
+  }
   function completeWelcome(){
     try{localStorage.setItem(WELCOME_KEY,"1");}catch(e){}
-    if(welcome)welcome.hidden=true;
+    if(welcome){
+      welcome.classList.remove("is-ready");
+      welcome.hidden=true;
+    }
   }
   window.freedomWelcome={show:showWelcome,complete:completeWelcome,isDone:welcomeDone};
   if(comeIn){
@@ -1799,8 +1833,11 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       completeWelcome();
     });
   }
+  // Stage Welcome under the splash immediately so Home never flashes through
+  // while the splash fades out.
+  showWelcome();
   if(!splash){
-    showWelcome();
+    armWelcome();
     return;
   }
   var holdMs=2500,fadeMs=400,started=Date.now();
@@ -1809,11 +1846,14 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     splash.hidden=true;
     splash.remove();
     showWelcome();
+    armWelcome();
   }
   function dismiss(){
     var wait=Math.max(0,holdMs-(Date.now()-started));
     setTimeout(function(){
       if(!splash||!splash.isConnected)return;
+      // Keep Welcome covering Home before splash goes transparent.
+      showWelcome();
       var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if(reduce){
         finishSplash();
@@ -4830,7 +4870,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1884",
+        "./service-worker.js?v=1885",
         { updateViaCache: "none" }
       );
 
