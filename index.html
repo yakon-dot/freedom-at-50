@@ -11,7 +11,33 @@
 #freedomSplash .freedom-splash-logo{margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;font-size:clamp(48px,12vw,64px);font-weight:500;color:#efcbaa;line-height:1}
 #freedomSplash.is-exiting{opacity:0;transition:opacity .4s ease;pointer-events:none}
 @media (prefers-reduced-motion:reduce){#freedomSplash.is-exiting{transition:none}}
+#freedomWelcome{
+  position:fixed;inset:0;z-index:9950;box-sizing:border-box;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  padding:calc(92px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
+  background:#0b0c0e url("./welcome-wallpaper.jpg") center center / cover no-repeat;
+  text-align:center;-webkit-tap-highlight-color:transparent;
+}
+#freedomWelcome[hidden]{display:none!important}
+.freedom-welcome-inner{
+  display:flex;flex-direction:column;align-items:center;width:100%;max-width:22rem;flex:1 1 auto;
+}
+.freedom-welcome-logo{
+  margin:0 0 clamp(40px,8vh,64px);
+  font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:clamp(48px,12vw,64px);font-weight:500;color:#efcbaa;line-height:1;
+}
+.freedom-welcome-headline{
+  margin:0 0 14px;font-size:25px;line-height:1.1;letter-spacing:-.035em;font-weight:400;
+  color:rgba(236,232,224,.78);
+}
+.freedom-welcome-support{
+  margin:0 auto clamp(42px,9vh,72px);max-width:18rem;
+  font-size:14px;line-height:1.55;color:rgba(200,198,192,.55);
+}
+.freedom-welcome-inner > .demo-outline-btn{margin-top:auto}
 </style>
+<link rel="preload" as="image" href="./welcome-wallpaper.jpg">
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
@@ -1734,27 +1760,60 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 <div id="freedomSplash" class="freedom-splash" role="presentation" aria-hidden="true">
   <div class="freedom-splash-logo">Freedom</div>
 </div>
+<div id="freedomWelcome" class="freedom-welcome" hidden>
+  <div class="freedom-welcome-inner">
+    <div class="freedom-welcome-logo">Freedom</div>
+    <h1 class="freedom-welcome-headline">Your future.<br>A little more yours.</h1>
+    <p class="freedom-welcome-support">A place to see what you're moving away from and what you're moving towards.</p>
+    <button class="demo-outline-btn demo-enter-btn" id="freedomWelcomeComeIn" type="button">Come in</button>
+  </div>
+</div>
 <script>
 (function(){
+  var WELCOME_KEY="freedom50-welcome-complete-v1";
   var splash=document.getElementById("freedomSplash");
-  if(!splash)return;
+  var welcome=document.getElementById("freedomWelcome");
+  var comeIn=document.getElementById("freedomWelcomeComeIn");
+  function welcomeDone(){
+    try{return localStorage.getItem(WELCOME_KEY)==="1";}catch(e){return false;}
+  }
+  function showWelcome(){
+    if(!welcome||welcomeDone())return false;
+    welcome.hidden=false;
+    return true;
+  }
+  function completeWelcome(){
+    try{localStorage.setItem(WELCOME_KEY,"1");}catch(e){}
+    if(welcome)welcome.hidden=true;
+  }
+  window.freedomWelcome={show:showWelcome,complete:completeWelcome,isDone:welcomeDone};
+  if(comeIn){
+    comeIn.addEventListener("click",function(){
+      completeWelcome();
+    });
+  }
+  if(!splash){
+    showWelcome();
+    return;
+  }
   var holdMs=2500,fadeMs=400,started=Date.now();
+  function finishSplash(){
+    if(!splash||!splash.isConnected)return;
+    splash.hidden=true;
+    splash.remove();
+    showWelcome();
+  }
   function dismiss(){
     var wait=Math.max(0,holdMs-(Date.now()-started));
     setTimeout(function(){
       if(!splash||!splash.isConnected)return;
       var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if(reduce){
-        splash.hidden=true;
-        splash.remove();
+        finishSplash();
         return;
       }
       splash.classList.add("is-exiting");
-      setTimeout(function(){
-        if(!splash||!splash.isConnected)return;
-        splash.hidden=true;
-        splash.remove();
-      },fadeMs);
+      setTimeout(finishSplash,fadeMs);
     },wait);
   }
   if(document.fonts&&document.fonts.load){
@@ -4764,7 +4823,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1880",
+        "./service-worker.js?v=1881",
         { updateViaCache: "none" }
       );
 

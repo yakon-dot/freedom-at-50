@@ -1,12 +1,13 @@
 /* Freedom at 50 — wallpaper cache restored (render never gated on preload) */
-const CACHE_NAME = "freedom-at-50-v1.8.6.17";
+const CACHE_NAME = "freedom-at-50-v1.8.6.18";
 const WALLPAPER_CACHE = "freedom-wallpapers-v1";
 const WALLPAPERS = [
   "./overview-wallpaper.png",
   "./journey-wallpaper.png",
   "./goals-wallpaper.png",
   "./pension-wallpaper.png",
-  "./archive-wallpaper.png"
+  "./archive-wallpaper.png",
+  "./welcome-wallpaper.jpg"
 ];
 
 function isWallpaperRequest(url) {
