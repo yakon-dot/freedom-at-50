@@ -63,10 +63,10 @@
   animation:freedomWelcomeComeInIn .75s ease-out .5s forwards;
 }
 #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in::before{
-  animation:freedomWelcomeComeInSheen 2.2s ease-in-out 1.35s 1 forwards;
+  animation:freedomWelcomeComeInSheen 2.8s ease-in-out 1.4s 1 forwards;
 }
 #freedomWelcome.is-ready #freedomWelcomeComeIn .freedom-welcome-arrow{
-  animation:freedomWelcomeArrowNudge 1.5s ease-in-out 1.55s 1 both;
+  animation:freedomWelcomeArrowNudge 1.7s ease-in-out 1.7s 1 both;
 }
 @keyframes freedomWelcomeComeInIn{
   from{opacity:0;transform:translateY(6px)}
@@ -74,13 +74,13 @@
 }
 @keyframes freedomWelcomeComeInSheen{
   0%{background-position:-55% 0;opacity:0}
-  10%{opacity:1}
-  90%{opacity:1}
+  8%{opacity:1}
+  92%{opacity:1}
   100%{background-position:155% 0;opacity:0}
 }
 @keyframes freedomWelcomeArrowNudge{
   0%,100%{transform:translateX(0)}
-  45%{transform:translateX(5px)}
+  42%{transform:translateX(6px)}
 }
 @media (prefers-reduced-motion:reduce){
   #freedomWelcomeComeIn.freedom-welcome-come-in{
@@ -4903,7 +4903,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1887",
+        "./service-worker.js?v=1888",
         { updateViaCache: "none" }
       );
 
