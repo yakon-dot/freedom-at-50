@@ -118,52 +118,52 @@
 /* Four corner light blobs — Freedom peach #efcbaa / sage #b0cdb8 on near-black charcoal */
 .freedom-look-blob{
   position:absolute;display:block;pointer-events:none;
-  filter:blur(72px);-webkit-filter:blur(72px);
+  filter:blur(64px);-webkit-filter:blur(64px);
   will-change:transform,opacity,border-radius;
 }
 .freedom-look-blob-tl{
-  top:-8%;left:-14%;width:46%;height:36%;
-  background:#efcbaa;opacity:.38;
+  top:-6%;left:-10%;width:38%;height:30%;
+  background:#efcbaa;opacity:.48;
   border-radius:58% 42% 62% 38% / 46% 54% 44% 56%;
   animation:freedomLookBlobTl 13s ease-in-out infinite;
 }
 .freedom-look-blob-tr{
-  top:-10%;right:-12%;width:44%;height:34%;
-  background:#b0cdb8;opacity:.34;
+  top:-8%;right:-8%;width:36%;height:28%;
+  background:#b0cdb8;opacity:.44;
   border-radius:42% 58% 40% 60% / 52% 40% 58% 48%;
   animation:freedomLookBlobTr 16s ease-in-out infinite;
 }
 .freedom-look-blob-bl{
-  bottom:-12%;left:-16%;width:48%;height:36%;
-  background:#b0cdb8;opacity:.32;
+  bottom:-10%;left:-12%;width:40%;height:30%;
+  background:#b0cdb8;opacity:.40;
   border-radius:48% 52% 44% 56% / 40% 60% 42% 58%;
   animation:freedomLookBlobBl 18s ease-in-out infinite;
 }
 .freedom-look-blob-br{
-  bottom:-10%;right:-14%;width:46%;height:38%;
-  background:#efcbaa;opacity:.36;
+  bottom:-8%;right:-10%;width:38%;height:32%;
+  background:#efcbaa;opacity:.46;
   border-radius:44% 56% 50% 50% / 58% 42% 54% 46%;
   animation:freedomLookBlobBr 20s ease-in-out infinite;
 }
 @keyframes freedomLookBlobTl{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.38;border-radius:58% 42% 62% 38% / 46% 54% 44% 56%}
-  40%{transform:translate(2.2%,1.4%) scale(1.04);opacity:.44;border-radius:48% 52% 44% 56% / 58% 42% 52% 48%}
-  70%{transform:translate(1%,-1%) scale(.97);opacity:.34;border-radius:54% 46% 58% 42% / 44% 56% 48% 52%}
+  0%,100%{transform:translate(0,0) scale(1);opacity:.48;border-radius:58% 42% 62% 38% / 46% 54% 44% 56%}
+  40%{transform:translate(2.2%,1.4%) scale(1.04);opacity:.54;border-radius:48% 52% 44% 56% / 58% 42% 52% 48%}
+  70%{transform:translate(1%,-1%) scale(.97);opacity:.42;border-radius:54% 46% 58% 42% / 44% 56% 48% 52%}
 }
 @keyframes freedomLookBlobTr{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.34;border-radius:42% 58% 40% 60% / 52% 40% 58% 48%}
-  35%{transform:translate(-2%,1.8%) scale(1.035);opacity:.4;border-radius:52% 48% 56% 44% / 44% 56% 46% 54%}
-  65%{transform:translate(-.8%,-1.4%) scale(.96);opacity:.3;border-radius:46% 54% 48% 52% / 56% 44% 52% 48%}
+  0%,100%{transform:translate(0,0) scale(1);opacity:.44;border-radius:42% 58% 40% 60% / 52% 40% 58% 48%}
+  35%{transform:translate(-2%,1.8%) scale(1.035);opacity:.5;border-radius:52% 48% 56% 44% / 44% 56% 46% 54%}
+  65%{transform:translate(-.8%,-1.4%) scale(.96);opacity:.38;border-radius:46% 54% 48% 52% / 56% 44% 52% 48%}
 }
 @keyframes freedomLookBlobBl{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.32;border-radius:48% 52% 44% 56% / 40% 60% 42% 58%}
-  45%{transform:translate(1.8%,-2%) scale(1.045);opacity:.38;border-radius:56% 44% 52% 48% / 50% 50% 46% 54%}
-  75%{transform:translate(-1.4%,-.8%) scale(.98);opacity:.28;border-radius:44% 56% 48% 52% / 46% 54% 50% 50%}
+  0%,100%{transform:translate(0,0) scale(1);opacity:.40;border-radius:48% 52% 44% 56% / 40% 60% 42% 58%}
+  45%{transform:translate(1.8%,-2%) scale(1.045);opacity:.46;border-radius:56% 44% 52% 48% / 50% 50% 46% 54%}
+  75%{transform:translate(-1.4%,-.8%) scale(.98);opacity:.34;border-radius:44% 56% 48% 52% / 46% 54% 50% 50%}
 }
 @keyframes freedomLookBlobBr{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.36;border-radius:44% 56% 50% 50% / 58% 42% 54% 46%}
-  30%{transform:translate(-1.8%,-1.4%) scale(1.03);opacity:.42;border-radius:52% 48% 46% 54% / 48% 52% 44% 56%}
-  60%{transform:translate(1.4%,1%) scale(.96);opacity:.32;border-radius:40% 60% 54% 46% / 54% 46% 58% 42%}
+  0%,100%{transform:translate(0,0) scale(1);opacity:.46;border-radius:44% 56% 50% 50% / 58% 42% 54% 46%}
+  30%{transform:translate(-1.8%,-1.4%) scale(1.03);opacity:.52;border-radius:52% 48% 46% 54% / 48% 52% 44% 56%}
+  60%{transform:translate(1.4%,1%) scale(.96);opacity:.4;border-radius:40% 60% 54% 46% / 54% 46% 58% 42%}
 }
 @media (prefers-reduced-motion:reduce){
   .freedom-look-blob-tl,.freedom-look-blob-tr,.freedom-look-blob-bl,.freedom-look-blob-br{animation:none}
