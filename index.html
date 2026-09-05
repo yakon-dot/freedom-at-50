@@ -114,35 +114,36 @@
 .freedom-look-bg{
   position:absolute;inset:0;pointer-events:none;overflow:hidden;
   background:#0b0c0e;
+  isolation:isolate;
 }
 /* Four corner light blobs — Freedom peach #efcbaa / sage #b0cdb8 on near-black charcoal */
 .freedom-look-blob{
   position:absolute;display:block;pointer-events:none;
-  filter:blur(70px);-webkit-filter:blur(70px);
+  filter:blur(64px);-webkit-filter:blur(64px);
   mix-blend-mode:screen;
   will-change:transform,opacity,border-radius;
 }
 .freedom-look-blob-tl{
-  top:-12%;left:-18%;width:58%;height:44%;
-  background:#efcbaa;opacity:.55;
+  top:-8%;left:-14%;width:48%;height:36%;
+  background:#efcbaa;opacity:.72;
   border-radius:58% 42% 62% 38% / 46% 54% 44% 56%;
   animation:freedomLookBlobTl 13s ease-in-out infinite;
 }
 .freedom-look-blob-tr{
-  top:-14%;right:-16%;width:56%;height:42%;
-  background:#b0cdb8;opacity:.50;
+  top:-10%;right:-12%;width:46%;height:34%;
+  background:#b0cdb8;opacity:.68;
   border-radius:42% 58% 40% 60% / 52% 40% 58% 48%;
   animation:freedomLookBlobTr 16s ease-in-out infinite;
 }
 .freedom-look-blob-bl{
-  bottom:-16%;left:-20%;width:58%;height:44%;
-  background:#b0cdb8;opacity:.48;
+  bottom:-12%;left:-16%;width:48%;height:36%;
+  background:#b0cdb8;opacity:.64;
   border-radius:48% 52% 44% 56% / 40% 60% 42% 58%;
   animation:freedomLookBlobBl 18s ease-in-out infinite;
 }
 .freedom-look-blob-br{
-  bottom:-14%;right:-18%;width:58%;height:46%;
-  background:#efcbaa;opacity:.52;
+  bottom:-10%;right:-14%;width:48%;height:38%;
+  background:#efcbaa;opacity:.70;
   border-radius:44% 56% 50% 50% / 58% 42% 54% 46%;
   animation:freedomLookBlobBr 20s ease-in-out infinite;
 }
