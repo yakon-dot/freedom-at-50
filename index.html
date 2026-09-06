@@ -70,9 +70,13 @@
   mask-composite:exclude;
 }
 #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
-#freedomMakeItYours.is-ready #freedomMakeYoursStart.freedom-welcome-come-in{
+#freedomMakeItYours.is-ready #freedomMakeYoursStart.freedom-welcome-come-in:not(.is-armed){
   pointer-events:auto;
   animation:freedomWelcomeComeInIn .75s ease-out .5s forwards;
+}
+/* After entrance, keep Start my Freedom tappable without relying on animation fill. */
+#freedomMakeYoursStart.freedom-welcome-come-in.is-armed{
+  opacity:1;transform:translateY(0);pointer-events:auto;
 }
 #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
 #freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen,
@@ -106,13 +110,16 @@
     opacity:1;transform:none;pointer-events:auto;
   }
   #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
-  #freedomMakeItYours.is-ready #freedomMakeYoursStart.freedom-welcome-come-in,
+  #freedomMakeItYours.is-ready #freedomMakeYoursStart.freedom-welcome-come-in:not(.is-armed),
   #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
   #freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen,
   #freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap,
   #freedomMakeYoursStart.is-sheening .freedom-welcome-sheen,
   #freedomMakeYoursStart.is-sheen-looping .freedom-welcome-sheen,
   #freedomMakeYoursStart.is-sheening .freedom-welcome-arrow-wrap{animation:none}
+  #freedomMakeYoursStart.freedom-welcome-come-in.is-armed{
+    opacity:1;transform:none;pointer-events:auto;
+  }
 }
 .freedom-welcome-arrow-wrap{
   display:inline-flex;align-items:center;flex:0 0 auto;position:relative;z-index:2;
@@ -364,12 +371,12 @@
   .freedom-look-handwrite-line.is-writing{animation:none}
   .freedom-look-inner .freedom-welcome-support.freedom-look-support{opacity:1;transition:none}
 }
-/* —— First-time Exit Demo: solid sage from approved reference (#ACBAA1) —— */
+/* —— First-time Exit Demo: solid Freedom near-black/charcoal (--bg / #0b0c0e) —— */
 #freedomMakeItYours{
   position:fixed;inset:0;z-index:9960;box-sizing:border-box;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
-  background:#ACBAA1;text-align:center;-webkit-tap-highlight-color:transparent;
+  background:var(--bg,#0b0c0e);text-align:center;-webkit-tap-highlight-color:transparent;
   opacity:0;pointer-events:none;
 }
 #freedomMakeItYours[hidden]{display:none!important}
@@ -423,7 +430,7 @@
 }
 /* Planned companion-selection stage (route target; designs not invented here) */
 #freedomCompanionSelect{
-  position:fixed;inset:0;z-index:9960;box-sizing:border-box;
+  position:fixed;inset:0;z-index:9961;box-sizing:border-box;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
   background:var(--bg,#0b0c0e);text-align:center;-webkit-tap-highlight-color:transparent;
@@ -2508,7 +2515,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     if(makeItYours)makeItYours.classList.remove("is-ready");
     stopButtonSheen(makeYoursStart,"makeYoursStart");
     if(makeYoursStart){
-      makeYoursStart.classList.remove("is-sheening","is-sheen-looping");
+      makeYoursStart.classList.remove("is-sheening","is-sheen-looping","is-armed");
     }
   }
   function presentMakeItYoursOpaque(){
@@ -2530,6 +2537,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       if(makeYoursLine2)makeYoursLine2.classList.add("is-writing");
       if(makeYoursSupport)makeYoursSupport.classList.add("is-visible");
       makeItYours.classList.add("is-ready");
+      if(makeYoursStart)makeYoursStart.classList.add("is-armed");
       return;
     }
     /* Same rhythm as the look-around bridge: quiet beat → line1 → gap → line2 → support → CTA. */
@@ -2563,18 +2571,22 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function showCompanionSelect(){
     if(!companionSelect)return false;
     companionSelect.hidden=false;
+    companionSelect.setAttribute("aria-hidden","false");
     return true;
   }
+  function hideCompanionSelect(){
+    if(!companionSelect)return;
+    companionSelect.hidden=true;
+    companionSelect.setAttribute("aria-hidden","true");
+  }
   function goMakeYoursToCompanion(){
+    /* Start my Freedom → planned companion-selection stage (not Home). */
     stopButtonSheen(makeYoursStart,"makeYoursStart");
     hideMakeItYours();
     showCompanionSelect();
-    if(typeof window.freedomCompanionSelect==="object"&&typeof window.freedomCompanionSelect.show==="function"){
-      window.freedomCompanionSelect.show();
-    }
   }
   function interceptFirstExitDemo(){
-    /* Returns true when sage covers the exit (first-time journey still open). */
+    /* Returns true when this screen covers the exit (first-time journey still open). */
     if(firstTimeDone())return false;
     presentMakeItYoursOpaque();
     armMakeItYours();
@@ -2590,6 +2602,12 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     interceptExitDemo:interceptFirstExitDemo,
     isFirstTimeDone:firstTimeDone,
     markFirstTimeComplete:markFirstTimeComplete
+  };
+  /* Planned companion-selection route — UI still to be built; stage exists for navigation. */
+  window.freedomCompanionSelect={
+    show:showCompanionSelect,
+    hide:hideCompanionSelect,
+    isOpen:function(){return !!(companionSelect&&!companionSelect.hidden);}
   };
 
   if(comeIn){
@@ -2614,11 +2632,13 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   if(makeYoursLine1)makeYoursLine1.addEventListener("animationend",markMakeYoursLineComplete);
   if(makeYoursLine2)makeYoursLine2.addEventListener("animationend",markMakeYoursLineComplete);
   if(makeYoursStart){
-    makeYoursStart.addEventListener("click",function(){
+    makeYoursStart.addEventListener("click",function(e){
+      e.preventDefault();
       goMakeYoursToCompanion();
     });
     makeYoursStart.addEventListener("animationend",function(e){
       if(e.animationName==="freedomWelcomeComeInIn"&&e.target===makeYoursStart){
+        makeYoursStart.classList.add("is-armed");
         makeYoursStart.classList.remove("is-sheen-looping");
         makeYoursStart.classList.add("is-sheening");
         return;
