@@ -8,7 +8,9 @@
 <style>html,body{background:#0b0c0e;color:#f5f4f0}
 #freedomSplash{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:#0b0c0e;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
 #freedomSplash[hidden]{display:none!important}
-#freedomSplash .freedom-splash-logo{margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;font-size:clamp(48px,12vw,64px);font-weight:500;color:#efcbaa;line-height:1}
+/* Hidden until Caveat is confirmed loaded — prevents fallback/system font flash */
+#freedomSplash .freedom-splash-logo{margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;font-size:clamp(48px,12vw,64px);font-weight:500;color:#efcbaa;line-height:1;visibility:hidden}
+#freedomSplash.is-font-ready .freedom-splash-logo{visibility:visible}
 /* Slow fade so Welcome (or Home) softens in underneath */
 #freedomSplash.is-exiting{opacity:0;transition:opacity 1.05s ease;pointer-events:none}
 @media (prefers-reduced-motion:reduce){#freedomSplash.is-exiting{transition:none}}
@@ -339,7 +341,10 @@
 }
 </style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- display=block: avoid swap FOUT on the splash wordmark path -->
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&display=block" rel="stylesheet">
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <link rel="preload" as="image" href="./overview-wallpaper.png">
@@ -2266,7 +2271,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     else if(needsLook)armLookAround();
     return;
   }
-  var holdMs=2500,fadeMs=1050,started=Date.now();
+  var holdMs=2500,fadeMs=1050,started=0;
   function finishSplash(shouldArmWelcome,shouldArmLook){
     if(!splash||!splash.isConnected)return;
     splash.hidden=true;
@@ -2280,6 +2285,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     }
   }
   function dismiss(){
+    if(!started)started=Date.now();
     var wait=Math.max(0,holdMs-(Date.now()-started));
     setTimeout(function(){
       if(!splash||!splash.isConnected)return;
@@ -2294,12 +2300,51 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       setTimeout(function(){finishSplash(armW,armL);},fadeMs);
     },wait);
   }
-  if(document.fonts&&document.fonts.load){
-    Promise.race([
-      document.fonts.load("500 56px Caveat"),
-      new Promise(function(resolve){setTimeout(resolve,350);})
-    ]).then(dismiss).catch(dismiss);
-  }else dismiss();
+  /* Reveal the wordmark only after Caveat is actually available.
+     Previously the logo painted immediately while Google Fonts used display=swap,
+     and a 350ms race could proceed before load — causing intermittent fallback flashes. */
+  function caveatReady(){
+    try{
+      /* Pass the wordmark text so unicode-range subsets covering "Freedom" are checked. */
+      return !!(document.fonts&&document.fonts.check&&document.fonts.check("500 56px Caveat","Freedom"));
+    }catch(e){return false;}
+  }
+  function revealWordmarkThenDismiss(){
+    if(!splash||!splash.isConnected)return;
+    splash.classList.add("is-font-ready");
+    started=Date.now();
+    dismiss();
+  }
+  function waitForCaveatThenReveal(){
+    if(caveatReady()){
+      revealWordmarkThenDismiss();
+      return;
+    }
+    if(!(document.fonts&&document.fonts.load)){
+      /* No Font Loading API — keep wordmark hidden rather than show a fallback. */
+      dismiss();
+      return;
+    }
+    var settled=false;
+    function finish(facesOk){
+      if(settled)return;
+      settled=true;
+      if(facesOk&&caveatReady())revealWordmarkThenDismiss();
+      else dismiss(); /* black splash only → next screen; never paint fallback */
+    }
+    Promise.all([
+      document.fonts.load("500 56px Caveat","Freedom"),
+      document.fonts.load("500 64px Caveat","Freedom"),
+      document.fonts.ready
+    ]).then(function(results){
+      var faces=results[0];
+      finish(faces&&faces.length>0);
+    }).catch(function(){finish(false);});
+    /* Safety valve so a broken font CDN cannot hang onboarding forever.
+       Wordmark still only reveals if check() passes — otherwise stay blank. */
+    setTimeout(function(){finish(caveatReady());},4000);
+  }
+  waitForCaveatThenReveal();
 })();
 </script>
 <div class="freedom-landscape" id="freedomLandscape" aria-hidden="true">
