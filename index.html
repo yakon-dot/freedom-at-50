@@ -2568,22 +2568,36 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     makeItYours.classList.remove("is-present","is-ready","is-exiting");
     makeItYours.hidden=true;
   }
-  function showCompanionSelect(){
-    if(!companionSelect)return false;
-    companionSelect.hidden=false;
-    companionSelect.setAttribute("aria-hidden","false");
-    return true;
-  }
   function hideCompanionSelect(){
+    /* Keep companion stage closed — Start my Freedom goes to Home for now. */
     if(!companionSelect)return;
     companionSelect.hidden=true;
     companionSelect.setAttribute("aria-hidden","true");
   }
-  function goMakeYoursToCompanion(){
-    /* Start my Freedom → planned companion-selection stage (not Home). */
-    stopButtonSheen(makeYoursStart,"makeYoursStart");
+  function finishMakeYoursToHome(){
     hideMakeItYours();
-    showCompanionSelect();
+    hideCompanionSelect();
+    if(typeof window.showHome==="function")window.showHome();
+  }
+  function goMakeYoursToHome(){
+    /*
+      Start my Freedom → normal Freedom Home.
+      Exit Demo already left Demo Mode and restored personal state under this
+      overlay; we only dismiss the first-time screen and mark it complete.
+    */
+    if(!makeItYours||makeItYours.hidden)return;
+    stopButtonSheen(makeYoursStart,"makeYoursStart");
+    hideCompanionSelect();
+    markFirstTimeComplete();
+    if(typeof window.showHome==="function")window.showHome();
+    if(prefersReducedMotion()){
+      finishMakeYoursToHome();
+      return;
+    }
+    makeItYours.classList.add("is-exiting");
+    queueMakeYoursTimer(function(){
+      finishMakeYoursToHome();
+    },ONBOARD_FADE_MS);
   }
   function interceptFirstExitDemo(){
     /* Returns true when this screen covers the exit (first-time journey still open). */
@@ -2602,12 +2616,6 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     interceptExitDemo:interceptFirstExitDemo,
     isFirstTimeDone:firstTimeDone,
     markFirstTimeComplete:markFirstTimeComplete
-  };
-  /* Planned companion-selection route — UI still to be built; stage exists for navigation. */
-  window.freedomCompanionSelect={
-    show:showCompanionSelect,
-    hide:hideCompanionSelect,
-    isOpen:function(){return !!(companionSelect&&!companionSelect.hidden);}
   };
 
   if(comeIn){
@@ -2634,7 +2642,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   if(makeYoursStart){
     makeYoursStart.addEventListener("click",function(e){
       e.preventDefault();
-      goMakeYoursToCompanion();
+      goMakeYoursToHome();
     });
     makeYoursStart.addEventListener("animationend",function(e){
       if(e.animationName==="freedomWelcomeComeInIn"&&e.target===makeYoursStart){
