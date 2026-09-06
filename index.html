@@ -20,8 +20,11 @@
   padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
   background:#0b0c0e url("./welcome-wallpaper.jpg?v=2") center center / cover no-repeat;
   text-align:center;-webkit-tap-highlight-color:transparent;
+  opacity:1;transition:opacity .85s ease;
 }
 #freedomWelcome[hidden]{display:none!important}
+#freedomWelcome.is-exiting{opacity:0;pointer-events:none}
+@media (prefers-reduced-motion:reduce){#freedomWelcome{transition:none}}
 .freedom-welcome-inner{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   width:100%;max-width:22rem;flex:1 1 auto;
@@ -36,16 +39,14 @@
   margin:0 auto 22px;max-width:18rem;
   font-size:14px;line-height:1.55;color:rgba(200,198,192,.55);
 }
-#freedomWelcomeComeIn.freedom-welcome-come-in,
-#freedomLookDemoBtn.freedom-welcome-come-in{
+#freedomWelcomeComeIn.freedom-welcome-come-in{
   position:relative;
   display:inline-flex;align-items:center;justify-content:center;gap:18px;
   min-width:152px;padding:10px 22px 10px 26px;
   opacity:0;transform:translateY(6px);pointer-events:none;
 }
 /* Stroke-only sheen: highlight on the outline, left → right */
-#freedomWelcomeComeIn .freedom-welcome-sheen,
-#freedomLookDemoBtn .freedom-welcome-sheen{
+#freedomWelcomeComeIn .freedom-welcome-sheen{
   position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;
   box-sizing:border-box;padding:1.5px;opacity:0;
   background:linear-gradient(90deg,
@@ -66,31 +67,16 @@
   mask-origin:content-box,border-box;
   mask-composite:exclude;
 }
-#freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
-#freedomLookAround.is-ready #freedomLookDemoBtn.freedom-welcome-come-in{
+#freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in{
   pointer-events:auto;
   animation:freedomWelcomeComeInIn .75s ease-out .5s forwards;
 }
 #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
-#freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen,
-#freedomLookDemoBtn.is-sheening .freedom-welcome-sheen,
-#freedomLookDemoBtn.is-sheen-looping .freedom-welcome-sheen{
+#freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen{
   animation:freedomWelcomeComeInSheen 2.8s ease-in-out forwards;
 }
-#freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap,
-#freedomLookDemoBtn.is-sheening .freedom-welcome-arrow-wrap{
+#freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap{
   animation:freedomWelcomeArrowNudge 1.65s ease-in-out .12s 1 both;
-}
-/*
-  DEMO MODE = same Come in CTA chrome (152×41 pill, padding, gap, arrow, stroke sheen).
-  Only differences: label + muted Freedom sage mid (#73b083) — not bright mint #84bd91.
-  Uppercase type is lightened/tightened so the longer label stays inside the same width.
-*/
-#freedomLookDemoBtn.freedom-look-demo-sage{
-  width:152px;min-width:152px;max-width:152px;height:41px;box-sizing:border-box;
-  border-color:rgba(115,176,131,.82);color:#73b083;
-  font-size:11px;font-weight:500;letter-spacing:0;
-  text-transform:uppercase;white-space:nowrap;
 }
 @keyframes freedomWelcomeComeInIn{
   from{opacity:0;transform:translateY(6px)}
@@ -109,18 +95,13 @@
   75%{transform:translateX(7px)}
 }
 @media (prefers-reduced-motion:reduce){
-  #freedomWelcomeComeIn.freedom-welcome-come-in,
-  #freedomLookDemoBtn.freedom-welcome-come-in{
+  #freedomWelcomeComeIn.freedom-welcome-come-in{
     opacity:1;transform:none;pointer-events:auto;
   }
   #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
-  #freedomLookAround.is-ready #freedomLookDemoBtn.freedom-welcome-come-in,
   #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
   #freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen,
-  #freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap,
-  #freedomLookDemoBtn.is-sheening .freedom-welcome-sheen,
-  #freedomLookDemoBtn.is-sheen-looping .freedom-welcome-sheen,
-  #freedomLookDemoBtn.is-sheening .freedom-welcome-arrow-wrap{animation:none}
+  #freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap{animation:none}
 }
 .freedom-welcome-arrow-wrap{
   display:inline-flex;align-items:center;flex:0 0 auto;position:relative;z-index:2;
@@ -128,15 +109,19 @@
 .freedom-welcome-arrow{
   width:16px;height:11px;display:block;
 }
-/* —— Have a look around first (onboarding bridge) —— */
+/* —— Have a look around first (onboarding bridge / timed transition) —— */
 #freedomLookAround{
   position:fixed;inset:0;z-index:9940;box-sizing:border-box;
   display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
   padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
   background:#0b0c0e;text-align:center;-webkit-tap-highlight-color:transparent;
-  overflow:hidden;
+  overflow:hidden;pointer-events:none;
+  opacity:0;transition:opacity .85s ease;
 }
 #freedomLookAround[hidden]{display:none!important}
+#freedomLookAround.is-ready{opacity:1}
+#freedomLookAround.is-exiting{opacity:0}
+@media (prefers-reduced-motion:reduce){#freedomLookAround{transition:none}}
 /* —— Look-around background: irregular multi-layer peach/sage smoke —— */
 .freedom-look-bg{
   position:absolute;inset:0;pointer-events:none;overflow:hidden;
@@ -329,9 +314,7 @@
   width:100%;max-width:22rem;flex:1 1 auto;
   transform:translateY(-7vh);
 }
-/* Bridge reuses Welcome headline/support classes for identical type.
-   Keep the established 28px support→CTA gap on this screen only. */
-.freedom-look-inner .freedom-welcome-support{margin-bottom:28px}
+/* Bridge reuses Welcome headline/support classes for identical type. */
 </style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2100,15 +2083,6 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   <div class="freedom-look-inner">
     <h1 class="freedom-welcome-headline">Have a look<br>around first.</h1>
     <p class="freedom-welcome-support">We've put a few things in so you can<br>see how Freedom feels before you<br>make it yours.</p>
-    <button class="demo-outline-btn freedom-welcome-come-in freedom-look-demo-sage" id="freedomLookDemoBtn" type="button">
-      <span class="freedom-welcome-sheen" aria-hidden="true"></span>
-      DEMO MODE
-      <span class="freedom-welcome-arrow-wrap">
-        <svg class="freedom-welcome-arrow" viewBox="0 0 18 12" aria-hidden="true" focusable="false">
-          <path d="M1.2 6H16.2M11.2 1.6 16.5 6 11.2 10.4" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </span>
-    </button>
   </div>
 </div>
 <script>
@@ -2119,7 +2093,6 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   var welcome=document.getElementById("freedomWelcome");
   var comeIn=document.getElementById("freedomWelcomeComeIn");
   var lookAround=document.getElementById("freedomLookAround");
-  var lookDemo=document.getElementById("freedomLookDemoBtn");
   function welcomeDone(){
     try{return localStorage.getItem(WELCOME_KEY)==="1";}catch(e){return false;}
   }
@@ -2127,7 +2100,11 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     try{return localStorage.getItem(LOOK_KEY)==="1";}catch(e){return false;}
   }
   var SHEEN_PAUSE_MS=1800;
+  var LOOK_HOLD_MS=2500;
+  var ONBOARD_FADE_MS=850;
   var sheenLoopTimers={};
+  var lookAutoTimer=null;
+  var lookAdvanceLock=false;
   function clearSheenLoop(key){
     if(sheenLoopTimers[key]){
       clearTimeout(sheenLoopTimers[key]);
@@ -2145,26 +2122,34 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     sheenLoopTimers[key]=setTimeout(function(){
       sheenLoopTimers[key]=null;
       if(!btn.isConnected)return;
-      /* Keep looping only while this button's screen is still visible. */
+      /* Keep looping only while Welcome is still visible. */
       if(btn===comeIn&&(!welcome||welcome.hidden||welcomeDone()))return;
-      if(btn===lookDemo&&(!lookAround||lookAround.hidden||lookAroundDone()))return;
       var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if(reduce)return;
-      /* Replay the same sheen keyframes without re-nudging the arrow. */
       btn.classList.remove("is-sheening");
       btn.classList.remove("is-sheen-looping");
       void btn.offsetWidth;
       btn.classList.add("is-sheen-looping");
     },SHEEN_PAUSE_MS);
   }
+  function prefersReducedMotion(){
+    return !!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+  function clearLookAutoTimer(){
+    if(lookAutoTimer){
+      clearTimeout(lookAutoTimer);
+      lookAutoTimer=null;
+    }
+  }
   function showWelcome(){
     if(!welcome||welcomeDone())return false;
+    welcome.classList.remove("is-exiting");
     welcome.hidden=false;
     return true;
   }
   function armWelcome(){
     if(!welcome||welcome.hidden||welcomeDone())return;
-    welcome.classList.remove("is-ready");
+    welcome.classList.remove("is-ready","is-exiting");
     stopButtonSheen(comeIn,"comeIn");
     void welcome.offsetWidth;
     requestAnimationFrame(function(){
@@ -2176,7 +2161,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function completeWelcome(){
     try{localStorage.setItem(WELCOME_KEY,"1");}catch(e){}
     if(welcome){
-      welcome.classList.remove("is-ready");
+      welcome.classList.remove("is-ready","is-exiting");
       welcome.hidden=true;
     }
     stopButtonSheen(comeIn,"comeIn");
@@ -2184,31 +2169,48 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function showLookAround(){
     /* Only after Welcome is complete — never replace Welcome */
     if(!lookAround||lookAroundDone()||!welcomeDone())return false;
+    lookAround.classList.remove("is-exiting");
     lookAround.hidden=false;
     return true;
   }
-  function armLookAround(){
+  function scheduleLookAroundAutoDemo(){
+    clearLookAutoTimer();
     if(!lookAround||lookAround.hidden||lookAroundDone())return;
-    lookAround.classList.remove("is-ready");
-    stopButtonSheen(lookDemo,"lookDemo");
+    lookAutoTimer=setTimeout(function(){
+      lookAutoTimer=null;
+      advanceLookAroundToDemo();
+    },LOOK_HOLD_MS);
+  }
+  function armLookAround(autoDelayMs){
+    if(!lookAround||lookAround.hidden||lookAroundDone())return;
+    lookAround.classList.remove("is-ready","is-exiting");
     void lookAround.offsetWidth;
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
+        if(!lookAround||lookAround.hidden||lookAroundDone())return;
         lookAround.classList.add("is-ready");
+        var delay=Math.max(0, autoDelayMs||0);
+        if(delay){
+          clearLookAutoTimer();
+          lookAutoTimer=setTimeout(function(){
+            lookAutoTimer=null;
+            scheduleLookAroundAutoDemo();
+          },delay);
+        }else{
+          scheduleLookAroundAutoDemo();
+        }
       });
     });
   }
   function completeLookAround(){
+    clearLookAutoTimer();
     try{localStorage.setItem(LOOK_KEY,"1");}catch(e){}
     if(lookAround){
-      lookAround.classList.remove("is-ready");
+      lookAround.classList.remove("is-ready","is-exiting");
       lookAround.hidden=true;
     }
-    stopButtonSheen(lookDemo,"lookDemo");
   }
-  function enterDemoFromLookAround(){
-    completeLookAround();
-    // Main app script exposes enterDemo as a global function declaration.
+  function triggerEnterDemo(){
     if(typeof window.enterDemo==="function"){
       window.enterDemo();
       return;
@@ -2217,18 +2219,60 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       enterDemo();
       return;
     }
-    // Fallback if scripts race: retry shortly.
     setTimeout(function(){
       if(typeof window.enterDemo==="function")window.enterDemo();
     },0);
+  }
+  function advanceLookAroundToDemo(){
+    if(lookAdvanceLock||lookAroundDone())return;
+    lookAdvanceLock=true;
+    clearLookAutoTimer();
+    /* Activate Demo under the bridge, then soft-fade the bridge away. */
+    triggerEnterDemo();
+    if(!lookAround||!lookAround.isConnected){
+      completeLookAround();
+      return;
+    }
+    if(prefersReducedMotion()){
+      completeLookAround();
+      return;
+    }
+    lookAround.classList.remove("is-ready");
+    lookAround.classList.add("is-exiting");
+    setTimeout(function(){
+      completeLookAround();
+    },ONBOARD_FADE_MS);
+  }
+  function goFromWelcomeToLookAround(){
+    if(welcomeDone()){
+      if(showLookAround())armLookAround();
+      return;
+    }
+    /* Persist Welcome completion first so showLookAround() is allowed. */
+    try{localStorage.setItem(WELCOME_KEY,"1");}catch(e){}
+    stopButtonSheen(comeIn,"comeIn");
+    /* Stage the bridge under Welcome (lower z-index), then crossfade. */
+    showLookAround();
+    if(prefersReducedMotion()||!welcome){
+      completeWelcome();
+      armLookAround();
+      return;
+    }
+    /* Delay the 2.5s hold until Welcome has finished fading so the message can register. */
+    armLookAround(ONBOARD_FADE_MS);
+    welcome.classList.add("is-exiting");
+    setTimeout(function(){
+      if(welcome){
+        welcome.classList.remove("is-ready","is-exiting");
+        welcome.hidden=true;
+      }
+    },ONBOARD_FADE_MS);
   }
   window.freedomWelcome={show:showWelcome,complete:completeWelcome,isDone:welcomeDone};
   window.freedomLookAround={show:showLookAround,complete:completeLookAround,isDone:lookAroundDone,arm:armLookAround};
   if(comeIn){
     comeIn.addEventListener("click",function(){
-      completeWelcome();
-      showLookAround();
-      armLookAround();
+      goFromWelcomeToLookAround();
     });
     comeIn.addEventListener("animationend",function(e){
       if(e.animationName==="freedomWelcomeComeInIn"&&e.target===comeIn){
@@ -2239,21 +2283,6 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       if(e.animationName!=="freedomWelcomeComeInSheen")return;
       if(!e.target||!e.target.classList||!e.target.classList.contains("freedom-welcome-sheen"))return;
       queueSheenLoop(comeIn,"comeIn");
-    });
-  }
-  if(lookDemo){
-    lookDemo.addEventListener("click",function(){
-      enterDemoFromLookAround();
-    });
-    lookDemo.addEventListener("animationend",function(e){
-      if(e.animationName==="freedomWelcomeComeInIn"&&e.target===lookDemo){
-        lookDemo.classList.remove("is-sheen-looping");
-        lookDemo.classList.add("is-sheening");
-        return;
-      }
-      if(e.animationName!=="freedomWelcomeComeInSheen")return;
-      if(!e.target||!e.target.classList||!e.target.classList.contains("freedom-welcome-sheen"))return;
-      queueSheenLoop(lookDemo,"lookDemo");
     });
   }
   // Stage the next onboarding surface under the splash so Home never flashes.
@@ -2284,8 +2313,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       if(!splash||!splash.isConnected)return;
       var armW=showWelcome();
       var armL=!armW&&showLookAround();
-      var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if(reduce){
+      if(prefersReducedMotion()){
         finishSplash(armW,armL);
         return;
       }
