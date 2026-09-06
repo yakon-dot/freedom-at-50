@@ -314,7 +314,40 @@
   width:100%;max-width:22rem;flex:1 1 auto;
   transform:translateY(-7vh);
 }
-/* Bridge reuses Welcome headline/support classes for identical type. */
+/*
+  Bridge headline: Caveat (same handwritten family as Demo welcome / Patricia sign).
+  Continuous left→right clip reveal — same technique as .freedom-landscape-sign.is-writing.
+  Not a typewriter / per-letter effect.
+*/
+.freedom-look-handwrite{
+  margin:0 0 14px;
+  font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:clamp(34px,9vw,42px);font-weight:500;line-height:1.15;
+  color:#efcbaa;text-align:center;
+  clip-path:inset(0 100% 0 0);
+}
+.freedom-look-handwrite.is-writing{
+  animation:freedomLookHandwrite 1.5s cubic-bezier(.37,.01,.18,1) forwards;
+}
+/* Existing Freedom secondary text; only fade timing is bridge-specific */
+.freedom-look-inner .freedom-welcome-support.freedom-look-support{
+  opacity:0;transition:opacity .55s ease;
+}
+.freedom-look-inner .freedom-welcome-support.freedom-look-support.is-visible{
+  opacity:1;
+}
+@keyframes freedomLookHandwrite{
+  0%{clip-path:inset(0 100% 0 0)}
+  18%{clip-path:inset(0 74% 0 0)}
+  48%{clip-path:inset(0 40% 0 0)}
+  72%{clip-path:inset(0 16% 0 0)}
+  100%{clip-path:inset(0 0 0 0)}
+}
+@media (prefers-reduced-motion:reduce){
+  .freedom-look-handwrite{clip-path:none}
+  .freedom-look-handwrite.is-writing{animation:none}
+  .freedom-look-inner .freedom-welcome-support.freedom-look-support{opacity:1;transition:none}
+}
 </style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2081,8 +2114,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     </div>
   </div>
   <div class="freedom-look-inner">
-    <h1 class="freedom-welcome-headline">Have a look<br>around first.</h1>
-    <p class="freedom-welcome-support">We've put a few things in so you can<br>see how Freedom feels before you<br>make it yours.</p>
+    <h1 class="freedom-look-handwrite" id="freedomLookHandwrite">Have a look<br>around first.</h1>
+    <p class="freedom-welcome-support freedom-look-support" id="freedomLookSupport">We've put a few things in so you can<br>see how Freedom feels before you<br>make it yours.</p>
   </div>
 </div>
 <script>
@@ -2100,11 +2133,16 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     try{return localStorage.getItem(LOOK_KEY)==="1";}catch(e){return false;}
   }
   var SHEEN_PAUSE_MS=1800;
-  var LOOK_HOLD_MS=2500;
+  var LOOK_HOLD_MS=2600;
   var ONBOARD_FADE_MS=850;
+  var LOOK_WRITE_MS=1500;
+  var LOOK_SUPPORT_FADE_AT_MS=1150;
   var sheenLoopTimers={};
   var lookAutoTimer=null;
+  var lookSupportTimer=null;
   var lookAdvanceLock=false;
+  var lookHandwrite=document.getElementById("freedomLookHandwrite");
+  var lookSupport=document.getElementById("freedomLookSupport");
   function clearSheenLoop(key){
     if(sheenLoopTimers[key]){
       clearTimeout(sheenLoopTimers[key]);
@@ -2139,6 +2177,36 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     if(lookAutoTimer){
       clearTimeout(lookAutoTimer);
       lookAutoTimer=null;
+    }
+  }
+  function clearLookSupportTimer(){
+    if(lookSupportTimer){
+      clearTimeout(lookSupportTimer);
+      lookSupportTimer=null;
+    }
+  }
+  function resetLookAroundWriting(){
+    clearLookSupportTimer();
+    if(lookHandwrite)lookHandwrite.classList.remove("is-writing");
+    if(lookSupport)lookSupport.classList.remove("is-visible");
+  }
+  function startLookAroundWriting(){
+    resetLookAroundWriting();
+    if(prefersReducedMotion()){
+      if(lookHandwrite)lookHandwrite.classList.add("is-writing");
+      if(lookSupport)lookSupport.classList.add("is-visible");
+      return;
+    }
+    if(lookHandwrite){
+      void lookHandwrite.offsetWidth;
+      lookHandwrite.classList.add("is-writing");
+    }
+    if(lookSupport){
+      lookSupportTimer=setTimeout(function(){
+        lookSupportTimer=null;
+        if(!lookAround||lookAround.hidden||lookAroundDone())return;
+        lookSupport.classList.add("is-visible");
+      },LOOK_SUPPORT_FADE_AT_MS);
     }
   }
   function showWelcome(){
@@ -2184,11 +2252,13 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function armLookAround(autoDelayMs){
     if(!lookAround||lookAround.hidden||lookAroundDone())return;
     lookAround.classList.remove("is-ready","is-exiting");
+    resetLookAroundWriting();
     void lookAround.offsetWidth;
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
         if(!lookAround||lookAround.hidden||lookAroundDone())return;
         lookAround.classList.add("is-ready");
+        startLookAroundWriting();
         var delay=Math.max(0, autoDelayMs||0);
         if(delay){
           clearLookAutoTimer();
@@ -2204,6 +2274,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   }
   function completeLookAround(){
     clearLookAutoTimer();
+    resetLookAroundWriting();
     try{localStorage.setItem(LOOK_KEY,"1");}catch(e){}
     if(lookAround){
       lookAround.classList.remove("is-ready","is-exiting");
