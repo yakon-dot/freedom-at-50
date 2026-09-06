@@ -912,12 +912,17 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.journey-active-v313 #journey .loan-title,
   body.journey-active-v313 #journey .loan-title-input{
     color:rgba(236,232,224,.78);
-    min-width:0;flex:1 1 0;max-width:100%;
+    min-width:0;max-width:100%;
     font-size:17px;font-weight:inherit;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
+  /*
+    Expanded journeys use an input for rename. Parent stacks title above amount
+    (column), so width:0 hid the name (e.g. Long Story). Match collapsed title.
+  */
   body.journey-active-v313 #journey .loan-title-input{
-    width:0;margin:0;padding:0;border:0;border-radius:0;
+    display:block;width:100%;box-sizing:border-box;
+    margin:0;padding:0;border:0;border-radius:0;
     background:transparent;font-family:inherit;letter-spacing:inherit;line-height:inherit;
   }
   body.journey-active-v313 #journey .loan-title-input:focus{
@@ -2582,13 +2587,18 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function goMakeYoursToHome(){
     /*
       Start my Freedom → normal Freedom Home.
-      Exit Demo already left Demo Mode and restored personal state under this
-      overlay; we only dismiss the first-time screen and mark it complete.
+      Exit Demo already left Demo Mode and restored the pre-Demo snapshot under
+      this overlay. For a brand-new user that snapshot must not keep Demo teaching
+      samples or seeded defaults — activate a clean empty personal Freedom here.
+      Returning users never see this screen (first-time already complete).
     */
     if(!makeItYours||makeItYours.hidden)return;
     stopButtonSheen(makeYoursStart,"makeYoursStart");
     hideCompanionSelect();
     markFirstTimeComplete();
+    if(typeof window.freedomDev==="object"&&typeof window.freedomDev.activateFreshPersonal==="function"){
+      window.freedomDev.activateFreshPersonal();
+    }
     if(typeof window.showHome==="function")window.showHome();
     if(prefersReducedMotion()){
       finishMakeYoursToHome();
@@ -3640,8 +3650,20 @@ function resetFreedomFreshStart(){
   try{localStorage.setItem(KEY,JSON.stringify(buildFreshUserState()));}catch(e){}
   location.replace(location.pathname+location.search);
 }
+function activateFreshPersonal(){
+  /* First-time Start my Freedom only: empty personal Journey/Goals/Pension records.
+     Demo samples stay in buildCanonicalDemoState(); returning users never hit this. */
+  if(demoMode)return;
+  state=buildFreshUserState();
+  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+  realStateSnapshot=null;
+  dismissAllPatriciaNotes();
+  syncDemoUi();
+  render();
+  if(typeof window.showHome==="function")window.showHome();
+}
 window.freedomDemo={openEntry:openDemoEntryFlow,exit:exitDemo,onHomeShown:handleDemoHomeShown,isActive:()=>demoMode};
-window.freedomDev={resetFreshStart:resetFreedomFreshStart};
+window.freedomDev={resetFreshStart:resetFreedomFreshStart,activateFreshPersonal:activateFreshPersonal};
 function monthsText(balance,payment){if(balance<=0)return"Complete";if(!payment)return"Repayment not set";const m=Math.ceil(balance/payment);return m===1?"About 1 month":`About ${m} months`}
 function loanReturned(loan){return Math.max(0,(Number(loan.starting)||0)-(Number(loan.current)||0));}
 function loanReturnedPct(loan){const s=Number(loan.starting)||0;if(!s)return 0;return Math.min(100,Math.max(0,loanReturned(loan)/s*100));}
