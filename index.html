@@ -355,10 +355,19 @@
 /* Existing Freedom secondary text; only fade timing is bridge-specific */
 .freedom-look-inner .freedom-welcome-support.freedom-look-support{
   opacity:0;transition:opacity .5s ease;
+  margin-bottom:0;
 }
 .freedom-look-inner .freedom-welcome-support.freedom-look-support.is-visible{
   opacity:1;
 }
+/* Quiet sage clarification — body sans, fade only (not handwriting) */
+.freedom-look-demo-note{
+  margin:16px auto 0;max-width:16rem;
+  font-family:inherit;font-size:13px;font-weight:400;line-height:1.45;
+  color:var(--green,#84bd91);text-align:center;
+  opacity:0;transition:opacity .6s ease;
+}
+.freedom-look-demo-note.is-visible{opacity:1}
 @keyframes freedomLookHandwrite{
   0%{clip-path:inset(0 100% 0 0)}
   18%{clip-path:inset(0 74% 0 0)}
@@ -370,6 +379,7 @@
   .freedom-look-handwrite-line{clip-path:none}
   .freedom-look-handwrite-line.is-writing{animation:none}
   .freedom-look-inner .freedom-welcome-support.freedom-look-support{opacity:1;transition:none}
+  .freedom-look-demo-note{opacity:1;transition:none}
 }
 /* —— First-time Exit Demo: solid Freedom near-black/charcoal (--bg / #0b0c0e) —— */
 #freedomMakeItYours{
@@ -2215,6 +2225,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       <span class="freedom-look-handwrite-line" id="freedomLookLine2">around first.</span>
     </h1>
     <p class="freedom-welcome-support freedom-look-support" id="freedomLookSupport">We've put a few things in so you can see how Freedom feels before you make it yours.</p>
+    <p class="freedom-look-demo-note" id="freedomLookDemoNote">You'll be in Demo Mode.</p>
   </div>
 </div>
 </div>
@@ -2255,23 +2266,28 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   var ONBOARD_FADE_MS=850;
   /* Bridge→Home exit fade only (Welcome crossfade stays ONBOARD_FADE_MS). */
   var LOOK_EXIT_FADE_MS=1350;
-  /* Bridge text sequence (wallpaper alone → line1 → line2 → support → read → Home) */
+  /* Bridge text sequence (wallpaper alone → line1 → line2 → support → demo note → read → Home) */
   var LOOK_BG_ALONE_MS=900;
   var LOOK_LINE_WRITE_MS=1000;
   var LOOK_LINE_GAP_MS=100;
   var LOOK_SUPPORT_FADE_MS=500;
-  /* Reading hold after support is fully visible (was 3900; +1800 for calmer exit). */
-  var LOOK_READ_PAUSE_MS=5700;
+  /* Brief pause after support is fully visible, then soft fade of Demo Mode line. */
+  var LOOK_DEMO_NOTE_GAP_MS=750;
+  var LOOK_DEMO_NOTE_FADE_MS=600;
+  /* Reading hold after Demo Mode line is fully visible (extends total bridge slightly). */
+  var LOOK_DEMO_NOTE_READ_MS=4800;
   var LOOK_LINE1_AT_MS=LOOK_BG_ALONE_MS;
   var LOOK_LINE2_AT_MS=LOOK_LINE1_AT_MS+LOOK_LINE_WRITE_MS+LOOK_LINE_GAP_MS;
   var LOOK_SUPPORT_AT_MS=LOOK_LINE2_AT_MS+LOOK_LINE_WRITE_MS;
-  var LOOK_SEQUENCE_MS=LOOK_SUPPORT_AT_MS+LOOK_SUPPORT_FADE_MS+LOOK_READ_PAUSE_MS;
+  var LOOK_DEMO_NOTE_AT_MS=LOOK_SUPPORT_AT_MS+LOOK_SUPPORT_FADE_MS+LOOK_DEMO_NOTE_GAP_MS;
+  var LOOK_SEQUENCE_MS=LOOK_DEMO_NOTE_AT_MS+LOOK_DEMO_NOTE_FADE_MS+LOOK_DEMO_NOTE_READ_MS;
   var sheenLoopTimers={};
   var lookSequenceTimers=[];
   var lookAdvanceLock=false;
   var lookLine1=document.getElementById("freedomLookLine1");
   var lookLine2=document.getElementById("freedomLookLine2");
   var lookSupport=document.getElementById("freedomLookSupport");
+  var lookDemoNote=document.getElementById("freedomLookDemoNote");
   function clearSheenLoop(key){
     if(sheenLoopTimers[key]){
       clearTimeout(sheenLoopTimers[key]);
@@ -2323,6 +2339,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     if(lookLine1)lookLine1.classList.remove("is-writing");
     if(lookLine2)lookLine2.classList.remove("is-writing");
     if(lookSupport)lookSupport.classList.remove("is-visible");
+    if(lookDemoNote)lookDemoNote.classList.remove("is-visible");
   }
   function startLookAroundWriting(){
     resetLookAroundWriting();
@@ -2330,13 +2347,14 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       if(lookLine1)lookLine1.classList.add("is-writing");
       if(lookLine2)lookLine2.classList.add("is-writing");
       if(lookSupport)lookSupport.classList.add("is-visible");
+      if(lookDemoNote)lookDemoNote.classList.add("is-visible");
       queueLookTimer(function(){
         if(!lookAround||lookAround.hidden||lookAroundDone())return;
         advanceLookAroundToDemo();
-      },LOOK_READ_PAUSE_MS);
+      },LOOK_DEMO_NOTE_READ_MS);
       return;
     }
-    /* Wallpaper alone, then line 1, pause, line 2, support fade, reading pause, Home. */
+    /* Wallpaper alone → line 1 → line 2 → support fade → pause → Demo Mode fade → read → Home. */
     queueLookTimer(function(){
       if(!lookAround||lookAround.hidden||lookAroundDone()||!lookLine1)return;
       void lookLine1.offsetWidth;
@@ -2351,6 +2369,10 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       if(!lookAround||lookAround.hidden||lookAroundDone()||!lookSupport)return;
       lookSupport.classList.add("is-visible");
     },LOOK_SUPPORT_AT_MS);
+    queueLookTimer(function(){
+      if(!lookAround||lookAround.hidden||lookAroundDone()||!lookDemoNote)return;
+      lookDemoNote.classList.add("is-visible");
+    },LOOK_DEMO_NOTE_AT_MS);
     queueLookTimer(function(){
       if(!lookAround||lookAround.hidden||lookAroundDone())return;
       advanceLookAroundToDemo();
@@ -5785,7 +5807,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1894",
+        "./service-worker.js?v=1895",
         { updateViaCache: "none" }
       );
 
