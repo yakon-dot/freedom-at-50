@@ -1627,7 +1627,6 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 
   .inner183{position:relative;min-height:100dvh;padding:calc(22px + env(safe-area-inset-top,0px)) 28px calc(18px + env(safe-area-inset-bottom,0px))}
   .brand183{position:absolute;left:28px;top:calc(48px + env(safe-area-inset-top,0px));font-family:"Caveat","Segoe Print","Bradley Hand",cursive;font-size:39px;color:#efcbaa;line-height:1}
-  .version183{position:absolute;left:30px;top:calc(91px + env(safe-area-inset-top,0px));font-size:10px;letter-spacing:.08em;color:rgba(239,203,170,.56)}
   .nav183{width:min(292px,82vw);margin-top:138px;margin-left:2px}
   .navbtn183,.morebtn183{width:100%;border:0;background:transparent;color:#f2f0eb;display:flex;align-items:center;gap:15px;text-align:left;padding:11px 0;font-size:16px;font-weight:500;cursor:pointer;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .navbtn183 svg,.morebtn183 svg{width:24px;height:24px;fill:none;stroke:#efcbaa;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;pointer-events:none}
@@ -1647,7 +1646,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   max-height:0;overflow:hidden;pointer-events:none;
   transition:max-height .48s cubic-bezier(.22,.61,.36,1)
 }
-.subwrap183.open{max-height:112px;pointer-events:auto}
+.subwrap183.open{max-height:148px;pointer-events:auto}
 .sub183{
   display:block;width:100%;border:0;background:transparent;color:#dedad3;text-align:left;
   padding:7px 0;font-size:13.5px;font-weight:450;cursor:pointer;touch-action:manipulation;
@@ -1658,6 +1657,11 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .subwrap183.open .sub183:nth-child(1){transition-delay:.05s}
 .subwrap183.open .sub183:nth-child(2){transition-delay:.13s}
 .subwrap183.open .sub183:nth-child(3){transition-delay:.21s}
+/* Quiet app version at the foot of More — same value source as former home label. */
+.more-version183{
+  margin:6px 0 0;padding:8px 0 2px;font-size:11px;letter-spacing:.04em;line-height:1.3;
+  color:rgba(222,218,211,.48);pointer-events:none;user-select:none;
+}
 /* Companion is not ready yet — keep markup for later, hide from More submenu */
 .sub183[data-more183="companion"],
 .sub183[hidden]{display:none!important;opacity:0!important;pointer-events:none!important;padding:0!important;margin:0!important;height:0!important;overflow:hidden!important}
@@ -2494,7 +2498,6 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 <div class="mobile183" id="mobile183" aria-hidden="false">
   <div class="inner183">
     <div class="brand183">Freedom</div>
-    <div class="version183">v1.8.6.2.2</div>
 <nav class="nav183" aria-label="Freedom navigation">
       <button class="navbtn183" type="button" data-go183="overview">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/><path d="M12 2v2M22 12h-2M12 22v-2M2 12h2"/></svg>
@@ -2528,6 +2531,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
         <button class="sub183" type="button" data-more183="archive">Archive</button>
         <button class="sub183" type="button" data-more183="companion" hidden aria-hidden="true" tabindex="-1">Companion</button>
         <button class="sub183" type="button" data-more183="reset">Reset Freedom</button>
+        <div class="more-version183">Version v1.8.6.2.2</div>
       </div>
     </nav>
   </div>
