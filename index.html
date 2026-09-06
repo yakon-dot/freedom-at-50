@@ -2832,6 +2832,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     companionSelect.classList.remove("is-present","is-exiting");
     companionSelect.hidden=true;
     companionSelect.setAttribute("aria-hidden","true");
+    companionSelect.style.zIndex="";
     companionOpenId=null;
     companionSelecting=false;
     companionSelect.querySelectorAll(".freedom-companion-card.is-open").forEach(function(card){
@@ -2891,32 +2892,46 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       ensureCompanionCardVisible(openCard);
     }
   }
-  function presentCompanionSelect(){
+  function presentCompanionSelect(opts){
+    /*
+      opts.beneathCover: stage Companion Selection under an existing opaque overlay
+      (sage / splash) so fading that overlay reveals Companion — never Home.
+      Companion’s normal z-index (9961) sits above sage (9960); beneathCover lowers
+      it for the cover duration only.
+    */
     if(!companionSelect)return false;
+    opts=opts||{};
     setCompanionPending(true);
     companionSelecting=false;
     companionSelect.hidden=false;
     companionSelect.setAttribute("aria-hidden","false");
     companionSelect.classList.remove("is-exiting");
     companionSelect.style.transition="none";
+    if(opts.beneathCover)companionSelect.style.zIndex="9955";
+    else companionSelect.style.zIndex="";
     companionSelect.classList.add("is-present");
     void companionSelect.offsetWidth;
     companionSelect.style.transition="";
     setCompanionOpen(null);
     var scroll=companionSelect.querySelector(".freedom-companion-scroll");
     if(scroll)scroll.scrollTop=0;
+    /* Companion is the authoritative surface — Home must not remain eligible underneath. */
+    if(typeof window.hideHome==="function")window.hideHome();
+    else document.body.classList.remove("home183");
     return true;
   }
   function finishMakeYoursToCompanion(){
     hideMakeItYours();
-    presentCompanionSelect();
+    if(companionSelect)companionSelect.style.zIndex="";
+    if(!companionSelect||companionSelect.hidden)presentCompanionSelect();
   }
   function goMakeYoursToCompanion(){
     /*
       Start my Freedom → Companion Selection (not Home yet).
-      Exit Demo already left Demo Mode under this overlay. Activate a clean empty
-      personal Freedom here, but do NOT mark first-time complete until a companion
-      is deliberately picked.
+      Exit Demo already left Demo Mode and may have shown Home under the sage
+      overlay. Stage Companion Selection BENEATH sage first, then fade sage out —
+      same pattern as Welcome→Look Around — so Home never shows through.
+      Do NOT mark first-time complete until a companion is deliberately picked.
     */
     if(!makeItYours||makeItYours.hidden)return;
     stopButtonSheen(makeYoursStart,"makeYoursStart");
@@ -2924,6 +2939,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     if(typeof window.freedomDev==="object"&&typeof window.freedomDev.activateFreshPersonal==="function"){
       window.freedomDev.activateFreshPersonal({skipHome:true});
     }
+    /* Authoritative next destination before uncovering sage. */
+    presentCompanionSelect({beneathCover:true});
     if(prefersReducedMotion()){
       finishMakeYoursToCompanion();
       return;
@@ -3053,10 +3070,14 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   var needsWelcome=showWelcome();
   var needsLook=!needsWelcome&&showLookAround();
   var needsCompanion=!needsWelcome&&!needsLook&&isCompanionPending();
+  /* Companion pending: stage under splash NOW (not after splash exits). */
+  if(needsCompanion)presentCompanionSelect({beneathCover:!!splash});
   if(!splash){
     if(needsWelcome)armWelcome();
     else if(needsLook)armLookAround();
-    else if(needsCompanion)presentCompanionSelect();
+    else if(needsCompanion){
+      if(companionSelect)companionSelect.style.zIndex="";
+    }
     return;
   }
   var holdMs=2500,fadeMs=1050,started=0;
@@ -3071,6 +3092,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       showLookAround();
       armLookAround();
     }else if(shouldArmCompanion){
+      /* Already staged under splash; restore normal stacking above Home. */
       presentCompanionSelect();
     }
   }
@@ -3960,7 +3982,13 @@ function exitDemo(){
   byId("demoEntryOverlay").hidden=true;
   hideDemoWelcomeOverlay();
   syncDemoUi();
-  if(typeof window.showHome==="function")window.showHome();
+  /* First-time Exit Demo: sage already covers the app. Do not make Personal Home
+     the uncovered destination — Companion Selection follows Start my Freedom. */
+  if(firstExit){
+    if(typeof window.hideHome==="function")window.hideHome();
+  }else if(typeof window.showHome==="function"){
+    window.showHome();
+  }
   render();
   applyDemoButtonState(byId("demo183"));
   if(firstExit)return;
@@ -6045,6 +6073,8 @@ fillForm();render();const initial=location.hash.slice(1);if(["overview","journey
   }
   function showHome(){
     if(!isMobile())return;
+    /* Unresolved / unfinished companion selection must never land on Home. */
+    if(window.freedomCompanionSelect&&typeof window.freedomCompanionSelect.isPending==="function"&&window.freedomCompanionSelect.isPending())return;
     document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315","archive-active-v316");
     closeMore();
     document.body.classList.add("home183");
@@ -6171,7 +6201,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1898",
+        "./service-worker.js?v=1899",
         { updateViaCache: "none" }
       );
 
