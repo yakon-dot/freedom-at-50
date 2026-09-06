@@ -111,67 +111,139 @@
   overflow:hidden;
 }
 #freedomLookAround[hidden]{display:none!important}
+/* —— Look-around background: irregular multi-layer peach/sage smoke —— */
 .freedom-look-bg{
   position:absolute;inset:0;pointer-events:none;overflow:hidden;
   background:#0b0c0e;
-  isolation:isolate;
 }
 /*
-  Four concentrated soft light clouds on near-black charcoal (~70–80% black).
-  Each cloud = 3 overlapping irregular smoke layers (not one giant corner wash).
-  Freedom peach #efcbaa / sage #b0cdb8.
+  Four asymmetrical smoke clouds on near-black charcoal.
+  Each = 3 elongated overlapping layers (no circular orbs).
+  No mix-blend-mode:screen (that bleached centres toward white).
+  Freedom peach #efcbaa · Freedom sage #b0cdb8 (+ denser sage #84bd91 on mid plumes).
 */
 .freedom-look-cloud{
   position:absolute;pointer-events:none;
-  width:min(34vw,168px);height:min(34vw,168px);
   will-change:transform,opacity;
 }
-.freedom-look-cloud-tl{top:6%;left:2%;animation:freedomLookCloudTl 13s ease-in-out -2.1s infinite alternate}
-.freedom-look-cloud-tr{top:5%;right:2%;animation:freedomLookCloudTr 16s ease-in-out -5.4s infinite alternate}
-.freedom-look-cloud-bl{bottom:8%;left:3%;animation:freedomLookCloudBl 18s ease-in-out -8.2s infinite alternate}
-.freedom-look-cloud-br{bottom:7%;right:2%;animation:freedomLookCloudBr 20s ease-in-out -1.6s infinite alternate}
+.freedom-look-cloud-tl{
+  top:-8%;left:-18%;
+  width:min(100vw,480px);height:min(52vw,250px);
+  animation:freedomLookCloudTl 13s ease-in-out -2.1s infinite alternate;
+}
+.freedom-look-cloud-tr{
+  top:-12%;right:-18%;
+  width:min(58vw,280px);height:min(88vw,420px);
+  animation:freedomLookCloudTr 16s ease-in-out -5.4s infinite alternate;
+}
+.freedom-look-cloud-bl{
+  bottom:-8%;left:-16%;
+  width:min(105vw,500px);height:min(50vw,240px);
+  animation:freedomLookCloudBl 18s ease-in-out -8.2s infinite alternate;
+}
+.freedom-look-cloud-br{
+  bottom:-10%;right:-14%;
+  width:min(78vw,360px);height:min(64vw,310px);
+  animation:freedomLookCloudBr 20s ease-in-out -1.6s infinite alternate;
+}
 .freedom-look-smoke{
   position:absolute;display:block;pointer-events:none;
-  mix-blend-mode:screen;
   will-change:transform,opacity,border-radius;
 }
 .freedom-look-cloud-tl .freedom-look-smoke,
 .freedom-look-cloud-br .freedom-look-smoke{background:#efcbaa}
 .freedom-look-cloud-tr .freedom-look-smoke,
 .freedom-look-cloud-bl .freedom-look-smoke{background:#b0cdb8}
-/* Layer A — bright concentrated core */
+.freedom-look-cloud-tr .freedom-look-smoke-b,
+.freedom-look-cloud-bl .freedom-look-smoke-b{background:#84bd91}
 .freedom-look-smoke-a{
-  width:46%;height:40%;
-  top:28%;left:24%;
-  opacity:.95;
-  filter:blur(18px);-webkit-filter:blur(18px);
-  border-radius:62% 38% 55% 45% / 48% 58% 42% 52%;
+  width:86%;height:36%;
+  top:32%;left:2%;
+  opacity:.92;
+  filter:blur(28px);-webkit-filter:blur(28px);
+  border-radius:78% 22% 68% 32% / 32% 68% 24% 76%;
   animation:freedomLookSmokeA 9.5s ease-in-out infinite alternate;
 }
-/* Layer B — mid smoke plume */
 .freedom-look-smoke-b{
-  width:68%;height:60%;
-  top:14%;left:10%;
-  opacity:.55;
-  filter:blur(30px);-webkit-filter:blur(30px);
-  border-radius:48% 52% 40% 60% / 55% 40% 60% 45%;
+  width:38%;height:88%;
+  top:2%;left:48%;
+  opacity:.7;
+  filter:blur(40px);-webkit-filter:blur(40px);
+  border-radius:28% 72% 40% 60% / 74% 26% 70% 30%;
   animation:freedomLookSmokeB 11s ease-in-out -2.8s infinite alternate;
 }
-/* Layer C — soft outer veil (local — does not fill the quadrant) */
 .freedom-look-smoke-c{
-  width:88%;height:82%;
-  top:2%;left:2%;
-  opacity:.32;
-  filter:blur(40px);-webkit-filter:blur(40px);
-  border-radius:40% 60% 52% 48% / 58% 42% 55% 45%;
+  width:100%;height:54%;
+  top:14%;left:-8%;
+  opacity:.42;
+  filter:blur(52px);-webkit-filter:blur(52px);
+  border-radius:52% 48% 28% 72% / 58% 38% 62% 42%;
   animation:freedomLookSmokeC 14s ease-in-out -4.5s infinite alternate;
 }
-.freedom-look-cloud-tr .freedom-look-smoke-a{top:24%;left:30%;border-radius:40% 60% 48% 52% / 55% 45% 58% 42%}
-.freedom-look-cloud-tr .freedom-look-smoke-b{top:16%;left:12%;border-radius:55% 45% 58% 42% / 42% 58% 40% 60%}
-.freedom-look-cloud-bl .freedom-look-smoke-a{top:32%;left:18%;border-radius:50% 50% 42% 58% / 40% 60% 48% 52%}
-.freedom-look-cloud-bl .freedom-look-smoke-b{top:12%;left:8%;border-radius:42% 58% 55% 45% / 60% 40% 52% 48%}
-.freedom-look-cloud-br .freedom-look-smoke-a{top:26%;left:28%;border-radius:58% 42% 48% 52% / 52% 48% 40% 60%}
-.freedom-look-cloud-br .freedom-look-smoke-b{top:14%;left:8%;border-radius:45% 55% 40% 60% / 48% 52% 58% 42%}
+.freedom-look-cloud-tl .freedom-look-smoke-a{
+  width:96%;height:38%;top:30%;left:-6%;
+  border-radius:85% 15% 75% 25% / 30% 70% 22% 78%;
+  opacity:1;
+  filter:blur(26px);-webkit-filter:blur(26px);
+}
+.freedom-look-cloud-tl .freedom-look-smoke-b{
+  width:40%;height:95%;top:-8%;left:46%;
+  border-radius:22% 78% 48% 52% / 80% 20% 72% 28%;
+  opacity:.78;background:#efcbaa;
+}
+.freedom-look-cloud-tl .freedom-look-smoke-c{
+  width:110%;height:52%;top:16%;left:2%;
+  border-radius:60% 40% 22% 78% / 45% 55% 58% 42%;
+  opacity:.5;
+}
+.freedom-look-cloud-tr .freedom-look-smoke-a{
+  width:46%;height:92%;top:0;left:34%;
+  border-radius:30% 70% 38% 62% / 78% 22% 70% 30%;
+  opacity:1;background:#b0cdb8;
+  filter:blur(26px);-webkit-filter:blur(26px);
+}
+.freedom-look-cloud-tr .freedom-look-smoke-b{
+  width:96%;height:36%;top:42%;left:-12%;
+  border-radius:70% 30% 55% 45% / 38% 62% 28% 72%;
+  opacity:.82;
+}
+.freedom-look-cloud-tr .freedom-look-smoke-c{
+  width:82%;height:76%;top:12%;left:6%;
+  border-radius:58% 42% 65% 35% / 28% 72% 32% 68%;
+  opacity:.5;background:#b0cdb8;
+}
+.freedom-look-cloud-bl .freedom-look-smoke-a{
+  width:98%;height:36%;top:36%;left:-8%;
+  border-radius:20% 80% 42% 58% / 72% 28% 68% 32%;
+  opacity:1;background:#b0cdb8;
+  filter:blur(26px);-webkit-filter:blur(26px);
+}
+.freedom-look-cloud-bl .freedom-look-smoke-b{
+  width:40%;height:95%;top:-8%;left:24%;
+  border-radius:62% 38% 55% 45% / 22% 78% 28% 72%;
+  opacity:.8;
+}
+.freedom-look-cloud-bl .freedom-look-smoke-c{
+  width:108%;height:56%;top:20%;left:4%;
+  border-radius:48% 52% 70% 30% / 50% 50% 38% 62%;
+  opacity:.5;background:#b0cdb8;
+}
+.freedom-look-cloud-br .freedom-look-smoke-a{
+  width:82%;height:44%;top:20%;left:6%;
+  border-radius:68% 32% 25% 75% / 42% 58% 62% 38%;
+  opacity:1;
+  filter:blur(26px);-webkit-filter:blur(26px);
+}
+.freedom-look-cloud-br .freedom-look-smoke-b{
+  width:52%;height:90%;top:4%;left:38%;
+  border-radius:35% 65% 58% 42% / 70% 30% 48% 52%;
+  opacity:.8;background:#efcbaa;
+}
+.freedom-look-cloud-br .freedom-look-smoke-c{
+  width:105%;height:58%;top:28%;left:-14%;
+  border-radius:50% 50% 32% 68% / 40% 60% 55% 45%;
+  opacity:.5;
+}
 @keyframes freedomLookCloudTl{
   0%{transform:translate3d(0,0,0) scale(1);opacity:1}
   25%{transform:translate3d(18px,14px,0) scale(1.12);opacity:.9}
@@ -201,25 +273,25 @@
   100%{transform:translate3d(-4px,-6px,0) scale(1.04);opacity:.95}
 }
 @keyframes freedomLookSmokeA{
-  0%{transform:translate3d(0,0,0) scale(1);border-radius:62% 38% 55% 45% / 48% 58% 42% 52%;opacity:.95}
-  25%{transform:translate3d(12px,-10px,0) scale(1.16);border-radius:45% 55% 40% 60% / 58% 42% 55% 45%;opacity:1}
-  50%{transform:translate3d(-10px,14px,0) scale(.86);border-radius:55% 45% 60% 40% / 40% 60% 48% 52%;opacity:.78}
-  75%{transform:translate3d(10px,6px,0) scale(1.12);border-radius:40% 60% 48% 52% / 52% 48% 58% 42%;opacity:.94}
-  100%{transform:translate3d(-8px,-8px,0) scale(1.06);border-radius:58% 42% 50% 50% / 45% 55% 40% 60%;opacity:.9}
+  0%{transform:translate3d(0,0,0) scale(1);border-radius:78% 22% 68% 32% / 32% 68% 24% 76%;opacity:.92}
+  25%{transform:translate3d(14px,-10px,0) scale(1.1);border-radius:55% 45% 40% 60% / 58% 42% 55% 45%;opacity:1}
+  50%{transform:translate3d(-12px,14px,0) scale(.9);border-radius:70% 30% 62% 38% / 40% 60% 30% 70%;opacity:.78}
+  75%{transform:translate3d(10px,8px,0) scale(1.08);border-radius:42% 58% 50% 50% / 52% 48% 60% 40%;opacity:.94}
+  100%{transform:translate3d(-8px,-8px,0) scale(1.04);border-radius:72% 28% 58% 42% / 36% 64% 28% 72%;opacity:.9}
 }
 @keyframes freedomLookSmokeB{
-  0%{transform:translate3d(0,0,0) scale(1);border-radius:48% 52% 40% 60% / 55% 40% 60% 45%;opacity:.55}
-  25%{transform:translate3d(-14px,12px,0) scale(1.14);border-radius:60% 40% 55% 45% / 42% 58% 45% 55%;opacity:.68}
-  50%{transform:translate3d(12px,-12px,0) scale(.84);border-radius:42% 58% 48% 52% / 58% 42% 52% 48%;opacity:.42}
-  75%{transform:translate3d(-10px,8px,0) scale(1.1);border-radius:52% 48% 58% 42% / 40% 60% 48% 52%;opacity:.6}
-  100%{transform:translate3d(8px,-6px,0) scale(1.04);border-radius:45% 55% 42% 58% / 50% 50% 40% 60%;opacity:.5}
+  0%{transform:translate3d(0,0,0) scale(1);border-radius:28% 72% 40% 60% / 74% 26% 70% 30%;opacity:.7}
+  25%{transform:translate3d(-14px,12px,0) scale(1.12);border-radius:55% 45% 62% 38% / 40% 60% 35% 65%;opacity:.82}
+  50%{transform:translate3d(12px,-12px,0) scale(.86);border-radius:40% 60% 48% 52% / 60% 40% 55% 45%;opacity:.55}
+  75%{transform:translate3d(-10px,8px,0) scale(1.08);border-radius:62% 38% 35% 65% / 45% 55% 50% 50%;opacity:.74}
+  100%{transform:translate3d(8px,-6px,0) scale(1.03);border-radius:32% 68% 50% 50% / 68% 32% 58% 42%;opacity:.66}
 }
 @keyframes freedomLookSmokeC{
-  0%{transform:translate3d(0,0,0) scale(1);border-radius:40% 60% 52% 48% / 58% 42% 55% 45%;opacity:.32}
-  25%{transform:translate3d(10px,8px,0) scale(1.12);border-radius:55% 45% 40% 60% / 45% 55% 42% 58%;opacity:.42}
-  50%{transform:translate3d(-12px,-8px,0) scale(.86);border-radius:48% 52% 58% 42% / 40% 60% 50% 50%;opacity:.24}
-  75%{transform:translate3d(8px,-10px,0) scale(1.08);border-radius:42% 58% 45% 55% / 55% 45% 48% 52%;opacity:.38}
-  100%{transform:translate3d(-6px,6px,0) scale(1.02);border-radius:50% 50% 42% 58% / 48% 52% 40% 60%;opacity:.3}
+  0%{transform:translate3d(0,0,0) scale(1);border-radius:52% 48% 28% 72% / 58% 38% 62% 42%;opacity:.42}
+  25%{transform:translate3d(10px,8px,0) scale(1.1);border-radius:58% 42% 40% 60% / 45% 55% 42% 58%;opacity:.52}
+  50%{transform:translate3d(-12px,-8px,0) scale(.88);border-radius:42% 58% 60% 40% / 40% 60% 50% 50%;opacity:.32}
+  75%{transform:translate3d(8px,-10px,0) scale(1.06);border-radius:50% 50% 35% 65% / 55% 45% 48% 52%;opacity:.46}
+  100%{transform:translate3d(-6px,6px,0) scale(1.02);border-radius:48% 52% 42% 58% / 50% 50% 40% 60%;opacity:.4}
 }
 @media (prefers-reduced-motion:reduce){
   .freedom-look-cloud-tl,.freedom-look-cloud-tr,.freedom-look-cloud-bl,.freedom-look-cloud-br,
