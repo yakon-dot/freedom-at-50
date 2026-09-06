@@ -473,7 +473,7 @@
 }
 .freedom-companion-heading span{display:block}
 .freedom-companion-sub{
-  margin:0 0 14px;max-width:16rem;
+  margin:0 0 42px;max-width:16rem;
   font-size:14px;line-height:1.5;font-weight:400;
   color:rgba(245,244,240,.68);text-align:center;
 }
@@ -539,17 +539,18 @@
   color:rgba(239,203,170,.78);
 }
 .freedom-companion-samples{
-  display:flex;flex-direction:column;gap:0;margin:0 0 16px;
+  display:flex;flex-direction:column;gap:0;
+  margin:0 18px 16px; /* narrower conversation zone only */
 }
 /* Editorial samples: no boxes — thin peach dividers only between lines */
 .freedom-companion-sample{
   margin:0;padding:12px 0;
   background:none;border:0;border-radius:0;
-  font-size:13px;line-height:1.45;font-weight:400;
+  font-size:13px;line-height:1.45;font-weight:400;font-style:normal;
   color:rgba(245,244,240,.82);
 }
 .freedom-companion-sample + .freedom-companion-sample{
-  border-top:1px solid rgba(239,203,170,.28);
+  border-top:1px solid rgba(239,203,170,.18);
 }
 .freedom-companion-pick-wrap{
   display:flex;justify-content:center;
@@ -2389,9 +2390,9 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
                 <p class="freedom-companion-bio">Sassy, opinionated and partial to a frozen cocktail. I'll tease you, give you my last penny and stay up until 2am helping you figure it all out.</p>
                 <p class="freedom-companion-samples-label">A few things I might say...</p>
                 <div class="freedom-companion-samples">
-                  <p class="freedom-companion-sample">Look at you, squirrelling away another €50. Show-off. I approve.</p>
-                  <p class="freedom-companion-sample">Another €120 in the holiday fund. I can smell the holiday coming. I'm packing my flip-flops. Obviously, I'm coming.</p>
-                  <p class="freedom-companion-sample">25% gone. Look at us being all responsible and impressive. Who knew?</p>
+                  <p class="freedom-companion-sample">“Look at you, squirrelling away another €50. Show-off. I approve.”</p>
+                  <p class="freedom-companion-sample">“Another €120 in the holiday fund. I can smell the holiday coming. I'm packing my flip-flops. Obviously, I'm coming.”</p>
+                  <p class="freedom-companion-sample">“25% gone. Look at us being all responsible and impressive. Who knew?”</p>
                 </div>
                 <div class="freedom-companion-pick-wrap">
                   <button class="freedom-companion-pick" type="button" data-pick-companion="patricia">Pick Patricia</button>
@@ -2412,9 +2413,9 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
                 <p class="freedom-companion-bio">Tea ready, blanket nearby. I'll listen, never rush you and help everything feel a little softer.</p>
                 <p class="freedom-companion-samples-label">A few things I might say...</p>
                 <div class="freedom-companion-samples">
-                  <p class="freedom-companion-sample">That's a lovely place to begin. Take your time from here. Nothing else needs doing today.</p>
-                  <p class="freedom-companion-sample">25% gone now. Look how far you've come. That's worth a little moment.</p>
-                  <p class="freedom-companion-sample">That's another €50 towards something that matters to you. You're making it real.</p>
+                  <p class="freedom-companion-sample">“That's a lovely place to begin. Take your time from here. Nothing else needs doing today.”</p>
+                  <p class="freedom-companion-sample">“25% gone now. Look how far you've come. That's worth a little moment.”</p>
+                  <p class="freedom-companion-sample">“That's another €50 towards something that matters to you. You're making it real.”</p>
                 </div>
                 <div class="freedom-companion-pick-wrap">
                   <button class="freedom-companion-pick" type="button" data-pick-companion="veronica">Pick Veronica</button>
@@ -2435,9 +2436,9 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
                 <p class="freedom-companion-bio">I like clear answers, useful lists and plans that actually work. I'll keep things honest, practical and free of fluff.</p>
                 <p class="freedom-companion-samples-label">A few things I might say...</p>
                 <div class="freedom-companion-samples">
-                  <p class="freedom-companion-sample">First entry saved. The important part is done. Explore when you're ready.</p>
-                  <p class="freedom-companion-sample">€50 added. €2,400 left to reach your goal. Clear progress. Nice work.</p>
-                  <p class="freedom-companion-sample">25% gone. That's a solid chunk behind you now. Keep that momentum.</p>
+                  <p class="freedom-companion-sample">“First entry saved. The important part is done. Explore when you're ready.”</p>
+                  <p class="freedom-companion-sample">“€50 added. €2,400 left to reach your goal. Clear progress. Nice work.”</p>
+                  <p class="freedom-companion-sample">“25% gone. That's a solid chunk behind you now. Keep that momentum.”</p>
                 </div>
                 <div class="freedom-companion-pick-wrap">
                   <button class="freedom-companion-pick" type="button" data-pick-companion="kevin">Pick Kevin</button>
@@ -6170,7 +6171,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1897",
+        "./service-worker.js?v=1898",
         { updateViaCache: "none" }
       );
 
