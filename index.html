@@ -2146,7 +2146,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   var LOOK_LINE_WRITE_MS=1000;
   var LOOK_LINE_GAP_MS=100;
   var LOOK_SUPPORT_FADE_MS=500;
-  var LOOK_READ_PAUSE_MS=1900;
+  /* Reading hold after support is fully visible (was 1900; +2000 for calmer exit). */
+  var LOOK_READ_PAUSE_MS=3900;
   var LOOK_LINE1_AT_MS=LOOK_BG_ALONE_MS;
   var LOOK_LINE2_AT_MS=LOOK_LINE1_AT_MS+LOOK_LINE_WRITE_MS+LOOK_LINE_GAP_MS;
   var LOOK_SUPPORT_AT_MS=LOOK_LINE2_AT_MS+LOOK_LINE_WRITE_MS;
@@ -2269,11 +2270,27 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     lookAround.hidden=false;
     return true;
   }
-  function armLookAround(){
+  function presentLookAroundOpaque(){
+    /* Snap bridge to full opacity with no entrance fade so Home never shows through. */
     if(!lookAround||lookAround.hidden||lookAroundDone())return;
-    lookAround.classList.remove("is-ready","is-exiting");
+    lookAround.style.transition="none";
+    lookAround.classList.remove("is-exiting");
+    lookAround.classList.add("is-ready");
+    void lookAround.offsetWidth;
+    lookAround.style.transition="";
+  }
+  function armLookAround(opts){
+    opts=opts||{};
+    if(!lookAround||lookAround.hidden||lookAroundDone())return;
     resetLookAroundWriting();
     lookAdvanceLock=false;
+    if(opts.immediate){
+      /* Already staged under Welcome: stay opaque; do not fade in from 0. */
+      presentLookAroundOpaque();
+      startLookAroundWriting();
+      return;
+    }
+    lookAround.classList.remove("is-ready","is-exiting");
     void lookAround.offsetWidth;
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
@@ -2327,21 +2344,24 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   }
   function goFromWelcomeToLookAround(){
     if(welcomeDone()){
-      if(showLookAround())armLookAround();
+      if(showLookAround())armLookAround({immediate:true});
       return;
     }
     /* Persist Welcome completion first so showLookAround() is allowed. */
     try{localStorage.setItem(WELCOME_KEY,"1");}catch(e){}
     stopButtonSheen(comeIn,"comeIn");
-    /* Stage the bridge under Welcome (lower z-index), then crossfade. */
+    /*
+      Stage the bridge UNDER Welcome at full opacity first, then fade Welcome out.
+      Previously both layers faded (Welcome out + bridge in), so Home (body.home183)
+      showed through the two translucent overlays for ~0.85s.
+    */
     showLookAround();
     if(prefersReducedMotion()||!welcome){
       completeWelcome();
-      armLookAround();
+      armLookAround({immediate:true});
       return;
     }
-    /* Bridge sequence starts as Welcome fades; wallpaper-alone beat covers the crossfade. */
-    armLookAround();
+    armLookAround({immediate:true});
     welcome.classList.add("is-exiting");
     setTimeout(function(){
       if(welcome){
