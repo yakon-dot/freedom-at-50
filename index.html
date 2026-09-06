@@ -79,9 +79,16 @@
 #freedomLookDemoBtn.is-sheening .freedom-welcome-arrow-wrap{
   animation:freedomWelcomeArrowNudge 1.65s ease-in-out .12s 1 both;
 }
-/* Sage outline CTA = Come in geometry with Freedom sage accent (#84bd91) */
+/*
+  DEMO MODE = same Come in CTA chrome (152×41 pill, padding, gap, arrow, stroke sheen).
+  Only differences: label + muted Freedom sage mid (#73b083) — not bright mint #84bd91.
+  Uppercase type is lightened/tightened so the longer label stays inside the same width.
+*/
 #freedomLookDemoBtn.freedom-look-demo-sage{
-  border-color:rgba(132,189,145,.82);color:#84bd91;
+  width:152px;min-width:152px;max-width:152px;height:41px;box-sizing:border-box;
+  border-color:rgba(115,176,131,.82);color:#73b083;
+  font-size:11px;font-weight:500;letter-spacing:0;
+  text-transform:uppercase;white-space:nowrap;
 }
 @keyframes freedomWelcomeComeInIn{
   from{opacity:0;transform:translateY(6px)}
