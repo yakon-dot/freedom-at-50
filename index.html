@@ -316,7 +316,8 @@
 }
 /*
   Bridge headline: Caveat (same handwritten family as Demo welcome / Patricia sign).
-  Continuous left→right clip reveal — same technique as .freedom-landscape-sign.is-writing.
+  Each line uses a continuous left→right clip reveal — same technique as
+  .freedom-landscape-sign.is-writing. Lines are sequenced in JS (not simultaneous).
   Not a typewriter / per-letter effect.
 */
 .freedom-look-handwrite{
@@ -324,14 +325,17 @@
   font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
   font-size:clamp(34px,9vw,42px);font-weight:500;line-height:1.15;
   color:#efcbaa;text-align:center;
+}
+.freedom-look-handwrite-line{
+  display:block;
   clip-path:inset(0 100% 0 0);
 }
-.freedom-look-handwrite.is-writing{
-  animation:freedomLookHandwrite 1.5s cubic-bezier(.37,.01,.18,1) forwards;
+.freedom-look-handwrite-line.is-writing{
+  animation:freedomLookHandwrite 1s cubic-bezier(.37,.01,.18,1) forwards;
 }
 /* Existing Freedom secondary text; only fade timing is bridge-specific */
 .freedom-look-inner .freedom-welcome-support.freedom-look-support{
-  opacity:0;transition:opacity .55s ease;
+  opacity:0;transition:opacity .5s ease;
 }
 .freedom-look-inner .freedom-welcome-support.freedom-look-support.is-visible{
   opacity:1;
@@ -344,8 +348,8 @@
   100%{clip-path:inset(0 0 0 0)}
 }
 @media (prefers-reduced-motion:reduce){
-  .freedom-look-handwrite{clip-path:none}
-  .freedom-look-handwrite.is-writing{animation:none}
+  .freedom-look-handwrite-line{clip-path:none}
+  .freedom-look-handwrite-line.is-writing{animation:none}
   .freedom-look-inner .freedom-welcome-support.freedom-look-support{opacity:1;transition:none}
 }
 </style>
@@ -2114,7 +2118,10 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     </div>
   </div>
   <div class="freedom-look-inner">
-    <h1 class="freedom-look-handwrite" id="freedomLookHandwrite">Have a look<br>around first.</h1>
+    <h1 class="freedom-look-handwrite" id="freedomLookHandwrite">
+      <span class="freedom-look-handwrite-line" id="freedomLookLine1">Have a look</span>
+      <span class="freedom-look-handwrite-line" id="freedomLookLine2">around first.</span>
+    </h1>
     <p class="freedom-welcome-support freedom-look-support" id="freedomLookSupport">We've put a few things in so you can<br>see how Freedom feels before you<br>make it yours.</p>
   </div>
 </div>
@@ -2133,15 +2140,22 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     try{return localStorage.getItem(LOOK_KEY)==="1";}catch(e){return false;}
   }
   var SHEEN_PAUSE_MS=1800;
-  var LOOK_HOLD_MS=2600;
   var ONBOARD_FADE_MS=850;
-  var LOOK_WRITE_MS=1500;
-  var LOOK_SUPPORT_FADE_AT_MS=1150;
+  /* Bridge text sequence (wallpaper alone → line1 → line2 → support → read → Home) */
+  var LOOK_BG_ALONE_MS=900;
+  var LOOK_LINE_WRITE_MS=1000;
+  var LOOK_LINE_GAP_MS=100;
+  var LOOK_SUPPORT_FADE_MS=500;
+  var LOOK_READ_PAUSE_MS=1900;
+  var LOOK_LINE1_AT_MS=LOOK_BG_ALONE_MS;
+  var LOOK_LINE2_AT_MS=LOOK_LINE1_AT_MS+LOOK_LINE_WRITE_MS+LOOK_LINE_GAP_MS;
+  var LOOK_SUPPORT_AT_MS=LOOK_LINE2_AT_MS+LOOK_LINE_WRITE_MS;
+  var LOOK_SEQUENCE_MS=LOOK_SUPPORT_AT_MS+LOOK_SUPPORT_FADE_MS+LOOK_READ_PAUSE_MS;
   var sheenLoopTimers={};
-  var lookAutoTimer=null;
-  var lookSupportTimer=null;
+  var lookSequenceTimers=[];
   var lookAdvanceLock=false;
-  var lookHandwrite=document.getElementById("freedomLookHandwrite");
+  var lookLine1=document.getElementById("freedomLookLine1");
+  var lookLine2=document.getElementById("freedomLookLine2");
   var lookSupport=document.getElementById("freedomLookSupport");
   function clearSheenLoop(key){
     if(sheenLoopTimers[key]){
@@ -2173,41 +2187,55 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function prefersReducedMotion(){
     return !!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }
-  function clearLookAutoTimer(){
-    if(lookAutoTimer){
-      clearTimeout(lookAutoTimer);
-      lookAutoTimer=null;
-    }
+  function clearLookSequenceTimers(){
+    lookSequenceTimers.forEach(function(id){clearTimeout(id);});
+    lookSequenceTimers=[];
   }
-  function clearLookSupportTimer(){
-    if(lookSupportTimer){
-      clearTimeout(lookSupportTimer);
-      lookSupportTimer=null;
-    }
+  function queueLookTimer(fn,ms){
+    var id=setTimeout(function(){
+      lookSequenceTimers=lookSequenceTimers.filter(function(t){return t!==id;});
+      fn();
+    },ms);
+    lookSequenceTimers.push(id);
+    return id;
   }
   function resetLookAroundWriting(){
-    clearLookSupportTimer();
-    if(lookHandwrite)lookHandwrite.classList.remove("is-writing");
+    clearLookSequenceTimers();
+    if(lookLine1)lookLine1.classList.remove("is-writing");
+    if(lookLine2)lookLine2.classList.remove("is-writing");
     if(lookSupport)lookSupport.classList.remove("is-visible");
   }
   function startLookAroundWriting(){
     resetLookAroundWriting();
     if(prefersReducedMotion()){
-      if(lookHandwrite)lookHandwrite.classList.add("is-writing");
+      if(lookLine1)lookLine1.classList.add("is-writing");
+      if(lookLine2)lookLine2.classList.add("is-writing");
       if(lookSupport)lookSupport.classList.add("is-visible");
+      queueLookTimer(function(){
+        if(!lookAround||lookAround.hidden||lookAroundDone())return;
+        advanceLookAroundToDemo();
+      },LOOK_READ_PAUSE_MS);
       return;
     }
-    if(lookHandwrite){
-      void lookHandwrite.offsetWidth;
-      lookHandwrite.classList.add("is-writing");
-    }
-    if(lookSupport){
-      lookSupportTimer=setTimeout(function(){
-        lookSupportTimer=null;
-        if(!lookAround||lookAround.hidden||lookAroundDone())return;
-        lookSupport.classList.add("is-visible");
-      },LOOK_SUPPORT_FADE_AT_MS);
-    }
+    /* Wallpaper alone, then line 1, pause, line 2, support fade, reading pause, Home. */
+    queueLookTimer(function(){
+      if(!lookAround||lookAround.hidden||lookAroundDone()||!lookLine1)return;
+      void lookLine1.offsetWidth;
+      lookLine1.classList.add("is-writing");
+    },LOOK_LINE1_AT_MS);
+    queueLookTimer(function(){
+      if(!lookAround||lookAround.hidden||lookAroundDone()||!lookLine2)return;
+      void lookLine2.offsetWidth;
+      lookLine2.classList.add("is-writing");
+    },LOOK_LINE2_AT_MS);
+    queueLookTimer(function(){
+      if(!lookAround||lookAround.hidden||lookAroundDone()||!lookSupport)return;
+      lookSupport.classList.add("is-visible");
+    },LOOK_SUPPORT_AT_MS);
+    queueLookTimer(function(){
+      if(!lookAround||lookAround.hidden||lookAroundDone())return;
+      advanceLookAroundToDemo();
+    },LOOK_SEQUENCE_MS);
   }
   function showWelcome(){
     if(!welcome||welcomeDone())return false;
@@ -2241,39 +2269,22 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     lookAround.hidden=false;
     return true;
   }
-  function scheduleLookAroundAutoDemo(){
-    clearLookAutoTimer();
-    if(!lookAround||lookAround.hidden||lookAroundDone())return;
-    lookAutoTimer=setTimeout(function(){
-      lookAutoTimer=null;
-      advanceLookAroundToDemo();
-    },LOOK_HOLD_MS);
-  }
-  function armLookAround(autoDelayMs){
+  function armLookAround(){
     if(!lookAround||lookAround.hidden||lookAroundDone())return;
     lookAround.classList.remove("is-ready","is-exiting");
     resetLookAroundWriting();
+    lookAdvanceLock=false;
     void lookAround.offsetWidth;
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
         if(!lookAround||lookAround.hidden||lookAroundDone())return;
         lookAround.classList.add("is-ready");
+        /* Text sequence owns wallpaper delay → write → support → read → Demo. */
         startLookAroundWriting();
-        var delay=Math.max(0, autoDelayMs||0);
-        if(delay){
-          clearLookAutoTimer();
-          lookAutoTimer=setTimeout(function(){
-            lookAutoTimer=null;
-            scheduleLookAroundAutoDemo();
-          },delay);
-        }else{
-          scheduleLookAroundAutoDemo();
-        }
       });
     });
   }
   function completeLookAround(){
-    clearLookAutoTimer();
     resetLookAroundWriting();
     try{localStorage.setItem(LOOK_KEY,"1");}catch(e){}
     if(lookAround){
@@ -2297,7 +2308,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function advanceLookAroundToDemo(){
     if(lookAdvanceLock||lookAroundDone())return;
     lookAdvanceLock=true;
-    clearLookAutoTimer();
+    resetLookAroundWriting();
     /* Activate Demo under the bridge, then soft-fade the bridge away. */
     triggerEnterDemo();
     if(!lookAround||!lookAround.isConnected){
@@ -2329,8 +2340,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       armLookAround();
       return;
     }
-    /* Delay the 2.5s hold until Welcome has finished fading so the message can register. */
-    armLookAround(ONBOARD_FADE_MS);
+    /* Bridge sequence starts as Welcome fades; wallpaper-alone beat covers the crossfade. */
+    armLookAround();
     welcome.classList.add("is-exiting");
     setTimeout(function(){
       if(welcome){
