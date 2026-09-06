@@ -438,14 +438,133 @@
   #freedomMakeItYours{transition:none}
   #freedomMakeItYours .freedom-welcome-support.freedom-make-yours-support{opacity:1;transition:none}
 }
-/* Planned companion-selection stage (route target; designs not invented here) */
+/* —— First-time Companion Selection —— */
 #freedomCompanionSelect{
   position:fixed;inset:0;z-index:9961;box-sizing:border-box;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
-  background:var(--bg,#0b0c0e);text-align:center;-webkit-tap-highlight-color:transparent;
+  display:flex;flex-direction:column;align-items:stretch;justify-content:flex-start;
+  padding:0;background:#0b0c0e;text-align:center;-webkit-tap-highlight-color:transparent;
+  opacity:0;pointer-events:none;
 }
 #freedomCompanionSelect[hidden]{display:none!important}
+#freedomCompanionSelect.is-present{opacity:1;pointer-events:auto}
+#freedomCompanionSelect.is-exiting{opacity:0;pointer-events:none;transition:opacity .85s ease}
+.freedom-companion-wallpaper{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:#0b0c0e url("./companion-select-wallpaper.jpg") center center / cover no-repeat;
+}
+.freedom-companion-scroll{
+  position:relative;z-index:1;flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:calc(36px + env(safe-area-inset-top,0px)) 22px calc(36px + env(safe-area-inset-bottom,0px));
+}
+.freedom-companion-inner{
+  width:100%;max-width:22rem;margin:0 auto;
+  display:flex;flex-direction:column;align-items:center;
+}
+.freedom-companion-heading{
+  margin:0 0 10px;width:100%;
+  font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:clamp(30px,8.2vw,38px);font-weight:500;line-height:1.18;
+  color:#efcbaa;text-align:center;
+}
+.freedom-companion-heading span{display:block}
+.freedom-companion-sub{
+  margin:0 0 22px;max-width:16rem;
+  font-size:14px;line-height:1.5;font-weight:400;
+  color:rgba(245,244,240,.55);text-align:center;
+}
+.freedom-companion-list{
+  width:100%;display:flex;flex-direction:column;gap:12px;
+}
+.freedom-companion-card{
+  margin:0;padding:0;border-radius:18px;
+  background:rgba(14,16,19,.42);
+  border:1px solid rgba(245,244,240,.10);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  overflow:hidden;text-align:left;
+}
+.freedom-companion-card-toggle{
+  width:100%;display:flex;align-items:center;gap:12px;
+  margin:0;padding:14px 14px 14px 16px;
+  border:0;background:transparent;color:inherit;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;font:inherit;text-align:left;
+}
+.freedom-companion-card-name{
+  flex:1 1 auto;min-width:0;
+  font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:28px;font-weight:500;line-height:1;color:#efcbaa;
+}
+.freedom-companion-card-icon{
+  flex:0 0 auto;width:42px;height:42px;
+  display:grid;place-items:center;
+}
+.freedom-companion-card-icon img{
+  display:block;width:100%;height:100%;object-fit:contain;
+  pointer-events:none;user-select:none;
+}
+.freedom-companion-card-chevron{
+  flex:0 0 auto;width:22px;height:22px;margin-left:2px;
+  color:rgba(239,203,170,.72);
+  transition:transform .28s cubic-bezier(.25,.1,.25,1);
+}
+.freedom-companion-card.is-open .freedom-companion-card-chevron{transform:rotate(180deg)}
+.freedom-companion-card-chevron svg{
+  width:22px;height:22px;display:block;fill:none;stroke:currentColor;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+.freedom-companion-card-panel{
+  display:grid;grid-template-rows:0fr;
+  transition:grid-template-rows .34s cubic-bezier(.25,.1,.25,1);
+}
+.freedom-companion-card.is-open .freedom-companion-card-panel{grid-template-rows:1fr}
+.freedom-companion-card-panel-inner{
+  overflow:hidden;min-height:0;
+}
+.freedom-companion-card-body{
+  padding:0 16px 16px;opacity:0;transform:translateY(4px);
+  transition:opacity .28s ease,transform .28s ease;
+}
+.freedom-companion-card.is-open .freedom-companion-card-body{
+  opacity:1;transform:none;
+}
+.freedom-companion-bio{
+  margin:0 0 14px;font-size:14px;line-height:1.55;
+  color:rgba(245,244,240,.78);font-weight:400;
+}
+.freedom-companion-samples-label{
+  margin:0 0 8px;
+  font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:18px;font-weight:500;line-height:1.2;
+  color:rgba(239,203,170,.78);
+}
+.freedom-companion-samples{
+  display:flex;flex-direction:column;gap:8px;margin:0 0 16px;
+}
+.freedom-companion-sample{
+  margin:0;padding:10px 12px;border-radius:14px;
+  background:rgba(8,10,12,.55);
+  border:1px solid rgba(245,244,240,.08);
+  font-size:13px;line-height:1.45;font-weight:400;
+  color:rgba(245,244,240,.82);
+}
+.freedom-companion-pick-wrap{
+  display:flex;justify-content:center;
+}
+.freedom-companion-pick{
+  display:inline-flex;align-items:center;justify-content:center;
+  margin:0;padding:9px 22px;border-radius:999px;
+  border:1px solid rgba(239,203,170,.82);
+  background:transparent;color:#efcbaa;
+  font-size:14px;font-weight:650;letter-spacing:.01em;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.freedom-companion-pick:active{opacity:.72}
+@media (prefers-reduced-motion:reduce){
+  #freedomCompanionSelect.is-exiting{transition:none}
+  .freedom-companion-card-panel{transition:none}
+  .freedom-companion-card-body{transition:none}
+  .freedom-companion-card-chevron{transition:none}
+}
 </style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2247,7 +2366,86 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     </button>
   </div>
 </div>
-<div id="freedomCompanionSelect" class="freedom-companion-select" hidden aria-label="Companion selection"></div>
+<div id="freedomCompanionSelect" class="freedom-companion-select" hidden aria-label="Companion selection">
+  <div class="freedom-companion-wallpaper" aria-hidden="true"></div>
+  <div class="freedom-companion-scroll">
+    <div class="freedom-companion-inner">
+      <h1 class="freedom-companion-heading"><span>Pick whoever you fancy</span><span>having around.</span></h1>
+      <p class="freedom-companion-sub">You can change your mind later.</p>
+      <div class="freedom-companion-list" id="freedomCompanionList" role="list">
+        <article class="freedom-companion-card" data-companion="patricia" role="listitem">
+          <button class="freedom-companion-card-toggle" type="button" aria-expanded="false" aria-controls="freedomCompanionPanel-patricia" id="freedomCompanionToggle-patricia">
+            <span class="freedom-companion-card-name">Patricia</span>
+            <span class="freedom-companion-card-icon" aria-hidden="true"><img src="./assets/companion-patricia.png" alt="" width="42" height="34" decoding="async"></span>
+            <span class="freedom-companion-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></span>
+          </button>
+          <div class="freedom-companion-card-panel" id="freedomCompanionPanel-patricia">
+            <div class="freedom-companion-card-panel-inner">
+              <div class="freedom-companion-card-body">
+                <p class="freedom-companion-bio">Sassy, opinionated and partial to a frozen cocktail. I'll tease you, give you my last penny and stay up until 2am helping you figure it all out.</p>
+                <p class="freedom-companion-samples-label">A few things I might say...</p>
+                <div class="freedom-companion-samples">
+                  <p class="freedom-companion-sample">Look at you, squirrelling away another €50. Show-off. I approve.</p>
+                  <p class="freedom-companion-sample">Another €120 in the holiday fund. I can smell the holiday coming. I'm packing my flip-flops. Obviously, I'm coming.</p>
+                  <p class="freedom-companion-sample">25% gone. Look at us being all responsible and impressive. Who knew?</p>
+                </div>
+                <div class="freedom-companion-pick-wrap">
+                  <button class="freedom-companion-pick" type="button" data-pick-companion="patricia">Pick Patricia</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="freedom-companion-card" data-companion="veronica" role="listitem">
+          <button class="freedom-companion-card-toggle" type="button" aria-expanded="false" aria-controls="freedomCompanionPanel-veronica" id="freedomCompanionToggle-veronica">
+            <span class="freedom-companion-card-name">Veronica</span>
+            <span class="freedom-companion-card-icon" aria-hidden="true"><img src="./assets/companion-veronica.png" alt="" width="36" height="42" decoding="async"></span>
+            <span class="freedom-companion-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></span>
+          </button>
+          <div class="freedom-companion-card-panel" id="freedomCompanionPanel-veronica">
+            <div class="freedom-companion-card-panel-inner">
+              <div class="freedom-companion-card-body">
+                <p class="freedom-companion-bio">Tea ready, blanket nearby. I'll listen, never rush you and help everything feel a little softer.</p>
+                <p class="freedom-companion-samples-label">A few things I might say...</p>
+                <div class="freedom-companion-samples">
+                  <p class="freedom-companion-sample">That's a lovely place to begin. Take your time from here. Nothing else needs doing today.</p>
+                  <p class="freedom-companion-sample">25% gone now. Look how far you've come. That's worth a little moment.</p>
+                  <p class="freedom-companion-sample">That's another €50 towards something that matters to you. You're making it real.</p>
+                </div>
+                <div class="freedom-companion-pick-wrap">
+                  <button class="freedom-companion-pick" type="button" data-pick-companion="veronica">Pick Veronica</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="freedom-companion-card" data-companion="kevin" role="listitem">
+          <button class="freedom-companion-card-toggle" type="button" aria-expanded="false" aria-controls="freedomCompanionPanel-kevin" id="freedomCompanionToggle-kevin">
+            <span class="freedom-companion-card-name">Kevin</span>
+            <span class="freedom-companion-card-icon" aria-hidden="true"><img src="./assets/companion-kevin.png" alt="" width="42" height="42" decoding="async"></span>
+            <span class="freedom-companion-card-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></span>
+          </button>
+          <div class="freedom-companion-card-panel" id="freedomCompanionPanel-kevin">
+            <div class="freedom-companion-card-panel-inner">
+              <div class="freedom-companion-card-body">
+                <p class="freedom-companion-bio">I like clear answers, useful lists and plans that actually work. I'll keep things honest, practical and free of fluff.</p>
+                <p class="freedom-companion-samples-label">A few things I might say...</p>
+                <div class="freedom-companion-samples">
+                  <p class="freedom-companion-sample">First entry saved. The important part is done. Explore when you're ready.</p>
+                  <p class="freedom-companion-sample">€50 added. €2,400 left to reach your goal. Clear progress. Nice work.</p>
+                  <p class="freedom-companion-sample">25% gone. That's a solid chunk behind you now. Keep that momentum.</p>
+                </div>
+                <div class="freedom-companion-pick-wrap">
+                  <button class="freedom-companion-pick" type="button" data-pick-companion="kevin">Pick Kevin</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 (function(){
   var WELCOME_KEY="freedom50-welcome-complete-v1";
@@ -2599,42 +2797,131 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     makeItYours.classList.remove("is-present","is-ready","is-exiting");
     makeItYours.hidden=true;
   }
+  var COMPANION_KEY="freedom50-companion-id-v1";
+  var COMPANION_PENDING_KEY="freedom50-companion-pending-v1";
+  var companionOpenId=null;
+  function getSelectedCompanion(){
+    try{
+      var v=localStorage.getItem(COMPANION_KEY)||"";
+      if(v==="patricia"||v==="veronica"||v==="kevin")return v;
+    }catch(e){}
+    return "";
+  }
+  function isCompanionPending(){
+    try{return localStorage.getItem(COMPANION_PENDING_KEY)==="1"&&!getSelectedCompanion();}catch(e){return false;}
+  }
+  function setCompanionPending(on){
+    try{
+      if(on)localStorage.setItem(COMPANION_PENDING_KEY,"1");
+      else localStorage.removeItem(COMPANION_PENDING_KEY);
+    }catch(e){}
+  }
+  function saveSelectedCompanion(id){
+    try{localStorage.setItem(COMPANION_KEY,id);}catch(e){}
+  }
   function hideCompanionSelect(){
-    /* Keep companion stage closed — Start my Freedom goes to Home for now. */
     if(!companionSelect)return;
+    companionSelect.classList.remove("is-present","is-exiting");
     companionSelect.hidden=true;
     companionSelect.setAttribute("aria-hidden","true");
+    companionOpenId=null;
+    companionSelect.querySelectorAll(".freedom-companion-card.is-open").forEach(function(card){
+      card.classList.remove("is-open");
+      var btn=card.querySelector(".freedom-companion-card-toggle");
+      if(btn)btn.setAttribute("aria-expanded","false");
+    });
   }
-  function finishMakeYoursToHome(){
+  function setCompanionOpen(id){
+    if(!companionSelect)return;
+    companionSelect.querySelectorAll(".freedom-companion-card").forEach(function(card){
+      var cid=card.getAttribute("data-companion");
+      var open=!!id&&cid===id;
+      card.classList.toggle("is-open",open);
+      var btn=card.querySelector(".freedom-companion-card-toggle");
+      if(btn)btn.setAttribute("aria-expanded",open?"true":"false");
+    });
+    companionOpenId=id||null;
+  }
+  function presentCompanionSelect(){
+    if(!companionSelect)return false;
+    setCompanionPending(true);
+    companionSelect.hidden=false;
+    companionSelect.setAttribute("aria-hidden","false");
+    companionSelect.classList.remove("is-exiting");
+    companionSelect.style.transition="none";
+    companionSelect.classList.add("is-present");
+    void companionSelect.offsetWidth;
+    companionSelect.style.transition="";
+    setCompanionOpen(null);
+    var scroll=companionSelect.querySelector(".freedom-companion-scroll");
+    if(scroll)scroll.scrollTop=0;
+    return true;
+  }
+  function finishMakeYoursToCompanion(){
     hideMakeItYours();
-    hideCompanionSelect();
-    if(typeof window.showHome==="function")window.showHome();
+    presentCompanionSelect();
   }
-  function goMakeYoursToHome(){
+  function goMakeYoursToCompanion(){
     /*
-      Start my Freedom → normal Freedom Home.
-      Exit Demo already left Demo Mode and restored the pre-Demo snapshot under
-      this overlay. For a brand-new user that snapshot must not keep Demo teaching
-      samples or seeded defaults — activate a clean empty personal Freedom here.
-      Returning users never see this screen (first-time already complete).
+      Start my Freedom → Companion Selection (not Home yet).
+      Exit Demo already left Demo Mode under this overlay. Activate a clean empty
+      personal Freedom here, but do NOT mark first-time complete until a companion
+      is deliberately picked.
     */
     if(!makeItYours||makeItYours.hidden)return;
     stopButtonSheen(makeYoursStart,"makeYoursStart");
-    hideCompanionSelect();
-    markFirstTimeComplete();
+    setCompanionPending(true);
     if(typeof window.freedomDev==="object"&&typeof window.freedomDev.activateFreshPersonal==="function"){
-      window.freedomDev.activateFreshPersonal();
+      window.freedomDev.activateFreshPersonal({skipHome:true});
     }
-    if(typeof window.showHome==="function")window.showHome();
     if(prefersReducedMotion()){
-      finishMakeYoursToHome();
+      finishMakeYoursToCompanion();
       return;
     }
     makeItYours.classList.add("is-exiting");
     queueMakeYoursTimer(function(){
-      finishMakeYoursToHome();
+      finishMakeYoursToCompanion();
     },ONBOARD_FADE_MS);
   }
+  function finishCompanionToHome(){
+    hideCompanionSelect();
+    if(typeof window.showHome==="function")window.showHome();
+  }
+  function completeCompanionSelection(id){
+    if(id!=="patricia"&&id!=="veronica"&&id!=="kevin")return;
+    saveSelectedCompanion(id);
+    setCompanionPending(false);
+    markFirstTimeComplete();
+    if(prefersReducedMotion()||!companionSelect||companionSelect.hidden){
+      finishCompanionToHome();
+      return;
+    }
+    companionSelect.classList.add("is-exiting");
+    queueMakeYoursTimer(function(){
+      finishCompanionToHome();
+    },ONBOARD_FADE_MS);
+  }
+  function bindCompanionSelect(){
+    if(!companionSelect||companionSelect.dataset.bound==="1")return;
+    companionSelect.dataset.bound="1";
+    companionSelect.addEventListener("click",function(e){
+      var pick=e.target.closest("[data-pick-companion]");
+      if(pick){
+        e.preventDefault();
+        completeCompanionSelection(pick.getAttribute("data-pick-companion"));
+        return;
+      }
+      var toggle=e.target.closest(".freedom-companion-card-toggle");
+      if(!toggle)return;
+      e.preventDefault();
+      var card=toggle.closest(".freedom-companion-card");
+      if(!card)return;
+      var id=card.getAttribute("data-companion");
+      if(companionOpenId===id)setCompanionOpen(null);
+      else setCompanionOpen(id);
+    });
+  }
+  bindCompanionSelect();
   function interceptFirstExitDemo(){
     /* Returns true when this screen covers the exit (first-time journey still open). */
     if(firstTimeDone())return false;
@@ -2652,6 +2939,12 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     interceptExitDemo:interceptFirstExitDemo,
     isFirstTimeDone:firstTimeDone,
     markFirstTimeComplete:markFirstTimeComplete
+  };
+  window.freedomCompanionSelect={
+    show:presentCompanionSelect,
+    hide:hideCompanionSelect,
+    isPending:isCompanionPending,
+    getSelected:getSelectedCompanion
   };
 
   if(comeIn){
@@ -2678,7 +2971,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   if(makeYoursStart){
     makeYoursStart.addEventListener("click",function(e){
       e.preventDefault();
-      goMakeYoursToHome();
+      goMakeYoursToCompanion();
     });
     makeYoursStart.addEventListener("animationend",function(e){
       if(e.animationName==="freedomWelcomeComeInIn"&&e.target===makeYoursStart){
@@ -2695,13 +2988,15 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   // Stage the next onboarding surface under the splash so Home never flashes.
   var needsWelcome=showWelcome();
   var needsLook=!needsWelcome&&showLookAround();
+  var needsCompanion=!needsWelcome&&!needsLook&&isCompanionPending();
   if(!splash){
     if(needsWelcome)armWelcome();
     else if(needsLook)armLookAround();
+    else if(needsCompanion)presentCompanionSelect();
     return;
   }
   var holdMs=2500,fadeMs=1050,started=0;
-  function finishSplash(shouldArmWelcome,shouldArmLook){
+  function finishSplash(shouldArmWelcome,shouldArmLook,shouldArmCompanion){
     if(!splash||!splash.isConnected)return;
     splash.hidden=true;
     splash.remove();
@@ -2711,6 +3006,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     }else if(shouldArmLook){
       showLookAround();
       armLookAround();
+    }else if(shouldArmCompanion){
+      presentCompanionSelect();
     }
   }
   function dismiss(){
@@ -2720,12 +3017,13 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       if(!splash||!splash.isConnected)return;
       var armW=showWelcome();
       var armL=!armW&&showLookAround();
+      var armC=!armW&&!armL&&isCompanionPending();
       if(prefersReducedMotion()){
-        finishSplash(armW,armL);
+        finishSplash(armW,armL,armC);
         return;
       }
       splash.classList.add("is-exiting");
-      setTimeout(function(){finishSplash(armW,armL);},fadeMs);
+      setTimeout(function(){finishSplash(armW,armL,armC);},fadeMs);
     },wait);
   }
   /* Reveal the wordmark only after Caveat is actually available.
@@ -3676,9 +3974,11 @@ function resetFreedomFreshStart(){
   try{localStorage.setItem(KEY,JSON.stringify(buildFreshUserState()));}catch(e){}
   location.replace(location.pathname+location.search);
 }
-function activateFreshPersonal(){
+function activateFreshPersonal(opts){
   /* First-time Start my Freedom only: empty personal Journey/Goals/Pension records.
-     Demo samples stay in buildCanonicalDemoState(); returning users never hit this. */
+     Demo samples stay in buildCanonicalDemoState(); returning users never hit this.
+     opts.skipHome: Companion Selection follows — do not open Home yet. */
+  opts=opts||{};
   if(demoMode)return;
   state=buildFreshUserState();
   try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
@@ -3686,7 +3986,7 @@ function activateFreshPersonal(){
   dismissAllPatriciaNotes();
   syncDemoUi();
   render();
-  if(typeof window.showHome==="function")window.showHome();
+  if(!opts.skipHome&&typeof window.showHome==="function")window.showHome();
 }
 window.freedomDemo={openEntry:openDemoEntryFlow,exit:exitDemo,onHomeShown:handleDemoHomeShown,isActive:()=>demoMode};
 window.freedomDev={resetFreshStart:resetFreedomFreshStart,activateFreshPersonal:activateFreshPersonal};
@@ -5807,7 +6107,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1895",
+        "./service-worker.js?v=1896",
         { updateViaCache: "none" }
       );
 
