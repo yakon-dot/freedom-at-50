@@ -66,7 +66,8 @@
   pointer-events:auto;
   animation:freedomWelcomeComeInIn .75s ease-out .5s forwards;
 }
-#freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen{
+#freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
+#freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen{
   animation:freedomWelcomeComeInSheen 2.8s ease-in-out forwards;
 }
 #freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap{
@@ -94,6 +95,7 @@
   }
   #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
   #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
+  #freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen,
   #freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap{animation:none}
 }
 .freedom-welcome-arrow-wrap{
@@ -357,7 +359,8 @@
   pointer-events:auto;
   animation:freedomWelcomeComeInIn .75s ease-out .5s forwards;
 }
-#freedomLookDemoBtn.is-sheening .freedom-welcome-sheen{
+#freedomLookDemoBtn.is-sheening .freedom-welcome-sheen,
+#freedomLookDemoBtn.is-sheen-looping .freedom-welcome-sheen{
   animation:freedomWelcomeComeInSheen 2.8s ease-in-out forwards;
 }
 #freedomLookDemoBtn.is-sheening .freedom-welcome-arrow-wrap{
@@ -369,6 +372,7 @@
   }
   #freedomLookAround.is-ready #freedomLookDemoBtn.freedom-look-demo-btn,
   #freedomLookDemoBtn.is-sheening .freedom-welcome-sheen,
+  #freedomLookDemoBtn.is-sheen-looping .freedom-welcome-sheen,
   #freedomLookDemoBtn.is-sheening .freedom-welcome-arrow-wrap{animation:none}
 }
 </style>
@@ -2162,6 +2166,37 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function lookAroundDone(){
     try{return localStorage.getItem(LOOK_KEY)==="1";}catch(e){return false;}
   }
+  var SHEEN_PAUSE_MS=1800;
+  var sheenLoopTimers={};
+  function clearSheenLoop(key){
+    if(sheenLoopTimers[key]){
+      clearTimeout(sheenLoopTimers[key]);
+      sheenLoopTimers[key]=null;
+    }
+  }
+  function stopButtonSheen(btn,key){
+    clearSheenLoop(key);
+    if(!btn)return;
+    btn.classList.remove("is-sheening","is-sheen-looping");
+  }
+  function queueSheenLoop(btn,key){
+    clearSheenLoop(key);
+    if(!btn||!btn.isConnected)return;
+    sheenLoopTimers[key]=setTimeout(function(){
+      sheenLoopTimers[key]=null;
+      if(!btn.isConnected)return;
+      /* Keep looping only while this button's screen is still visible. */
+      if(btn===comeIn&&(!welcome||welcome.hidden||welcomeDone()))return;
+      if(btn===lookDemo&&(!lookAround||lookAround.hidden||lookAroundDone()))return;
+      var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if(reduce)return;
+      /* Replay the same sheen keyframes without re-nudging the arrow. */
+      btn.classList.remove("is-sheening");
+      btn.classList.remove("is-sheen-looping");
+      void btn.offsetWidth;
+      btn.classList.add("is-sheen-looping");
+    },SHEEN_PAUSE_MS);
+  }
   function showWelcome(){
     if(!welcome||welcomeDone())return false;
     welcome.hidden=false;
@@ -2170,7 +2205,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function armWelcome(){
     if(!welcome||welcome.hidden||welcomeDone())return;
     welcome.classList.remove("is-ready");
-    if(comeIn)comeIn.classList.remove("is-sheening");
+    stopButtonSheen(comeIn,"comeIn");
     void welcome.offsetWidth;
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
@@ -2184,7 +2219,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       welcome.classList.remove("is-ready");
       welcome.hidden=true;
     }
-    if(comeIn)comeIn.classList.remove("is-sheening");
+    stopButtonSheen(comeIn,"comeIn");
   }
   function showLookAround(){
     /* Only after Welcome is complete — never replace Welcome */
@@ -2195,7 +2230,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function armLookAround(){
     if(!lookAround||lookAround.hidden||lookAroundDone())return;
     lookAround.classList.remove("is-ready");
-    if(lookDemo)lookDemo.classList.remove("is-sheening");
+    stopButtonSheen(lookDemo,"lookDemo");
     void lookAround.offsetWidth;
     requestAnimationFrame(function(){
       requestAnimationFrame(function(){
@@ -2209,7 +2244,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       lookAround.classList.remove("is-ready");
       lookAround.hidden=true;
     }
-    if(lookDemo)lookDemo.classList.remove("is-sheening");
+    stopButtonSheen(lookDemo,"lookDemo");
   }
   function enterDemoFromLookAround(){
     completeLookAround();
@@ -2236,9 +2271,14 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       armLookAround();
     });
     comeIn.addEventListener("animationend",function(e){
-      if(e.target!==comeIn)return;
-      if(e.animationName!=="freedomWelcomeComeInIn")return;
-      comeIn.classList.add("is-sheening");
+      if(e.animationName==="freedomWelcomeComeInIn"&&e.target===comeIn){
+        comeIn.classList.remove("is-sheen-looping");
+        comeIn.classList.add("is-sheening");
+        return;
+      }
+      if(e.animationName!=="freedomWelcomeComeInSheen")return;
+      if(!e.target||!e.target.classList||!e.target.classList.contains("freedom-welcome-sheen"))return;
+      queueSheenLoop(comeIn,"comeIn");
     });
   }
   if(lookDemo){
@@ -2246,9 +2286,14 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       enterDemoFromLookAround();
     });
     lookDemo.addEventListener("animationend",function(e){
-      if(e.target!==lookDemo)return;
-      if(e.animationName!=="freedomWelcomeComeInIn")return;
-      lookDemo.classList.add("is-sheening");
+      if(e.animationName==="freedomWelcomeComeInIn"&&e.target===lookDemo){
+        lookDemo.classList.remove("is-sheen-looping");
+        lookDemo.classList.add("is-sheening");
+        return;
+      }
+      if(e.animationName!=="freedomWelcomeComeInSheen")return;
+      if(!e.target||!e.target.classList||!e.target.classList.contains("freedom-welcome-sheen"))return;
+      queueSheenLoop(lookDemo,"lookDemo");
     });
   }
   // Stage the next onboarding surface under the splash so Home never flashes.
