@@ -329,16 +329,9 @@
   width:100%;max-width:22rem;flex:1 1 auto;
   transform:translateY(-7vh);
 }
-/* Exact Journey/Goals hero h1 treatment (journey-hero h1 / goals-hero h1) — no artificial weight */
-.freedom-look-headline{
-  margin:0 0 14px;font-size:25px;line-height:1.1;letter-spacing:-.035em;
-  color:rgba(236,232,224,.78);
-}
-/* Exact Journey/Goals hero p treatment (journey-hero p / goals-hero p) */
-.freedom-look-support{
-  margin:0 auto 28px;max-width:18rem;
-  font-size:14px;line-height:1.55;color:rgba(200,198,192,.55);
-}
+/* Bridge reuses Welcome headline/support classes for identical type.
+   Keep the established 28px support→CTA gap on this screen only. */
+.freedom-look-inner .freedom-welcome-support{margin-bottom:28px}
 </style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2105,8 +2098,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     </div>
   </div>
   <div class="freedom-look-inner">
-    <h1 class="freedom-look-headline">Have a look<br>around first.</h1>
-    <p class="freedom-look-support">We've put a few things in so you can<br>see how Freedom feels before you<br>make it yours.</p>
+    <h1 class="freedom-welcome-headline">Have a look<br>around first.</h1>
+    <p class="freedom-welcome-support">We've put a few things in so you can<br>see how Freedom feels before you<br>make it yours.</p>
     <button class="demo-outline-btn freedom-welcome-come-in freedom-look-demo-sage" id="freedomLookDemoBtn" type="button">
       <span class="freedom-welcome-sheen" aria-hidden="true"></span>
       DEMO MODE
