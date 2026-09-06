@@ -116,59 +116,114 @@
   background:#0b0c0e;
   isolation:isolate;
 }
-/* Four corner light blobs — Freedom peach #efcbaa / sage #b0cdb8 on near-black charcoal */
-.freedom-look-blob{
+/*
+  Four concentrated soft light clouds on near-black charcoal (~70–80% black).
+  Each cloud = 3 overlapping irregular smoke layers (not one giant corner wash).
+  Freedom peach #efcbaa / sage #b0cdb8.
+*/
+.freedom-look-cloud{
+  position:absolute;pointer-events:none;
+  width:min(34vw,168px);height:min(34vw,168px);
+  will-change:transform,opacity;
+}
+.freedom-look-cloud-tl{top:6%;left:2%;animation:freedomLookCloudTl 13s ease-in-out -2.1s infinite alternate}
+.freedom-look-cloud-tr{top:5%;right:2%;animation:freedomLookCloudTr 16s ease-in-out -5.4s infinite alternate}
+.freedom-look-cloud-bl{bottom:8%;left:3%;animation:freedomLookCloudBl 18s ease-in-out -8.2s infinite alternate}
+.freedom-look-cloud-br{bottom:7%;right:2%;animation:freedomLookCloudBr 20s ease-in-out -1.6s infinite alternate}
+.freedom-look-smoke{
   position:absolute;display:block;pointer-events:none;
-  filter:blur(64px);-webkit-filter:blur(64px);
   mix-blend-mode:screen;
   will-change:transform,opacity,border-radius;
 }
-.freedom-look-blob-tl{
-  top:-8%;left:-14%;width:48%;height:36%;
-  background:#efcbaa;opacity:.72;
-  border-radius:58% 42% 62% 38% / 46% 54% 44% 56%;
-  animation:freedomLookBlobTl 13s ease-in-out infinite;
+.freedom-look-cloud-tl .freedom-look-smoke,
+.freedom-look-cloud-br .freedom-look-smoke{background:#efcbaa}
+.freedom-look-cloud-tr .freedom-look-smoke,
+.freedom-look-cloud-bl .freedom-look-smoke{background:#b0cdb8}
+/* Layer A — bright concentrated core */
+.freedom-look-smoke-a{
+  width:46%;height:40%;
+  top:28%;left:24%;
+  opacity:.95;
+  filter:blur(18px);-webkit-filter:blur(18px);
+  border-radius:62% 38% 55% 45% / 48% 58% 42% 52%;
+  animation:freedomLookSmokeA 9.5s ease-in-out infinite alternate;
 }
-.freedom-look-blob-tr{
-  top:-10%;right:-12%;width:46%;height:34%;
-  background:#b0cdb8;opacity:.68;
-  border-radius:42% 58% 40% 60% / 52% 40% 58% 48%;
-  animation:freedomLookBlobTr 16s ease-in-out infinite;
+/* Layer B — mid smoke plume */
+.freedom-look-smoke-b{
+  width:68%;height:60%;
+  top:14%;left:10%;
+  opacity:.55;
+  filter:blur(30px);-webkit-filter:blur(30px);
+  border-radius:48% 52% 40% 60% / 55% 40% 60% 45%;
+  animation:freedomLookSmokeB 11s ease-in-out -2.8s infinite alternate;
 }
-.freedom-look-blob-bl{
-  bottom:-12%;left:-16%;width:48%;height:36%;
-  background:#b0cdb8;opacity:.64;
-  border-radius:48% 52% 44% 56% / 40% 60% 42% 58%;
-  animation:freedomLookBlobBl 18s ease-in-out infinite;
+/* Layer C — soft outer veil (local — does not fill the quadrant) */
+.freedom-look-smoke-c{
+  width:88%;height:82%;
+  top:2%;left:2%;
+  opacity:.32;
+  filter:blur(40px);-webkit-filter:blur(40px);
+  border-radius:40% 60% 52% 48% / 58% 42% 55% 45%;
+  animation:freedomLookSmokeC 14s ease-in-out -4.5s infinite alternate;
 }
-.freedom-look-blob-br{
-  bottom:-10%;right:-14%;width:48%;height:38%;
-  background:#efcbaa;opacity:.70;
-  border-radius:44% 56% 50% 50% / 58% 42% 54% 46%;
-  animation:freedomLookBlobBr 20s ease-in-out infinite;
+.freedom-look-cloud-tr .freedom-look-smoke-a{top:24%;left:30%;border-radius:40% 60% 48% 52% / 55% 45% 58% 42%}
+.freedom-look-cloud-tr .freedom-look-smoke-b{top:16%;left:12%;border-radius:55% 45% 58% 42% / 42% 58% 40% 60%}
+.freedom-look-cloud-bl .freedom-look-smoke-a{top:32%;left:18%;border-radius:50% 50% 42% 58% / 40% 60% 48% 52%}
+.freedom-look-cloud-bl .freedom-look-smoke-b{top:12%;left:8%;border-radius:42% 58% 55% 45% / 60% 40% 52% 48%}
+.freedom-look-cloud-br .freedom-look-smoke-a{top:26%;left:28%;border-radius:58% 42% 48% 52% / 52% 48% 40% 60%}
+.freedom-look-cloud-br .freedom-look-smoke-b{top:14%;left:8%;border-radius:45% 55% 40% 60% / 48% 52% 58% 42%}
+@keyframes freedomLookCloudTl{
+  0%{transform:translate3d(0,0,0) scale(1);opacity:1}
+  25%{transform:translate3d(18px,14px,0) scale(1.12);opacity:.9}
+  50%{transform:translate3d(-10px,22px,0) scale(.9);opacity:1}
+  75%{transform:translate3d(22px,-12px,0) scale(1.1);opacity:.92}
+  100%{transform:translate3d(8px,8px,0) scale(1.04);opacity:.96}
 }
-@keyframes freedomLookBlobTl{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.55;border-radius:58% 42% 62% 38% / 46% 54% 44% 56%}
-  40%{transform:translate(2.2%,1.4%) scale(1.04);opacity:.62;border-radius:48% 52% 44% 56% / 58% 42% 52% 48%}
-  70%{transform:translate(1%,-1%) scale(.97);opacity:.48;border-radius:54% 46% 58% 42% / 44% 56% 48% 52%}
+@keyframes freedomLookCloudTr{
+  0%{transform:translate3d(0,0,0) scale(1);opacity:1}
+  25%{transform:translate3d(-20px,16px,0) scale(1.11);opacity:.88}
+  50%{transform:translate3d(12px,-14px,0) scale(.91);opacity:1}
+  75%{transform:translate3d(-14px,20px,0) scale(1.13);opacity:.9}
+  100%{transform:translate3d(-6px,6px,0) scale(1.03);opacity:.95}
 }
-@keyframes freedomLookBlobTr{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.50;border-radius:42% 58% 40% 60% / 52% 40% 58% 48%}
-  35%{transform:translate(-2%,1.8%) scale(1.035);opacity:.58;border-radius:52% 48% 56% 44% / 44% 56% 46% 54%}
-  65%{transform:translate(-.8%,-1.4%) scale(.96);opacity:.42;border-radius:46% 54% 48% 52% / 56% 44% 52% 48%}
+@keyframes freedomLookCloudBl{
+  0%{transform:translate3d(0,0,0) scale(1);opacity:1}
+  25%{transform:translate3d(16px,-18px,0) scale(1.1);opacity:.89}
+  50%{transform:translate3d(-18px,-6px,0) scale(.92);opacity:1}
+  75%{transform:translate3d(20px,12px,0) scale(1.12);opacity:.9}
+  100%{transform:translate3d(8px,-8px,0) scale(1.05);opacity:.96}
 }
-@keyframes freedomLookBlobBl{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.48;border-radius:48% 52% 44% 56% / 40% 60% 42% 58%}
-  45%{transform:translate(1.8%,-2%) scale(1.045);opacity:.55;border-radius:56% 44% 52% 48% / 50% 50% 46% 54%}
-  75%{transform:translate(-1.4%,-.8%) scale(.98);opacity:.4;border-radius:44% 56% 48% 52% / 46% 54% 50% 50%}
+@keyframes freedomLookCloudBr{
+  0%{transform:translate3d(0,0,0) scale(1);opacity:1}
+  25%{transform:translate3d(-16px,-14px,0) scale(1.12);opacity:.87}
+  50%{transform:translate3d(14px,16px,0) scale(.9);opacity:1}
+  75%{transform:translate3d(-22px,10px,0) scale(1.09);opacity:.91}
+  100%{transform:translate3d(-4px,-6px,0) scale(1.04);opacity:.95}
 }
-@keyframes freedomLookBlobBr{
-  0%,100%{transform:translate(0,0) scale(1);opacity:.52;border-radius:44% 56% 50% 50% / 58% 42% 54% 46%}
-  30%{transform:translate(-1.8%,-1.4%) scale(1.03);opacity:.6;border-radius:52% 48% 46% 54% / 48% 52% 44% 56%}
-  60%{transform:translate(1.4%,1%) scale(.96);opacity:.44;border-radius:40% 60% 54% 46% / 54% 46% 58% 42%}
+@keyframes freedomLookSmokeA{
+  0%{transform:translate3d(0,0,0) scale(1);border-radius:62% 38% 55% 45% / 48% 58% 42% 52%;opacity:.95}
+  25%{transform:translate3d(12px,-10px,0) scale(1.16);border-radius:45% 55% 40% 60% / 58% 42% 55% 45%;opacity:1}
+  50%{transform:translate3d(-10px,14px,0) scale(.86);border-radius:55% 45% 60% 40% / 40% 60% 48% 52%;opacity:.78}
+  75%{transform:translate3d(10px,6px,0) scale(1.12);border-radius:40% 60% 48% 52% / 52% 48% 58% 42%;opacity:.94}
+  100%{transform:translate3d(-8px,-8px,0) scale(1.06);border-radius:58% 42% 50% 50% / 45% 55% 40% 60%;opacity:.9}
+}
+@keyframes freedomLookSmokeB{
+  0%{transform:translate3d(0,0,0) scale(1);border-radius:48% 52% 40% 60% / 55% 40% 60% 45%;opacity:.55}
+  25%{transform:translate3d(-14px,12px,0) scale(1.14);border-radius:60% 40% 55% 45% / 42% 58% 45% 55%;opacity:.68}
+  50%{transform:translate3d(12px,-12px,0) scale(.84);border-radius:42% 58% 48% 52% / 58% 42% 52% 48%;opacity:.42}
+  75%{transform:translate3d(-10px,8px,0) scale(1.1);border-radius:52% 48% 58% 42% / 40% 60% 48% 52%;opacity:.6}
+  100%{transform:translate3d(8px,-6px,0) scale(1.04);border-radius:45% 55% 42% 58% / 50% 50% 40% 60%;opacity:.5}
+}
+@keyframes freedomLookSmokeC{
+  0%{transform:translate3d(0,0,0) scale(1);border-radius:40% 60% 52% 48% / 58% 42% 55% 45%;opacity:.32}
+  25%{transform:translate3d(10px,8px,0) scale(1.12);border-radius:55% 45% 40% 60% / 45% 55% 42% 58%;opacity:.42}
+  50%{transform:translate3d(-12px,-8px,0) scale(.86);border-radius:48% 52% 58% 42% / 40% 60% 50% 50%;opacity:.24}
+  75%{transform:translate3d(8px,-10px,0) scale(1.08);border-radius:42% 58% 45% 55% / 55% 45% 48% 52%;opacity:.38}
+  100%{transform:translate3d(-6px,6px,0) scale(1.02);border-radius:50% 50% 42% 58% / 48% 52% 40% 60%;opacity:.3}
 }
 @media (prefers-reduced-motion:reduce){
-  .freedom-look-blob-tl,.freedom-look-blob-tr,.freedom-look-blob-bl,.freedom-look-blob-br{animation:none}
+  .freedom-look-cloud-tl,.freedom-look-cloud-tr,.freedom-look-cloud-bl,.freedom-look-cloud-br,
+  .freedom-look-smoke-a,.freedom-look-smoke-b,.freedom-look-smoke-c{animation:none}
 }
 .freedom-look-inner{
   position:relative;z-index:1;
@@ -1990,10 +2045,26 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 </div>
 <div id="freedomLookAround" class="freedom-look-around" hidden>
   <div class="freedom-look-bg" aria-hidden="true">
-    <span class="freedom-look-blob freedom-look-blob-tl"></span>
-    <span class="freedom-look-blob freedom-look-blob-tr"></span>
-    <span class="freedom-look-blob freedom-look-blob-bl"></span>
-    <span class="freedom-look-blob freedom-look-blob-br"></span>
+    <div class="freedom-look-cloud freedom-look-cloud-tl">
+      <span class="freedom-look-smoke freedom-look-smoke-a"></span>
+      <span class="freedom-look-smoke freedom-look-smoke-b"></span>
+      <span class="freedom-look-smoke freedom-look-smoke-c"></span>
+    </div>
+    <div class="freedom-look-cloud freedom-look-cloud-tr">
+      <span class="freedom-look-smoke freedom-look-smoke-a"></span>
+      <span class="freedom-look-smoke freedom-look-smoke-b"></span>
+      <span class="freedom-look-smoke freedom-look-smoke-c"></span>
+    </div>
+    <div class="freedom-look-cloud freedom-look-cloud-bl">
+      <span class="freedom-look-smoke freedom-look-smoke-a"></span>
+      <span class="freedom-look-smoke freedom-look-smoke-b"></span>
+      <span class="freedom-look-smoke freedom-look-smoke-c"></span>
+    </div>
+    <div class="freedom-look-cloud freedom-look-cloud-br">
+      <span class="freedom-look-smoke freedom-look-smoke-a"></span>
+      <span class="freedom-look-smoke freedom-look-smoke-b"></span>
+      <span class="freedom-look-smoke freedom-look-smoke-c"></span>
+    </div>
   </div>
   <div class="freedom-look-inner">
     <h1 class="freedom-look-headline">Have a look<br>around first.</h1>
