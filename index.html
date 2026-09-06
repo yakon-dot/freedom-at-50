@@ -39,14 +39,16 @@
   margin:0 auto 22px;max-width:18rem;
   font-size:14px;line-height:1.55;color:rgba(200,198,192,.55);
 }
-#freedomWelcomeComeIn.freedom-welcome-come-in{
+#freedomWelcomeComeIn.freedom-welcome-come-in,
+#freedomMakeYoursStart.freedom-welcome-come-in{
   position:relative;
   display:inline-flex;align-items:center;justify-content:center;gap:18px;
   min-width:152px;padding:10px 22px 10px 26px;
   opacity:0;transform:translateY(6px);pointer-events:none;
 }
 /* Stroke-only sheen: highlight on the outline, left → right */
-#freedomWelcomeComeIn .freedom-welcome-sheen{
+#freedomWelcomeComeIn .freedom-welcome-sheen,
+#freedomMakeYoursStart .freedom-welcome-sheen{
   position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;
   box-sizing:border-box;padding:1.5px;opacity:0;
   background:linear-gradient(90deg,
@@ -67,15 +69,19 @@
   mask-origin:content-box,border-box;
   mask-composite:exclude;
 }
-#freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in{
+#freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
+#freedomMakeItYours.is-ready #freedomMakeYoursStart.freedom-welcome-come-in{
   pointer-events:auto;
   animation:freedomWelcomeComeInIn .75s ease-out .5s forwards;
 }
 #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
-#freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen{
+#freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen,
+#freedomMakeYoursStart.is-sheening .freedom-welcome-sheen,
+#freedomMakeYoursStart.is-sheen-looping .freedom-welcome-sheen{
   animation:freedomWelcomeComeInSheen 2.8s ease-in-out forwards;
 }
-#freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap{
+#freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap,
+#freedomMakeYoursStart.is-sheening .freedom-welcome-arrow-wrap{
   animation:freedomWelcomeArrowNudge 1.65s ease-in-out .12s 1 both;
 }
 @keyframes freedomWelcomeComeInIn{
@@ -95,13 +101,18 @@
   75%{transform:translateX(7px)}
 }
 @media (prefers-reduced-motion:reduce){
-  #freedomWelcomeComeIn.freedom-welcome-come-in{
+  #freedomWelcomeComeIn.freedom-welcome-come-in,
+  #freedomMakeYoursStart.freedom-welcome-come-in{
     opacity:1;transform:none;pointer-events:auto;
   }
   #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
+  #freedomMakeItYours.is-ready #freedomMakeYoursStart.freedom-welcome-come-in,
   #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
   #freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen,
-  #freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap{animation:none}
+  #freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap,
+  #freedomMakeYoursStart.is-sheening .freedom-welcome-sheen,
+  #freedomMakeYoursStart.is-sheen-looping .freedom-welcome-sheen,
+  #freedomMakeYoursStart.is-sheening .freedom-welcome-arrow-wrap{animation:none}
 }
 .freedom-welcome-arrow-wrap{
   display:inline-flex;align-items:center;flex:0 0 auto;position:relative;z-index:2;
@@ -353,6 +364,41 @@
   .freedom-look-handwrite-line.is-writing{animation:none}
   .freedom-look-inner .freedom-welcome-support.freedom-look-support{opacity:1;transition:none}
 }
+/* —— First-time Exit Demo: solid sage “Ready to make it yours?” —— */
+#freedomMakeItYours{
+  position:fixed;inset:0;z-index:9960;box-sizing:border-box;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
+  background:var(--green,#84bd91);text-align:center;-webkit-tap-highlight-color:transparent;
+  opacity:0;pointer-events:none;
+}
+#freedomMakeItYours[hidden]{display:none!important}
+#freedomMakeItYours.is-present{opacity:1;pointer-events:auto}
+#freedomMakeItYours.is-exiting{opacity:0;pointer-events:none;transition:opacity .85s ease}
+.freedom-make-yours-inner{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;max-width:22rem;
+}
+/* Reuse bridge Caveat handwrite; cream/peach on approved sage */
+#freedomMakeItYours .freedom-look-handwrite{margin:0 0 18px;color:#efcbaa}
+#freedomMakeItYours .freedom-welcome-support.freedom-make-yours-support{
+  margin:0 auto 28px;max-width:17rem;
+  opacity:0;transition:opacity .5s ease;
+  color:rgba(245,244,240,.78);
+}
+#freedomMakeItYours .freedom-welcome-support.freedom-make-yours-support.is-visible{opacity:1}
+@media (prefers-reduced-motion:reduce){
+  #freedomMakeItYours{transition:none}
+  #freedomMakeItYours .freedom-welcome-support.freedom-make-yours-support{opacity:1;transition:none}
+}
+/* Planned companion-selection stage (route target; designs not invented here) */
+#freedomCompanionSelect{
+  position:fixed;inset:0;z-index:9960;box-sizing:border-box;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
+  background:var(--bg,#0b0c0e);text-align:center;-webkit-tap-highlight-color:transparent;
+}
+#freedomCompanionSelect[hidden]{display:none!important}
 </style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -2130,6 +2176,26 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     <p class="freedom-welcome-support freedom-look-support" id="freedomLookSupport">We've put a few things in so you can<br>see how Freedom feels before you<br>make it yours.</p>
   </div>
 </div>
+</div>
+<div id="freedomMakeItYours" class="freedom-make-it-yours" hidden>
+  <div class="freedom-make-yours-inner">
+    <h1 class="freedom-look-handwrite" id="freedomMakeYoursHandwrite">
+      <span class="freedom-look-handwrite-line" id="freedomMakeYoursLine1">Ready to make</span>
+      <span class="freedom-look-handwrite-line" id="freedomMakeYoursLine2">it yours?</span>
+    </h1>
+    <p class="freedom-welcome-support freedom-make-yours-support" id="freedomMakeYoursSupport">Start with one thing you're<br>clearing, building or keeping<br>an eye on.</p>
+    <button class="demo-outline-btn demo-enter-btn freedom-welcome-come-in" id="freedomMakeYoursStart" type="button">
+      <span class="freedom-welcome-sheen" aria-hidden="true"></span>
+      Start my Freedom
+      <span class="freedom-welcome-arrow-wrap">
+        <svg class="freedom-welcome-arrow" viewBox="0 0 18 12" aria-hidden="true" focusable="false">
+          <path d="M1.2 6H16.2M11.2 1.6 16.5 6 11.2 10.4" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </button>
+  </div>
+</div>
+<div id="freedomCompanionSelect" class="freedom-companion-select" hidden aria-label="Companion selection"></div>
 <script>
 (function(){
   var WELCOME_KEY="freedom50-welcome-complete-v1";
@@ -2182,8 +2248,12 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     sheenLoopTimers[key]=setTimeout(function(){
       sheenLoopTimers[key]=null;
       if(!btn.isConnected)return;
-      /* Keep looping only while Welcome is still visible. */
+      /* Keep looping only while the owning screen is still visible. */
       if(btn===comeIn&&(!welcome||welcome.hidden||welcomeDone()))return;
+      if(key==="makeYoursStart"){
+        var sage=document.getElementById("freedomMakeItYours");
+        if(!sage||sage.hidden||!sage.classList.contains("is-present"))return;
+      }
       var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if(reduce)return;
       btn.classList.remove("is-sheening");
@@ -2377,8 +2447,126 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       }
     },ONBOARD_FADE_MS);
   }
+
+  /* —— First-time Exit Demo → sage “Ready to make it yours?” —— */
+  var FIRST_TIME_KEY="freedom50-first-time-complete-v1";
+  var makeItYours=document.getElementById("freedomMakeItYours");
+  var makeYoursStart=document.getElementById("freedomMakeYoursStart");
+  var makeYoursLine1=document.getElementById("freedomMakeYoursLine1");
+  var makeYoursLine2=document.getElementById("freedomMakeYoursLine2");
+  var makeYoursSupport=document.getElementById("freedomMakeYoursSupport");
+  var companionSelect=document.getElementById("freedomCompanionSelect");
+  var makeYoursTimers=[];
+  function firstTimeDone(){
+    try{return localStorage.getItem(FIRST_TIME_KEY)==="1";}catch(e){return false;}
+  }
+  function markFirstTimeComplete(){
+    try{localStorage.setItem(FIRST_TIME_KEY,"1");}catch(e){}
+  }
+  function clearMakeYoursTimers(){
+    makeYoursTimers.forEach(function(id){clearTimeout(id);});
+    makeYoursTimers=[];
+  }
+  function queueMakeYoursTimer(fn,ms){
+    var id=setTimeout(function(){
+      makeYoursTimers=makeYoursTimers.filter(function(t){return t!==id;});
+      fn();
+    },ms);
+    makeYoursTimers.push(id);
+    return id;
+  }
+  function resetMakeYoursWriting(){
+    clearMakeYoursTimers();
+    if(makeYoursLine1)makeYoursLine1.classList.remove("is-writing");
+    if(makeYoursLine2)makeYoursLine2.classList.remove("is-writing");
+    if(makeYoursSupport)makeYoursSupport.classList.remove("is-visible");
+    if(makeItYours)makeItYours.classList.remove("is-ready");
+    stopButtonSheen(makeYoursStart,"makeYoursStart");
+    if(makeYoursStart){
+      makeYoursStart.classList.remove("is-sheening","is-sheen-looping");
+    }
+  }
+  function presentMakeItYoursOpaque(){
+    /* Cover Demo→Home so Home never flashes between Exit Demo and sage. */
+    if(!makeItYours)return false;
+    resetMakeYoursWriting();
+    makeItYours.classList.remove("is-exiting");
+    makeItYours.hidden=false;
+    makeItYours.style.transition="none";
+    makeItYours.classList.add("is-present");
+    void makeItYours.offsetWidth;
+    makeItYours.style.transition="";
+    return true;
+  }
+  function startMakeYoursWriting(){
+    if(!makeItYours||makeItYours.hidden)return;
+    if(prefersReducedMotion()){
+      if(makeYoursLine1)makeYoursLine1.classList.add("is-writing");
+      if(makeYoursLine2)makeYoursLine2.classList.add("is-writing");
+      if(makeYoursSupport)makeYoursSupport.classList.add("is-visible");
+      makeItYours.classList.add("is-ready");
+      return;
+    }
+    /* Same rhythm as the look-around bridge: quiet beat → line1 → gap → line2 → support → CTA. */
+    queueMakeYoursTimer(function(){
+      if(!makeItYours||makeItYours.hidden||!makeYoursLine1)return;
+      void makeYoursLine1.offsetWidth;
+      makeYoursLine1.classList.add("is-writing");
+    },LOOK_BG_ALONE_MS);
+    queueMakeYoursTimer(function(){
+      if(!makeItYours||makeItYours.hidden||!makeYoursLine2)return;
+      void makeYoursLine2.offsetWidth;
+      makeYoursLine2.classList.add("is-writing");
+    },LOOK_LINE2_AT_MS);
+    queueMakeYoursTimer(function(){
+      if(!makeItYours||makeItYours.hidden||!makeYoursSupport)return;
+      makeYoursSupport.classList.add("is-visible");
+      /* CTA uses the same Come in entrance (0.5s delay inside the keyframes trigger). */
+      makeItYours.classList.add("is-ready");
+    },LOOK_SUPPORT_AT_MS);
+  }
+  function armMakeItYours(){
+    if(!makeItYours||makeItYours.hidden)return;
+    startMakeYoursWriting();
+  }
+  function hideMakeItYours(){
+    resetMakeYoursWriting();
+    if(!makeItYours)return;
+    makeItYours.classList.remove("is-present","is-ready","is-exiting");
+    makeItYours.hidden=true;
+  }
+  function showCompanionSelect(){
+    if(!companionSelect)return false;
+    companionSelect.hidden=false;
+    return true;
+  }
+  function goMakeYoursToCompanion(){
+    stopButtonSheen(makeYoursStart,"makeYoursStart");
+    hideMakeItYours();
+    showCompanionSelect();
+    if(typeof window.freedomCompanionSelect==="object"&&typeof window.freedomCompanionSelect.show==="function"){
+      window.freedomCompanionSelect.show();
+    }
+  }
+  function interceptFirstExitDemo(){
+    /* Returns true when sage covers the exit (first-time journey still open). */
+    if(firstTimeDone())return false;
+    presentMakeItYoursOpaque();
+    armMakeItYours();
+    return true;
+  }
+
   window.freedomWelcome={show:showWelcome,complete:completeWelcome,isDone:welcomeDone};
   window.freedomLookAround={show:showLookAround,complete:completeLookAround,isDone:lookAroundDone,arm:armLookAround};
+  window.freedomMakeItYours={
+    show:presentMakeItYoursOpaque,
+    arm:armMakeItYours,
+    hide:hideMakeItYours,
+    interceptExitDemo:interceptFirstExitDemo,
+    isFirstTimeDone:firstTimeDone,
+    markFirstTimeComplete:markFirstTimeComplete
+  };
+
   if(comeIn){
     comeIn.addEventListener("click",function(){
       goFromWelcomeToLookAround();
@@ -2392,6 +2580,21 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       if(e.animationName!=="freedomWelcomeComeInSheen")return;
       if(!e.target||!e.target.classList||!e.target.classList.contains("freedom-welcome-sheen"))return;
       queueSheenLoop(comeIn,"comeIn");
+    });
+  }
+  if(makeYoursStart){
+    makeYoursStart.addEventListener("click",function(){
+      goMakeYoursToCompanion();
+    });
+    makeYoursStart.addEventListener("animationend",function(e){
+      if(e.animationName==="freedomWelcomeComeInIn"&&e.target===makeYoursStart){
+        makeYoursStart.classList.remove("is-sheen-looping");
+        makeYoursStart.classList.add("is-sheening");
+        return;
+      }
+      if(e.animationName!=="freedomWelcomeComeInSheen")return;
+      if(!e.target||!e.target.classList||!e.target.classList.contains("freedom-welcome-sheen"))return;
+      queueSheenLoop(makeYoursStart,"makeYoursStart");
     });
   }
   // Stage the next onboarding surface under the splash so Home never flashes.
@@ -3287,6 +3490,11 @@ function enterDemo(){
 window.enterDemo=enterDemo;
 function exitDemo(){
   if(!demoMode)return;
+  /* First-time journey: cover with sage BEFORE unwinding Demo so Home never flashes. */
+  var firstExit=false;
+  if(window.freedomMakeItYours&&typeof window.freedomMakeItYours.interceptExitDemo==="function"){
+    firstExit=!!window.freedomMakeItYours.interceptExitDemo();
+  }
   demoMode=false;
   sessionStorage.removeItem(DEMO_SESSION_KEY);
   if(realStateSnapshot)state=realStateSnapshot;
@@ -3299,6 +3507,7 @@ function exitDemo(){
   if(typeof window.showHome==="function")window.showHome();
   render();
   applyDemoButtonState(byId("demo183"));
+  if(firstExit)return;
 }
 function continueFromWelcome(){
   hideDemoWelcomeOverlay();
