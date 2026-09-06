@@ -455,7 +455,11 @@
 .freedom-companion-scroll{
   position:relative;z-index:1;flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;
   -webkit-overflow-scrolling:touch;
-  padding:calc(36px + env(safe-area-inset-top,0px)) 22px calc(36px + env(safe-area-inset-bottom,0px));
+  /* Match Journey/Goals heading start: page pad (safe+10px) + --hero-text-top */
+  padding:
+    calc(env(safe-area-inset-top,0px) + 10px + clamp(62px,calc(20vh - 58px),117px))
+    22px
+    calc(36px + env(safe-area-inset-bottom,0px));
 }
 .freedom-companion-inner{
   width:100%;max-width:22rem;margin:0 auto;
@@ -469,9 +473,9 @@
 }
 .freedom-companion-heading span{display:block}
 .freedom-companion-sub{
-  margin:0 0 22px;max-width:16rem;
+  margin:0 0 14px;max-width:16rem;
   font-size:14px;line-height:1.5;font-weight:400;
-  color:rgba(245,244,240,.55);text-align:center;
+  color:rgba(245,244,240,.68);text-align:center;
 }
 .freedom-companion-list{
   width:100%;display:flex;flex-direction:column;gap:12px;
@@ -505,13 +509,14 @@
 .freedom-companion-card-chevron{
   flex:0 0 auto;width:22px;height:22px;margin-left:2px;
   color:rgba(239,203,170,.72);
-  transition:transform .28s cubic-bezier(.25,.1,.25,1);
+  transition:transform .34s cubic-bezier(.25,.1,.25,1);
 }
 .freedom-companion-card.is-open .freedom-companion-card-chevron{transform:rotate(180deg)}
 .freedom-companion-card-chevron svg{
   width:22px;height:22px;display:block;fill:none;stroke:currentColor;
   stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
+/* Height-only expand/collapse — content clips with the card as one motion */
 .freedom-companion-card-panel{
   display:grid;grid-template-rows:0fr;
   transition:grid-template-rows .34s cubic-bezier(.25,.1,.25,1);
@@ -521,31 +526,30 @@
   overflow:hidden;min-height:0;
 }
 .freedom-companion-card-body{
-  padding:0 16px 16px;opacity:0;transform:translateY(4px);
-  transition:opacity .28s ease,transform .28s ease;
-}
-.freedom-companion-card.is-open .freedom-companion-card-body{
-  opacity:1;transform:none;
+  padding:0 16px 16px;
 }
 .freedom-companion-bio{
   margin:0 0 14px;font-size:14px;line-height:1.55;
   color:rgba(245,244,240,.78);font-weight:400;
 }
 .freedom-companion-samples-label{
-  margin:0 0 8px;
+  margin:0 0 4px;
   font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
   font-size:18px;font-weight:500;line-height:1.2;
   color:rgba(239,203,170,.78);
 }
 .freedom-companion-samples{
-  display:flex;flex-direction:column;gap:8px;margin:0 0 16px;
+  display:flex;flex-direction:column;gap:0;margin:0 0 16px;
 }
+/* Editorial samples: no boxes — thin peach dividers only between lines */
 .freedom-companion-sample{
-  margin:0;padding:10px 12px;border-radius:14px;
-  background:rgba(8,10,12,.55);
-  border:1px solid rgba(245,244,240,.08);
+  margin:0;padding:12px 0;
+  background:none;border:0;border-radius:0;
   font-size:13px;line-height:1.45;font-weight:400;
   color:rgba(245,244,240,.82);
+}
+.freedom-companion-sample + .freedom-companion-sample{
+  border-top:1px solid rgba(239,203,170,.28);
 }
 .freedom-companion-pick-wrap{
   display:flex;justify-content:center;
@@ -559,10 +563,10 @@
   cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 .freedom-companion-pick:active{opacity:.72}
+.freedom-companion-pick.is-confirming{pointer-events:none;cursor:default}
 @media (prefers-reduced-motion:reduce){
   #freedomCompanionSelect.is-exiting{transition:none}
   .freedom-companion-card-panel{transition:none}
-  .freedom-companion-card-body{transition:none}
   .freedom-companion-card-chevron{transition:none}
 }
 </style>
@@ -2799,7 +2803,10 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   }
   var COMPANION_KEY="freedom50-companion-id-v1";
   var COMPANION_PENDING_KEY="freedom50-companion-pending-v1";
+  var COMPANION_ACK_MS=700;
   var companionOpenId=null;
+  var companionSelecting=false;
+  var companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
   function getSelectedCompanion(){
     try{
       var v=localStorage.getItem(COMPANION_KEY)||"";
@@ -2825,11 +2832,48 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     companionSelect.hidden=true;
     companionSelect.setAttribute("aria-hidden","true");
     companionOpenId=null;
+    companionSelecting=false;
     companionSelect.querySelectorAll(".freedom-companion-card.is-open").forEach(function(card){
       card.classList.remove("is-open");
       var btn=card.querySelector(".freedom-companion-card-toggle");
       if(btn)btn.setAttribute("aria-expanded","false");
     });
+    companionSelect.querySelectorAll(".freedom-companion-pick").forEach(function(btn){
+      var id=btn.getAttribute("data-pick-companion");
+      if(id&&companionNames[id])btn.textContent="Pick "+companionNames[id];
+      btn.classList.remove("is-confirming");
+    });
+  }
+  function ensureCompanionCardVisible(card){
+    if(!companionSelect||!card)return;
+    var scroll=companionSelect.querySelector(".freedom-companion-scroll");
+    if(!scroll)return;
+    var reduce=prefersReducedMotion();
+    function adjust(){
+      var sRect=scroll.getBoundingClientRect();
+      var cRect=card.getBoundingClientRect();
+      var heading=companionSelect.querySelector(".freedom-companion-heading");
+      /* Keep enough top context that the page heading still feels present. */
+      var keepTop=heading?Math.min(108,Math.max(64,heading.getBoundingClientRect().height+36)):72;
+      var delta=0;
+      if(cRect.top<sRect.top+keepTop){
+        delta=cRect.top-(sRect.top+keepTop);
+      }else if(cRect.bottom>sRect.bottom-20){
+        var needDown=cRect.bottom-(sRect.bottom-20);
+        var maxDown=cRect.top-(sRect.top+keepTop);
+        delta=Math.min(needDown,Math.max(0,maxDown));
+      }
+      if(Math.abs(delta)>2){
+        scroll.scrollBy({top:delta,behavior:reduce?"auto":"smooth"});
+      }
+    }
+    requestAnimationFrame(function(){
+      requestAnimationFrame(adjust);
+    });
+    /* Re-check after the height transition settles. */
+    if(!reduce){
+      queueMakeYoursTimer(adjust,360);
+    }
   }
   function setCompanionOpen(id){
     if(!companionSelect)return;
@@ -2841,10 +2885,15 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       if(btn)btn.setAttribute("aria-expanded",open?"true":"false");
     });
     companionOpenId=id||null;
+    if(id){
+      var openCard=companionSelect.querySelector('.freedom-companion-card[data-companion="'+id+'"]');
+      ensureCompanionCardVisible(openCard);
+    }
   }
   function presentCompanionSelect(){
     if(!companionSelect)return false;
     setCompanionPending(true);
+    companionSelecting=false;
     companionSelect.hidden=false;
     companionSelect.setAttribute("aria-hidden","false");
     companionSelect.classList.remove("is-exiting");
@@ -2887,28 +2936,42 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     hideCompanionSelect();
     if(typeof window.showHome==="function")window.showHome();
   }
-  function completeCompanionSelection(id){
+  function completeCompanionSelection(id,pickBtn){
+    if(companionSelecting)return;
     if(id!=="patricia"&&id!=="veronica"&&id!=="kevin")return;
+    companionSelecting=true;
+    /* Persist immediately, then briefly acknowledge on the same Pick button. */
     saveSelectedCompanion(id);
     setCompanionPending(false);
     markFirstTimeComplete();
-    if(prefersReducedMotion()||!companionSelect||companionSelect.hidden){
-      finishCompanionToHome();
-      return;
+    if(pickBtn){
+      pickBtn.textContent=companionNames[id]+" it is.";
+      pickBtn.classList.add("is-confirming");
     }
-    companionSelect.classList.add("is-exiting");
+    var ackMs=prefersReducedMotion()?0:COMPANION_ACK_MS;
     queueMakeYoursTimer(function(){
-      finishCompanionToHome();
-    },ONBOARD_FADE_MS);
+      if(prefersReducedMotion()||!companionSelect||companionSelect.hidden){
+        finishCompanionToHome();
+        return;
+      }
+      companionSelect.classList.add("is-exiting");
+      queueMakeYoursTimer(function(){
+        finishCompanionToHome();
+      },ONBOARD_FADE_MS);
+    },ackMs);
   }
   function bindCompanionSelect(){
     if(!companionSelect||companionSelect.dataset.bound==="1")return;
     companionSelect.dataset.bound="1";
     companionSelect.addEventListener("click",function(e){
+      if(companionSelecting){
+        e.preventDefault();
+        return;
+      }
       var pick=e.target.closest("[data-pick-companion]");
       if(pick){
         e.preventDefault();
-        completeCompanionSelection(pick.getAttribute("data-pick-companion"));
+        completeCompanionSelection(pick.getAttribute("data-pick-companion"),pick);
         return;
       }
       var toggle=e.target.closest(".freedom-companion-card-toggle");
@@ -6107,7 +6170,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1896",
+        "./service-worker.js?v=1897",
         { updateViaCache: "none" }
       );
 
