@@ -120,7 +120,8 @@
 }
 #freedomLookAround[hidden]{display:none!important}
 #freedomLookAround.is-ready{opacity:1}
-#freedomLookAround.is-exiting{opacity:0}
+/* Exit-only: slower soft crossfade into Home (entrance stays .85s). */
+#freedomLookAround.is-exiting{opacity:0;transition:opacity 1.35s ease}
 @media (prefers-reduced-motion:reduce){#freedomLookAround{transition:none}}
 /* —— Look-around background: irregular multi-layer peach/sage smoke —— */
 .freedom-look-bg{
@@ -2141,13 +2142,15 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   }
   var SHEEN_PAUSE_MS=1800;
   var ONBOARD_FADE_MS=850;
+  /* Bridge→Home exit fade only (Welcome crossfade stays ONBOARD_FADE_MS). */
+  var LOOK_EXIT_FADE_MS=1350;
   /* Bridge text sequence (wallpaper alone → line1 → line2 → support → read → Home) */
   var LOOK_BG_ALONE_MS=900;
   var LOOK_LINE_WRITE_MS=1000;
   var LOOK_LINE_GAP_MS=100;
   var LOOK_SUPPORT_FADE_MS=500;
-  /* Reading hold after support is fully visible (was 1900; +2000 for calmer exit). */
-  var LOOK_READ_PAUSE_MS=3900;
+  /* Reading hold after support is fully visible (was 3900; +1800 for calmer exit). */
+  var LOOK_READ_PAUSE_MS=5700;
   var LOOK_LINE1_AT_MS=LOOK_BG_ALONE_MS;
   var LOOK_LINE2_AT_MS=LOOK_LINE1_AT_MS+LOOK_LINE_WRITE_MS+LOOK_LINE_GAP_MS;
   var LOOK_SUPPORT_AT_MS=LOOK_LINE2_AT_MS+LOOK_LINE_WRITE_MS;
@@ -2340,7 +2343,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     lookAround.classList.add("is-exiting");
     setTimeout(function(){
       completeLookAround();
-    },ONBOARD_FADE_MS);
+    },LOOK_EXIT_FADE_MS);
   }
   function goFromWelcomeToLookAround(){
     if(welcomeDone()){
