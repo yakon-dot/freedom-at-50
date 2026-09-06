@@ -460,7 +460,7 @@ main{padding:4px 18px calc(106px + var(--safe-bottom))}.page{display:none}.page.
 input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px solid #343840;border-radius:14px;padding:14px 15px;font-size:16px;outline:none}input:focus{border-color:var(--yellow);box-shadow:0 0 0 3px rgba(231,207,99,.1)}input[readonly]{color:#d9d9d5;background:#101215}label{display:block;color:var(--muted);font-size:13px;margin-top:15px}.save-btn,.secondary-btn{width:100%;border-radius:16px;padding:14px 16px;margin-top:16px;font-weight:720}.save-btn{background:var(--yellow);color:#17150b;border:0}.save-btn.complete{background:var(--green);color:#0c130e}.secondary-btn{background:transparent;border:1px solid #454952;color:var(--text)}.loan-card{padding:19px}.loan-title{font-size:19px;font-weight:760}.loan-summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}.loan-stat{background:#0e1013;border:1px solid #272b31;border-radius:15px;padding:12px}.loan-stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.loan-stat strong{font-size:16px}.editor{margin-top:15px;padding-top:2px}.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.empty-note{color:var(--muted);font-size:14px;line-height:1.5}.success-copy{color:#c9decf;font-size:14px;line-height:1.5;margin:12px 0 0}
 .bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(12,13,15,.96);backdrop-filter:blur(18px);border-top:1px solid #292c31;padding:8px 8px calc(8px + var(--safe-bottom));display:grid;grid-template-columns:repeat(5,1fr);gap:3px}.nav-btn{border:0;background:transparent;color:#9799a2;border-radius:15px;min-height:58px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;-webkit-tap-highlight-color:transparent}.nav-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-btn.active{color:var(--yellow);background:rgba(231,207,99,.1)}.save-note{position:fixed;left:50%;bottom:calc(86px + var(--safe-bottom));transform:translate(-50%,14px);background:#f0ead0;color:#17150d;padding:10px 14px;border-radius:999px;font-weight:700;font-size:12px;opacity:0;pointer-events:none;transition:.18s;z-index:80}.save-note.show{opacity:1;transform:translate(-50%,0)}
 
-.journey-card-head{display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}.journey-card-head .loan-title{min-width:0;flex:1}.journey-card-head .pill{margin-left:auto}.journey-chevron{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;padding:0;border:1px solid rgba(218,167,128,.28);border-radius:50%;background:rgba(218,167,128,.055);color:rgba(231,177,137,.88);transition:transform .22s ease}.journey-chevron svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.loan-card:not(.is-collapsed) .journey-chevron{transform:rotate(180deg)}.journey-card-body[hidden]{display:none}.loan-card.is-collapsed{padding-top:17px;padding-bottom:17px}.loan-card.is-collapsed .journey-card-head+.progress{margin-top:12px}.loan-card.is-collapsed .loan-summary{display:none}.loan-card.is-collapsed .journey-card-footer{display:none}
+.journey-card-head{display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}.journey-card-head .loan-title{min-width:0;flex:1}.journey-card-head .pill{margin-left:auto}.journey-chevron{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;padding:0;border:1px solid rgba(218,167,128,.28);border-radius:50%;background:rgba(218,167,128,.055);color:rgba(231,177,137,.88);transition:transform .22s ease}.journey-chevron svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.loan-card:not(.is-collapsed) .journey-chevron{transform:rotate(180deg)}.loan-card.is-collapsing .journey-chevron{transform:none}.journey-card-body[hidden]{display:none}.loan-card.is-collapsed{padding-top:17px;padding-bottom:17px}.loan-card.is-collapsed .journey-card-head+.progress{margin-top:12px}.loan-card.is-collapsed .loan-summary{display:none}.loan-card.is-collapsed .journey-card-footer{display:none}
 .update-banner{position:fixed;left:14px;right:14px;top:calc(12px + env(safe-area-inset-top,0px));z-index:120;max-width:680px;margin:0 auto;background:#f0ead0;color:#17150d;border:1px solid rgba(231,207,99,.75);border-radius:18px;padding:12px 12px 12px 15px;box-shadow:0 12px 34px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:space-between;gap:12px}.update-banner[hidden]{display:none}.update-banner strong{display:block;font-size:14px}.update-banner span{display:block;font-size:12px;opacity:.72;margin-top:2px}.update-btn{border:0;background:#17150d;color:#f5f4f0;border-radius:12px;padding:10px 13px;font-weight:760;white-space:nowrap}
 
 .archive-goal-btn{margin-top:14px;width:auto;padding:10px 14px;border-radius:999px;border:1px solid rgba(231,207,99,.45);background:transparent;color:var(--gold);font-size:13px;font-weight:750;cursor:pointer}
@@ -2137,6 +2137,8 @@ body.home183 .demo183.is-demo-active{
 .card-body-wrap.is-collapsed{grid-template-rows:0fr}
 .card-body-wrap>.journey-card-body{overflow:hidden;min-height:0;transition:opacity var(--motion-expand) var(--motion-ease),transform var(--motion-expand) var(--motion-ease)}
 .card-body-wrap.is-collapsed>.journey-card-body{opacity:0;transform:translateY(4px);pointer-events:none}
+/* Journey collapse: height-only clip so content + shell resize as one motion (no fade-then-shrink) */
+#journey .card-body-wrap.is-collapsed>.journey-card-body{opacity:1;transform:none;pointer-events:none}
 .card-body-wrap:not(.is-collapsed)>.journey-card-body.freedom-body-reveal{animation:freedomBodyIn var(--motion-expand) var(--motion-ease) both}
 .journey-chevron{transition:transform var(--motion-chevron) var(--motion-ease)!important}
 .progress span{transition:width var(--motion-progress) var(--motion-ease)}
@@ -3753,6 +3755,8 @@ const freedomMotion={
   },
   prepareCards(pageId){
     if(this.reduced)return;
+    // Journey cards must open already settled — no drop-in / stagger entrance.
+    if(pageId==="journey")return;
     this.pageCards(pageId).forEach(card=>{
       if(card.classList.contains("freedom-card-new"))return;
       card.classList.remove("freedom-card-enter");
@@ -3762,6 +3766,10 @@ const freedomMotion={
   },
   runCardEnter(pageId){
     const cards=this.pageCards(pageId);
+    if(pageId==="journey"){
+      cards.forEach(card=>{card.classList.remove("freedom-card-pre-enter","freedom-card-enter");card.style.removeProperty("--motion-delay")});
+      return;
+    }
     const enterMs=this.enterDuration();
     cards.forEach((card,i)=>{
       if(card.classList.contains("freedom-card-new"))return;
@@ -4351,9 +4359,15 @@ function goalsMonthlyNeededTotal(){
   return total;
 }
 function updateMonthlySummaryCards(){
+  const journeySummary=byId("journeyMonthlySummary");
   const journeyEl=byId("journeyMonthlyAmount");
+  // Hide only when the Journey dataset is empty — not when the calculated amount is €0.
+  if(journeySummary)journeySummary.hidden=!(Array.isArray(state.loans)&&state.loans.length);
   if(journeyEl)journeyEl.textContent=`${euro0(journeyMonthlyCommitmentsTotal())}/month`;
+  const goalsSummary=byId("goalsMonthlySummary");
   const goalsEl=byId("goalsMonthlyAmount");
+  // Hide only when there are zero visible Goal records — not when the calculated amount is €0.
+  if(goalsSummary)goalsSummary.hidden=!visibleGoalKeys().length;
   if(goalsEl)goalsEl.textContent=`${euro0(goalsMonthlyNeededTotal())}/month`;
 }
 function formatGoalMonthLabel(dateStr){
@@ -4895,7 +4909,10 @@ function renderLoans(){
       const card=head.closest(".loan-card");
       const wrap=card?.querySelector(".card-body-wrap");
       if(wrap&&!freedomMotion.reduced){
-        wrap.classList.add("is-collapsed");card.classList.add("is-collapsed");
+        // Animate body height only; apply card.is-collapsed on re-render so shell
+        // padding/margins do not snap ahead of the height collapse.
+        wrap.classList.add("is-collapsed");
+        card.classList.add("is-collapsing");
         setTimeout(()=>{state.loans[i].collapsed=true;persist();renderLoans();},380);
         return;
       }
