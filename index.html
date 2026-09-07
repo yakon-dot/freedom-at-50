@@ -449,8 +449,75 @@
 #freedomCompanionSelect.is-present{opacity:1;pointer-events:auto}
 #freedomCompanionSelect.is-exiting{opacity:0;pointer-events:none;transition:opacity .85s ease}
 .freedom-companion-wallpaper{
-  position:fixed;inset:0;z-index:0;pointer-events:none;
+  position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
   background:#0b0c0e url("./companion-select-wallpaper.jpg") center center / cover no-repeat;
+}
+/* Soft peach/sage drift — lower third only; wallpaper image itself stays still */
+.freedom-companion-ambient{
+  position:absolute;left:0;right:0;bottom:0;height:46%;
+  overflow:hidden;pointer-events:none;
+  -webkit-mask-image:linear-gradient(to top,#000 40%,transparent 100%);
+  mask-image:linear-gradient(to top,#000 40%,transparent 100%);
+}
+.freedom-companion-glow{
+  position:absolute;border-radius:50%;
+  filter:blur(72px);opacity:.9;
+  will-change:transform;
+  transform:translate3d(0,0,0) scale(1);
+}
+.freedom-companion-glow-peach{
+  width:92vmin;height:70vmin;left:-18%;bottom:-28%;
+  background:radial-gradient(circle at 40% 45%,
+    rgba(239,203,170,.42) 0%,
+    rgba(239,184,146,.18) 42%,
+    transparent 72%);
+  animation:freedomCompanionGlowPeach 16s ease-in-out infinite alternate;
+}
+.freedom-companion-glow-sage{
+  width:88vmin;height:66vmin;right:-22%;bottom:-32%;
+  background:radial-gradient(circle at 55% 50%,
+    rgba(132,189,145,.34) 0%,
+    rgba(115,176,131,.14) 44%,
+    transparent 74%);
+  animation:freedomCompanionGlowSage 19.5s ease-in-out infinite alternate;
+}
+@keyframes freedomCompanionGlowPeach{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  100%{transform:translate3d(4.5%,-3%,0) scale(1.06)}
+}
+@keyframes freedomCompanionGlowSage{
+  0%{transform:translate3d(0,0,0) scale(1.03)}
+  100%{transform:translate3d(-5%,2.5%,0) scale(.97)}
+}
+/* Entrance: wallpaper first, then soft content reveals (opacity + tiny settle) */
+#freedomCompanionSelect.is-enter-ready .freedom-companion-heading,
+#freedomCompanionSelect.is-enter-ready .freedom-companion-sub,
+#freedomCompanionSelect.is-enter-ready .freedom-companion-card{
+  opacity:0;transform:translate3d(0,5px,0);
+}
+#freedomCompanionSelect.is-entering .freedom-companion-heading{
+  animation:freedomCompanionEnterSoft .46s cubic-bezier(.25,.1,.25,1) .26s both;
+}
+#freedomCompanionSelect.is-entering .freedom-companion-sub{
+  animation:freedomCompanionEnterSoft .42s cubic-bezier(.25,.1,.25,1) .38s both;
+}
+#freedomCompanionSelect.is-entering .freedom-companion-card[data-companion="patricia"]{
+  animation:freedomCompanionEnterSoft .4s cubic-bezier(.25,.1,.25,1) .52s both;
+}
+#freedomCompanionSelect.is-entering .freedom-companion-card[data-companion="veronica"]{
+  animation:freedomCompanionEnterSoft .4s cubic-bezier(.25,.1,.25,1) .64s both;
+}
+#freedomCompanionSelect.is-entering .freedom-companion-card[data-companion="kevin"]{
+  animation:freedomCompanionEnterSoft .4s cubic-bezier(.25,.1,.25,1) .76s both;
+}
+@keyframes freedomCompanionEnterSoft{
+  from{opacity:0;transform:translate3d(0,5px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+#freedomCompanionSelect.is-enter-done .freedom-companion-heading,
+#freedomCompanionSelect.is-enter-done .freedom-companion-sub,
+#freedomCompanionSelect.is-enter-done .freedom-companion-card{
+  opacity:1;transform:none;animation:none;
 }
 .freedom-companion-scroll{
   position:relative;z-index:1;flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;
@@ -569,6 +636,15 @@
   #freedomCompanionSelect.is-exiting{transition:none}
   .freedom-companion-card-panel{transition:none}
   .freedom-companion-card-chevron{transition:none}
+  .freedom-companion-glow{animation:none!important;will-change:auto}
+  #freedomCompanionSelect.is-enter-ready .freedom-companion-heading,
+  #freedomCompanionSelect.is-enter-ready .freedom-companion-sub,
+  #freedomCompanionSelect.is-enter-ready .freedom-companion-card,
+  #freedomCompanionSelect.is-entering .freedom-companion-heading,
+  #freedomCompanionSelect.is-entering .freedom-companion-sub,
+  #freedomCompanionSelect.is-entering .freedom-companion-card{
+    opacity:1;transform:none;animation:none!important;
+  }
 }
 </style>
 <link rel="preload" as="image" href="./welcome-wallpaper.jpg?v=2">
@@ -2372,7 +2448,12 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   </div>
 </div>
 <div id="freedomCompanionSelect" class="freedom-companion-select" hidden aria-label="Companion selection">
-  <div class="freedom-companion-wallpaper" aria-hidden="true"></div>
+  <div class="freedom-companion-wallpaper" aria-hidden="true">
+    <div class="freedom-companion-ambient" aria-hidden="true">
+      <span class="freedom-companion-glow freedom-companion-glow-peach"></span>
+      <span class="freedom-companion-glow freedom-companion-glow-sage"></span>
+    </div>
+  </div>
   <div class="freedom-companion-scroll">
     <div class="freedom-companion-inner">
       <h1 class="freedom-companion-heading"><span>Pick whoever you fancy</span><span>having around.</span></h1>
@@ -2829,7 +2910,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   }
   function hideCompanionSelect(){
     if(!companionSelect)return;
-    companionSelect.classList.remove("is-present","is-exiting");
+    companionSelect.classList.remove("is-present","is-exiting","is-entering","is-enter-ready","is-enter-done");
     companionSelect.hidden=true;
     companionSelect.setAttribute("aria-hidden","true");
     companionSelect.style.zIndex="";
@@ -2892,12 +2973,40 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       ensureCompanionCardVisible(openCard);
     }
   }
+  function prepareCompanionEntrance(){
+    if(!companionSelect)return;
+    companionSelect.classList.remove("is-entering","is-enter-done");
+    companionSelect.classList.add("is-enter-ready");
+  }
+  function startCompanionEntrance(){
+    if(!companionSelect)return;
+    companionSelect.classList.remove("is-enter-done");
+    if(prefersReducedMotion()){
+      companionSelect.classList.remove("is-enter-ready","is-entering");
+      companionSelect.classList.add("is-enter-done");
+      return;
+    }
+    /* Wallpaper already visible; soft content sequence via CSS delays (~1.16s total). */
+    companionSelect.classList.add("is-enter-ready");
+    companionSelect.classList.remove("is-entering");
+    void companionSelect.offsetWidth;
+    companionSelect.classList.remove("is-enter-ready");
+    companionSelect.classList.add("is-entering");
+    /* After Kevin finishes (~0.76s delay + 0.4s), lock final opacity/transform. */
+    queueMakeYoursTimer(function(){
+      if(!companionSelect||companionSelect.hidden)return;
+      companionSelect.classList.remove("is-entering");
+      companionSelect.classList.add("is-enter-done");
+    },1180);
+  }
   function presentCompanionSelect(opts){
     /*
       opts.beneathCover: stage Companion Selection under an existing opaque overlay
       (sage / splash) so fading that overlay reveals Companion — never Home.
       Companion’s normal z-index (9961) sits above sage (9960); beneathCover lowers
       it for the cover duration only.
+      Entrance starts when this screen becomes the uncovered destination (not while
+      still beneath a cover), so the wallpaper-first beat is part of Companion itself.
     */
     if(!companionSelect)return false;
     opts=opts||{};
@@ -2918,12 +3027,15 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     /* Companion is the authoritative surface — Home must not remain eligible underneath. */
     if(typeof window.hideHome==="function")window.hideHome();
     else document.body.classList.remove("home183");
+    if(opts.beneathCover)prepareCompanionEntrance();
+    else startCompanionEntrance();
     return true;
   }
   function finishMakeYoursToCompanion(){
     hideMakeItYours();
     if(companionSelect)companionSelect.style.zIndex="";
     if(!companionSelect||companionSelect.hidden)presentCompanionSelect();
+    else startCompanionEntrance();
   }
   function goMakeYoursToCompanion(){
     /*
@@ -6201,7 +6313,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1899",
+        "./service-worker.js?v=1900",
         { updateViaCache: "none" }
       );
 
