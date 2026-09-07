@@ -452,14 +452,25 @@
   position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
   background:#0b0c0e url("./companion-select-wallpaper.jpg") center center / cover no-repeat;
 }
-/* Soft peach/sage drift — lower third only; wallpaper image itself stays still.
-   Transform animates on the glow wrapper; blur/fill stay on the inner node.
-   (Same element filter+transform was freezing visual updates on WebKit/iOS.) */
+/* Quiet the wallpaper’s baked lower glow so the animated layers can be seen.
+   Wallpaper image itself stays still — only a soft charcoal veil over the bottom. */
+.freedom-companion-wallpaper::after{
+  content:"";position:absolute;left:0;right:0;bottom:0;height:58%;
+  pointer-events:none;z-index:0;
+  background:linear-gradient(to top,
+    rgba(11,12,14,.78) 0%,
+    rgba(11,12,14,.42) 42%,
+    rgba(11,12,14,0) 100%);
+}
+/* Soft peach/sage drift — lower third only.
+   Transform on the wrapper; blur/fill on the inner node (WebKit-safe).
+   Fills use Freedom peach/sage solids (Look Around strength) so motion reads
+   against the photo wallpaper. */
 .freedom-companion-ambient{
-  position:absolute;left:0;right:0;bottom:0;height:46%;
-  overflow:hidden;pointer-events:none;
-  -webkit-mask-image:linear-gradient(to top,#000 40%,transparent 100%);
-  mask-image:linear-gradient(to top,#000 40%,transparent 100%);
+  position:absolute;left:0;right:0;bottom:0;height:52%;
+  overflow:hidden;pointer-events:none;z-index:1;
+  -webkit-mask-image:linear-gradient(to top,#000 35%,transparent 100%);
+  mask-image:linear-gradient(to top,#000 35%,transparent 100%);
 }
 .freedom-companion-glow{
   position:absolute;display:block;
@@ -468,41 +479,38 @@
 }
 .freedom-companion-glow-fill{
   position:absolute;inset:0;display:block;border-radius:50%;
-  filter:blur(72px);-webkit-filter:blur(72px);
-  opacity:.9;pointer-events:none;
+  filter:blur(56px);-webkit-filter:blur(56px);
+  pointer-events:none;
 }
+/* Match wallpaper colour placement: sage left, peach right */
 .freedom-companion-glow-peach{
-  width:92vmin;height:70vmin;left:-18%;bottom:-28%;
+  width:96vmin;height:74vmin;right:-20%;bottom:-30%;
   animation:freedomCompanionGlowPeach 18s ease-in-out -3.5s infinite;
 }
 .freedom-companion-glow-peach .freedom-companion-glow-fill{
-  background:radial-gradient(circle at 40% 45%,
-    rgba(239,203,170,.42) 0%,
-    rgba(239,184,146,.18) 42%,
-    transparent 72%);
+  background:#efcbaa;
+  opacity:.52;
 }
 .freedom-companion-glow-sage{
-  width:88vmin;height:66vmin;right:-22%;bottom:-32%;
+  width:92vmin;height:70vmin;left:-18%;bottom:-28%;
   animation:freedomCompanionGlowSage 14.5s ease-in-out -6.8s infinite;
 }
 .freedom-companion-glow-sage .freedom-companion-glow-fill{
-  background:radial-gradient(circle at 55% 50%,
-    rgba(132,189,145,.34) 0%,
-    rgba(115,176,131,.14) 44%,
-    transparent 74%);
+  background:#84bd91;
+  opacity:.48;
 }
 @keyframes freedomCompanionGlowPeach{
   0%{transform:translate3d(0,0,0) scale(1)}
-  22%{transform:translate3d(14px,-12px,0) scale(1.05)}
-  48%{transform:translate3d(-10px,-18px,0) scale(1.08)}
-  72%{transform:translate3d(12px,-6px,0) scale(1.03)}
+  22%{transform:translate3d(16px,-14px,0) scale(1.06)}
+  48%{transform:translate3d(-12px,-20px,0) scale(1.1)}
+  72%{transform:translate3d(14px,-8px,0) scale(1.04)}
   100%{transform:translate3d(0,0,0) scale(1)}
 }
 @keyframes freedomCompanionGlowSage{
   0%{transform:translate3d(0,0,0) scale(1.02)}
-  28%{transform:translate3d(-16px,10px,0) scale(.97)}
-  54%{transform:translate3d(12px,16px,0) scale(1.06)}
-  78%{transform:translate3d(-8px,-8px,0) scale(1.01)}
+  28%{transform:translate3d(-18px,12px,0) scale(.96)}
+  54%{transform:translate3d(14px,18px,0) scale(1.08)}
+  78%{transform:translate3d(-10px,-10px,0) scale(1.01)}
   100%{transform:translate3d(0,0,0) scale(1.02)}
 }
 /* Entrance: wallpaper first, then soft content reveals (opacity + tiny settle) */
@@ -6329,7 +6337,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1903",
+        "./service-worker.js?v=1904",
         { updateViaCache: "none" }
       );
 
