@@ -1972,134 +1972,138 @@ body.home183 .demo183-wrap{
 
 /* —— Companion Message (reusable speech bubble; visual component only) —— */
 .freedom-companion-msg-host{
-  position:absolute;left:50%;top:46%;z-index:5;
-  width:min(82vw,312px);
-  transform:translate(-42%,-50%);
+  position:absolute;left:50%;top:52%;z-index:5;
+  width:min(78vw,268px);
+  transform:translate(-50%,-50%);
   pointer-events:auto;
 }
 .freedom-companion-msg{
-  --cm-peach:#f0c29a;
+  --cm-peach:#efcbaa;
   --cm-pink:#e889b4;
   --cm-purple:#a56ad0;
+  --cm-body:rgba(6,10,20,.9);
   position:relative;
   isolation:isolate;
-  border-radius:30px;
-  padding:22px 20px 18px;
-  /* Deeper charcoal/navy glass */
-  background:rgba(8,12,26,.78);
-  backdrop-filter:blur(26px) saturate(1.22);
-  -webkit-backdrop-filter:blur(26px) saturate(1.22);
+  border-radius:22px;
+  padding:14px 14px 12px;
+  /* Rich deep charcoal/navy glass — restrained transparency */
+  background:var(--cm-body);
+  backdrop-filter:blur(22px) saturate(1.15);
+  -webkit-backdrop-filter:blur(22px) saturate(1.15);
   box-shadow:
-    0 28px 56px rgba(0,0,0,.6),
-    0 10px 22px rgba(0,0,0,.36);
-  color:rgba(236,232,224,.86);
+    0 22px 44px rgba(0,0,0,.62),
+    0 8px 16px rgba(0,0,0,.38);
+  color:rgba(232,228,220,.82);
 }
-/* One soft peach→pink→purple outer glow */
+/* Soft peach → pink → purple bloom spilling into Home */
 .freedom-companion-msg::before{
-  content:"";position:absolute;inset:-11px;z-index:-1;border-radius:40px;pointer-events:none;
-  background:linear-gradient(145deg,
-    rgba(240,194,154,.34) 0%,
-    rgba(232,137,180,.28) 48%,
-    rgba(165,106,208,.32) 100%);
-  filter:blur(15px);
-  opacity:.72;
+  content:"";position:absolute;inset:-14px;z-index:-1;border-radius:34px;pointer-events:none;
+  background:linear-gradient(125deg,
+    rgba(255,170,110,.42) 0%,
+    rgba(240,130,170,.34) 42%,
+    rgba(170,90,220,.4) 100%);
+  filter:blur(18px);
+  opacity:.7;
   animation:freedomCompanionMsgGlow 7.5s ease-in-out infinite alternate;
 }
-/* Clearer luminous peach → pink → purple border */
+/* Thin luminous peach/orange → pink → magenta/purple border */
 .freedom-companion-msg::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1.35px;
-  background:linear-gradient(135deg,
-    #f2c69a 0%,
-    #f0a8b8 26%,
-    #e889b4 50%,
-    #c57bc4 76%,
-    #a56ad0 100%);
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1.25px;
+  background:linear-gradient(115deg,
+    #ffb078 0%,
+    #f29a9a 22%,
+    #e889b4 48%,
+    #c45ec8 74%,
+    #9b5ad8 100%);
   -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
   -webkit-mask-composite:xor;
   mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
   mask-composite:exclude;
   opacity:1;
 }
-/* One clean left-edge speech tail (tucked into card edge) */
+/* Simple left-edge speech triangle — fill matches card body */
 .freedom-companion-msg-tail{
-  position:absolute;left:-8px;top:47%;z-index:1;
+  position:absolute;left:-9px;top:42%;z-index:1;
   width:0;height:0;
   transform:translateY(-50%);
   border-style:solid;
-  border-width:10px 11px 10px 0;
-  border-color:transparent rgba(8,12,26,.82) transparent transparent;
-  filter:drop-shadow(-1px 0 3px rgba(240,194,154,.22));
+  border-width:7px 9px 7px 0;
+  border-color:transparent var(--cm-body) transparent transparent;
+  filter:drop-shadow(-1px 0 2px rgba(255,176,120,.35));
   pointer-events:none;
 }
 .freedom-companion-msg-inner{position:relative;z-index:2}
 .freedom-companion-msg-row{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
 }
 .freedom-companion-msg-copy{flex:1 1 auto;min-width:0;text-align:left}
 .freedom-companion-msg-name{
-  margin:0 0 8px;
+  margin:0 0 6px;
   font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
-  font-size:clamp(26px,7vw,30px);font-weight:500;line-height:1;
-  color:var(--cm-peach,#f0c29a);
+  font-size:clamp(22px,6.2vw,26px);font-weight:500;line-height:1;
+  color:var(--cm-peach,#efcbaa);
 }
 .freedom-companion-msg-text{
-  margin:0;max-width:15.5rem;
-  font-size:13.5px;line-height:1.45;font-weight:400;
-  color:rgba(232,228,220,.78);
+  margin:0;max-width:11.6rem;
+  font-size:11.5px;line-height:1.38;font-weight:400;
+  color:rgba(226,222,214,.76);
+  white-space:pre-line;
+  text-align:left;
 }
 .freedom-companion-msg-inline-emoji{
   font-style:normal;font-weight:400;
 }
 .freedom-companion-msg-emoji{
   flex:0 0 auto;align-self:center;
-  font-size:52px;line-height:1;
-  filter:drop-shadow(0 0 12px rgba(232,137,180,.55)) drop-shadow(0 2px 10px rgba(0,0,0,.35));
+  font-size:44px;line-height:1;
+  filter:drop-shadow(0 0 8px rgba(232,137,180,.4)) drop-shadow(0 2px 8px rgba(0,0,0,.32));
   user-select:none;pointer-events:none;
 }
 .freedom-companion-msg-actions{
-  display:flex;align-items:stretch;justify-content:stretch;gap:10px;
-  margin-top:18px;
+  display:flex;align-items:stretch;justify-content:stretch;gap:8px;
+  margin-top:12px;
 }
 .freedom-companion-msg-action{
   flex:1 1 0;min-width:0;
-  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;
-  margin:0;padding:12px 12px 11px;
-  border-radius:16px;
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;
+  margin:0;padding:7px 9px;
+  border-radius:11px;
   /* Clearing: subtle warm peach/rose glass */
-  border:1px solid rgba(240,194,154,.32);
-  background:linear-gradient(165deg,rgba(240,194,154,.16),rgba(232,137,180,.08) 42%,rgba(10,14,24,.5) 78%);
-  color:rgba(245,244,240,.88);
-  font-size:13px;font-weight:500;letter-spacing:.01em;text-align:left;
-  backdrop-filter:blur(14px) saturate(1.1);-webkit-backdrop-filter:blur(14px) saturate(1.1);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 8px rgba(240,194,154,.05);
+  border:1px solid rgba(240,194,154,.28);
+  background:linear-gradient(165deg,rgba(240,194,154,.12),rgba(232,137,180,.06) 40%,rgba(8,12,22,.55) 78%);
+  color:rgba(245,244,240,.86);
+  font-size:11.5px;font-weight:500;letter-spacing:.01em;text-align:left;
+  backdrop-filter:blur(10px) saturate(1.08);-webkit-backdrop-filter:blur(10px) saturate(1.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 0 6px rgba(240,194,154,.04);
   cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 .freedom-companion-msg-action:nth-child(2){
   /* Building: subtle purple glass */
-  border-color:rgba(165,106,208,.36);
-  background:linear-gradient(165deg,rgba(165,106,208,.15),rgba(120,80,170,.08) 42%,rgba(10,14,24,.5) 78%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.05),0 0 8px rgba(165,106,208,.06);
+  border-color:rgba(165,106,208,.32);
+  background:linear-gradient(165deg,rgba(165,106,208,.12),rgba(120,80,170,.06) 40%,rgba(8,12,22,.55) 78%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 0 6px rgba(165,106,208,.05);
 }
 .freedom-companion-msg-action-label{
-  display:block;font-size:13px;font-weight:500;line-height:1.15;
-  color:rgba(245,244,240,.88);
+  display:block;font-size:11.5px;font-weight:500;line-height:1.1;
+  color:rgba(245,244,240,.86);
 }
 .freedom-companion-msg-action-sub{
-  display:block;font-size:10.5px;font-weight:400;line-height:1.25;
+  display:block;font-size:8.5px;font-weight:400;line-height:1.15;
   color:rgba(210,206,198,.55);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .freedom-companion-msg-action:active{opacity:.78}
 .freedom-companion-msg-dismiss{
-  position:absolute;top:10px;right:10px;z-index:3;
-  width:28px;height:28px;margin:0;padding:0;border:0;border-radius:999px;
-  background:transparent;color:rgba(236,232,224,.55);
-  font-size:18px;line-height:1;cursor:pointer;
+  position:absolute;top:6px;right:6px;z-index:3;
+  width:24px;height:24px;margin:0;padding:0;border:0;border-radius:999px;
+  background:transparent;color:rgba(236,232,224,.5);
+  font-size:16px;line-height:1;cursor:pointer;
   -webkit-tap-highlight-color:transparent;
 }
 .freedom-companion-msg-dismiss:active{color:rgba(239,203,170,.9)}
 @keyframes freedomCompanionMsgGlow{
-  0%{opacity:.62;transform:scale(.988)}
-  100%{opacity:.88;transform:scale(1.015)}
+  0%{opacity:.58;transform:scale(.99)}
+  100%{opacity:.82;transform:scale(1.012)}
 }
 @media (prefers-reduced-motion:reduce){
   .freedom-companion-msg::before{animation:none}
@@ -6604,7 +6608,7 @@ window.FreedomCompanionMessage=(function(){
   if(!host||!window.FreedomCompanionMessage)return;
   window.FreedomCompanionMessage.mount(host,{
     name:"Patricia",
-    message:"Let's put one thing on the map. What do you want to focus on first?",
+    message:"Let's put one thing on the map.\nWhat do you want to focus on first?",
     inlineEmoji:"✨",
     largeEmoji:"🗺️",
     actions:[
@@ -6627,7 +6631,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1918",
+        "./service-worker.js?v=1919",
         { updateViaCache: "none" }
       );
 
