@@ -3064,9 +3064,16 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       finishMakeYoursToCompanion();
     },ONBOARD_FADE_MS);
   }
+  function stagePersonalHomeUnderCompanion(){
+    /* Home must be the uncovered destination before Companion fades/unmounts.
+       Otherwise .app Overview (DEMO MODE badge) paints for a frame. */
+    if(typeof window.showHome==="function")window.showHome();
+    else document.body.classList.add("home183");
+  }
   function finishCompanionToHome(){
     hideCompanionSelect();
-    if(typeof window.showHome==="function")window.showHome();
+    /* Home was staged under Companion before the fade; keep it authoritative. */
+    stagePersonalHomeUnderCompanion();
   }
   function completeCompanionSelection(id,pickBtn){
     if(companionSelecting)return;
@@ -3082,6 +3089,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     }
     var ackMs=prefersReducedMotion()?0:COMPANION_ACK_MS;
     queueMakeYoursTimer(function(){
+      /* Stage Personal Home under Companion BEFORE any uncover/fade. */
+      stagePersonalHomeUnderCompanion();
       if(prefersReducedMotion()||!companionSelect||companionSelect.hidden){
         finishCompanionToHome();
         return;
@@ -6315,7 +6324,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1914",
+        "./service-worker.js?v=1915",
         { updateViaCache: "none" }
       );
 
