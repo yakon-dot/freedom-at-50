@@ -452,8 +452,32 @@
   position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;
   background:#0b0c0e url("./companion-select-wallpaper.jpg") center center / cover no-repeat;
 }
-/* Bottom sage/peach blobs: reuse Look Around cloud markup + existing
-   .freedom-look-cloud-bl / -br + smoke keyframes (top clouds omitted). */
+/* Bottom sage/peach blobs: Look Around cloud markup (top clouds omitted).
+   Companion-only amplitude: same timing/easing/opacity, larger travel. */
+#freedomCompanionSelect .freedom-look-cloud-bl{
+  animation:freedomCompanionCloudBl 18s ease-in-out -8.2s infinite alternate;
+}
+#freedomCompanionSelect .freedom-look-cloud-br{
+  animation:freedomCompanionCloudBr 20s ease-in-out -1.6s infinite alternate;
+}
+/* Sage: wider horizontal drift, modest vertical. Peach: alternate path, more vertical.
+   Large travel so the glow edge climbs into the dark mid-band and reads clearly. */
+@keyframes freedomCompanionCloudBl{
+  0%{transform:translate3d(0,0,0) scale(1);opacity:1}
+  20%{transform:translate3d(118px,-42px,0) scale(1.07);opacity:.89}
+  40%{transform:translate3d(-102px,18px,0) scale(.94);opacity:1}
+  60%{transform:translate3d(132px,-30px,0) scale(1.08);opacity:.9}
+  80%{transform:translate3d(-112px,12px,0) scale(.95);opacity:.96}
+  100%{transform:translate3d(48px,-36px,0) scale(1.03);opacity:.96}
+}
+@keyframes freedomCompanionCloudBr{
+  0%{transform:translate3d(0,0,0) scale(1);opacity:1}
+  20%{transform:translate3d(-128px,-62px,0) scale(1.07);opacity:.87}
+  40%{transform:translate3d(82px,34px,0) scale(.94);opacity:1}
+  60%{transform:translate3d(-138px,22px,0) scale(1.06);opacity:.91}
+  80%{transform:translate3d(96px,-54px,0) scale(.96);opacity:.95}
+  100%{transform:translate3d(-58px,28px,0) scale(1.03);opacity:.95}
+}
 /* Entrance: wallpaper first, then soft content reveals (opacity + tiny settle) */
 #freedomCompanionSelect.is-enter-ready .freedom-companion-heading,
 #freedomCompanionSelect.is-enter-ready .freedom-companion-sub,
@@ -6283,7 +6307,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1905",
+        "./service-worker.js?v=1910",
         { updateViaCache: "none" }
       );
 
