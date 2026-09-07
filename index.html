@@ -1973,7 +1973,8 @@ body.home183 .demo183-wrap{
 /* —— Companion Message (reusable speech bubble; visual component only) —— */
 .freedom-companion-msg-host{
   position:absolute;left:50%;top:52%;z-index:5;
-  width:min(78vw,268px);
+  /* ~8% smaller; -50% centres the card body (tail is absolute overflow) */
+  width:min(72vw,246px);
   transform:translate(-50%,-50%);
   pointer-events:auto;
 }
@@ -1981,34 +1982,34 @@ body.home183 .demo183-wrap{
   --cm-peach:#efcbaa;
   --cm-pink:#e889b4;
   --cm-purple:#a56ad0;
-  --cm-body:rgba(6,10,20,.9);
+  /* Almost-black charcoal — opaque enough that glow won't purple-tint the fill */
+  --cm-body:#06080f;
   position:relative;
   isolation:isolate;
-  border-radius:22px;
-  padding:14px 14px 12px;
-  /* Rich deep charcoal/navy glass — restrained transparency */
-  background:var(--cm-body);
-  backdrop-filter:blur(22px) saturate(1.15);
-  -webkit-backdrop-filter:blur(22px) saturate(1.15);
+  border-radius:20px;
+  padding:12px 10px 10px;
+  background:rgba(6,8,15,.94);
+  backdrop-filter:blur(14px) saturate(.85);
+  -webkit-backdrop-filter:blur(14px) saturate(.85);
   box-shadow:
-    0 22px 44px rgba(0,0,0,.62),
-    0 8px 16px rgba(0,0,0,.38);
+    0 20px 40px rgba(0,0,0,.64),
+    0 8px 14px rgba(0,0,0,.4);
   color:rgba(232,228,220,.82);
 }
-/* Soft peach → pink → purple bloom spilling into Home */
+/* Wider soft bloom cast onto Home; border stays thin via ::after */
 .freedom-companion-msg::before{
-  content:"";position:absolute;inset:-14px;z-index:-1;border-radius:34px;pointer-events:none;
+  content:"";position:absolute;inset:-24px;z-index:-1;border-radius:42px;pointer-events:none;
   background:linear-gradient(125deg,
-    rgba(255,170,110,.42) 0%,
-    rgba(240,130,170,.34) 42%,
-    rgba(170,90,220,.4) 100%);
-  filter:blur(18px);
-  opacity:.7;
+    rgba(255,176,120,.55) 0%,
+    rgba(236,120,170,.42) 45%,
+    rgba(168,80,214,.5) 100%);
+  filter:blur(28px);
+  opacity:.88;
   animation:freedomCompanionMsgGlow 7.5s ease-in-out infinite alternate;
 }
-/* Thin luminous peach/orange → pink → magenta/purple border */
+/* Thin crisp luminous peach → pink → magenta/purple border */
 .freedom-companion-msg::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1.25px;
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1.15px;
   background:linear-gradient(115deg,
     #ffb078 0%,
     #f29a9a 22%,
@@ -2021,31 +2022,34 @@ body.home183 .demo183-wrap{
   mask-composite:exclude;
   opacity:1;
 }
-/* Simple left-edge speech triangle — fill matches card body */
+/* Proper left speech-bubble tail — lower-left, dark fill, peach edge glow */
 .freedom-companion-msg-tail{
-  position:absolute;left:-9px;top:42%;z-index:1;
+  position:absolute;left:-14px;bottom:30%;z-index:1;
   width:0;height:0;
-  transform:translateY(-50%);
   border-style:solid;
-  border-width:7px 9px 7px 0;
+  border-width:11px 15px 11px 0;
   border-color:transparent var(--cm-body) transparent transparent;
-  filter:drop-shadow(-1px 0 2px rgba(255,176,120,.35));
+  filter:
+    drop-shadow(-1.5px 0 0 rgba(255,176,120,.75))
+    drop-shadow(-2px 1px 0 rgba(255,176,120,.35))
+    drop-shadow(-4px 0 6px rgba(255,160,110,.4));
   pointer-events:none;
 }
 .freedom-companion-msg-inner{position:relative;z-index:2}
 .freedom-companion-msg-row{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:4px;
 }
-.freedom-companion-msg-copy{flex:1 1 auto;min-width:0;text-align:left}
+.freedom-companion-msg-copy{flex:1 1 auto;min-width:0;text-align:left;padding-right:2px}
 .freedom-companion-msg-name{
-  margin:0 0 6px;
+  margin:0 0 5px;
   font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
   font-size:clamp(22px,6.2vw,26px);font-weight:500;line-height:1;
   color:var(--cm-peach,#efcbaa);
 }
 .freedom-companion-msg-text{
-  margin:0;max-width:11.6rem;
-  font-size:11.5px;line-height:1.38;font-weight:400;
+  margin:0;
+  font-size:9.25px;line-height:1.32;font-weight:400;
+  letter-spacing:-0.01em;
   color:rgba(226,222,214,.76);
   white-space:pre-line;
   text-align:left;
@@ -2102,8 +2106,8 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-dismiss:active{color:rgba(239,203,170,.9)}
 @keyframes freedomCompanionMsgGlow{
-  0%{opacity:.58;transform:scale(.99)}
-  100%{opacity:.82;transform:scale(1.012)}
+  0%{opacity:.7;transform:scale(.992)}
+  100%{opacity:.92;transform:scale(1.014)}
 }
 @media (prefers-reduced-motion:reduce){
   .freedom-companion-msg::before{animation:none}
@@ -6631,7 +6635,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1919",
+        "./service-worker.js?v=1921",
         { updateViaCache: "none" }
       );
 
