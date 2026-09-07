@@ -499,13 +499,13 @@ html:has(#freedomMakeItYours.is-present:not([hidden])) body{
   animation:freedomCompanionEnterSoft .42s cubic-bezier(.25,.1,.25,1) .38s both;
 }
 #freedomCompanionSelect.is-entering .freedom-companion-card[data-companion="patricia"]{
-  animation:freedomCompanionEnterSoft .4s cubic-bezier(.25,.1,.25,1) .52s both;
+  animation:freedomCompanionEnterSoft .6s cubic-bezier(.25,.1,.25,1) .52s both;
 }
 #freedomCompanionSelect.is-entering .freedom-companion-card[data-companion="veronica"]{
-  animation:freedomCompanionEnterSoft .4s cubic-bezier(.25,.1,.25,1) .64s both;
+  animation:freedomCompanionEnterSoft .6s cubic-bezier(.25,.1,.25,1) .84s both;
 }
 #freedomCompanionSelect.is-entering .freedom-companion-card[data-companion="kevin"]{
-  animation:freedomCompanionEnterSoft .4s cubic-bezier(.25,.1,.25,1) .76s both;
+  animation:freedomCompanionEnterSoft .6s cubic-bezier(.25,.1,.25,1) 1.16s both;
 }
 @keyframes freedomCompanionEnterSoft{
   from{opacity:0;transform:translate3d(0,5px,0)}
@@ -2994,12 +2994,12 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     void companionSelect.offsetWidth;
     companionSelect.classList.remove("is-enter-ready");
     companionSelect.classList.add("is-entering");
-    /* After Kevin finishes (~0.76s delay + 0.4s), lock final opacity/transform. */
+    /* After Kevin finishes (~1.16s delay + 0.6s), lock final opacity/transform. */
     queueMakeYoursTimer(function(){
       if(!companionSelect||companionSelect.hidden)return;
       companionSelect.classList.remove("is-entering");
       companionSelect.classList.add("is-enter-done");
-    },1180);
+    },1780);
   }
   function presentCompanionSelect(opts){
     /*
@@ -6315,7 +6315,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1913",
+        "./service-worker.js?v=1914",
         { updateViaCache: "none" }
       );
 
