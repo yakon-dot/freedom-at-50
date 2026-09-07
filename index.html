@@ -460,7 +460,7 @@
   mask-image:linear-gradient(to top,#000 40%,transparent 100%);
 }
 .freedom-companion-glow{
-  position:absolute;border-radius:50%;
+  position:absolute;display:block;border-radius:50%;
   filter:blur(72px);opacity:.9;
   will-change:transform;
   transform:translate3d(0,0,0) scale(1);
@@ -471,7 +471,8 @@
     rgba(239,203,170,.42) 0%,
     rgba(239,184,146,.18) 42%,
     transparent 72%);
-  animation:freedomCompanionGlowPeach 16s ease-in-out infinite alternate;
+  /* Multi-stage drift (not ping-pong). % translate was ~16px max — visually static. */
+  animation:freedomCompanionGlowPeach 18s ease-in-out infinite;
 }
 .freedom-companion-glow-sage{
   width:88vmin;height:66vmin;right:-22%;bottom:-32%;
@@ -479,15 +480,21 @@
     rgba(132,189,145,.34) 0%,
     rgba(115,176,131,.14) 44%,
     transparent 74%);
-  animation:freedomCompanionGlowSage 19.5s ease-in-out infinite alternate;
+  animation:freedomCompanionGlowSage 14.5s ease-in-out infinite;
 }
 @keyframes freedomCompanionGlowPeach{
   0%{transform:translate3d(0,0,0) scale(1)}
-  100%{transform:translate3d(4.5%,-3%,0) scale(1.06)}
+  22%{transform:translate3d(3.2vw,-2.4vh,0) scale(1.05)}
+  48%{transform:translate3d(-1.8vw,-3.6vh,0) scale(1.08)}
+  72%{transform:translate3d(2.4vw,-1.2vh,0) scale(1.03)}
+  100%{transform:translate3d(0,0,0) scale(1)}
 }
 @keyframes freedomCompanionGlowSage{
-  0%{transform:translate3d(0,0,0) scale(1.03)}
-  100%{transform:translate3d(-5%,2.5%,0) scale(.97)}
+  0%{transform:translate3d(0,0,0) scale(1.02)}
+  28%{transform:translate3d(-3.6vw,1.8vh,0) scale(.97)}
+  54%{transform:translate3d(2.2vw,3.2vh,0) scale(1.06)}
+  78%{transform:translate3d(-1.4vw,-1.6vh,0) scale(1.01)}
+  100%{transform:translate3d(0,0,0) scale(1.02)}
 }
 /* Entrance: wallpaper first, then soft content reveals (opacity + tiny settle) */
 #freedomCompanionSelect.is-enter-ready .freedom-companion-heading,
@@ -6313,7 +6320,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1900",
+        "./service-worker.js?v=1901",
         { updateViaCache: "none" }
       );
 
