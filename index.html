@@ -388,6 +388,14 @@
   padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(52px + env(safe-area-inset-bottom,0px));
   background:var(--bg,#0b0c0e);text-align:center;-webkit-tap-highlight-color:transparent;
   opacity:0;pointer-events:none;
+  overflow:hidden;overscroll-behavior:none;
+  height:100%;max-height:100dvh;
+}
+/* While this full-screen onboarding is up, lock document scroll so the
+   taller Home underneath cannot rubber-band or show a page scrollbar. */
+html:has(#freedomMakeItYours.is-present:not([hidden])),
+html:has(#freedomMakeItYours.is-present:not([hidden])) body{
+  overflow:hidden;overscroll-behavior:none;
 }
 #freedomMakeItYours[hidden]{display:none!important}
 #freedomMakeItYours.is-present{opacity:1;pointer-events:auto}
@@ -6307,7 +6315,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1912",
+        "./service-worker.js?v=1913",
         { updateViaCache: "none" }
       );
 
