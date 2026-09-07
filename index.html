@@ -1969,6 +1969,127 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 body.home183 .demo183-wrap{
   top:calc(52px + env(safe-area-inset-top,0px));right:28px;
 }
+
+/* —— Companion Message (reusable speech bubble; visual component only) —— */
+.freedom-companion-msg-host{
+  position:absolute;left:50%;top:46%;z-index:5;
+  width:min(82vw,312px);
+  transform:translate(-42%,-50%);
+  pointer-events:auto;
+}
+.freedom-companion-msg{
+  --cm-peach:#efcbaa;
+  --cm-pink:#e39ab8;
+  --cm-purple:#9b6db8;
+  position:relative;
+  isolation:isolate;
+  border-radius:30px;
+  padding:22px 20px 18px;
+  background:rgba(10,14,18,.52);
+  backdrop-filter:blur(22px) saturate(1.15);
+  -webkit-backdrop-filter:blur(22px) saturate(1.15);
+  box-shadow:
+    0 22px 48px rgba(0,0,0,.48),
+    0 8px 18px rgba(0,0,0,.28);
+  color:rgba(236,232,224,.86);
+}
+/* Soft peach→pink→purple outer glow (breathes slowly) */
+.freedom-companion-msg::before{
+  content:"";position:absolute;inset:-10px;z-index:-1;border-radius:38px;pointer-events:none;
+  background:
+    radial-gradient(120% 80% at 12% 88%, rgba(239,203,170,.34), transparent 58%),
+    radial-gradient(110% 90% at 88% 18%, rgba(227,154,184,.28), transparent 55%),
+    radial-gradient(90% 80% at 78% 92%, rgba(155,109,184,.30), transparent 58%);
+  filter:blur(10px);
+  opacity:.9;
+  animation:freedomCompanionMsgGlow 7.5s ease-in-out infinite alternate;
+}
+/* Thin luminous gradient border */
+.freedom-companion-msg::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1px;
+  background:linear-gradient(145deg,
+    rgba(239,203,170,.95) 0%,
+    rgba(227,154,184,.88) 42%,
+    rgba(155,109,184,.92) 100%);
+  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
+  mask-composite:exclude;
+  opacity:.92;
+}
+.freedom-companion-msg-tail{
+  position:absolute;left:-7px;top:48%;z-index:1;
+  width:16px;height:16px;
+  transform:translateY(-50%) rotate(45deg);
+  border-radius:3px 0 0 0;
+  background:rgba(10,14,18,.56);
+  box-shadow:-6px 0 14px rgba(239,203,170,.18);
+  border-left:1px solid rgba(239,203,170,.78);
+  border-top:1px solid rgba(227,154,184,.55);
+  pointer-events:none;
+}
+.freedom-companion-msg-inner{position:relative;z-index:2}
+.freedom-companion-msg-row{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+}
+.freedom-companion-msg-copy{flex:1 1 auto;min-width:0;text-align:left}
+.freedom-companion-msg-name{
+  margin:0 0 8px;
+  font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+  font-size:clamp(26px,7vw,30px);font-weight:500;line-height:1;
+  color:var(--cm-peach,#efcbaa);
+}
+.freedom-companion-msg-text{
+  margin:0;max-width:15.5rem;
+  font-size:13.5px;line-height:1.45;font-weight:400;
+  color:rgba(232,228,220,.78);
+}
+.freedom-companion-msg-inline-emoji{
+  font-style:normal;font-weight:400;
+}
+.freedom-companion-msg-emoji{
+  flex:0 0 auto;align-self:center;
+  font-size:42px;line-height:1;
+  filter:drop-shadow(0 0 10px rgba(227,154,184,.42)) drop-shadow(0 0 18px rgba(155,109,184,.22));
+  user-select:none;pointer-events:none;
+}
+.freedom-companion-msg-actions{
+  display:flex;align-items:stretch;justify-content:stretch;gap:10px;
+  margin-top:18px;
+}
+.freedom-companion-msg-action{
+  flex:1 1 0;min-width:0;
+  margin:0;padding:11px 12px;
+  border-radius:16px;
+  border:1px solid rgba(239,203,170,.28);
+  background:rgba(12,16,22,.42);
+  color:rgba(245,244,240,.9);
+  font-size:13.5px;font-weight:600;letter-spacing:.01em;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  box-shadow:0 0 12px rgba(239,203,170,.08);
+  cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+.freedom-companion-msg-action:nth-child(2){
+  border-color:rgba(155,109,184,.34);
+  box-shadow:0 0 12px rgba(155,109,184,.10);
+}
+.freedom-companion-msg-action:active{opacity:.78}
+.freedom-companion-msg-dismiss{
+  position:absolute;top:10px;right:10px;z-index:3;
+  width:28px;height:28px;margin:0;padding:0;border:0;border-radius:999px;
+  background:transparent;color:rgba(236,232,224,.55);
+  font-size:18px;line-height:1;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.freedom-companion-msg-dismiss:active{color:rgba(239,203,170,.9)}
+@keyframes freedomCompanionMsgGlow{
+  0%{opacity:.72;transform:scale(.985)}
+  100%{opacity:1;transform:scale(1.02)}
+}
+@media (prefers-reduced-motion:reduce){
+  .freedom-companion-msg::before{animation:none}
+}
+
 .demo183-wrap .subwrap183{margin-left:0;width:100%}
 .demo-overlay{
   position:fixed;inset:0;z-index:9800;display:flex;align-items:center;justify-content:center;
@@ -3330,6 +3451,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
         <button class="sub183" type="button" data-more183="reset">Reset Freedom</button>
       </div>
     </nav>
+    <div class="freedom-companion-msg-host" id="freedomCompanionMsgHost" aria-live="polite"></div>
   </div>
 </div>
 
@@ -6359,6 +6481,115 @@ fillForm();render();const initial=location.hash.slice(1);if(["overview","journey
 
 // Update flow for Freedom at 50.
 // This is network-first and replaces any older service-worker cache.
+
+/* Companion Message — reusable visual component (no behaviour wiring yet) */
+window.FreedomCompanionMessage=(function(){
+  function esc(s){
+    return String(s==null?"":s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;");
+  }
+  function create(opts){
+    opts=opts||{};
+    const root=document.createElement("article");
+    root.className="freedom-companion-msg";
+    root.setAttribute("role","group");
+    if(opts.name)root.setAttribute("aria-label",String(opts.name)+" message");
+
+    const tail=document.createElement("span");
+    tail.className="freedom-companion-msg-tail";
+    tail.setAttribute("aria-hidden","true");
+    root.appendChild(tail);
+
+    const inner=document.createElement("div");
+    inner.className="freedom-companion-msg-inner";
+
+    if(opts.dismissible){
+      const x=document.createElement("button");
+      x.type="button";
+      x.className="freedom-companion-msg-dismiss";
+      x.setAttribute("aria-label","Dismiss");
+      x.textContent="×";
+      root.appendChild(x);
+    }
+
+    const row=document.createElement("div");
+    row.className="freedom-companion-msg-row";
+
+    const copy=document.createElement("div");
+    copy.className="freedom-companion-msg-copy";
+    if(opts.name){
+      const name=document.createElement("p");
+      name.className="freedom-companion-msg-name";
+      name.textContent=String(opts.name);
+      copy.appendChild(name);
+    }
+    const textEl=document.createElement("p");
+    textEl.className="freedom-companion-msg-text";
+    let msg=String(opts.message||"");
+    textEl.textContent=msg;
+    if(opts.inlineEmoji){
+      const em=document.createElement("span");
+      em.className="freedom-companion-msg-inline-emoji";
+      em.textContent=" "+String(opts.inlineEmoji);
+      textEl.appendChild(em);
+    }
+    copy.appendChild(textEl);
+    row.appendChild(copy);
+
+    if(opts.largeEmoji){
+      const big=document.createElement("span");
+      big.className="freedom-companion-msg-emoji";
+      big.setAttribute("aria-hidden","true");
+      big.textContent=String(opts.largeEmoji);
+      row.appendChild(big);
+    }
+    inner.appendChild(row);
+
+    const actions=Array.isArray(opts.actions)?opts.actions.filter(Boolean):[];
+    if(actions.length){
+      const rowA=document.createElement("div");
+      rowA.className="freedom-companion-msg-actions";
+      actions.forEach(function(a){
+        const btn=document.createElement("button");
+        btn.type="button";
+        btn.className="freedom-companion-msg-action";
+        if(a.id)btn.setAttribute("data-companion-action",String(a.id));
+        btn.textContent=String(a.label||"");
+        rowA.appendChild(btn);
+      });
+      inner.appendChild(rowA);
+    }
+
+    root.appendChild(inner);
+    return root;
+  }
+  function mount(host, opts){
+    if(!host)return null;
+    host.innerHTML="";
+    const el=create(opts);
+    host.appendChild(el);
+    return el;
+  }
+  return {create:create,mount:mount};
+})();
+
+/* Visual preview on Home only — not wired to onboarding / routing / persistence */
+(function(){
+  const host=document.getElementById("freedomCompanionMsgHost");
+  if(!host||!window.FreedomCompanionMessage)return;
+  window.FreedomCompanionMessage.mount(host,{
+    name:"Patricia",
+    message:"Let's put one thing on the map. What do you want to focus on first?",
+    inlineEmoji:"✨",
+    largeEmoji:"🗺️",
+    actions:[
+      {id:"clearing",label:"Clearing"},
+      {id:"building",label:"Building"}
+    ]
+  });
+})();
+
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     const banner = document.getElementById("updateBanner");
@@ -6372,7 +6603,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1916",
+        "./service-worker.js?v=1917",
         { updateViaCache: "none" }
       );
 
