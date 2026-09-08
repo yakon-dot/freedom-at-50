@@ -1983,33 +1983,33 @@ body.home183 .demo183-wrap{
   --cm-pink:#e889b4;
   --cm-purple:#a56ad0;
   /* Deep near-black charcoal/navy — no purple fill */
-  --cm-body:#030508;
+  --cm-body:#020306;
   position:relative;
   isolation:isolate;
   border-radius:20px;
   padding:12px 10px 10px;
-  background:rgba(3,5,8,.97);
-  backdrop-filter:blur(12px) saturate(.65);
-  -webkit-backdrop-filter:blur(12px) saturate(.65);
+  background:rgba(2,3,6,.98);
+  backdrop-filter:blur(10px) saturate(.55);
+  -webkit-backdrop-filter:blur(10px) saturate(.55);
   box-shadow:
-    0 22px 42px rgba(0,0,0,.72),
-    0 8px 16px rgba(0,0,0,.48);
+    0 22px 42px rgba(0,0,0,.74),
+    0 8px 16px rgba(0,0,0,.5);
   color:rgba(232,228,220,.82);
 }
-/* Two concentrated corner blooms only — not a full-card haze */
+/* Corner light only: peach TL + magenta BR — no full-card smoke */
 .freedom-companion-msg::before{
-  content:"";position:absolute;inset:-14px;z-index:-1;border-radius:34px;pointer-events:none;
+  content:"";position:absolute;inset:-10px;z-index:-1;border-radius:30px;pointer-events:none;
   background:
-    radial-gradient(ellipse 48% 44% at 2% 4%,
-      rgba(255,176,110,.9) 0%,
-      rgba(255,158,100,.45) 38%,
-      transparent 70%),
-    radial-gradient(ellipse 48% 44% at 98% 96%,
-      rgba(200,85,215,.85) 0%,
-      rgba(155,70,205,.4) 38%,
-      transparent 70%);
-  filter:blur(11px);
-  opacity:.92;
+    radial-gradient(ellipse 34% 30% at 0% 0%,
+      rgba(255,178,112,.95) 0%,
+      rgba(255,160,100,.5) 32%,
+      transparent 62%),
+    radial-gradient(ellipse 34% 30% at 100% 100%,
+      rgba(205,88,218,.92) 0%,
+      rgba(160,72,210,.45) 32%,
+      transparent 62%);
+  filter:blur(8px);
+  opacity:.95;
   animation:freedomCompanionMsgGlow 8s ease-in-out infinite alternate;
 }
 /* Thin crisp border: peach TL → quiet mid → magenta/purple BR */
@@ -2054,8 +2054,8 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-text{
   margin:0;
-  font-size:10.25px;line-height:1.34;font-weight:400;
-  letter-spacing:-0.02em;
+  font-size:9.85px;line-height:1.34;font-weight:400;
+  letter-spacing:-0.025em;
   color:rgba(226,222,214,.76);
   white-space:pre-line;
   text-align:left;
@@ -6655,7 +6655,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1923",
+        "./service-worker.js?v=1924",
         { updateViaCache: "none" }
       );
 
