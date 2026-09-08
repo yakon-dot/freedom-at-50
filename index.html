@@ -2036,13 +2036,7 @@ body.home183 .demo183-wrap{
   position:relative;
   z-index:1;
   border-radius:20px;
-  /* Compact top inset (~20px); extra bubble height comes from min-height, not padding */
   padding:20px 14px 13px;
-  box-sizing:border-box;
-  display:flex;
-  flex-direction:column;
-  /* ~32px taller than prior ~184px card — extends TOP only when bottom is held fixed */
-  min-height:216px;
   background:linear-gradient(165deg,rgba(22,28,44,.94) 0%,rgba(12,16,28,.96) 55%,rgba(14,18,32,.95) 100%);
   backdrop-filter:blur(16px) saturate(.95);
   -webkit-backdrop-filter:blur(16px) saturate(.95);
@@ -2057,13 +2051,7 @@ body.home183 .demo183-wrap{
   position:absolute;z-index:1;pointer-events:none;overflow:visible;
   display:block;
 }
-.freedom-companion-msg-inner{
-  position:relative;z-index:2;
-  flex:1 1 auto;
-  display:flex;
-  flex-direction:column;
-  min-height:0;
-}
+.freedom-companion-msg-inner{position:relative;z-index:2}
 .freedom-companion-msg-row{
   display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
 }
@@ -2109,9 +2097,7 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-actions{
   display:flex;align-items:stretch;justify-content:stretch;gap:8px;
-  /* Pin actions to the bottom of the taller card; preserve prior 20px gap */
-  margin-top:auto;
-  padding-top:20px;
+  margin-top:20px;
 }
 .freedom-companion-msg-action{
   flex:1 1 0;min-width:0;
