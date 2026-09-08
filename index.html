@@ -2059,24 +2059,28 @@ body.home183 .demo183-wrap{
   mask-composite:exclude;
   opacity:1;
 }
-/* Outward left speech-bubble tail — rotated square merges into card fill */
+/* Speech-bubble wedge: peach outer edge + dark inner fill (no rotate/diamond) */
 .freedom-companion-msg-tail{
-  position:absolute;left:-7px;bottom:30%;z-index:1;
-  width:14px;height:14px;
-  transform:translateY(50%) rotate(45deg);
-  /* Same dark card fill so the join has no seam */
-  background:linear-gradient(165deg,rgba(22,28,44,.94) 0%,rgba(12,16,28,.96) 55%,rgba(14,18,32,.95) 100%);
+  position:absolute;left:-12px;bottom:30%;z-index:1;
+  width:15px;height:18px;
+  transform:translateY(50%);
+  clip-path:polygon(0 50%,100% 0,100% 100%);
+  /* Warm peach matching TL border */
+  background:linear-gradient(135deg,#ffb078 0%,#f5a090 42%,#efcbaa 100%);
   pointer-events:none;
 }
-/* Peach outline/glow on exposed outer edges only (not the card-side join) */
+/* Tiny dark cover at the card-side join — hides border seam without changing card ::after */
 .freedom-companion-msg-tail::before{
-  content:"";position:absolute;inset:-1.5px;z-index:-1;pointer-events:none;
-  background:linear-gradient(225deg,
-    rgba(255,176,120,.78) 0%,
-    rgba(255,170,115,.55) 38%,
-    rgba(255,160,110,.2) 62%,
-    transparent 78%);
-  filter:blur(1.1px);
+  content:"";position:absolute;top:1px;bottom:1px;right:-1px;width:5px;
+  z-index:2;pointer-events:none;
+  background:linear-gradient(165deg,rgba(22,28,44,.98) 0%,rgba(12,16,28,.99) 55%,rgba(14,18,32,.98) 100%);
+}
+/* Inner dark fill — ~1.5px inside outer wedge; extends to base so no gap at join */
+.freedom-companion-msg-tail::after{
+  content:"";position:absolute;top:1.5px;bottom:1.5px;left:1.5px;right:0;
+  z-index:1;pointer-events:none;
+  clip-path:polygon(0 50%,100% 0,100% 100%);
+  background:linear-gradient(165deg,rgba(22,28,44,.94) 0%,rgba(12,16,28,.96) 55%,rgba(14,18,32,.95) 100%);
 }
 .freedom-companion-msg-inner{position:relative;z-index:2}
 .freedom-companion-msg-row{
