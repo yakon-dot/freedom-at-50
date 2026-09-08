@@ -1973,37 +1973,47 @@ body.home183 .demo183-wrap{
 /* —— Companion Message (reusable speech bubble; visual component only) —— */
 .freedom-companion-msg-host{
   position:absolute;left:50%;top:52%;z-index:5;
-  /* ~12–15% wider; -50% centres the card body (tail is absolute overflow) */
-  width:min(82vw,282px);
+  /* ~9% larger than prior; -50% centres the card body (tail is absolute overflow) */
+  width:min(86vw,308px);
   transform:translate(-50%,-50%);
   pointer-events:auto;
 }
-/* Elongated edge glows BEHIND the card — TL peach, BR magenta; not round smoke blobs */
+/* Long illuminated EDGE glows BEHIND the card — perimeter light, not colour clouds */
 .freedom-companion-msg-host::before{
-  content:"";position:absolute;inset:-18px;z-index:0;border-radius:40px;pointer-events:none;
+  content:"";position:absolute;inset:-11px;z-index:0;border-radius:32px;pointer-events:none;
   background:
-    /* peach hotspot + along top edge */
-    radial-gradient(ellipse 78% 26% at 18% 0%,
-      rgba(255,176,110,.92) 0%,
-      rgba(255,160,100,.42) 42%,
+    /* TL corner hotspot */
+    radial-gradient(ellipse 20% 20% at 0% 0%,
+      rgba(255,178,112,.98) 0%,
+      rgba(255,160,100,.55) 45%,
       transparent 72%),
-    /* peach along left edge */
-    radial-gradient(ellipse 26% 78% at 0% 22%,
-      rgba(255,170,105,.82) 0%,
-      rgba(255,150,95,.34) 42%,
+    /* peach along TOP edge from left */
+    linear-gradient(90deg,
+      rgba(255,176,110,.7) 0%,
+      rgba(255,160,100,.28) 38%,
+      transparent 62%) top left / 70% 14px no-repeat,
+    /* peach along LEFT edge from top */
+    linear-gradient(180deg,
+      rgba(255,170,105,.62) 0%,
+      rgba(255,150,95,.24) 42%,
+      transparent 65%) top left / 14px 70% no-repeat,
+    /* BR corner hotspot */
+    radial-gradient(ellipse 20% 20% at 100% 100%,
+      rgba(210,90,220,.96) 0%,
+      rgba(180,75,215,.52) 45%,
       transparent 72%),
-    /* magenta hotspot + along bottom edge */
-    radial-gradient(ellipse 78% 26% at 82% 100%,
-      rgba(210,90,220,.88) 0%,
-      rgba(175,75,210,.4) 42%,
-      transparent 72%),
-    /* magenta along right edge */
-    radial-gradient(ellipse 26% 78% at 100% 78%,
-      rgba(195,85,215,.8) 0%,
-      rgba(165,70,205,.32) 42%,
-      transparent 72%);
-  filter:blur(13px);
-  opacity:.92;
+    /* magenta along BOTTOM edge from right */
+    linear-gradient(270deg,
+      rgba(210,90,220,.66) 0%,
+      rgba(175,75,210,.26) 38%,
+      transparent 62%) bottom right / 70% 14px no-repeat,
+    /* magenta along RIGHT edge from bottom */
+    linear-gradient(0deg,
+      rgba(195,85,215,.58) 0%,
+      rgba(165,70,205,.22) 42%,
+      transparent 65%) bottom right / 14px 70% no-repeat;
+  filter:blur(9px);
+  opacity:.94;
   animation:freedomCompanionMsgGlow 8s ease-in-out infinite alternate;
 }
 .freedom-companion-msg{
@@ -2083,21 +2093,21 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-actions{
   display:flex;align-items:stretch;justify-content:stretch;gap:8px;
-  margin-top:16px;
+  margin-top:20px;
 }
 .freedom-companion-msg-action{
   flex:1 1 0;min-width:0;
-  display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:6px;
-  margin:0;padding:10px 9px;
+  display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:5px;
+  margin:0;padding:10px 8px;
   border-radius:12px;
   overflow:hidden;
-  /* Clearing: warm peach/rose tinted glass */
-  border:1px solid rgba(240,194,154,.38);
-  background:linear-gradient(160deg,rgba(240,194,154,.22),rgba(232,140,170,.12) 38%,rgba(16,20,34,.66) 78%);
+  /* Clearing: slightly richer warm peach/rose glass tint */
+  border:1px solid rgba(240,194,154,.44);
+  background:linear-gradient(160deg,rgba(240,194,154,.28),rgba(232,140,170,.14) 38%,rgba(16,20,34,.64) 78%);
   color:rgba(245,244,240,.88);
   font-size:11.5px;font-weight:500;letter-spacing:.01em;text-align:left;
   backdrop-filter:blur(12px) saturate(1.12);-webkit-backdrop-filter:blur(12px) saturate(1.12);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 7px rgba(240,194,154,.07);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 7px rgba(240,194,154,.08);
   cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 .freedom-companion-msg-action:nth-child(2){
@@ -2107,29 +2117,28 @@ body.home183 .demo183-wrap{
   box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 0 7px rgba(165,106,208,.09);
 }
 .freedom-companion-msg-action-icon{
-  flex:0 0 auto;width:16px;height:16px;display:grid;place-items:center;
+  flex:0 0 auto;width:14px;height:14px;display:grid;place-items:center;
   color:rgba(239,203,170,.88);
 }
 .freedom-companion-msg-action-icon svg{
-  width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+  width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
 .freedom-companion-msg-action:nth-child(2) .freedom-companion-msg-action-icon{
   color:rgba(200,160,230,.9);
 }
 .freedom-companion-msg-action-copy{
-  flex:1 1 auto;min-width:0;max-width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;
-  overflow:hidden;
+  flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;
 }
 .freedom-companion-msg-action-label{
-  display:block;max-width:100%;font-size:11.5px;font-weight:500;line-height:1.1;
+  display:block;font-size:11.5px;font-weight:500;line-height:1.1;
   color:rgba(245,244,240,.9);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;
 }
 .freedom-companion-msg-action-sub{
-  display:block;max-width:100%;box-sizing:border-box;
-  font-size:8px;font-weight:400;line-height:1.15;letter-spacing:-0.02em;
+  display:block;box-sizing:border-box;
+  font-size:8.25px;font-weight:400;line-height:1.15;letter-spacing:-0.015em;
   color:rgba(210,206,198,.58);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  white-space:nowrap;
 }
 .freedom-companion-msg-action:active{opacity:.78}
 .freedom-companion-msg-dismiss{
@@ -6695,7 +6704,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1927",
+        "./service-worker.js?v=1928",
         { updateViaCache: "none" }
       );
 
