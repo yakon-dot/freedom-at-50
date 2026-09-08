@@ -1978,42 +1978,42 @@ body.home183 .demo183-wrap{
   transform:translate(-50%,-50%);
   pointer-events:auto;
 }
-/* Long illuminated EDGE glows BEHIND the card — perimeter light, not colour clouds */
+/* Edge illumination BEHIND the card — sources tucked under perimeter */
 .freedom-companion-msg-host::before{
-  content:"";position:absolute;inset:-11px;z-index:0;border-radius:32px;pointer-events:none;
+  content:"";position:absolute;inset:-8px -10px -10px -7px;z-index:0;border-radius:30px;pointer-events:none;
   background:
-    /* TL corner hotspot */
-    radial-gradient(ellipse 20% 20% at 0% 0%,
-      rgba(255,178,112,.98) 0%,
-      rgba(255,160,100,.55) 45%,
-      transparent 72%),
-    /* peach along TOP edge from left */
+    /* TL hotspot tucked under corner (most light behind card) */
+    radial-gradient(ellipse 28% 26% at 10% 10%,
+      rgba(255,178,112,.95) 0%,
+      rgba(255,160,100,.42) 40%,
+      transparent 68%),
+    /* soft peach falloff along TOP edge */
     linear-gradient(90deg,
-      rgba(255,176,110,.7) 0%,
-      rgba(255,160,100,.28) 38%,
-      transparent 62%) top left / 70% 14px no-repeat,
-    /* peach along LEFT edge from top */
+      rgba(255,176,110,.55) 0%,
+      rgba(255,160,100,.2) 32%,
+      transparent 55%) top left / 58% 11px no-repeat,
+    /* soft peach falloff along LEFT edge — restrained escape */
     linear-gradient(180deg,
-      rgba(255,170,105,.62) 0%,
-      rgba(255,150,95,.24) 42%,
-      transparent 65%) top left / 14px 70% no-repeat,
-    /* BR corner hotspot */
-    radial-gradient(ellipse 20% 20% at 100% 100%,
-      rgba(210,90,220,.96) 0%,
-      rgba(180,75,215,.52) 45%,
-      transparent 72%),
-    /* magenta along BOTTOM edge from right */
+      rgba(255,170,105,.42) 0%,
+      rgba(255,150,95,.16) 36%,
+      transparent 58%) top left / 10px 55% no-repeat,
+    /* BR hotspot tucked under corner */
+    radial-gradient(ellipse 26% 24% at 90% 90%,
+      rgba(210,90,220,.9) 0%,
+      rgba(180,75,215,.4) 40%,
+      transparent 68%),
+    /* soft magenta along BOTTOM edge */
     linear-gradient(270deg,
-      rgba(210,90,220,.66) 0%,
-      rgba(175,75,210,.26) 38%,
-      transparent 62%) bottom right / 70% 14px no-repeat,
-    /* magenta along RIGHT edge from bottom */
+      rgba(210,90,220,.52) 0%,
+      rgba(175,75,210,.18) 34%,
+      transparent 56%) bottom right / 58% 11px no-repeat,
+    /* soft magenta along RIGHT edge */
     linear-gradient(0deg,
-      rgba(195,85,215,.58) 0%,
-      rgba(165,70,205,.22) 42%,
-      transparent 65%) bottom right / 14px 70% no-repeat;
-  filter:blur(9px);
-  opacity:.94;
+      rgba(195,85,215,.46) 0%,
+      rgba(165,70,205,.16) 36%,
+      transparent 58%) bottom right / 10px 55% no-repeat;
+  filter:blur(8px);
+  opacity:.9;
   animation:freedomCompanionMsgGlow 8s ease-in-out infinite alternate;
 }
 .freedom-companion-msg{
@@ -2036,7 +2036,7 @@ body.home183 .demo183-wrap{
 }
 /* Thin bright luminous border: peach TL → pink → vivid magenta/purple BR */
 .freedom-companion-msg::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1.2px;
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1.5px;
   background:linear-gradient(135deg,
     #ffb078 0%,
     #f5a090 18%,
@@ -2049,17 +2049,24 @@ body.home183 .demo183-wrap{
   mask-composite:exclude;
   opacity:1;
 }
-/* Simple left speech-bubble tail */
+/* Seamless left speech-bubble tail — continuous with card silhouette */
 .freedom-companion-msg-tail{
-  position:absolute;left:-13px;bottom:32%;z-index:1;
-  width:0;height:0;
-  border-style:solid;
-  border-width:10px 14px 10px 0;
-  border-color:transparent rgba(12,16,30,.96) transparent transparent;
+  position:absolute;left:-11px;bottom:30%;z-index:2;
+  width:16px;height:20px;
+  transform:translateY(50%);
+  background:linear-gradient(165deg,rgba(22,28,44,.96) 0%,rgba(12,16,28,.98) 55%,rgba(14,18,32,.97) 100%);
+  clip-path:polygon(100% 6%, 0 50%, 100% 94%);
   filter:
-    drop-shadow(-1.5px 0 0 rgba(255,176,120,.8))
-    drop-shadow(-3px 0 6px rgba(255,160,110,.4));
+    drop-shadow(-1.25px 0 0 rgba(255,176,120,.72))
+    drop-shadow(-2.5px 0 5px rgba(255,160,110,.28));
   pointer-events:none;
+}
+/* Cover card stroke at the join so the border doesn't cut through the tail */
+.freedom-companion-msg-tail::after{
+  content:"";position:absolute;right:-4px;top:50%;transform:translateY(-50%);
+  width:9px;height:14px;
+  background:linear-gradient(165deg,rgba(22,28,44,.98) 0%,rgba(12,16,28,.99) 100%);
+  border-radius:1px;
 }
 .freedom-companion-msg-inner{position:relative;z-index:2}
 .freedom-companion-msg-row{
@@ -2086,10 +2093,19 @@ body.home183 .demo183-wrap{
   font-style:normal;font-weight:400;
 }
 .freedom-companion-msg-emoji{
+  position:relative;
   flex:0 0 auto;align-self:center;
+  margin-right:10px;
   font-size:44px;line-height:1;
-  filter:drop-shadow(0 0 8px rgba(232,137,180,.4)) drop-shadow(0 2px 8px rgba(0,0,0,.32));
   user-select:none;pointer-events:none;
+  z-index:1;
+}
+/* Tiny local glow behind the native emoji only */
+.freedom-companion-msg-emoji::before{
+  content:"";position:absolute;left:18%;right:18%;top:22%;bottom:18%;
+  z-index:-1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(232,150,190,.5) 0%,rgba(180,120,210,.22) 55%,transparent 75%);
+  filter:blur(5px);
 }
 .freedom-companion-msg-actions{
   display:flex;align-items:stretch;justify-content:stretch;gap:8px;
@@ -6704,7 +6720,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1928",
+        "./service-worker.js?v=1929",
         { updateViaCache: "none" }
       );
 
