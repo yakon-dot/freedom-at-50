@@ -1975,7 +1975,8 @@ body.home183 .demo183-wrap{
   position:absolute;left:50%;top:52%;z-index:5;
   /* ~9% larger than prior; -50% centres the card body (tail is absolute overflow) */
   width:min(86vw,308px);
-  transform:translate(-50%,-50%);
+  /* Offset by half the added top padding so bottom edge + buttons stay put */
+  transform:translate(-50%,calc(-50% - 12.5px));
   pointer-events:auto;
 }
 /* TL peach edge glow — independent layer behind the card */
@@ -2035,7 +2036,8 @@ body.home183 .demo183-wrap{
   position:relative;
   z-index:1;
   border-radius:20px;
-  padding:15px 14px 13px;
+  /* Extra top padding raises top edge + Patricia/copy/map/X; bottom padding unchanged */
+  padding:40px 14px 13px;
   background:linear-gradient(165deg,rgba(22,28,44,.94) 0%,rgba(12,16,28,.96) 55%,rgba(14,18,32,.95) 100%);
   backdrop-filter:blur(16px) saturate(.95);
   -webkit-backdrop-filter:blur(16px) saturate(.95);
@@ -6585,7 +6587,8 @@ window.FreedomCompanionMessage=(function(){
     const y0=pad;
     const x1=tailOut+W;
     const y1=pad+H;
-    const midY=y0+H*0.70;
+    /* Anchor beak from the bottom so extra top height does not move the pointer */
+    const midY=y1-48;
     /* Approved beak scaled 1.5× — projection + opening + control offsets together */
     const tipX=1;
     const tipY=midY+5.25;
