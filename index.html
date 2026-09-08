@@ -2065,15 +2065,17 @@ body.home183 .demo183-wrap{
   width:15px;height:18px;
   transform:translateY(50%);
   clip-path:polygon(0 50%,100% 0,100% 100%);
-  /* Warm peach matching TL border */
-  background:linear-gradient(135deg,#ffb078 0%,#f5a090 42%,#efcbaa 100%);
+  /* Peach tip + dark strip on the card-side base so the join has no peach vertical */
+  background:
+    linear-gradient(165deg,rgba(22,28,44,1) 0%,rgba(12,16,28,1) 55%,rgba(14,18,32,1) 100%) right center / 5px 100% no-repeat,
+    linear-gradient(135deg,#ffb078 0%,#f5a090 42%,#efcbaa 100%);
   pointer-events:none;
 }
-/* Tiny dark cover at the card-side join — hides border seam without changing card ::after */
+/* Opaque dark cover where the card border crosses the wedge (card-side join only) */
 .freedom-companion-msg-tail::before{
-  content:"";position:absolute;top:1px;bottom:1px;right:-1px;width:5px;
+  content:"";position:absolute;left:10px;top:0;bottom:0;width:6px;
   z-index:2;pointer-events:none;
-  background:linear-gradient(165deg,rgba(22,28,44,.98) 0%,rgba(12,16,28,.99) 55%,rgba(14,18,32,.98) 100%);
+  background:rgba(12,16,28,1);
 }
 /* Inner dark fill — ~1.5px inside outer wedge; extends to base so no gap at join */
 .freedom-companion-msg-tail::after{
