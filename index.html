@@ -1973,44 +1973,56 @@ body.home183 .demo183-wrap{
 /* —— Companion Message (reusable speech bubble; visual component only) —— */
 .freedom-companion-msg-host{
   position:absolute;left:50%;top:52%;z-index:5;
-  /* ~8% smaller; -50% centres the card body (tail is absolute overflow) */
-  width:min(72vw,246px);
+  /* ~12–15% wider; -50% centres the card body (tail is absolute overflow) */
+  width:min(82vw,282px);
   transform:translate(-50%,-50%);
   pointer-events:auto;
+}
+/* Elongated edge glows BEHIND the card — TL peach, BR magenta; not round smoke blobs */
+.freedom-companion-msg-host::before{
+  content:"";position:absolute;inset:-18px;z-index:0;border-radius:40px;pointer-events:none;
+  background:
+    /* peach hotspot + along top edge */
+    radial-gradient(ellipse 78% 26% at 18% 0%,
+      rgba(255,176,110,.92) 0%,
+      rgba(255,160,100,.42) 42%,
+      transparent 72%),
+    /* peach along left edge */
+    radial-gradient(ellipse 26% 78% at 0% 22%,
+      rgba(255,170,105,.82) 0%,
+      rgba(255,150,95,.34) 42%,
+      transparent 72%),
+    /* magenta hotspot + along bottom edge */
+    radial-gradient(ellipse 78% 26% at 82% 100%,
+      rgba(210,90,220,.88) 0%,
+      rgba(175,75,210,.4) 42%,
+      transparent 72%),
+    /* magenta along right edge */
+    radial-gradient(ellipse 26% 78% at 100% 78%,
+      rgba(195,85,215,.8) 0%,
+      rgba(165,70,205,.32) 42%,
+      transparent 72%);
+  filter:blur(13px);
+  opacity:.92;
+  animation:freedomCompanionMsgGlow 8s ease-in-out infinite alternate;
 }
 .freedom-companion-msg{
   --cm-peach:#efcbaa;
   --cm-pink:#e889b4;
   --cm-purple:#a56ad0;
-  /* Rich deep charcoal/navy glass — not flat black */
-  --cm-body:rgba(14,18,32,.9);
+  /* Rich deep charcoal/navy glass — opaque enough to sit cleanly over glow */
+  --cm-body:rgba(14,18,32,.94);
   position:relative;
-  isolation:isolate;
+  z-index:1;
   border-radius:20px;
-  padding:14px 12px 12px;
-  background:linear-gradient(165deg,rgba(22,28,44,.88) 0%,rgba(10,14,26,.92) 55%,rgba(12,16,30,.9) 100%);
-  backdrop-filter:blur(18px) saturate(1.05);
-  -webkit-backdrop-filter:blur(18px) saturate(1.05);
+  padding:15px 14px 13px;
+  background:linear-gradient(165deg,rgba(22,28,44,.94) 0%,rgba(12,16,28,.96) 55%,rgba(14,18,32,.95) 100%);
+  backdrop-filter:blur(16px) saturate(.95);
+  -webkit-backdrop-filter:blur(16px) saturate(.95);
   box-shadow:
     0 22px 44px rgba(0,0,0,.58),
     0 8px 18px rgba(0,0,0,.36);
   color:rgba(232,228,220,.84);
-}
-/* Strong TL peach + BR magenta hotspots; quiet elsewhere — emitted by border, not fog */
-.freedom-companion-msg::before{
-  content:"";position:absolute;inset:-16px;z-index:-1;border-radius:36px;pointer-events:none;
-  background:
-    radial-gradient(ellipse 46% 42% at 4% 6%,
-      rgba(255,176,110,.95) 0%,
-      rgba(255,150,95,.55) 34%,
-      transparent 68%),
-    radial-gradient(ellipse 46% 42% at 96% 94%,
-      rgba(210,90,220,.9) 0%,
-      rgba(170,70,210,.5) 34%,
-      transparent 68%);
-  filter:blur(14px);
-  opacity:.95;
-  animation:freedomCompanionMsgGlow 8s ease-in-out infinite alternate;
 }
 /* Thin bright luminous border: peach TL → pink → vivid magenta/purple BR */
 .freedom-companion-msg::after{
@@ -2033,7 +2045,7 @@ body.home183 .demo183-wrap{
   width:0;height:0;
   border-style:solid;
   border-width:10px 14px 10px 0;
-  border-color:transparent rgba(12,16,30,.92) transparent transparent;
+  border-color:transparent rgba(12,16,30,.96) transparent transparent;
   filter:
     drop-shadow(-1.5px 0 0 rgba(255,176,120,.8))
     drop-shadow(-3px 0 6px rgba(255,160,110,.4));
@@ -2041,7 +2053,7 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-inner{position:relative;z-index:2}
 .freedom-companion-msg-row{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:6px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
 }
 .freedom-companion-msg-copy{flex:1 1 auto;min-width:0;text-align:left;padding-right:2px}
 .freedom-companion-msg-name{
@@ -2075,43 +2087,47 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-action{
   flex:1 1 0;min-width:0;
-  display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:7px;
-  margin:0;padding:10px 10px;
+  display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:6px;
+  margin:0;padding:10px 9px;
   border-radius:12px;
+  overflow:hidden;
   /* Clearing: warm peach/rose tinted glass */
-  border:1px solid rgba(240,194,154,.34);
-  background:linear-gradient(160deg,rgba(240,194,154,.18),rgba(232,140,170,.1) 38%,rgba(16,20,34,.62) 78%);
+  border:1px solid rgba(240,194,154,.38);
+  background:linear-gradient(160deg,rgba(240,194,154,.22),rgba(232,140,170,.12) 38%,rgba(16,20,34,.66) 78%);
   color:rgba(245,244,240,.88);
   font-size:11.5px;font-weight:500;letter-spacing:.01em;text-align:left;
   backdrop-filter:blur(12px) saturate(1.12);-webkit-backdrop-filter:blur(12px) saturate(1.12);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 0 8px rgba(240,194,154,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 0 7px rgba(240,194,154,.07);
   cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 .freedom-companion-msg-action:nth-child(2){
   /* Building: purple tinted glass */
-  border-color:rgba(165,106,208,.4);
-  background:linear-gradient(160deg,rgba(165,106,208,.2),rgba(130,90,180,.1) 38%,rgba(16,20,34,.62) 78%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 8px rgba(165,106,208,.1);
+  border-color:rgba(165,106,208,.44);
+  background:linear-gradient(160deg,rgba(165,106,208,.24),rgba(130,90,180,.12) 38%,rgba(16,20,34,.66) 78%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 0 7px rgba(165,106,208,.09);
 }
 .freedom-companion-msg-action-icon{
-  flex:0 0 auto;width:18px;height:18px;display:grid;place-items:center;
+  flex:0 0 auto;width:16px;height:16px;display:grid;place-items:center;
   color:rgba(239,203,170,.88);
 }
 .freedom-companion-msg-action-icon svg{
-  width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+  width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
 }
 .freedom-companion-msg-action:nth-child(2) .freedom-companion-msg-action-icon{
   color:rgba(200,160,230,.9);
 }
 .freedom-companion-msg-action-copy{
-  flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  flex:1 1 auto;min-width:0;max-width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:2px;
+  overflow:hidden;
 }
 .freedom-companion-msg-action-label{
-  display:block;font-size:11.5px;font-weight:500;line-height:1.1;
+  display:block;max-width:100%;font-size:11.5px;font-weight:500;line-height:1.1;
   color:rgba(245,244,240,.9);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .freedom-companion-msg-action-sub{
-  display:block;font-size:8.5px;font-weight:400;line-height:1.15;
+  display:block;max-width:100%;box-sizing:border-box;
+  font-size:8px;font-weight:400;line-height:1.15;letter-spacing:-0.02em;
   color:rgba(210,206,198,.58);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
@@ -2125,11 +2141,11 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-dismiss:active{color:rgba(239,203,170,.9)}
 @keyframes freedomCompanionMsgGlow{
-  0%{opacity:.8}
-  100%{opacity:.98}
+  0%{opacity:.78}
+  100%{opacity:.96}
 }
 @media (prefers-reduced-motion:reduce){
-  .freedom-companion-msg::before{animation:none}
+  .freedom-companion-msg-host::before{animation:none}
 }
 
 .demo183-wrap .subwrap183{margin-left:0;width:100%}
@@ -6679,7 +6695,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1926",
+        "./service-worker.js?v=1927",
         { updateViaCache: "none" }
       );
 
