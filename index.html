@@ -2061,7 +2061,7 @@ body.home183 .demo183-wrap{
 }
 /* Speech-bubble wedge: peach outer edge + dark inner fill (no rotate/diamond) */
 .freedom-companion-msg-tail{
-  position:absolute;left:-12px;bottom:30%;z-index:1;
+  position:absolute;left:-12px;bottom:30%;z-index:2;
   width:15px;height:18px;
   transform:translateY(50%);
   clip-path:polygon(0 50%,100% 0,100% 100%);
@@ -2073,7 +2073,7 @@ body.home183 .demo183-wrap{
 }
 /* Opaque dark cover where the card border crosses the wedge (card-side join only) */
 .freedom-companion-msg-tail::before{
-  content:"";position:absolute;left:10px;top:0;bottom:0;width:6px;
+  content:"";position:absolute;left:9px;top:-1px;bottom:-1px;width:8px;
   z-index:2;pointer-events:none;
   background:rgba(12,16,28,1);
 }
