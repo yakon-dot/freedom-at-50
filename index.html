@@ -6533,6 +6533,12 @@ window.FreedomCompanionMessage=(function(){
       x.className="freedom-companion-msg-dismiss";
       x.setAttribute("aria-label","Dismiss");
       x.textContent="×";
+      x.addEventListener("click",function(ev){
+        ev.preventDefault();
+        ev.stopPropagation();
+        if(typeof opts.onDismiss==="function")opts.onDismiss();
+        else if(root.parentNode)root.parentNode.removeChild(root);
+      });
       root.appendChild(x);
     }
 
@@ -6610,11 +6616,19 @@ window.FreedomCompanionMessage=(function(){
 (function(){
   const host=document.getElementById("freedomCompanionMsgHost");
   if(!host||!window.FreedomCompanionMessage)return;
+  /* TEMP DEV ONLY: X dismisses this preview so More > Reset is reachable.
+     Final first-ever companion message will dismiss via Clearing/Building — no X. */
+  host.hidden=false;
   window.FreedomCompanionMessage.mount(host,{
     name:"Patricia",
     message:"Let's put one thing on the map.\nWhat do you want to focus on first?",
     inlineEmoji:"✨",
     largeEmoji:"🗺️",
+    dismissible:true,
+    onDismiss:function(){
+      host.innerHTML="";
+      host.hidden=true;
+    },
     actions:[
       {id:"clearing",label:"Clearing",sub:"Reduce what you owe"},
       {id:"building",label:"Building",sub:"Grow for what's next"}
@@ -6635,7 +6649,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1921",
+        "./service-worker.js?v=1922",
         { updateViaCache: "none" }
       );
 
