@@ -1982,83 +1982,79 @@ body.home183 .demo183-wrap{
   --cm-peach:#efcbaa;
   --cm-pink:#e889b4;
   --cm-purple:#a56ad0;
-  /* Deep near-black charcoal/navy — no purple fill */
-  --cm-body:#020306;
+  /* Rich deep charcoal/navy glass — not flat black */
+  --cm-body:rgba(14,18,32,.9);
   position:relative;
   isolation:isolate;
   border-radius:20px;
-  padding:12px 10px 10px;
-  background:rgba(2,3,6,.99);
-  backdrop-filter:blur(8px) saturate(.4);
-  -webkit-backdrop-filter:blur(8px) saturate(.4);
+  padding:14px 12px 12px;
+  background:linear-gradient(165deg,rgba(22,28,44,.88) 0%,rgba(10,14,26,.92) 55%,rgba(12,16,30,.9) 100%);
+  backdrop-filter:blur(18px) saturate(1.05);
+  -webkit-backdrop-filter:blur(18px) saturate(1.05);
   box-shadow:
-    0 22px 42px rgba(0,0,0,.76),
-    0 8px 16px rgba(0,0,0,.52),
-    -5px -5px 16px rgba(255,170,110,.3),
-    7px 7px 18px rgba(190,80,210,.28);
-  color:rgba(232,228,220,.82);
+    0 22px 44px rgba(0,0,0,.58),
+    0 8px 18px rgba(0,0,0,.36);
+  color:rgba(232,228,220,.84);
 }
-/* Corner light only: peach TL + magenta BR — no full-card smoke */
+/* Strong TL peach + BR magenta hotspots; quiet elsewhere — emitted by border, not fog */
 .freedom-companion-msg::before{
-  content:"";position:absolute;inset:-8px;z-index:-1;border-radius:28px;pointer-events:none;
+  content:"";position:absolute;inset:-16px;z-index:-1;border-radius:36px;pointer-events:none;
   background:
-    radial-gradient(ellipse 28% 26% at 0% 0%,
-      rgba(255,178,112,.98) 0%,
-      rgba(255,160,100,.48) 30%,
-      transparent 58%),
-    radial-gradient(ellipse 28% 26% at 100% 100%,
-      rgba(205,88,218,.95) 0%,
-      rgba(160,72,210,.42) 30%,
-      transparent 58%);
-  filter:blur(6px);
-  opacity:.96;
+    radial-gradient(ellipse 46% 42% at 4% 6%,
+      rgba(255,176,110,.95) 0%,
+      rgba(255,150,95,.55) 34%,
+      transparent 68%),
+    radial-gradient(ellipse 46% 42% at 96% 94%,
+      rgba(210,90,220,.9) 0%,
+      rgba(170,70,210,.5) 34%,
+      transparent 68%);
+  filter:blur(14px);
+  opacity:.95;
   animation:freedomCompanionMsgGlow 8s ease-in-out infinite alternate;
 }
-/* Thin crisp border: peach TL → quiet mid → magenta/purple BR */
+/* Thin bright luminous border: peach TL → pink → vivid magenta/purple BR */
 .freedom-companion-msg::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1.15px;
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1.2px;
   background:linear-gradient(135deg,
     #ffb078 0%,
-    #f2a090 16%,
-    #e8a0b8 38%,
-    #d070c0 62%,
-    #b85ad0 82%,
-    #9b5ad8 100%);
+    #f5a090 18%,
+    #e889b4 45%,
+    #d060c8 72%,
+    #a855d8 100%);
   -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
   -webkit-mask-composite:xor;
   mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
   mask-composite:exclude;
   opacity:1;
 }
-/* Proper left speech-bubble tail — lower-left, dark fill, peach edge glow */
+/* Simple left speech-bubble tail */
 .freedom-companion-msg-tail{
-  position:absolute;left:-14px;bottom:30%;z-index:1;
+  position:absolute;left:-13px;bottom:32%;z-index:1;
   width:0;height:0;
   border-style:solid;
-  border-width:11px 15px 11px 0;
-  border-color:transparent var(--cm-body) transparent transparent;
+  border-width:10px 14px 10px 0;
+  border-color:transparent rgba(12,16,30,.92) transparent transparent;
   filter:
-    drop-shadow(-1.5px 0 0 rgba(255,176,120,.75))
-    drop-shadow(-2px 1px 0 rgba(255,176,120,.35))
-    drop-shadow(-4px 0 6px rgba(255,160,110,.4));
+    drop-shadow(-1.5px 0 0 rgba(255,176,120,.8))
+    drop-shadow(-3px 0 6px rgba(255,160,110,.4));
   pointer-events:none;
 }
 .freedom-companion-msg-inner{position:relative;z-index:2}
 .freedom-companion-msg-row{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:4px;
+  display:flex;align-items:flex-start;justify-content:space-between;gap:6px;
 }
 .freedom-companion-msg-copy{flex:1 1 auto;min-width:0;text-align:left;padding-right:2px}
 .freedom-companion-msg-name{
-  margin:0 0 5px;
+  margin:0 0 8px;
   font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
   font-size:clamp(22px,6.2vw,26px);font-weight:500;line-height:1;
   color:var(--cm-peach,#efcbaa);
 }
 .freedom-companion-msg-text{
-  margin:0;
-  font-size:9.85px;line-height:1.34;font-weight:400;
-  letter-spacing:-0.025em;
-  color:rgba(226,222,214,.76);
+  margin:0 0 2px;
+  font-size:10.5px;line-height:1.38;font-weight:400;
+  letter-spacing:-0.02em;
+  color:rgba(226,222,214,.78);
   text-align:left;
 }
 .freedom-companion-msg-line{
@@ -2075,35 +2071,48 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-actions{
   display:flex;align-items:stretch;justify-content:stretch;gap:8px;
-  margin-top:12px;
+  margin-top:16px;
 }
 .freedom-companion-msg-action{
   flex:1 1 0;min-width:0;
-  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;
-  margin:0;padding:7px 9px;
-  border-radius:11px;
-  /* Clearing: subtle warm peach/rose glass */
-  border:1px solid rgba(240,194,154,.28);
-  background:linear-gradient(165deg,rgba(240,194,154,.12),rgba(232,137,180,.06) 40%,rgba(8,12,22,.55) 78%);
-  color:rgba(245,244,240,.86);
+  display:flex;flex-direction:row;align-items:center;justify-content:flex-start;gap:7px;
+  margin:0;padding:10px 10px;
+  border-radius:12px;
+  /* Clearing: warm peach/rose tinted glass */
+  border:1px solid rgba(240,194,154,.34);
+  background:linear-gradient(160deg,rgba(240,194,154,.18),rgba(232,140,170,.1) 38%,rgba(16,20,34,.62) 78%);
+  color:rgba(245,244,240,.88);
   font-size:11.5px;font-weight:500;letter-spacing:.01em;text-align:left;
-  backdrop-filter:blur(10px) saturate(1.08);-webkit-backdrop-filter:blur(10px) saturate(1.08);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 0 6px rgba(240,194,154,.04);
+  backdrop-filter:blur(12px) saturate(1.12);-webkit-backdrop-filter:blur(12px) saturate(1.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07),0 0 8px rgba(240,194,154,.08);
   cursor:pointer;-webkit-tap-highlight-color:transparent;
 }
 .freedom-companion-msg-action:nth-child(2){
-  /* Building: subtle purple glass */
-  border-color:rgba(165,106,208,.32);
-  background:linear-gradient(165deg,rgba(165,106,208,.12),rgba(120,80,170,.06) 40%,rgba(8,12,22,.55) 78%);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.04),0 0 6px rgba(165,106,208,.05);
+  /* Building: purple tinted glass */
+  border-color:rgba(165,106,208,.4);
+  background:linear-gradient(160deg,rgba(165,106,208,.2),rgba(130,90,180,.1) 38%,rgba(16,20,34,.62) 78%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 8px rgba(165,106,208,.1);
+}
+.freedom-companion-msg-action-icon{
+  flex:0 0 auto;width:18px;height:18px;display:grid;place-items:center;
+  color:rgba(239,203,170,.88);
+}
+.freedom-companion-msg-action-icon svg{
+  width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;
+}
+.freedom-companion-msg-action:nth-child(2) .freedom-companion-msg-action-icon{
+  color:rgba(200,160,230,.9);
+}
+.freedom-companion-msg-action-copy{
+  flex:1 1 auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px;
 }
 .freedom-companion-msg-action-label{
   display:block;font-size:11.5px;font-weight:500;line-height:1.1;
-  color:rgba(245,244,240,.86);
+  color:rgba(245,244,240,.9);
 }
 .freedom-companion-msg-action-sub{
   display:block;font-size:8.5px;font-weight:400;line-height:1.15;
-  color:rgba(210,206,198,.55);
+  color:rgba(210,206,198,.58);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .freedom-companion-msg-action:active{opacity:.78}
@@ -6595,16 +6604,26 @@ window.FreedomCompanionMessage=(function(){
         btn.type="button";
         btn.className="freedom-companion-msg-action";
         if(a.id)btn.setAttribute("data-companion-action",String(a.id));
+        if(a.iconSvg){
+          const ic=document.createElement("span");
+          ic.className="freedom-companion-msg-action-icon";
+          ic.setAttribute("aria-hidden","true");
+          ic.innerHTML=String(a.iconSvg);
+          btn.appendChild(ic);
+        }
+        const copyCol=document.createElement("span");
+        copyCol.className="freedom-companion-msg-action-copy";
         const lab=document.createElement("span");
         lab.className="freedom-companion-msg-action-label";
         lab.textContent=String(a.label||"");
-        btn.appendChild(lab);
+        copyCol.appendChild(lab);
         if(a.sub){
           const sub=document.createElement("span");
           sub.className="freedom-companion-msg-action-sub";
           sub.textContent=String(a.sub);
-          btn.appendChild(sub);
+          copyCol.appendChild(sub);
         }
+        btn.appendChild(copyCol);
         rowA.appendChild(btn);
       });
       inner.appendChild(rowA);
@@ -6641,8 +6660,8 @@ window.FreedomCompanionMessage=(function(){
       host.hidden=true;
     },
     actions:[
-      {id:"clearing",label:"Clearing",sub:"Reduce what you owe"},
-      {id:"building",label:"Building",sub:"Grow for what's next"}
+      {id:"clearing",label:"Clearing",sub:"Reduce what you owe",iconSvg:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="7" ry="2.6"/><ellipse cx="12" cy="13" rx="7" ry="2.6"/><ellipse cx="12" cy="9" rx="7" ry="2.6"/><path d="M5 9v8M19 9v8"/></svg>'},
+      {id:"building",label:"Building",sub:"Grow for what's next",iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-3.8 0-6-2.1-6-5.8 3.8 0 6 2.1 6 5.8Z"/><path d="M12 11c3.8 0 6-2.1 6-5.8-3.8 0-6 2.1-6 5.8Z"/><path d="M8.5 21h7"/></svg>'}
     ]
   });
 })();
@@ -6660,7 +6679,7 @@ if ("serviceWorker" in navigator) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1925",
+        "./service-worker.js?v=1926",
         { updateViaCache: "none" }
       );
 
