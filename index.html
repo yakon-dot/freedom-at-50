@@ -1975,7 +1975,8 @@ body.home183 .demo183-wrap{
   position:absolute;left:50%;top:52%;z-index:5;
   /* ~9% larger than prior; -50% centres the card body (tail is absolute overflow) */
   width:min(86vw,308px);
-  transform:translate(-50%,-50%);
+  /* Shift up by half the +32px height grow so bottom edge + buttons stay put */
+  transform:translate(-50%,calc(-50% - 28.5px));
   pointer-events:auto;
 }
 /* TL peach edge glow — independent layer behind the card */
@@ -2035,7 +2036,13 @@ body.home183 .demo183-wrap{
   position:relative;
   z-index:1;
   border-radius:20px;
-  padding:15px 14px 13px;
+  /* Compact top inset (~20px); extra bubble height comes from min-height, not padding */
+  padding:20px 14px 13px;
+  box-sizing:border-box;
+  display:flex;
+  flex-direction:column;
+  /* ~32px taller than prior ~184px card — extends TOP only when bottom is held fixed */
+  min-height:216px;
   background:linear-gradient(165deg,rgba(22,28,44,.94) 0%,rgba(12,16,28,.96) 55%,rgba(14,18,32,.95) 100%);
   backdrop-filter:blur(16px) saturate(.95);
   -webkit-backdrop-filter:blur(16px) saturate(.95);
@@ -2043,42 +2050,20 @@ body.home183 .demo183-wrap{
     0 22px 44px rgba(0,0,0,.58),
     0 8px 18px rgba(0,0,0,.36);
   color:rgba(232,228,220,.84);
+  overflow:visible;
 }
-/* Thin bright luminous border: peach TL → pink → vivid magenta/purple BR */
-.freedom-companion-msg::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;padding:1.5px;
-  background:linear-gradient(135deg,
-    #ffb078 0%,
-    #f5a090 18%,
-    #e889b4 45%,
-    #d060c8 72%,
-    #a855d8 100%);
-  -webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
-  -webkit-mask-composite:xor;
-  mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);
-  mask-composite:exclude;
-  opacity:1;
+/* Continuous SVG perimeter: rounded card + left speech-bubble tail (stroke only) */
+.freedom-companion-msg-outline{
+  position:absolute;z-index:1;pointer-events:none;overflow:visible;
+  display:block;
 }
-/* Outward left speech-bubble tail — rotated square merges into card fill */
-.freedom-companion-msg-tail{
-  position:absolute;left:-7px;bottom:30%;z-index:1;
-  width:14px;height:14px;
-  transform:translateY(50%) rotate(45deg);
-  /* Same dark card fill so the join has no seam */
-  background:linear-gradient(165deg,rgba(22,28,44,.94) 0%,rgba(12,16,28,.96) 55%,rgba(14,18,32,.95) 100%);
-  pointer-events:none;
+.freedom-companion-msg-inner{
+  position:relative;z-index:2;
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
 }
-/* Peach outline/glow on exposed outer edges only (not the card-side join) */
-.freedom-companion-msg-tail::before{
-  content:"";position:absolute;inset:-1.5px;z-index:-1;pointer-events:none;
-  background:linear-gradient(225deg,
-    rgba(255,176,120,.78) 0%,
-    rgba(255,170,115,.55) 38%,
-    rgba(255,160,110,.2) 62%,
-    transparent 78%);
-  filter:blur(1.1px);
-}
-.freedom-companion-msg-inner{position:relative;z-index:2}
 .freedom-companion-msg-row{
   display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
 }
@@ -2124,7 +2109,9 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-actions{
   display:flex;align-items:stretch;justify-content:stretch;gap:8px;
-  margin-top:20px;
+  /* Pin actions to the bottom of the taller card; preserve prior 20px gap */
+  margin-top:auto;
+  padding-top:20px;
 }
 .freedom-companion-msg-action{
   flex:1 1 0;min-width:0;
@@ -6587,10 +6574,93 @@ fillForm();render();const initial=location.hash.slice(1);if(["overview","journey
 
 /* Companion Message — reusable visual component (no behaviour wiring yet) */
 window.FreedomCompanionMessage=(function(){
+  const SVG_NS="http://www.w3.org/2000/svg";
   function esc(s){
     return String(s==null?"":s)
       .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
       .replace(/"/g,"&quot;");
+  }
+  /* One continuous path: rounded rect perimeter + left speech-bubble tail */
+  function layoutOutline(root, svg, path){
+    const W=root.offsetWidth;
+    const H=root.offsetHeight;
+    if(!W||!H)return;
+    const r=20;
+    const tailOut=29.5;
+    const pad=2;
+    const svgW=W+tailOut+pad;
+    const svgH=H+pad*2;
+    svg.setAttribute("viewBox","0 0 "+svgW+" "+svgH);
+    svg.style.left=(-tailOut)+"px";
+    svg.style.top=(-pad)+"px";
+    svg.style.width=svgW+"px";
+    svg.style.height=svgH+"px";
+
+    const x0=tailOut;
+    const y0=pad;
+    const x1=tailOut+W;
+    const y1=pad+H;
+    const midY=y0+H*0.70;
+    /* Approved a1b36a7 silhouette, larger projection/body; upper attach capped */
+    const tipX=1;
+    const tipY=midY+5.25;
+    const yBot=midY+7.95;
+    const yTop=midY-9.5;
+
+    let d="M "+(x0+r)+" "+y0;
+    d+=" L "+(x1-r)+" "+y0;
+    d+=" A "+r+" "+r+" 0 0 1 "+x1+" "+(y0+r);
+    d+=" L "+x1+" "+(y1-r);
+    d+=" A "+r+" "+r+" 0 0 1 "+(x1-r)+" "+y1;
+    d+=" L "+(x0+r)+" "+y1;
+    d+=" A "+r+" "+r+" 0 0 1 "+x0+" "+(y1-r);
+    d+=" L "+x0+" "+yBot;
+    d+=" C "+(x0-3.6)+" "+yBot+", "+(tipX+7.05)+" "+(tipY+3.6)+", "+tipX+" "+tipY;
+    d+=" C "+(tipX+10.0)+" "+(tipY-3.2)+", "+(x0-0.5)+" "+(yTop+3.8)+", "+x0+" "+yTop;
+    d+=" L "+x0+" "+(y0+r);
+    d+=" A "+r+" "+r+" 0 0 1 "+(x0+r)+" "+y0;
+    d+=" Z";
+    path.setAttribute("d",d);
+  }
+  function createOutline(root){
+    const svg=document.createElementNS(SVG_NS,"svg");
+    svg.setAttribute("class","freedom-companion-msg-outline");
+    svg.setAttribute("aria-hidden","true");
+
+    const defs=document.createElementNS(SVG_NS,"defs");
+    const gid="cm-stroke-"+Math.random().toString(36).slice(2,9);
+    const grad=document.createElementNS(SVG_NS,"linearGradient");
+    grad.setAttribute("id",gid);
+    grad.setAttribute("x1","0%");
+    grad.setAttribute("y1","0%");
+    grad.setAttribute("x2","100%");
+    grad.setAttribute("y2","100%");
+    [
+      ["0%","#ffb078"],
+      ["18%","#f5a090"],
+      ["45%","#e889b4"],
+      ["72%","#d060c8"],
+      ["100%","#a855d8"]
+    ].forEach(function(pair){
+      const stop=document.createElementNS(SVG_NS,"stop");
+      stop.setAttribute("offset",pair[0]);
+      stop.setAttribute("stop-color",pair[1]);
+      grad.appendChild(stop);
+    });
+    defs.appendChild(grad);
+
+    const path=document.createElementNS(SVG_NS,"path");
+    path.setAttribute("fill","none");
+    path.setAttribute("stroke","url(#"+gid+")");
+    path.setAttribute("stroke-width","1.5");
+    path.setAttribute("stroke-linejoin","round");
+    path.setAttribute("stroke-linecap","round");
+
+    svg.appendChild(defs);
+    svg.appendChild(path);
+    root.insertBefore(svg,root.firstChild);
+
+    return function(){ layoutOutline(root,svg,path); };
   }
   function create(opts){
     opts=opts||{};
@@ -6599,10 +6669,7 @@ window.FreedomCompanionMessage=(function(){
     root.setAttribute("role","group");
     if(opts.name)root.setAttribute("aria-label",String(opts.name)+" message");
 
-    const tail=document.createElement("span");
-    tail.className="freedom-companion-msg-tail";
-    tail.setAttribute("aria-hidden","true");
-    root.appendChild(tail);
+    const layout=createOutline(root);
 
     const inner=document.createElement("div");
     inner.className="freedom-companion-msg-inner";
@@ -6691,6 +6758,7 @@ window.FreedomCompanionMessage=(function(){
     }
 
     root.appendChild(inner);
+    root._cmLayoutOutline=layout;
     return root;
   }
   function mount(host, opts){
@@ -6698,6 +6766,12 @@ window.FreedomCompanionMessage=(function(){
     host.innerHTML="";
     const el=create(opts);
     host.appendChild(el);
+    /* Measure after mount so path matches rendered card size */
+    if(typeof el._cmLayoutOutline==="function"){
+      requestAnimationFrame(function(){
+        el._cmLayoutOutline();
+      });
+    }
     return el;
   }
   return {create:create,mount:mount};
