@@ -1978,47 +1978,53 @@ body.home183 .demo183-wrap{
   transform:translate(-50%,-50%);
   pointer-events:auto;
 }
-/* Longer edge-following illumination BEHIND the card — not blobs */
+/* TL peach edge glow — independent layer behind the card */
 .freedom-companion-msg-host::before{
-  content:"";position:absolute;inset:-9px -11px -11px -8px;z-index:0;border-radius:30px;pointer-events:none;
+  content:"";position:absolute;z-index:0;pointer-events:none;
+  left:-10px;top:-10px;width:78%;height:72%;
+  border-radius:28px 0 0 0;
   background:
-    /* TL corner hotspot (under perimeter) */
-    radial-gradient(ellipse 22% 20% at 6% 6%,
+    radial-gradient(ellipse 38% 34% at 10% 12%,
       rgba(255,178,112,.98) 0%,
-      rgba(255,160,100,.48) 42%,
-      transparent 70%),
-    /* peach travelling along TOP edge */
+      rgba(255,160,100,.5) 38%,
+      transparent 68%),
     linear-gradient(90deg,
-      rgba(255,176,110,.72) 0%,
-      rgba(255,160,100,.34) 40%,
-      rgba(255,150,100,.1) 68%,
-      transparent 85%) top left / 82% 12px no-repeat,
-    /* peach travelling DOWN LEFT edge */
+      rgba(255,176,110,.78) 0%,
+      rgba(255,160,100,.36) 42%,
+      rgba(255,150,100,.1) 72%,
+      transparent 88%) top left / 100% 11px no-repeat,
     linear-gradient(180deg,
-      rgba(255,170,105,.62) 0%,
-      rgba(255,150,95,.28) 42%,
-      rgba(255,145,95,.08) 70%,
-      transparent 88%) top left / 11px 78% no-repeat,
-    /* BR corner hotspot */
-    radial-gradient(ellipse 22% 20% at 94% 94%,
+      rgba(255,170,105,.7) 0%,
+      rgba(255,150,95,.3) 44%,
+      rgba(255,145,95,.08) 72%,
+      transparent 90%) top left / 10px 100% no-repeat;
+  filter:blur(4.5px);
+  opacity:.9;
+  animation:freedomCompanionMsgGlowTl 8s ease-in-out infinite alternate;
+}
+/* BR magenta edge glow — independent layer behind the card */
+.freedom-companion-msg-host::after{
+  content:"";position:absolute;z-index:0;pointer-events:none;
+  right:-11px;bottom:-11px;width:78%;height:72%;
+  border-radius:0 0 28px 0;
+  background:
+    radial-gradient(ellipse 38% 34% at 90% 88%,
       rgba(210,90,220,.96) 0%,
-      rgba(180,75,215,.46) 42%,
-      transparent 70%),
-    /* magenta travelling along BOTTOM edge */
+      rgba(180,75,215,.48) 38%,
+      transparent 68%),
     linear-gradient(270deg,
-      rgba(210,90,220,.68) 0%,
-      rgba(175,75,210,.3) 40%,
-      rgba(170,70,205,.1) 68%,
-      transparent 85%) bottom right / 82% 12px no-repeat,
-    /* magenta travelling UP RIGHT edge */
+      rgba(210,90,220,.74) 0%,
+      rgba(175,75,210,.32) 42%,
+      rgba(170,70,205,.1) 72%,
+      transparent 88%) bottom right / 100% 11px no-repeat,
     linear-gradient(0deg,
-      rgba(195,85,215,.58) 0%,
-      rgba(165,70,205,.26) 42%,
-      rgba(160,70,200,.08) 70%,
-      transparent 88%) bottom right / 11px 78% no-repeat;
-  filter:blur(8px);
-  opacity:.93;
-  animation:freedomCompanionMsgGlow 8s ease-in-out infinite alternate;
+      rgba(195,85,215,.66) 0%,
+      rgba(165,70,205,.28) 44%,
+      rgba(160,70,200,.08) 72%,
+      transparent 90%) bottom right / 10px 100% no-repeat;
+  filter:blur(4.5px);
+  opacity:.88;
+  animation:freedomCompanionMsgGlowBr 8.5s ease-in-out infinite alternate-reverse;
 }
 .freedom-companion-msg{
   --cm-peach:#efcbaa;
@@ -2053,21 +2059,24 @@ body.home183 .demo183-wrap{
   mask-composite:exclude;
   opacity:1;
 }
-/* Outward left speech-bubble tail — continuous silhouette, no inward notch */
+/* Outward left speech-bubble tail — rotated square merges into card fill */
 .freedom-companion-msg-tail{
-  position:absolute;left:-12px;bottom:30%;z-index:3;
-  width:0;height:0;
-  transform:translateY(50%);
-  border-style:solid;
-  border-width:8px 13px 8px 0;
-  border-color:transparent rgba(12,16,28,.98) transparent transparent;
-  /* rightward drop-shadow covers card border at join; leftward = peach perimeter */
-  filter:
-    drop-shadow(4px 0 0 rgba(12,16,28,.99))
-    drop-shadow(-1.25px -0.5px 0 rgba(255,176,120,.7))
-    drop-shadow(-1.25px 0.5px 0 rgba(255,170,115,.62))
-    drop-shadow(-3px 0 5px rgba(255,160,110,.3));
+  position:absolute;left:-7px;bottom:30%;z-index:1;
+  width:14px;height:14px;
+  transform:translateY(50%) rotate(45deg);
+  /* Same dark card fill so the join has no seam */
+  background:linear-gradient(165deg,rgba(22,28,44,.94) 0%,rgba(12,16,28,.96) 55%,rgba(14,18,32,.95) 100%);
   pointer-events:none;
+}
+/* Peach outline/glow on exposed outer edges only (not the card-side join) */
+.freedom-companion-msg-tail::before{
+  content:"";position:absolute;inset:-1.5px;z-index:-1;pointer-events:none;
+  background:linear-gradient(225deg,
+    rgba(255,176,120,.78) 0%,
+    rgba(255,170,115,.55) 38%,
+    rgba(255,160,110,.2) 62%,
+    transparent 78%);
+  filter:blur(1.1px);
 }
 .freedom-companion-msg-inner{position:relative;z-index:2}
 .freedom-companion-msg-row{
@@ -2104,13 +2113,14 @@ body.home183 .demo183-wrap{
 }
 /* Small warm glow BEHIND the native emoji (emoji stays crisp) */
 .freedom-companion-msg-emoji::before{
-  content:"";position:absolute;left:2%;right:2%;top:8%;bottom:8%;
+  content:"";position:absolute;left:-22%;right:-22%;top:-18%;bottom:-18%;
   z-index:-1;border-radius:50%;pointer-events:none;
-  background:radial-gradient(ellipse 70% 65% at 50% 55%,
-    rgba(255,186,150,.7) 0%,
-    rgba(236,150,180,.42) 48%,
-    transparent 74%);
-  filter:blur(7px);
+  background:radial-gradient(ellipse 72% 68% at 50% 55%,
+    rgba(255,186,150,.88) 0%,
+    rgba(236,150,180,.55) 46%,
+    transparent 76%);
+  filter:blur(9px);
+  opacity:.95;
 }
 .freedom-companion-msg-actions{
   display:flex;align-items:stretch;justify-content:stretch;gap:8px;
@@ -2170,12 +2180,17 @@ body.home183 .demo183-wrap{
   -webkit-tap-highlight-color:transparent;
 }
 .freedom-companion-msg-dismiss:active{color:rgba(239,203,170,.9)}
-@keyframes freedomCompanionMsgGlow{
+@keyframes freedomCompanionMsgGlowTl{
   0%{opacity:.78}
-  100%{opacity:.96}
+  100%{opacity:.94}
+}
+@keyframes freedomCompanionMsgGlowBr{
+  0%{opacity:.74}
+  100%{opacity:.92}
 }
 @media (prefers-reduced-motion:reduce){
-  .freedom-companion-msg-host::before{animation:none}
+  .freedom-companion-msg-host::before,
+  .freedom-companion-msg-host::after{animation:none}
 }
 
 .demo183-wrap .subwrap183{margin-left:0;width:100%}
