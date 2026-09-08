@@ -1975,8 +1975,8 @@ body.home183 .demo183-wrap{
   position:absolute;left:50%;top:52%;z-index:5;
   /* ~9% larger than prior; -50% centres the card body (tail is absolute overflow) */
   width:min(86vw,308px);
-  /* Offset by half the added top padding so bottom edge + buttons stay put */
-  transform:translate(-50%,calc(-50% - 12.5px));
+  /* Shift up by half the +32px height grow so bottom edge + buttons stay put */
+  transform:translate(-50%,calc(-50% - 28.5px));
   pointer-events:auto;
 }
 /* TL peach edge glow — independent layer behind the card */
@@ -2036,8 +2036,12 @@ body.home183 .demo183-wrap{
   position:relative;
   z-index:1;
   border-radius:20px;
-  /* Extra top padding raises top edge + Patricia/copy/map/X; bottom padding unchanged */
-  padding:40px 14px 13px;
+  /* Compact top inset (~20px); extra bubble height comes from min-height, not padding */
+  padding:20px 14px 13px;
+  display:flex;
+  flex-direction:column;
+  /* ~32px taller than prior ~184px card — extends TOP only when bottom is held fixed */
+  min-height:216px;
   background:linear-gradient(165deg,rgba(22,28,44,.94) 0%,rgba(12,16,28,.96) 55%,rgba(14,18,32,.95) 100%);
   backdrop-filter:blur(16px) saturate(.95);
   -webkit-backdrop-filter:blur(16px) saturate(.95);
@@ -2052,7 +2056,13 @@ body.home183 .demo183-wrap{
   position:absolute;z-index:1;pointer-events:none;overflow:visible;
   display:block;
 }
-.freedom-companion-msg-inner{position:relative;z-index:2}
+.freedom-companion-msg-inner{
+  position:relative;z-index:2;
+  flex:1 1 auto;
+  display:flex;
+  flex-direction:column;
+  min-height:0;
+}
 .freedom-companion-msg-row{
   display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
 }
@@ -2098,7 +2108,9 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-actions{
   display:flex;align-items:stretch;justify-content:stretch;gap:8px;
-  margin-top:20px;
+  /* Pin actions to the bottom of the taller card; preserve prior 20px gap */
+  margin-top:auto;
+  padding-top:20px;
 }
 .freedom-companion-msg-action{
   flex:1 1 0;min-width:0;
