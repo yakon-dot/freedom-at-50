@@ -6602,7 +6602,8 @@ window.FreedomCompanionMessage=(function(){
     /* Same tip + lower edge; only upper attachment moved up */
     d+=" L "+x0+" "+yBot;
     d+=" C "+(x0-2)+" "+yBot+", "+(tipX+4)+" "+(tipY+2)+", "+tipX+" "+tipY;
-    d+=" C "+(tipX+7)+" "+(tipY-2)+", "+(x0-1.5)+" "+(yTop+1.5)+", "+x0+" "+yTop;
+    /* Soften upper join: pull final control nearer vertical so edge→beak has no kink */
+    d+=" C "+(tipX+7)+" "+(tipY-2)+", "+(x0-0.35)+" "+(yTop+2.8)+", "+x0+" "+yTop;
     d+=" L "+x0+" "+(y0+r);
     d+=" A "+r+" "+r+" 0 0 1 "+(x0+r)+" "+y0;
     d+=" Z";
