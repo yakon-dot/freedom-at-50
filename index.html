@@ -1037,7 +1037,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
-      #070809 url("./journey-wallpaper.png") center -170px/cover no-repeat;
+      #070809 url("./journey-wallpaper.png") center -190px/cover no-repeat;
   }
   body.journey-active-v313 .app::before{display:none}
   body.journey-active-v313 #journey{
@@ -1048,7 +1048,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.journey-active-v313 #journey .journey-hero{
     --hero-text-top:clamp(62px,calc(20vh - 58px),117px);
     position:relative;
-    min-height:clamp(200px,36vh,300px);
+    min-height:clamp(156px,calc(36vh - 44px),256px);
     padding:clamp(40px,7vh,60px) 18px clamp(64px,11vh,100px);
     text-align:center;box-sizing:border-box;
   }
@@ -1063,7 +1063,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     font-size:14px;line-height:1.55;
     color:rgba(200,198,192,.55);
   }
-  body.journey-active-v313 #journey .journey-actions{justify-content:flex-end;margin:0 0 clamp(6px,1vh,10px)}
+  body.journey-active-v313 #journey .journey-actions{
+    flex-wrap:nowrap;align-items:stretch;justify-content:space-between;gap:10px;
+    margin:114px 0 clamp(6px,1vh,10px);
+  }
   body.journey-active-v313 #journey #loanList{margin-top:clamp(18px,3.5vh,32px);gap:18px}
   body.journey-active-v313 #journey #loanList .loan-card{
     touch-action:pan-y;transition:transform .22s ease,box-shadow .22s ease;
@@ -1080,28 +1083,29 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     transition:transform .22s ease;
   }
   body.journey-active-v313 #journey #toggleAddJourney{
+    margin-left:auto;
     border-color:rgba(218,167,128,.42);background:rgba(16,18,20,.30);
     color:rgba(231,177,137,.88);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
   }
   body.journey-active-v313 #journey .monthly-summary-card{
-    margin:clamp(10px,1.6vh,14px) 0 0;
-    padding:14px 16px 13px;
+    flex:1 1 auto;width:auto;max-width:220px;height:36px;
+    margin:0;padding:3px 12px;
     border:1px solid rgba(220,190,150,.18);
-    border-radius:22px;
+    border-radius:999px;
     background:rgba(18,20,24,.08);
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     box-shadow:none;
-    text-align:center;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:left;
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
   }
   body.journey-active-v313 #journey .monthly-summary-card[hidden]{display:none!important}
   body.journey-active-v313 #journey .monthly-summary-card::before{display:none}
   body.journey-active-v313 #journey .monthly-summary-amount{
-    margin:0;font-size:28px;line-height:1.05;font-weight:720;
+    margin:0;font-size:13px;line-height:1;font-weight:720;
     letter-spacing:-.03em;color:#efcbaa;
   }
   body.journey-active-v313 #journey .monthly-summary-label{
-    margin:6px 0 0;font-size:13px;line-height:1.4;font-weight:500;
+    margin:2px 0 0;font-size:7.5px;line-height:1;font-weight:500;
     color:rgba(236,232,224,.78);
   }
   body.journey-active-v313 #journey .stack{gap:18px}
@@ -1314,7 +1318,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
-      #070809 url("./goals-wallpaper.png") center -140px/cover no-repeat;
+      #070809 url("./goals-wallpaper.png") center -160px/cover no-repeat;
   }
   body.goals-active-v314 .app::before{display:none}
   body.goals-active-v314 .app{position:relative;z-index:1;background:transparent}
@@ -1328,7 +1332,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.goals-active-v314 #goals .goals-hero{
     --hero-text-top:clamp(62px,calc(20vh - 58px),117px);
     position:relative;
-    min-height:clamp(200px,36vh,300px);
+    min-height:clamp(156px,calc(36vh - 44px),256px);
     padding:clamp(40px,7vh,60px) 18px clamp(64px,11vh,100px);
     text-align:center;box-sizing:border-box;
   }
@@ -1343,7 +1347,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     font-size:14px;line-height:1.55;
     color:rgba(200,198,192,.55);
   }
-  body.goals-active-v314 #goals .goals-actions{justify-content:flex-end;margin:0 0 clamp(6px,1vh,10px)}
+  body.goals-active-v314 #goals .goals-actions{
+    flex-wrap:nowrap;align-items:stretch;justify-content:space-between;gap:10px;
+    margin:124px 0 clamp(6px,1vh,10px);
+  }
   body.goals-active-v314 #goals #goalsList{margin-top:clamp(18px,3.5vh,32px);gap:18px}
   body.goals-active-v314 #goals #goalsList .goal-card{
     touch-action:pan-y;transition:transform .22s ease,box-shadow .22s ease;
@@ -1358,28 +1365,29 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     transition:transform .22s ease;
   }
   body.goals-active-v314 #goals #toggleAddGoal{
+    margin-left:auto;
     border-color:rgba(218,167,128,.42);background:rgba(16,18,20,.30);
     color:rgba(231,177,137,.88);box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
   }
   body.goals-active-v314 #goals .monthly-summary-card{
-    margin:clamp(10px,1.6vh,14px) 0 0;
-    padding:14px 16px 13px;
+    flex:1 1 auto;width:auto;max-width:220px;height:36px;
+    margin:0;padding:3px 12px;
     border:1px solid rgba(220,190,150,.18);
-    border-radius:22px;
+    border-radius:999px;
     background:rgba(18,20,24,.06);
     backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
     box-shadow:none;
-    text-align:center;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:left;
+    display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
   }
   body.goals-active-v314 #goals .monthly-summary-card[hidden]{display:none!important}
   body.goals-active-v314 #goals .monthly-summary-card::before{display:none}
   body.goals-active-v314 #goals .monthly-summary-amount{
-    margin:0;font-size:28px;line-height:1.05;font-weight:720;
+    margin:0;font-size:13px;line-height:1;font-weight:720;
     letter-spacing:-.03em;color:#efcbaa;
   }
   body.goals-active-v314 #goals .monthly-summary-label{
-    margin:6px 0 0;font-size:13px;line-height:1.4;font-weight:500;
+    margin:2px 0 0;font-size:7.5px;line-height:1;font-weight:500;
     color:rgba(236,232,224,.78);
   }
   body.goals-active-v314 #goals .stack{gap:18px}
@@ -1979,10 +1987,13 @@ body.home183 .demo183-wrap{
   transform:translate(-50%,calc(-50% - 28.5px));
   pointer-events:auto;
 }
+.freedom-companion-msg-host.is-entering{
+  animation:freedomCompanionMsgEnter 400ms ease-out both;
+}
 /* TL peach edge glow — independent layer behind the card */
 .freedom-companion-msg-host::before{
   content:"";position:absolute;z-index:0;pointer-events:none;
-  left:-10px;top:-10px;width:90%;height:80%;
+  left:-6px;top:-6px;width:90%;height:80%;
   border-radius:28px 0 0 0;
   background:
     radial-gradient(ellipse 38% 34% at 10% 12%,
@@ -2051,6 +2062,19 @@ body.home183 .demo183-wrap{
   position:absolute;z-index:1;pointer-events:none;overflow:visible;
   display:block;
 }
+.freedom-companion-msg-glow-outline{
+  position:absolute;z-index:0;pointer-events:none;overflow:visible;
+  display:block;
+}
+.freedom-companion-msg-travelling-glow{
+  pointer-events:none;
+  opacity:1;
+  animation:freedomCompanionMsgPerimeterTravel 11s linear infinite;
+}
+.freedom-companion-msg-travelling-fade{
+  pointer-events:none;
+  animation:freedomCompanionMsgPerimeterTravel 11s linear infinite;
+}
 .freedom-companion-msg-inner{position:relative;z-index:2}
 .freedom-companion-msg-row{
   display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
@@ -2086,14 +2110,20 @@ body.home183 .demo183-wrap{
 }
 /* Small warm glow BEHIND the native emoji (emoji stays crisp) */
 .freedom-companion-msg-emoji::before{
-  content:"";position:absolute;left:-22%;right:-22%;top:-18%;bottom:-18%;
-  z-index:-1;border-radius:50%;pointer-events:none;
-  background:radial-gradient(ellipse 72% 68% at 50% 55%,
-    rgba(255,186,150,.88) 0%,
-    rgba(236,150,180,.55) 46%,
-    transparent 76%);
-  filter:blur(9px);
-  opacity:.95;
+  content:"";position:absolute;left:50%;top:52%;
+  width:1.48em;height:1.22em;
+  transform:translate(-50%,-50%) rotate(-7deg);
+  z-index:-1;pointer-events:none;
+  border-radius:67% 33% 58% 42% / 39% 61% 34% 66%;
+  background:
+    radial-gradient(ellipse 52% 66% at 25% 43%,
+      rgba(255,158,101,.96) 0%,rgba(255,133,112,.62) 42%,transparent 75%),
+    radial-gradient(ellipse 58% 45% at 72% 27%,
+      rgba(255,76,151,.86) 0%,rgba(255,75,151,.5) 40%,transparent 74%),
+    radial-gradient(ellipse 48% 58% at 63% 76%,
+      rgba(244,76,166,.72) 0%,rgba(235,83,165,.38) 43%,transparent 76%);
+  filter:blur(7px);
+  opacity:.98;
 }
 .freedom-companion-msg-actions{
   display:flex;align-items:stretch;justify-content:stretch;gap:8px;
@@ -2161,9 +2191,20 @@ body.home183 .demo183-wrap{
   0%{opacity:.74}
   100%{opacity:.92}
 }
+@keyframes freedomCompanionMsgPerimeterTravel{
+  from{stroke-dashoffset:0}
+  to{stroke-dashoffset:-100}
+}
+@keyframes freedomCompanionMsgEnter{
+  from{opacity:0;transform:translate(-50%,calc(-50% - 16.5px)) scale(.98)}
+  to{opacity:1;transform:translate(-50%,calc(-50% - 28.5px)) scale(1)}
+}
 @media (prefers-reduced-motion:reduce){
+  .freedom-companion-msg-host.is-entering{animation:none}
   .freedom-companion-msg-host::before,
   .freedom-companion-msg-host::after{animation:none}
+  .freedom-companion-msg-travelling-glow,
+  .freedom-companion-msg-travelling-fade{display:none}
 }
 
 .demo183-wrap .subwrap183{margin-left:0;width:100%}
@@ -3076,6 +3117,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   }
   var COMPANION_KEY="freedom50-companion-id-v1";
   var COMPANION_PENDING_KEY="freedom50-companion-pending-v1";
+  var COMPANION_FIRST_SETUP_PENDING_KEY="freedom50-companion-first-setup-pending-v1";
   var COMPANION_ACK_MS=700;
   var companionOpenId=null;
   var companionSelecting=false;
@@ -3098,6 +3140,15 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   }
   function saveSelectedCompanion(id){
     try{localStorage.setItem(COMPANION_KEY,id);}catch(e){}
+  }
+  function isFirstCompanionSetupPending(){
+    try{return localStorage.getItem(COMPANION_FIRST_SETUP_PENDING_KEY)==="1";}catch(e){return false;}
+  }
+  function setFirstCompanionSetupPending(on){
+    try{
+      if(on)localStorage.setItem(COMPANION_FIRST_SETUP_PENDING_KEY,"1");
+      else localStorage.removeItem(COMPANION_FIRST_SETUP_PENDING_KEY);
+    }catch(e){}
   }
   function hideCompanionSelect(){
     if(!companionSelect)return;
@@ -3263,6 +3314,9 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     hideCompanionSelect();
     /* Home was staged under Companion before the fade; keep it authoritative. */
     stagePersonalHomeUnderCompanion();
+    if(window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.mountAfterSelection==="function"){
+      window.FreedomFirstCompanionSetup.mountAfterSelection();
+    }
   }
   function completeCompanionSelection(id,pickBtn){
     if(companionSelecting)return;
@@ -3270,6 +3324,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     companionSelecting=true;
     /* Persist immediately, then briefly acknowledge on the same Pick button. */
     saveSelectedCompanion(id);
+    setFirstCompanionSetupPending(true);
     setCompanionPending(false);
     markFirstTimeComplete();
     if(pickBtn){
@@ -3337,7 +3392,9 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     show:presentCompanionSelect,
     hide:hideCompanionSelect,
     isPending:isCompanionPending,
-    getSelected:getSelectedCompanion
+    getSelected:getSelectedCompanion,
+    isFirstSetupPending:isFirstCompanionSetupPending,
+    completeFirstSetup:function(){setFirstCompanionSetupPending(false);}
   };
 
   if(comeIn){
@@ -3406,6 +3463,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     }else if(shouldArmCompanion){
       /* Already staged under splash; restore normal stacking above Home. */
       presentCompanionSelect();
+    }else if(window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.restoreAfterReload==="function"){
+      window.FreedomFirstCompanionSetup.restoreAfterReload();
     }
   }
   function dismiss(){
@@ -3645,8 +3704,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     </div>
   </div>
 </section>
-<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><div class="stack" id="loanList"></div></section>
-<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><div class="stack" id="goalsList"></div></section>
+<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
+<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
@@ -4323,6 +4382,7 @@ function confirmEnterDemo(){
 }
 function enterDemo(){
   if(demoMode)return;
+  if(window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.hide==="function")window.FreedomFirstCompanionSetup.hide();
   realStateSnapshot=JSON.parse(JSON.stringify(state));
   resetDemoSession();
   state=buildCanonicalDemoState();
@@ -4361,6 +4421,9 @@ function exitDemo(){
   render();
   applyDemoButtonState(byId("demo183"));
   if(firstExit)return;
+  if(window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.restoreAfterReload==="function"){
+    window.FreedomFirstCompanionSetup.restoreAfterReload();
+  }
 }
 function continueFromWelcome(){
   hideDemoWelcomeOverlay();
@@ -6567,7 +6630,7 @@ window.FreedomCompanionMessage=(function(){
       .replace(/"/g,"&quot;");
   }
   /* One continuous path: rounded rect perimeter + left speech-bubble tail */
-  function layoutOutline(root, svg, path){
+  function layoutOutline(root, svg, path, glowSvg, glowPaths, glowFadePaths, glowMaskPath){
     const W=root.offsetWidth;
     const H=root.offsetHeight;
     if(!W||!H)return;
@@ -6581,6 +6644,11 @@ window.FreedomCompanionMessage=(function(){
     svg.style.top=(-pad)+"px";
     svg.style.width=svgW+"px";
     svg.style.height=svgH+"px";
+    glowSvg.setAttribute("viewBox","0 0 "+svgW+" "+svgH);
+    glowSvg.style.left=(-tailOut)+"px";
+    glowSvg.style.top=(-pad)+"px";
+    glowSvg.style.width=svgW+"px";
+    glowSvg.style.height=svgH+"px";
 
     const x0=tailOut;
     const y0=pad;
@@ -6608,6 +6676,9 @@ window.FreedomCompanionMessage=(function(){
     d+=" A "+r+" "+r+" 0 0 1 "+(x0+r)+" "+y0;
     d+=" Z";
     path.setAttribute("d",d);
+    glowPaths.forEach(function(glowPath){glowPath.setAttribute("d",d);});
+    glowFadePaths.forEach(function(glowFadePath){glowFadePath.setAttribute("d",d);});
+    glowMaskPath.setAttribute("d",d);
   }
   function createOutline(root){
     const svg=document.createElementNS(SVG_NS,"svg");
@@ -6636,6 +6707,175 @@ window.FreedomCompanionMessage=(function(){
     });
     defs.appendChild(grad);
 
+    const glowSvg=document.createElementNS(SVG_NS,"svg");
+    glowSvg.setAttribute("class","freedom-companion-msg-glow-outline");
+    glowSvg.setAttribute("aria-hidden","true");
+    const glowDefs=defs.cloneNode(true);
+    const glowGid=gid+"-glow";
+    glowDefs.querySelector("linearGradient").setAttribute("id",glowGid);
+    const baseGlowGid=gid+"-base-glow";
+    const baseGlowGrad=document.createElementNS(SVG_NS,"linearGradient");
+    baseGlowGrad.setAttribute("id",baseGlowGid);
+    baseGlowGrad.setAttribute("x1","0%");
+    baseGlowGrad.setAttribute("y1","0%");
+    baseGlowGrad.setAttribute("x2","100%");
+    baseGlowGrad.setAttribute("y2","100%");
+    [
+      ["0%","#ff8a45"],
+      ["22%","#ff5c70"],
+      ["48%","#ff3f9b"],
+      ["74%","#d83fd2"],
+      ["100%","#9148e8"]
+    ].forEach(function(pair){
+      const stop=document.createElementNS(SVG_NS,"stop");
+      stop.setAttribute("offset",pair[0]);
+      stop.setAttribute("stop-color",pair[1]);
+      baseGlowGrad.appendChild(stop);
+    });
+    glowDefs.appendChild(baseGlowGrad);
+    const glowMaskId=gid+"-exterior-mask";
+    const glowMask=document.createElementNS(SVG_NS,"mask");
+    glowMask.setAttribute("id",glowMaskId);
+    glowMask.setAttribute("maskUnits","userSpaceOnUse");
+    glowMask.setAttribute("x","-100");
+    glowMask.setAttribute("y","-100");
+    glowMask.setAttribute("width","1000");
+    glowMask.setAttribute("height","1000");
+    const glowMaskExterior=document.createElementNS(SVG_NS,"rect");
+    glowMaskExterior.setAttribute("x","-100");
+    glowMaskExterior.setAttribute("y","-100");
+    glowMaskExterior.setAttribute("width","1000");
+    glowMaskExterior.setAttribute("height","1000");
+    glowMaskExterior.setAttribute("fill","white");
+    const glowMaskFeatherId=gid+"-exterior-mask-feather";
+    const glowMaskFeather=document.createElementNS(SVG_NS,"filter");
+    glowMaskFeather.setAttribute("id",glowMaskFeatherId);
+    glowMaskFeather.setAttribute("filterUnits","userSpaceOnUse");
+    glowMaskFeather.setAttribute("x","-100");
+    glowMaskFeather.setAttribute("y","-100");
+    glowMaskFeather.setAttribute("width","1000");
+    glowMaskFeather.setAttribute("height","1000");
+    const glowMaskFeatherBlur=document.createElementNS(SVG_NS,"feGaussianBlur");
+    glowMaskFeatherBlur.setAttribute("stdDeviation","2");
+    glowMaskFeather.appendChild(glowMaskFeatherBlur);
+    glowDefs.appendChild(glowMaskFeather);
+    const glowMaskPath=document.createElementNS(SVG_NS,"path");
+    glowMaskPath.setAttribute("fill","black");
+    glowMaskPath.setAttribute("filter","url(#"+glowMaskFeatherId+")");
+    glowMask.appendChild(glowMaskExterior);
+    glowMask.appendChild(glowMaskPath);
+    glowDefs.appendChild(glowMask);
+
+    const glowRenderFilterId=gid+"-travelling-blur";
+    const glowRenderFilter=document.createElementNS(SVG_NS,"filter");
+    glowRenderFilter.setAttribute("id",glowRenderFilterId);
+    glowRenderFilter.setAttribute("x","-100%");
+    glowRenderFilter.setAttribute("y","-100%");
+    glowRenderFilter.setAttribute("width","300%");
+    glowRenderFilter.setAttribute("height","300%");
+    const glowRenderBlur=document.createElementNS(SVG_NS,"feGaussianBlur");
+    glowRenderBlur.setAttribute("in","SourceGraphic");
+    glowRenderBlur.setAttribute("stdDeviation","14");
+    glowRenderBlur.setAttribute("result","softGlow");
+    glowRenderFilter.appendChild(glowRenderBlur);
+    const glowRenderIntensity=document.createElementNS(SVG_NS,"feComponentTransfer");
+    glowRenderIntensity.setAttribute("in","softGlow");
+    const glowRenderAlpha=document.createElementNS(SVG_NS,"feFuncA");
+    glowRenderAlpha.setAttribute("type","linear");
+    glowRenderAlpha.setAttribute("slope","2.2");
+    glowRenderIntensity.appendChild(glowRenderAlpha);
+    glowRenderFilter.appendChild(glowRenderIntensity);
+    glowDefs.appendChild(glowRenderFilter);
+
+    const baseGlowFilterId=gid+"-base-glow-blur";
+    const baseGlowFilter=document.createElementNS(SVG_NS,"filter");
+    baseGlowFilter.setAttribute("id",baseGlowFilterId);
+    baseGlowFilter.setAttribute("x","-100%");
+    baseGlowFilter.setAttribute("y","-100%");
+    baseGlowFilter.setAttribute("width","300%");
+    baseGlowFilter.setAttribute("height","300%");
+    const baseGlowBlur=document.createElementNS(SVG_NS,"feGaussianBlur");
+    baseGlowBlur.setAttribute("in","SourceGraphic");
+    baseGlowBlur.setAttribute("stdDeviation","6");
+    baseGlowFilter.appendChild(baseGlowBlur);
+    glowDefs.appendChild(baseGlowFilter);
+
+    function createFeatherMask(name,className,strokeWidth,dasharray,dashoffset,stdDeviation){
+      const maskId=gid+"-"+name+"-fade";
+      const filterId=maskId+"-blur";
+      const filter=document.createElementNS(SVG_NS,"filter");
+      filter.setAttribute("id",filterId);
+      filter.setAttribute("x","-100%");
+      filter.setAttribute("y","-100%");
+      filter.setAttribute("width","300%");
+      filter.setAttribute("height","300%");
+      const gaussian=document.createElementNS(SVG_NS,"feGaussianBlur");
+      gaussian.setAttribute("stdDeviation",stdDeviation);
+      filter.appendChild(gaussian);
+      glowDefs.appendChild(filter);
+
+      const mask=document.createElementNS(SVG_NS,"mask");
+      mask.setAttribute("id",maskId);
+      mask.setAttribute("maskUnits","userSpaceOnUse");
+      mask.setAttribute("x","-100");
+      mask.setAttribute("y","-100");
+      mask.setAttribute("width","1000");
+      mask.setAttribute("height","1000");
+      mask.setAttribute("mask-type","alpha");
+      const maskBackground=document.createElementNS(SVG_NS,"rect");
+      maskBackground.setAttribute("x","-100");
+      maskBackground.setAttribute("y","-100");
+      maskBackground.setAttribute("width","1000");
+      maskBackground.setAttribute("height","1000");
+      maskBackground.setAttribute("fill","black");
+      maskBackground.setAttribute("fill-opacity","0");
+      const fadePath=document.createElementNS(SVG_NS,"path");
+      fadePath.setAttribute("class","freedom-companion-msg-travelling-fade "+className);
+      fadePath.setAttribute("fill","none");
+      fadePath.setAttribute("stroke","white");
+      fadePath.setAttribute("stroke-width",strokeWidth);
+      fadePath.setAttribute("stroke-linejoin","round");
+      fadePath.setAttribute("stroke-linecap","round");
+      fadePath.setAttribute("pathLength","100");
+      fadePath.setAttribute("stroke-dasharray",dasharray);
+      fadePath.setAttribute("stroke-dashoffset",dashoffset);
+      fadePath.setAttribute("filter","url(#"+filterId+")");
+      mask.appendChild(maskBackground);
+      mask.appendChild(fadePath);
+      glowDefs.appendChild(mask);
+      return {id:maskId,path:fadePath};
+    }
+    const featherMask=createFeatherMask("single","freedom-companion-msg-travelling-fade-single","24","32 68","0","7");
+
+    function createGlowPath(className,strokeWidth,dasharray,dashoffset,fadeMaskId){
+      const glowPath=document.createElementNS(SVG_NS,"path");
+      glowPath.setAttribute("class","freedom-companion-msg-travelling-glow "+className);
+      glowPath.setAttribute("fill","none");
+      glowPath.setAttribute("stroke","url(#"+glowGid+")");
+      glowPath.setAttribute("stroke-width",strokeWidth);
+      glowPath.setAttribute("stroke-linejoin","round");
+      glowPath.setAttribute("stroke-linecap","round");
+      glowPath.setAttribute("pathLength","100");
+      glowPath.setAttribute("stroke-dasharray",dasharray);
+      glowPath.setAttribute("stroke-dashoffset",dashoffset);
+      glowPath.setAttribute("filter","url(#"+glowRenderFilterId+")");
+      glowPath.setAttribute("mask","url(#"+fadeMaskId+")");
+      return glowPath;
+    }
+    const baseGlowPath=document.createElementNS(SVG_NS,"path");
+    baseGlowPath.setAttribute("fill","none");
+    baseGlowPath.setAttribute("stroke","url(#"+baseGlowGid+")");
+    baseGlowPath.setAttribute("stroke-width","5");
+    baseGlowPath.setAttribute("stroke-linejoin","round");
+    baseGlowPath.setAttribute("stroke-linecap","round");
+    baseGlowPath.setAttribute("opacity",".90");
+    baseGlowPath.setAttribute("filter","url(#"+baseGlowFilterId+")");
+    const glowPaths=[
+      baseGlowPath,
+      createGlowPath("freedom-companion-msg-travelling-glow-single","8","32 68","0",featherMask.id)
+    ];
+    const glowFadePaths=[featherMask.path];
+
     const path=document.createElementNS(SVG_NS,"path");
     path.setAttribute("fill","none");
     path.setAttribute("stroke","url(#"+gid+")");
@@ -6643,11 +6883,16 @@ window.FreedomCompanionMessage=(function(){
     path.setAttribute("stroke-linejoin","round");
     path.setAttribute("stroke-linecap","round");
 
+    glowSvg.appendChild(glowDefs);
+    const glowGroup=document.createElementNS(SVG_NS,"g");
+    glowPaths.forEach(function(glowPath){glowGroup.appendChild(glowPath);});
+    glowSvg.appendChild(glowGroup);
     svg.appendChild(defs);
     svg.appendChild(path);
+    root.insertBefore(glowSvg,root.firstChild);
     root.insertBefore(svg,root.firstChild);
 
-    return function(){ layoutOutline(root,svg,path); };
+    return function(){ layoutOutline(root,svg,path,glowSvg,glowPaths,glowFadePaths,glowMaskPath); };
   }
   function create(opts){
     opts=opts||{};
@@ -6753,6 +6998,8 @@ window.FreedomCompanionMessage=(function(){
     host.innerHTML="";
     const el=create(opts);
     host.appendChild(el);
+    const glowSvg=el.querySelector(".freedom-companion-msg-glow-outline");
+    if(glowSvg)host.insertBefore(glowSvg,el);
     /* Measure after mount so path matches rendered card size */
     if(typeof el._cmLayoutOutline==="function"){
       requestAnimationFrame(function(){
@@ -6764,31 +7011,109 @@ window.FreedomCompanionMessage=(function(){
   return {create:create,mount:mount};
 })();
 
-/* Visual preview on Home only — not wired to onboarding / routing / persistence */
+/* First companion setup message — Personal Home only. */
 (function(){
   const host=document.getElementById("freedomCompanionMsgHost");
   if(!host||!window.FreedomCompanionMessage)return;
-  /* TEMP DEV ONLY: X dismisses this preview so More > Reset is reachable.
-     Final first-ever companion message will dismiss via Clearing/Building — no X. */
-  host.hidden=false;
-  window.FreedomCompanionMessage.mount(host,{
-    name:"Patricia",
-    message:"Let's put one thing on the map.\nWhat do you want to focus on first?",
-    inlineEmoji:"✨",
-    largeEmoji:"🗺️",
-    dismissible:true,
-    onDismiss:function(){
-      host.innerHTML="";
-      host.hidden=true;
-    },
-    actions:[
-      {id:"clearing",label:"Clearing",sub:"Reduce what you owe",iconSvg:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="7" ry="2.6"/><ellipse cx="12" cy="13" rx="7" ry="2.6"/><ellipse cx="12" cy="9" rx="7" ry="2.6"/><path d="M5 9v8M19 9v8"/></svg>'},
-      {id:"building",label:"Building",sub:"Grow for what's next",iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-3.8 0-6-2.1-6-5.8 3.8 0 6 2.1 6 5.8Z"/><path d="M12 11c3.8 0 6-2.1 6-5.8-3.8 0-6 2.1-6 5.8Z"/><path d="M8.5 21h7"/></svg>'}
-    ]
-  });
+  const companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
+  const definitions={
+    patricia:{
+      message:"Let's put one thing on the map.\nWhat do you want to focus on first?",
+      inlineEmoji:"✨",
+      largeEmoji:"🗺️"
+    }
+  };
+  const actions=[
+    {id:"clearing",label:"Clearing",sub:"Reduce what you owe",iconSvg:'<svg viewBox="0 0 24 24"><ellipse cx="12" cy="17" rx="7" ry="2.6"/><ellipse cx="12" cy="13" rx="7" ry="2.6"/><ellipse cx="12" cy="9" rx="7" ry="2.6"/><path d="M5 9v8M19 9v8"/></svg>'},
+    {id:"building",label:"Building",sub:"Grow for what's next",iconSvg:'<svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-3.8 0-6-2.1-6-5.8 3.8 0 6 2.1 6 5.8Z"/><path d="M12 11c3.8 0 6-2.1 6-5.8-3.8 0-6 2.1-6 5.8Z"/><path d="M8.5 21h7"/></svg>'}
+  ];
+  function hide(){
+    host.classList.remove("is-entering");
+    host.innerHTML="";
+    host.hidden=true;
+  }
+  function complete(action){
+    const companionSelect=window.freedomCompanionSelect;
+    if(!companionSelect||typeof companionSelect.completeFirstSetup!=="function")return;
+    companionSelect.completeFirstSetup();
+    hide();
+    const isClearing=action==="clearing";
+    const pageId=isClearing?"journey":"goals";
+    if(typeof window.page==="function")window.page(pageId);
+  }
+  function personalHomeIsVisible(){
+    const home=document.getElementById("mobile183");
+    const blockers=["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect"];
+    return document.body.classList.contains("home183")&&
+      !!home&&home.getAttribute("aria-hidden")!=="true"&&
+      !blockers.some(function(id){
+        const el=document.getElementById(id);
+        return !!el&&!el.hidden;
+      });
+  }
+  function mountPending(){
+    const companionSelect=window.freedomCompanionSelect;
+    const inDemo=!!(window.freedomDemo&&typeof window.freedomDemo.isActive==="function"&&window.freedomDemo.isActive());
+    const selected=companionSelect&&typeof companionSelect.getSelected==="function"?companionSelect.getSelected():"";
+    const pending=!!(companionSelect&&typeof companionSelect.isFirstSetupPending==="function"&&companionSelect.isFirstSetupPending());
+    const definition=definitions[selected];
+    if(inDemo||!personalHomeIsVisible()||!pending||!companionNames[selected]||!definition){
+      hide();
+      return;
+    }
+    if(host.querySelector(".freedom-companion-msg"))return;
+    host.hidden=false;
+    const companion=window.FreedomCompanionMessage.mount(host,{
+      name:companionNames[selected],
+      message:definition.message,
+      inlineEmoji:definition.inlineEmoji,
+      largeEmoji:definition.largeEmoji,
+      /* TEMP DEV ONLY: dismissing does not complete the pending setup. */
+      dismissible:true,
+      onDismiss:hide,
+      actions:actions
+    });
+    host.classList.remove("is-entering");
+    void host.offsetWidth;
+    host.classList.add("is-entering");
+    companion.addEventListener("click",function(ev){
+      const actionButton=ev.target.closest("[data-companion-action]");
+      if(!actionButton)return;
+      const action=actionButton.getAttribute("data-companion-action");
+      if(action==="clearing"||action==="building")complete(action);
+    });
+  }
+  window.FreedomFirstCompanionSetup={
+    hide:hide,
+    mountAfterSelection:mountPending,
+    restoreAfterReload:mountPending
+  };
 })();
 
-if ("serviceWorker" in navigator) {
+const freedomIsLocalPreviewHost=(()=>{
+  const host=location.hostname;
+  if(host==="localhost"||host==="127.0.0.1"||host==="::1")return true;
+  if(/^10\./.test(host)||/^192\.168\./.test(host))return true;
+  const match=host.match(/^172\.(\d+)\./);
+  return !!match&&Number(match[1])>=16&&Number(match[1])<=31;
+})();
+
+if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
+  /* DEV ONLY: remove an older local controller so previews always use live files. */
+  window.addEventListener("load",async()=>{
+    try{
+      const registrations=await navigator.serviceWorker.getRegistrations();
+      const removed=(await Promise.all(registrations.map(registration=>registration.unregister()))).some(Boolean);
+      const reloadKey="freedom50-local-sw-cleared-v1";
+      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)){
+        sessionStorage.setItem(reloadKey,"1");
+        location.reload();
+      }
+    }catch(err){
+      console.warn("Local service worker cleanup failed:",err);
+    }
+  });
+} else if ("serviceWorker" in navigator) {
   window.addEventListener("load", async () => {
     const banner = document.getElementById("updateBanner");
     const updateNow = document.getElementById("updateNow");
