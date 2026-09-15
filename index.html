@@ -4997,7 +4997,7 @@ function setGoalUsesTarget(key,on){
 function saveGoal(key){
   if(key.startsWith("custom:")){
     const i=Number(key.slice(7)),g=state.customGoals[i];
-    if(!g) return;
+    if(!g) return false;
     const nameEl=document.querySelector(`[data-goal-name="${i}"]`);
     const targetEl=byId(`goalTarget_custom_${i}`);
     const addEl=byId(`goalAdd_custom_${i}`);
@@ -5014,7 +5014,7 @@ function saveGoal(key){
     if(add>0){g.current=Math.round((g.current+add)*100)/100;bumpGoalLifetimeAdded(key,add);checkDemoRunawayMoneyNote(key,add);}
   }else{
     const m=builtInGoalMeta[key];
-    if(!m) return;
+    if(!m) return false;
     const nameEl=document.querySelector(`[data-goal-name-built="${key}"]`);
     const targetEl=byId(`goalTarget_${key}`);
     const addEl=byId(`goalAdd_${key}`);
@@ -5039,6 +5039,7 @@ function saveGoal(key){
     if(add>0){state[m.valueKey]=Math.round((state[m.valueKey]+add)*100)/100;bumpGoalLifetimeAdded(key,add);}
   }
   persist(); render();
+  return true;
 }
 function refreshGoalPlanForecast(key,card){
   card=card||document.querySelector(`#goalsList .goal-card[data-goal-key="${CSS.escape(key)}"]`);
@@ -5471,7 +5472,8 @@ function renderGoals(){
   if(arch) arch.addEventListener("click",()=>{if(state.housePocket>0)return;state.housePocketArchived=true;persist();render();page("overview");});
   list.querySelectorAll("[data-save-goal]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
-    saveGoal(btn.dataset.saveGoal);
+    const key=btn.dataset.saveGoal;
+    if(saveGoal(key))toggleGoalCollapsed(key);
   }));
   function toggleGoalSection(key,kind){
     const isPlan=kind==="plan";
@@ -5748,9 +5750,9 @@ function renderLoans(){
     freedomMotion.decorateNewCard(card,"journey",i);list.appendChild(card);
   });
   const skipToggle=el=>el.closest("input,button[data-archive-loan],button[data-delete-loan],button[data-save-loan],button[data-add-repayment],button[data-loan-mode],button[data-loan-correct-balance-toggle],button[data-loan-correct-balance-save],.save-btn,.journey-mode-btn,.goal-correct-btn,.goal-correct-save");
-  list.querySelectorAll("[data-toggle-loan]").forEach(head=>head.addEventListener("click",e=>{
-    if(journeyDragJustEnded||skipToggle(e.target))return;
-    const i=Number(head.dataset.toggleLoan);
+  function toggleLoanCollapsed(i,head){
+    head=head||list.querySelector(`[data-toggle-loan="${i}"]`);
+    if(!head||!state.loans[i])return;
     const wasCollapsed=state.loans[i].collapsed;
     if(!wasCollapsed){
       loanCorrectBalanceOpen[i]=false;
@@ -5768,6 +5770,10 @@ function renderLoans(){
     state.loans[i].collapsed=!wasCollapsed;
     if(wasCollapsed)freedomMotion.setPendingReveal("journey",i);
     persist();renderLoans();freedomMotion.runPendingReveal();
+  }
+  list.querySelectorAll("[data-toggle-loan]").forEach(head=>head.addEventListener("click",e=>{
+    if(journeyDragJustEnded||skipToggle(e.target))return;
+    toggleLoanCollapsed(Number(head.dataset.toggleLoan),head);
   }));
   function applyLoanField(i,field,value){
     const loan=state.loans[i];
@@ -5914,6 +5920,7 @@ function renderLoans(){
     if(paymentEl)applyLoanField(i,"payment",paymentEl.value);
     if(dateEl)applyLoanField(i,"freedomDate",dateEl.value);
     persist();render();
+    toggleLoanCollapsed(i);
   }));
   list.querySelectorAll("[data-archive-loan]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
