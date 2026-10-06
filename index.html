@@ -1987,6 +1987,9 @@ body.home183 .demo183-wrap{
   transform:translate(-50%,calc(-50% - 28.5px));
   pointer-events:auto;
 }
+.freedom-companion-msg-host.is-page-response{
+  position:fixed;z-index:950;
+}
 .freedom-companion-msg-host.is-entering{
   animation:freedomCompanionMsgEnter 400ms ease-out both;
 }
@@ -3704,8 +3707,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     </div>
   </div>
 </section>
-<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
-<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
+<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div><div class="freedom-companion-msg-host is-page-response" id="freedomJourneyCompanionMsgHost" aria-live="polite" hidden></div></section>
+<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div><div class="freedom-companion-msg-host is-page-response" id="freedomGoalsCompanionMsgHost" aria-live="polite" hidden></div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
@@ -4755,6 +4758,7 @@ function page(id){
     goalsNoteShowToken++;
     hidePatriciaNote("journeyFirst");
     hidePatriciaNote("goalsFirst");
+    if(window.FreedomCompanionFirstCreated&&typeof window.FreedomCompanionFirstCreated.hideAll==="function")window.FreedomCompanionFirstCreated.hideAll();
     if(typeof window.showHome==="function"){window.showHome();return}
   }
   if(typeof window.hideHome==="function")window.hideHome();
@@ -4766,6 +4770,7 @@ function page(id){
   document.body.classList.toggle("pension-active-v315",id==="pension");
   document.body.classList.toggle("archive-active-v316",id==="archive");
   document.body.classList.remove("overview-active");
+  if(window.FreedomCompanionFirstCreated&&typeof window.FreedomCompanionFirstCreated.restoreForPage==="function")window.FreedomCompanionFirstCreated.restoreForPage(id);
   if(id!=="goals")resetGoalSectionUiState();
   if(id!=="journey")resetLoanCorrectBalanceUiState();
   if(["overview","journey","goals","pension"].includes(id))freedomWallpapers.preload(id);
@@ -6465,6 +6470,7 @@ byId("addGoal").addEventListener("click",()=>{
   const hasTarget=!!byId("newGoalHasTarget").checked;
   const target=hasTarget?Math.max(0,Number(byId("newGoalTarget").value)||0):0;
   if(!name){byId("newGoalName").focus();return}
+  const isFirstCreated=state.customGoals.length===0;
   state.customGoals.push({name,current,startingBalance:current,target,hasTarget,lifetimeAdded:0,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:0,goalDate:null});
   freedomMotion.markNew("goals","custom:"+(state.customGoals.length-1));
   persist();
@@ -6475,9 +6481,10 @@ byId("addGoal").addEventListener("click",()=>{
   byId("newGoalTargetWrap").hidden=true;
   byId("addGoalCard").hidden=true;
   render();
+  if(isFirstCreated&&window.FreedomCompanionFirstCreated)window.FreedomCompanionFirstCreated.trigger("goals");
 });
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
-byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}state.loans.push({name,starting,current,payment,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:null,lastRepaymentDate:null});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();});
+byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}const isFirstCreated=state.loans.length===0;state.loans.push({name,starting,current,payment,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:null,lastRepaymentDate:null});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();if(isFirstCreated&&window.FreedomCompanionFirstCreated)window.FreedomCompanionFirstCreated.trigger("journey");});
 document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));
 if(demoMode)syncDemoUi();
 byId("demo183")?.addEventListener("click",handleDemo183Click);
@@ -7103,6 +7110,99 @@ window.FreedomCompanionMessage=(function(){
     mountAfterSelection:mountPending,
     restoreAfterReload:mountPending
   };
+})();
+
+/* One-time companion responses after the first created Journey and Goal. */
+(function(){
+  if(!window.FreedomCompanionMessage)return;
+  const STATE_KEY="freedom50-companion-first-created-responses-v1";
+  const companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
+  const definitions={
+    journey:{
+      patricia:{message:"There it is. Out of your head and onto the list.\nVery organised of us. Slightly unsettling.",largeEmoji:"👀"},
+      veronica:{message:"That’s one less thing to carry only in your head.\nYou don’t need to do anything else with it today.",largeEmoji:"🫖"},
+      kevin:{message:"First entry saved. The important part is done.\nExplore when you’re ready.",largeEmoji:"✅"}
+    },
+    goals:{
+      patricia:{message:"There it is. Officially something we’re doing now.\nI assume I’m invited.",largeEmoji:"🍹"},
+      veronica:{message:"That’s something lovely to look forward to.\nWe can take our time getting there.",largeEmoji:"🦋"},
+      kevin:{message:"Goal saved. The target is clear.\nNow you can work the plan.",largeEmoji:"📋"}
+    }
+  };
+  const hosts={
+    journey:document.getElementById("freedomJourneyCompanionMsgHost"),
+    goals:document.getElementById("freedomGoalsCompanionMsgHost")
+  };
+  function readState(){
+    try{
+      const value=JSON.parse(localStorage.getItem(STATE_KEY)||"null");
+      return value&&typeof value==="object"?value:{};
+    }catch(e){return {};}
+  }
+  function writeStatus(kind,status){
+    const value=readState();
+    value[kind]=status;
+    try{localStorage.setItem(STATE_KEY,JSON.stringify(value));}catch(e){}
+  }
+  function selectedCompanion(){
+    const select=window.freedomCompanionSelect;
+    return select&&typeof select.getSelected==="function"?select.getSelected():"";
+  }
+  function inDemo(){
+    return !!(window.freedomDemo&&typeof window.freedomDemo.isActive==="function"&&window.freedomDemo.isActive());
+  }
+  function hide(kind){
+    const host=hosts[kind];
+    if(!host)return;
+    host.classList.remove("is-entering");
+    host.innerHTML="";
+    host.hidden=true;
+  }
+  function hideAll(){
+    hide("journey");
+    hide("goals");
+  }
+  function isActivePage(kind){
+    const page=document.getElementById(kind);
+    return !!page&&page.classList.contains("active")&&!document.body.classList.contains("home183");
+  }
+  function mount(kind){
+    hideAll();
+    const host=hosts[kind];
+    const selected=selectedCompanion();
+    const definition=definitions[kind]&&definitions[kind][selected];
+    if(!host||inDemo()||!isActivePage(kind)||readState()[kind]!=="pending"||!definition||!companionNames[selected])return;
+    host.hidden=false;
+    window.FreedomCompanionMessage.mount(host,{
+      name:companionNames[selected],
+      message:definition.message,
+      largeEmoji:definition.largeEmoji,
+      dismissible:true,
+      onDismiss:function(){
+        writeStatus(kind,"complete");
+        hide(kind);
+      }
+    });
+    host.classList.remove("is-entering");
+    void host.offsetWidth;
+    host.classList.add("is-entering");
+  }
+  function trigger(kind){
+    if(!definitions[kind]||inDemo()||readState()[kind])return;
+    writeStatus(kind,"pending");
+    mount(kind);
+  }
+  function restoreForPage(pageId){
+    if(pageId==="journey"||pageId==="goals")mount(pageId);
+    else hideAll();
+  }
+  window.FreedomCompanionFirstCreated={
+    trigger:trigger,
+    restoreForPage:restoreForPage,
+    hideAll:hideAll
+  };
+  const activePage=document.querySelector(".page.active");
+  if(activePage)requestAnimationFrame(function(){restoreForPage(activePage.id);});
 })();
 
 const freedomIsLocalPreviewHost=(()=>{
