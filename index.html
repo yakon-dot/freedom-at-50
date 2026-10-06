@@ -1987,11 +1987,46 @@ body.home183 .demo183-wrap{
   transform:translate(-50%,calc(-50% - 28.5px));
   pointer-events:auto;
 }
+/* Page-response: in document flow below hero / above first card (not a fixed overlay).
+   Home first-setup keeps the absolute/centered host rules above. */
 .freedom-companion-msg-host.is-page-response{
-  position:fixed;z-index:950;
+  position:relative;left:auto;top:auto;z-index:5;
+  width:min(86vw,308px);max-width:100%;
+  transform:none;
+  /* Bottom margin clears the exterior glow so the first card sits below, not under it */
+  margin:6px auto 32px;
+  /* Inserting this block must not scroll-anchor the hero under the status bar */
+  overflow-anchor:none;
+}
+/* Flow spacer holds the vertical slot while the open host is portaled to body for scrim. */
+.freedom-companion-msg-flow-slot{
+  display:block;width:min(86vw,308px);max-width:100%;
+  margin:6px auto 32px;
+  pointer-events:none;visibility:hidden;
+  overflow-anchor:none;
+}
+/* Page-response only: companion sits under the hero, so the controls no longer need
+   the large hero-offset top margin — companion bottom margin provides the gap. */
+body.journey-active-v313 #journey .freedom-companion-msg-flow-slot + .journey-actions,
+body.journey-active-v313 #journey .freedom-companion-msg-host.is-page-response:not([hidden]) + .journey-actions,
+body.goals-active-v314 #goals .freedom-companion-msg-flow-slot + .goals-actions,
+body.goals-active-v314 #goals .freedom-companion-msg-host.is-page-response:not([hidden]) + .goals-actions{
+  margin-top:clamp(8px,1.2vh,14px);
+}
+/* Journey/Goals page-response scrim only (not Home first-setup).
+   Host box-shadow so backdrop-filter does not sample a dark layer under the card.
+   Page-response hosts are reparented to body while open (see syncScrim) so the
+   scrim is not trapped under #journey/.app stacking contexts.
+   Fixed top/left track the in-flow spacer (cards stay pushed down). */
+.freedom-companion-msg-host.is-page-response.is-msg-open{
+  position:fixed;z-index:950;margin:0;
+  box-shadow:0 0 0 100vmax rgba(11,12,14,.40);
 }
 .freedom-companion-msg-host.is-entering{
   animation:freedomCompanionMsgEnter 400ms ease-out both;
+}
+.freedom-companion-msg-host.is-page-response.is-entering{
+  animation:freedomCompanionMsgEnterPage 400ms ease-out both;
 }
 /* TL peach edge glow — independent layer behind the card */
 .freedom-companion-msg-host::before{
@@ -2091,7 +2126,7 @@ body.home183 .demo183-wrap{
 }
 .freedom-companion-msg-text{
   margin:0 0 2px;
-  font-size:10.5px;line-height:1.38;font-weight:400;
+  font-size:11.5px;line-height:1.38;font-weight:400;
   letter-spacing:-0.02em;
   color:rgba(226,222,214,.78);
   text-align:left;
@@ -2201,6 +2236,10 @@ body.home183 .demo183-wrap{
 @keyframes freedomCompanionMsgEnter{
   from{opacity:0;transform:translate(-50%,calc(-50% - 16.5px)) scale(.98)}
   to{opacity:1;transform:translate(-50%,calc(-50% - 28.5px)) scale(1)}
+}
+@keyframes freedomCompanionMsgEnterPage{
+  from{opacity:0;transform:translateY(10px) scale(.98)}
+  to{opacity:1;transform:none}
 }
 @media (prefers-reduced-motion:reduce){
   .freedom-companion-msg-host.is-entering{animation:none}
@@ -3707,8 +3746,10 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     </div>
   </div>
 </section>
-<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="journey-actions"><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">Starting amount</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">Current balance</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">Monthly repayment</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div><div class="freedom-companion-msg-host is-page-response" id="freedomJourneyCompanionMsgHost" aria-live="polite" hidden></div></section>
-<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div><div class="freedom-companion-msg-host is-page-response" id="freedomGoalsCompanionMsgHost" aria-live="polite" hidden></div></section>
+<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomJourneyCompanionMsgHost" aria-live="polite" hidden></div>
+<div class="journey-actions"><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><h2>Add a new journey</h2><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">How much did you borrow?</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">How much is left to pay?</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">How much do you want to pay each month?</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
+<section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomGoalsCompanionMsgHost" aria-live="polite" hidden></div>
+<div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><h2>Add a new goal</h2><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
@@ -4571,7 +4612,7 @@ function buildLoanExpandedBody(i,loan){
   const lastRepay=loan.lastRepaymentAmount!=null&&loan.lastRepaymentDate
     ?`<strong>${euro2(loan.lastRepaymentAmount)} · ${formatRepaymentDate(loan.lastRepaymentDate)}</strong>`
     :`<span>—</span>`;
-  return `<div class="journey-status"><div class="loan-summary loan-summary-single"><div class="loan-stat"><small>Money returned</small><strong class="journey-returned-value" data-returned-for="${i}">${euro2(returned)} · ${pct.toFixed(1)}%</strong></div></div><div class="journey-plan-label">Plan my payoff by</div><div class="journey-mode-switch"><button class="journey-mode-btn${mode==="monthly"?" active":""}" type="button" data-loan-mode="${i}" data-mode="monthly">Monthly repayment</button><button class="journey-mode-btn${mode==="date"?" active":""}" type="button" data-loan-mode="${i}" data-mode="date">Freedom date</button></div><div class="journey-mode-panel" data-mode-panel="monthly"${mode!=="monthly"?" hidden":""}><div class="loan-stat"><small>Planned monthly repayment</small><input class="loan-stat-value" data-loan="${i}" data-field="payment" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.payment}" aria-label="Planned monthly repayment"></div><div class="loan-stat loan-stat-forecast"><small>Estimated freedom</small><strong class="freedom-estimate" data-freedom-for="${i}">${esc(forecast.line1)}</strong><span class="freedom-date-estimate" data-freedom-date-for="${i}">${esc(forecast.line2)}</span></div></div><div class="journey-mode-panel" data-mode-panel="date"${mode!=="date"?" hidden":""}><div class="loan-stat journey-freedom-date-stat"><small>I want this gone by</small><input class="loan-stat-value journey-freedom-date-input" id="loanFreedomDate_${i}" data-loan="${i}" data-field="freedomDate" type="month" value="${dateVal}" aria-label="Freedom date"></div><div class="loan-stat loan-stat-forecast"><small>Estimated monthly repayment needed</small><strong class="freedom-estimate-needed" data-needed-for="${i}">${esc(needed)}</strong><span class="journey-estimate-note">Estimate only — excludes interest and charges</span></div></div></div><div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div><div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">Archive journey</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button><button class="save-btn" data-save-loan="${i}" type="button">Save</button></div>`;
+  return `<div class="journey-status"><div class="loan-summary loan-summary-single"><div class="loan-stat"><small>Money returned</small><strong class="journey-returned-value" data-returned-for="${i}">${euro2(returned)} · ${pct.toFixed(1)}%</strong></div></div><div class="journey-plan-label">Plan my payoff by</div><div class="journey-mode-switch"><button class="journey-mode-btn${mode==="monthly"?" active":""}" type="button" data-loan-mode="${i}" data-mode="monthly">Monthly repayment</button><button class="journey-mode-btn${mode==="date"?" active":""}" type="button" data-loan-mode="${i}" data-mode="date">Freedom date</button></div><div class="journey-mode-panel" data-mode-panel="monthly"${mode!=="monthly"?" hidden":""}><div class="loan-stat"><small>How much do you want to pay each month?</small><input class="loan-stat-value" data-loan="${i}" data-field="payment" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.payment}" aria-label="How much do you want to pay each month?"></div><div class="loan-stat loan-stat-forecast"><small>Estimated freedom</small><strong class="freedom-estimate" data-freedom-for="${i}">${esc(forecast.line1)}</strong><span class="freedom-date-estimate" data-freedom-date-for="${i}">${esc(forecast.line2)}</span></div></div><div class="journey-mode-panel" data-mode-panel="date"${mode!=="date"?" hidden":""}><div class="loan-stat journey-freedom-date-stat"><small>I want this gone by</small><input class="loan-stat-value journey-freedom-date-input" id="loanFreedomDate_${i}" data-loan="${i}" data-field="freedomDate" type="month" value="${dateVal}" aria-label="Freedom date"></div><div class="loan-stat loan-stat-forecast"><small>Estimated monthly repayment needed</small><strong class="freedom-estimate-needed" data-needed-for="${i}">${esc(needed)}</strong><span class="journey-estimate-note">Estimate only — excludes interest and charges</span></div></div></div><div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div><div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">Archive journey</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button><button class="save-btn" data-save-loan="${i}" type="button">Save</button></div>`;
 }
 
 function wrapCardBody(html,collapsed){return `<div class="card-body-wrap${collapsed?" is-collapsed":""}"><div class="journey-card-body">${html}</div></div>`;}
@@ -6948,15 +6989,10 @@ window.FreedomCompanionMessage=(function(){
     }
     const textEl=document.createElement("p");
     textEl.className="freedom-companion-msg-text";
-    const lines=String(opts.message||"").split("\n");
-    lines.forEach(function(line,i){
-      const span=document.createElement("span");
-      span.className="freedom-companion-msg-line";
-      let t=line;
-      if(i===lines.length-1&&opts.inlineEmoji)t+=" "+String(opts.inlineEmoji);
-      span.textContent=t;
-      textEl.appendChild(span);
-    });
+    /* Continuous sentence flow — do not force \n fragments onto nowrap block lines */
+    let messageText=String(opts.message||"").replace(/\n+/g," ").replace(/\s+/g," ").trim();
+    if(opts.inlineEmoji)messageText+=" "+String(opts.inlineEmoji);
+    textEl.textContent=messageText;
     copy.appendChild(textEl);
     row.appendChild(copy);
 
@@ -7007,22 +7043,147 @@ window.FreedomCompanionMessage=(function(){
     root._cmLayoutOutline=layout;
     return root;
   }
+  /* Page-response scrim only; Home first-setup stays clear.
+     In-flow spacer keeps Journey/Goal cards pushed down; host is portaled to
+     body at the spacer’s screen rect so the box-shadow scrim can cover nav. */
+  let pagePosBound=false;
+  function clearPageResponseInline(h){
+    h.style.top="";
+    h.style.left="";
+    h.style.width="";
+    h.style.right="";
+    h.style.bottom="";
+    h.style.transform="";
+  }
+  function ensureFlowSlot(h){
+    if(h._cmFlowSlot&&h._cmFlowSlot.parentNode)return h._cmFlowSlot;
+    const slot=document.createElement("div");
+    slot.className="freedom-companion-msg-flow-slot";
+    slot.setAttribute("aria-hidden","true");
+    if(h.parentElement)h.parentElement.insertBefore(slot,h);
+    h._cmFlowSlot=slot;
+    return slot;
+  }
+  function removeFlowSlot(h){
+    const slot=h._cmFlowSlot;
+    if(slot&&slot.parentNode)slot.parentNode.removeChild(slot);
+    h._cmFlowSlot=null;
+  }
+  function pageResponseContentHeight(h){
+    const msg=h.querySelector(".freedom-companion-msg");
+    const fromMsg=msg?(msg.offsetHeight||0):0;
+    const fromHost=h.offsetHeight||0;
+    return Math.max(fromMsg,fromHost);
+  }
+  function positionPageResponseHost(h){
+    const slot=h._cmFlowSlot;
+    if(!slot||!slot.parentNode)return;
+    const height=pageResponseContentHeight(h);
+    if(height>0)slot.style.height=height+"px";
+    const rect=slot.getBoundingClientRect();
+    h.style.top=rect.top+"px";
+    h.style.left=rect.left+"px";
+    h.style.width=rect.width+"px";
+    h.style.right="auto";
+    h.style.bottom="auto";
+    h.style.transform="none";
+  }
+  function onPagePosSync(){
+    document.querySelectorAll(".freedom-companion-msg-host.is-page-response.is-msg-open").forEach(positionPageResponseHost);
+  }
+  function bindPagePos(){
+    if(pagePosBound)return;
+    pagePosBound=true;
+    window.addEventListener("scroll",onPagePosSync,true);
+    window.addEventListener("resize",onPagePosSync);
+    if(window.visualViewport){
+      window.visualViewport.addEventListener("resize",onPagePosSync);
+      window.visualViewport.addEventListener("scroll",onPagePosSync);
+    }
+  }
+  function unbindPagePosIfIdle(){
+    if(document.querySelector(".freedom-companion-msg-host.is-page-response.is-msg-open"))return;
+    if(!pagePosBound)return;
+    pagePosBound=false;
+    window.removeEventListener("scroll",onPagePosSync,true);
+    window.removeEventListener("resize",onPagePosSync);
+    if(window.visualViewport){
+      window.visualViewport.removeEventListener("resize",onPagePosSync);
+      window.visualViewport.removeEventListener("scroll",onPagePosSync);
+    }
+  }
+  function syncScrim(){
+    let anyPageOpen=false;
+    document.querySelectorAll(".freedom-companion-msg-host").forEach(function(h){
+      const open=!h.hidden&&!!h.querySelector(".freedom-companion-msg");
+      const isPage=h.classList.contains("is-page-response");
+      if(isPage&&open){
+        anyPageOpen=true;
+        h.classList.add("is-msg-open");
+        /* Escape #journey/#goals/.app stacking contexts so fixed host + scrim
+           cover the full viewport including bottom nav, above the page.
+           Leave a flow spacer so the first card stays below the message. */
+        if(h.parentElement!==document.body){
+          const measured=pageResponseContentHeight(h);
+          const slot=ensureFlowSlot(h);
+          if(measured>0)slot.style.height=measured+"px";
+          h._cmReturnParent=h.parentElement;
+          h._cmReturnNext=h.nextSibling;
+          document.body.appendChild(h);
+        }else if((!h._cmFlowSlot||!h._cmFlowSlot.parentNode)&&h._cmReturnParent){
+          const slot=document.createElement("div");
+          slot.className="freedom-companion-msg-flow-slot";
+          slot.setAttribute("aria-hidden","true");
+          const parent=h._cmReturnParent;
+          const next=h._cmReturnNext;
+          if(next&&next.parentElement===parent)parent.insertBefore(slot,next);
+          else parent.appendChild(slot);
+          h._cmFlowSlot=slot;
+        }
+        positionPageResponseHost(h);
+      }else{
+        h.classList.remove("is-msg-open");
+        clearPageResponseInline(h);
+        removeFlowSlot(h);
+        if(h._cmReturnParent){
+          const parent=h._cmReturnParent;
+          const next=h._cmReturnNext;
+          if(next&&next.parentElement===parent)parent.insertBefore(h,next);
+          else parent.appendChild(h);
+          h._cmReturnParent=null;
+          h._cmReturnNext=null;
+        }
+      }
+    });
+    if(anyPageOpen)bindPagePos();
+    else unbindPagePosIfIdle();
+    const leftover=document.getElementById("freedomCompanionMsgScrim");
+    if(leftover&&leftover.parentNode)leftover.parentNode.removeChild(leftover);
+  }
   function mount(host, opts){
     if(!host)return null;
+    opts=opts||{};
+    const userDismiss=opts.onDismiss;
+    opts.onDismiss=function(){
+      if(typeof userDismiss==="function")userDismiss();
+      syncScrim();
+    };
     host.innerHTML="";
     const el=create(opts);
     host.appendChild(el);
     const glowSvg=el.querySelector(".freedom-companion-msg-glow-outline");
     if(glowSvg)host.insertBefore(glowSvg,el);
-    /* Measure after mount so path matches rendered card size */
+    /* Measure after mount so path matches rendered card size; re-sync page slot. */
     if(typeof el._cmLayoutOutline==="function"){
       requestAnimationFrame(function(){
         el._cmLayoutOutline();
+        syncScrim();
       });
     }
+    syncScrim();
     return el;
   }
-  return {create:create,mount:mount};
+  return {create:create,mount:mount,syncScrim:syncScrim};
 })();
 
 /* First companion setup message — Personal Home only. */
@@ -7053,6 +7214,9 @@ window.FreedomCompanionMessage=(function(){
     host.classList.remove("is-entering");
     host.innerHTML="";
     host.hidden=true;
+    if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+    }
   }
   function complete(action){
     const companionSelect=window.freedomCompanionSelect;
@@ -7157,6 +7321,9 @@ window.FreedomCompanionMessage=(function(){
     host.classList.remove("is-entering");
     host.innerHTML="";
     host.hidden=true;
+    if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+    }
   }
   function hideAll(){
     hide("journey");
@@ -7186,6 +7353,30 @@ window.FreedomCompanionMessage=(function(){
     host.classList.remove("is-entering");
     void host.offsetWidth;
     host.classList.add("is-entering");
+    /* Keep Journey/Goals hero at its natural top (below the safe area). Inserting the
+       in-flow message must not scroll-anchor the heading under the status bar; content
+       below may extend and scroll. Blur first so iOS keyboard focus cannot keep the
+       viewport pinned mid-page after Add Journey/Goal. */
+    function pinHeroTop(){
+      const active=document.activeElement;
+      if(active&&typeof active.blur==="function")active.blur();
+      window.scrollTo(0,0);
+      if(document.documentElement)document.documentElement.scrollTop=0;
+      if(document.body)document.body.scrollTop=0;
+    }
+    pinHeroTop();
+    if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+      requestAnimationFrame(function(){
+        pinHeroTop();
+        window.FreedomCompanionMessage.syncScrim();
+      });
+      /* Re-measure after enter animation so the flow slot matches final height. */
+      setTimeout(function(){
+        pinHeroTop();
+        window.FreedomCompanionMessage.syncScrim();
+      }, 420);
+    }
   }
   function trigger(kind){
     if(!definitions[kind]||inDemo()||readState()[kind])return;
