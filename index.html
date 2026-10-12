@@ -2028,6 +2028,10 @@ body.goals-active-v314 #goals .freedom-companion-msg-host.is-page-response:not([
 .freedom-companion-msg-host.is-page-response.is-entering{
   animation:freedomCompanionMsgEnterPage 400ms ease-out both;
 }
+/* First Journey repayment responses use a larger reading size only. */
+.freedom-companion-msg-host.is-first-journey-repayment .freedom-companion-msg-text{
+  font-size:13px;
+}
 /* TL peach edge glow — independent layer behind the card */
 .freedom-companion-msg-host::before{
   content:"";position:absolute;z-index:0;pointer-events:none;
@@ -7416,7 +7420,11 @@ window.FreedomCompanionMessage=(function(){
 (function(){
   if(!window.FreedomCompanionMessage)return;
   const host=document.getElementById("freedomJourneyCompanionMsgHost");
-  const owner="patricia-first-journey-repayment";
+  const owner="first-journey-repayment";
+  const companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
+  const definitions={
+    patricia:{message:"First payment. Look at you, making moves. That balance has no idea who it’s dealing with."}
+  };
   function selectedCompanion(){
     const select=window.freedomCompanionSelect;
     return select&&typeof select.getSelected==="function"?select.getSelected():"";
@@ -7433,6 +7441,7 @@ window.FreedomCompanionMessage=(function(){
     host.classList.remove("is-entering");
     host.innerHTML="";
     host.hidden=true;
+    host.classList.remove("is-first-journey-repayment");
     delete host.dataset.companionMessageOwner;
     if(typeof window.FreedomCompanionMessage.syncScrim==="function")window.FreedomCompanionMessage.syncScrim();
   }
@@ -7441,12 +7450,16 @@ window.FreedomCompanionMessage=(function(){
     /* A halfway/completion achievement owns this interaction. The per-Journey
        first-payment flag has already been consumed before this point. */
     if(result.crossedHalfway||result.completed)return;
-    if(!host||inDemo()||!journeyIsActive()||selectedCompanion()!=="patricia")return;
+    const selected=selectedCompanion();
+    const definition=definitions[selected];
+    if(!host||inDemo()||!journeyIsActive()||!definition||!companionNames[selected])return;
     host.dataset.companionMessageOwner=owner;
+    host.classList.add("is-first-journey-repayment");
     host.hidden=false;
     window.FreedomCompanionMessage.mount(host,{
-      name:"Patricia",
-      message:"First payment. Look at you, making moves. That balance has no idea who it’s dealing with.",
+      name:companionNames[selected],
+      message:definition.message,
+      largeEmoji:"👏",
       dismissible:true,
       onDismiss:hide
     });
