@@ -2225,6 +2225,9 @@ body.goals-active-v314 #goals .freedom-companion-msg-host.is-page-response:not([
   -webkit-tap-highlight-color:transparent;
 }
 .freedom-companion-msg-dismiss:active{color:rgba(239,203,170,.9)}
+.freedom-companion-msg-host.is-first-journey-repayment .freedom-companion-msg-dismiss{
+  text-indent:-3px;
+}
 @keyframes freedomCompanionMsgGlowTl{
   0%{opacity:.78}
   100%{opacity:.94}
@@ -5806,7 +5809,7 @@ function renderLoans(){
     freedomMotion.decorateNewCard(card,"journey",i);list.appendChild(card);
   });
   const skipToggle=el=>el.closest("input,button[data-archive-loan],button[data-delete-loan],button[data-save-loan],button[data-add-repayment],button[data-loan-mode],button[data-loan-correct-balance-toggle],button[data-loan-correct-balance-save],.save-btn,.journey-mode-btn,.goal-correct-btn,.goal-correct-save");
-  function toggleLoanCollapsed(i,head){
+  function toggleLoanCollapsed(i,head,onCollapsed){
     head=head||list.querySelector(`[data-toggle-loan="${i}"]`);
     if(!head||!state.loans[i])return;
     const wasCollapsed=state.loans[i].collapsed;
@@ -5819,13 +5822,19 @@ function renderLoans(){
         // padding/margins do not snap ahead of the height collapse.
         wrap.classList.add("is-collapsed");
         card.classList.add("is-collapsing");
-        setTimeout(()=>{state.loans[i].collapsed=true;persist();renderLoans();},380);
+        setTimeout(()=>{
+          state.loans[i].collapsed=true;
+          persist();
+          renderLoans();
+          if(typeof onCollapsed==="function")onCollapsed();
+        },380);
         return;
       }
     }
     state.loans[i].collapsed=!wasCollapsed;
     if(wasCollapsed)freedomMotion.setPendingReveal("journey",i);
     persist();renderLoans();freedomMotion.runPendingReveal();
+    if(!wasCollapsed&&typeof onCollapsed==="function")onCollapsed();
   }
   list.querySelectorAll("[data-toggle-loan]").forEach(head=>head.addEventListener("click",e=>{
     if(journeyDragJustEnded||skipToggle(e.target))return;
@@ -5966,7 +5975,7 @@ function renderLoans(){
     checkJourneyCompletionCelebration(loan,prevCurrent);
     persist();render();
     if(isFirstActualRepayment&&window.FreedomCompanionJourneyRepayment){
-      window.FreedomCompanionJourneyRepayment.triggerFirstPayment({crossedHalfway:crossedHalfway,completed:completed});
+      window.FreedomCompanionJourneyRepayment.triggerFirstPayment(loan,{crossedHalfway:crossedHalfway,completed:completed});
     }
   }));
   list.querySelectorAll("[data-save-loan]").forEach(btn=>btn.addEventListener("click",e=>{
@@ -5986,7 +5995,11 @@ function renderLoans(){
     if(paymentEl)applyLoanField(i,"payment",paymentEl.value);
     if(dateEl)applyLoanField(i,"freedomDate",dateEl.value);
     persist();render();
-    toggleLoanCollapsed(i);
+    toggleLoanCollapsed(i,null,function(){
+      if(window.FreedomCompanionJourneyRepayment&&typeof window.FreedomCompanionJourneyRepayment.afterSuccessfulSave==="function"){
+        window.FreedomCompanionJourneyRepayment.afterSuccessfulSave(loan);
+      }
+    });
   }));
   list.querySelectorAll("[data-archive-loan]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
@@ -7425,6 +7438,8 @@ window.FreedomCompanionMessage=(function(){
   const definitions={
     patricia:{message:"First payment. Look at you, making moves. That balance has no idea who it’s dealing with."}
   };
+  const pendingByLoan=new Map();
+  const appearanceTimers=new Set();
   function selectedCompanion(){
     const select=window.freedomCompanionSelect;
     return select&&typeof select.getSelected==="function"?select.getSelected():"";
@@ -7445,13 +7460,12 @@ window.FreedomCompanionMessage=(function(){
     delete host.dataset.companionMessageOwner;
     if(typeof window.FreedomCompanionMessage.syncScrim==="function")window.FreedomCompanionMessage.syncScrim();
   }
-  function triggerFirstPayment(result){
-    result=result||{};
-    /* A halfway/completion achievement owns this interaction. The per-Journey
-       first-payment flag has already been consumed before this point. */
-    if(result.crossedHalfway||result.completed)return;
-    const selected=selectedCompanion();
-    const definition=definitions[selected];
+  function clearPending(){
+    pendingByLoan.clear();
+    appearanceTimers.forEach(function(timer){clearTimeout(timer);});
+    appearanceTimers.clear();
+  }
+  function showFirstPayment(selected,definition){
     if(!host||inDemo()||!journeyIsActive()||!definition||!companionNames[selected])return;
     host.dataset.companionMessageOwner=owner;
     host.classList.add("is-first-journey-repayment");
@@ -7474,11 +7488,39 @@ window.FreedomCompanionMessage=(function(){
       requestAnimationFrame(function(){window.FreedomCompanionMessage.syncScrim();});
     }
   }
+  function triggerFirstPayment(loan,result){
+    result=result||{};
+    /* A halfway/completion achievement owns this interaction. The per-Journey
+       first-payment flag has already been consumed before this point. */
+    if(result.crossedHalfway||result.completed){
+      pendingByLoan.delete(loan);
+      return;
+    }
+    const selected=selectedCompanion();
+    const definition=definitions[selected];
+    if(!host||inDemo()||!journeyIsActive()||!definition||!companionNames[selected])return;
+    pendingByLoan.set(loan,{definition:definition,selected:selected});
+  }
+  function afterSuccessfulSave(loan){
+    const pending=loan&&pendingByLoan.get(loan);
+    if(!pending)return;
+    pendingByLoan.delete(loan);
+    const timer=setTimeout(function(){
+      appearanceTimers.delete(timer);
+      if(selectedCompanion()!==pending.selected)return;
+      showFirstPayment(pending.selected,pending.definition);
+    },400);
+    appearanceTimers.add(timer);
+  }
   function onPageChange(pageId){
-    if(pageId!=="journey")hide();
+    if(pageId!=="journey"){
+      clearPending();
+      hide();
+    }
   }
   window.FreedomCompanionJourneyRepayment={
     triggerFirstPayment:triggerFirstPayment,
+    afterSuccessfulSave:afterSuccessfulSave,
     onPageChange:onPageChange,
     hide:hide
   };
