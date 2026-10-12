@@ -3926,6 +3926,9 @@ if(Array.isArray(state.loans)){
     if(loan.freedomDate===undefined)loan.freedomDate=null;
     if(loan.lastRepaymentAmount===undefined)loan.lastRepaymentAmount=null;
     if(loan.lastRepaymentDate===undefined)loan.lastRepaymentDate=null;
+    if(loan.firstRepaymentCompanionConsumed===undefined){
+      loan.firstRepaymentCompanionConsumed=loan.lastRepaymentAmount!=null||!!loan.lastRepaymentDate;
+    }
   });
 }
 
@@ -4794,6 +4797,9 @@ const freedomMotion={
 window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change",e=>{freedomMotion.reduced=e.matches});
 
 function page(id){
+  if(window.FreedomCompanionJourneyRepayment&&typeof window.FreedomCompanionJourneyRepayment.onPageChange==="function"){
+    window.FreedomCompanionJourneyRepayment.onPageChange(id);
+  }
   if(id==="home"){
     journeyNoteShowToken++;
     goalsNoteShowToken++;
@@ -5943,11 +5949,21 @@ function renderLoans(){
     const amount=Math.max(0,Number(input?.value)||0);
     if(!amount){input?.focus();return;}
     const prevCurrent=loan.current;
+    const isFirstActualRepayment=loan.firstRepaymentCompanionConsumed!==true&&!loan.lastRepaymentDate;
     loan.current=Math.max(0,Math.round((loan.current-amount)*100)/100);
     loan.lastRepaymentAmount=amount;
     loan.lastRepaymentDate=new Date().toISOString();
+    if(isFirstActualRepayment)loan.firstRepaymentCompanionConsumed=true;
+    const starting=Math.max(0,Number(loan.starting)||0);
+    const prevProgress=starting?Math.max(0,(starting-prevCurrent)/starting):0;
+    const nextProgress=starting?Math.max(0,(starting-loan.current)/starting):0;
+    const crossedHalfway=prevProgress<.5&&nextProgress>=.5;
+    const completed=prevCurrent>0&&loan.current<=0;
     checkJourneyCompletionCelebration(loan,prevCurrent);
     persist();render();
+    if(isFirstActualRepayment&&window.FreedomCompanionJourneyRepayment){
+      window.FreedomCompanionJourneyRepayment.triggerFirstPayment({crossedHalfway:crossedHalfway,completed:completed});
+    }
   }));
   list.querySelectorAll("[data-save-loan]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
@@ -6525,7 +6541,7 @@ byId("addGoal").addEventListener("click",()=>{
   if(isFirstCreated&&window.FreedomCompanionFirstCreated)window.FreedomCompanionFirstCreated.trigger("goals");
 });
 byId("toggleAddJourney").addEventListener("click",()=>{const card=byId("addJourneyCard");card.hidden=!card.hidden;if(!card.hidden){byId("newJourneyName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
-byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}const isFirstCreated=state.loans.length===0;state.loans.push({name,starting,current,payment,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:null,lastRepaymentDate:null});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();if(isFirstCreated&&window.FreedomCompanionFirstCreated)window.FreedomCompanionFirstCreated.trigger("journey");});
+byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}const isFirstCreated=state.loans.length===0;state.loans.push({name,starting,current,payment,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:null,lastRepaymentDate:null,firstRepaymentCompanionConsumed:false});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();if(isFirstCreated&&window.FreedomCompanionFirstCreated)window.FreedomCompanionFirstCreated.trigger("journey");});
 document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));
 if(demoMode)syncDemoUi();
 byId("demo183")?.addEventListener("click",handleDemo183Click);
@@ -7394,6 +7410,65 @@ window.FreedomCompanionMessage=(function(){
   };
   const activePage=document.querySelector(".page.active");
   if(activePage)requestAnimationFrame(function(){restoreForPage(activePage.id);});
+})();
+
+/* Patricia's one-time response to the first actual repayment on each Journey. */
+(function(){
+  if(!window.FreedomCompanionMessage)return;
+  const host=document.getElementById("freedomJourneyCompanionMsgHost");
+  const owner="patricia-first-journey-repayment";
+  function selectedCompanion(){
+    const select=window.freedomCompanionSelect;
+    return select&&typeof select.getSelected==="function"?select.getSelected():"";
+  }
+  function inDemo(){
+    return !!(window.freedomDemo&&typeof window.freedomDemo.isActive==="function"&&window.freedomDemo.isActive());
+  }
+  function journeyIsActive(){
+    const page=document.getElementById("journey");
+    return !!page&&page.classList.contains("active")&&!document.body.classList.contains("home183");
+  }
+  function hide(){
+    if(!host||host.dataset.companionMessageOwner!==owner)return;
+    host.classList.remove("is-entering");
+    host.innerHTML="";
+    host.hidden=true;
+    delete host.dataset.companionMessageOwner;
+    if(typeof window.FreedomCompanionMessage.syncScrim==="function")window.FreedomCompanionMessage.syncScrim();
+  }
+  function triggerFirstPayment(result){
+    result=result||{};
+    /* A halfway/completion achievement owns this interaction. The per-Journey
+       first-payment flag has already been consumed before this point. */
+    if(result.crossedHalfway||result.completed)return;
+    if(!host||inDemo()||!journeyIsActive()||selectedCompanion()!=="patricia")return;
+    host.dataset.companionMessageOwner=owner;
+    host.hidden=false;
+    window.FreedomCompanionMessage.mount(host,{
+      name:"Patricia",
+      message:"First payment. Look at you, making moves. That balance has no idea who it’s dealing with.",
+      dismissible:true,
+      onDismiss:hide
+    });
+    host.classList.remove("is-entering");
+    void host.offsetWidth;
+    host.classList.add("is-entering");
+    const active=document.activeElement;
+    if(active&&typeof active.blur==="function")active.blur();
+    window.scrollTo(0,0);
+    if(typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+      requestAnimationFrame(function(){window.FreedomCompanionMessage.syncScrim();});
+    }
+  }
+  function onPageChange(pageId){
+    if(pageId!=="journey")hide();
+  }
+  window.FreedomCompanionJourneyRepayment={
+    triggerFirstPayment:triggerFirstPayment,
+    onPageChange:onPageChange,
+    hide:hide
+  };
 })();
 
 const freedomIsLocalPreviewHost=(()=>{
