@@ -1188,15 +1188,15 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.overview-active-v300 #overview .overview-chevron{display:none}
 
   body.journey-active-v313{background:transparent}
-  html:has(body.journey-active-v313){background:#070809!important}
-  /* Original Journey wallpaper framing restored (center -190px / cover). */
+  html:has(body.journey-active-v313){background:#070809}
+  /* Wallpaper framing restored from 942e28 — center -190px / cover only. */
   body.journey-active-v313::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
       #070809 url("./journey-wallpaper.png") center -190px/cover no-repeat;
   }
-  /* Subtle bottom blend only — softens the small letterbox into the nav without reframing. */
+  /* Non-layout bottom fade only — does not resize/crop/reposition the wallpaper. */
   body.journey-active-v313::after{
     content:"";position:fixed;left:0;right:0;bottom:0;z-index:0;pointer-events:none;
     height:calc(88px + env(safe-area-inset-bottom,0px));
@@ -1891,14 +1891,14 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   /* ===== Pension page (v315) — matches Journey/Goals system ===== */
   body.pension-active-v315{background:transparent}
   html:has(body.pension-active-v315){background:#070809}
-  /* Original Pension wallpaper framing kept (center -150px / cover). */
+  /* Wallpaper framing restored from 942e28 — center -150px / cover only. */
   body.pension-active-v315::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
       #070809 url("./pension-wallpaper.png") center -150px/cover no-repeat;
   }
-  /* Same subtle bottom blend as Journey for the smaller Pension gap. */
+  /* Non-layout bottom fade only — does not resize/crop/reposition the wallpaper. */
   body.pension-active-v315::after{
     content:"";position:fixed;left:0;right:0;bottom:0;z-index:0;pointer-events:none;
     height:calc(72px + env(safe-area-inset-bottom,0px));
@@ -13425,7 +13425,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1931",
+        "./service-worker.js?v=1932",
         { updateViaCache: "none" }
       );
 
