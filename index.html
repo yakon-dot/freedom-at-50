@@ -1208,6 +1208,20 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
       #070809 76%,
       #070809 100%);
   }
+  /* Standalone/PWA only — Safari/tab rules above stay unchanged. */
+  @media (display-mode: standalone), (display-mode: fullscreen){
+    body.journey-active-v313::after{
+      content:"";position:fixed;left:0;right:0;bottom:0;z-index:0;pointer-events:none;
+      height:260px;
+      background:linear-gradient(to bottom,
+        rgba(7,8,9,0) 0%,
+        rgba(7,8,9,0) 12%,
+        rgba(7,8,9,.22) 34%,
+        rgba(7,8,9,.58) 56%,
+        #070809 74%,
+        #070809 100%);
+    }
+  }
   body.journey-active-v313 .app::before{display:none}
   body.journey-active-v313 #journey{
     position:relative;z-index:1;
@@ -1911,6 +1925,20 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
       rgba(7,8,9,.52) 56%,
       #070809 74%,
       #070809 100%);
+  }
+  /* Standalone/PWA only — Safari/tab rules above stay unchanged. */
+  @media (display-mode: standalone), (display-mode: fullscreen){
+    body.pension-active-v315::after{
+      content:"";position:fixed;left:0;right:0;bottom:0;z-index:0;pointer-events:none;
+      height:220px;
+      background:linear-gradient(to bottom,
+        rgba(7,8,9,0) 0%,
+        rgba(7,8,9,0) 12%,
+        rgba(7,8,9,.2) 32%,
+        rgba(7,8,9,.55) 54%,
+        #070809 72%,
+        #070809 100%);
+    }
   }
   body.pension-active-v315 .app::before{display:none}
   body.pension-active-v315 .app{position:relative;z-index:1;background:transparent}
@@ -13429,7 +13457,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1934",
+        "./service-worker.js?v=1935",
         { updateViaCache: "none" }
       );
 
