@@ -4735,6 +4735,116 @@ function freedomSeedNavPreviewState(extra){
     window.__FREEDOM_WELCOME_BACK_FORCE__=kind;
   }catch(e){}
 })();
+/* TEMP DEV ONLY — positive-pattern FLOW seeds (real repay path; force on/off).
+   ?positivePattern=not-ready|same-month|on|vs-half -patricia|veronica|kevin
+   Production remains genuine 30% once eligible. Do not ship. */
+(function(){
+  try{
+    const raw=String(new URLSearchParams(location.search).get("positivePattern")||"").toLowerCase();
+    const match=raw.match(/^(not-ready|same-month|on|vs-half)-(patricia|veronica|kevin)$/);
+    if(!match)return;
+    const kind=match[1];
+    const companion=match[2];
+    const seedKey="freedom50-positive-pattern-flow-seed-v1";
+    const PATTERN_KEY="freedom50-positive-pattern-v1";
+    function monthKeyOffset(offsetMonths){
+      const d=new Date();
+      d.setDate(1);
+      d.setMonth(d.getMonth()+offsetMonths);
+      return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+    }
+    const thisMonth=monthKeyOffset(0);
+    const prevMonth=monthKeyOffset(-1);
+    if(sessionStorage.getItem(seedKey)===raw){
+      const autoRepay=kind!=="not-ready";
+      const injectRepay=kind==="vs-half"?150:(autoRepay?50:0);
+      window.__FREEDOM_POSITIVE_PATTERN__={kind:kind,companion:companion,seeded:false,pageKind:"journey",injectRepay:injectRepay,autoRepay:autoRepay};
+      window.__FREEDOM_POSITIVE_PATTERN_FORCE__="on";
+      window.__FREEDOM_ORDINARY_FORCE__="off";
+      return;
+    }
+    localStorage.setItem("freedom50-welcome-complete-v1","1");
+    localStorage.setItem("freedom50-look-around-complete-v1","1");
+    localStorage.setItem("freedom50-first-time-complete-v1","1");
+    localStorage.setItem("freedom50-companion-id-v1",companion);
+    localStorage.removeItem("freedom50-companion-pending-v1");
+    localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
+    localStorage.setItem("freedom50-companion-first-created-responses-v1",JSON.stringify({journey:"complete",goals:"complete"}));
+    let patternUpdates=[];
+    let injectRepay=0;
+    let autoRepay=false;
+    let loanCurrent=700;
+    let milestoneExperienced=false;
+    if(kind==="not-ready"){
+      patternUpdates=[{month:prevMonth,at:new Date().toISOString()},{month:thisMonth,at:new Date().toISOString()}];
+      autoRepay=false;
+      injectRepay=0;
+    }else if(kind==="same-month"){
+      patternUpdates=[
+        {month:thisMonth,at:new Date().toISOString()},
+        {month:thisMonth,at:new Date().toISOString()}
+      ];
+      autoRepay=true;
+      injectRepay=50;
+    }else if(kind==="on"){
+      patternUpdates=[
+        {month:prevMonth,at:new Date().toISOString()},
+        {month:prevMonth,at:new Date().toISOString()}
+      ];
+      autoRepay=true;
+      injectRepay=50;
+    }else if(kind==="vs-half"){
+      patternUpdates=[
+        {month:prevMonth,at:new Date().toISOString()},
+        {month:prevMonth,at:new Date().toISOString()}
+      ];
+      loanCurrent=600;
+      milestoneExperienced=false;
+      autoRepay=true;
+      injectRepay=150;
+    }
+    localStorage.setItem(PATTERN_KEY,JSON.stringify({
+      updates:patternUpdates,
+      lastLineByCompanion:{patricia:-1,veronica:-1,kevin:-1}
+    }));
+    const base={
+      archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],customGoals:[],
+      hiddenBuiltInGoals:{houseFund:true,holidayFund:true,personalSavings:true},
+      deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalNames:{},goalTargets:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalHasTarget:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalPlanMode:{houseFund:"monthly",holidayFund:"monthly",personalSavings:"monthly"},
+      goalPlannedMonthly:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalDate:{houseFund:null,holidayFund:null,personalSavings:null},
+      goalLifetimeAdded:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLifeHappensTotal:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastLifeHappens:{},goalStartingBalance:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastBalanceCorrection:{},goalCollapsed:{},goalOrder:[],
+      goalCompletionExperienced:{},goalCompletedAt:{},goalMilestoneExperienced:{},
+      goalOrdinaryProgress:{},goalMeaningfulProgress:{},
+      loans:[{
+        name:"Car Loan",starting:1000,current:loanCurrent,payment:50,collapsed:false,
+        payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:50,lastRepaymentDate:new Date().toISOString(),
+        firstRepaymentCompanionConsumed:true,milestoneExperienced:milestoneExperienced,completionExperienced:false,
+        ordinarySkipNext:false,ordinaryLastLine:-1,
+        lastMeaningfulProgressAt:new Date().toISOString(),dormantLastLine:-1
+      }],
+      housePocket:0,housePocketMonthly:0,housePocketArchived:true,
+      housePocketCompletedAt:null,housePocketArchiveRemoved:true,
+      houseFund:0,holidayFund:0,holidayMonthly:0,personalSavings:0,pensions:[],
+      overviewExcludeHousePocket:true
+    };
+    localStorage.setItem("freedom50-mobile-v1",JSON.stringify(base));
+    sessionStorage.removeItem("freedom50-demo-session-v1");
+    sessionStorage.setItem(seedKey,raw);
+    window.__FREEDOM_POSITIVE_PATTERN__={
+      kind:kind,companion:companion,seeded:true,pageKind:"journey",
+      injectRepay:injectRepay,autoRepay:autoRepay
+    };
+    window.__FREEDOM_POSITIVE_PATTERN_FORCE__="on";
+    window.__FREEDOM_ORDINARY_FORCE__="off";
+  }catch(e){}
+})();
 /* TEMP DEV ONLY — rename / repurpose FLOW seeds (real edit+Save path; force on/off).
    ?renameFlow=journey-on|journey-off|journey-same|journey-half|journey-wake|journey-create
                |goal-on|goal-off|goal-same|goal-half|goal-wake|goal-create
@@ -6532,6 +6642,9 @@ function page(id){
   if(window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.onPageChange==="function"){
     window.FreedomOrdinaryProgress.onPageChange(id);
   }
+  if(window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.onPageChange==="function"){
+    window.FreedomPositivePattern.onPageChange(id);
+  }
   if(window.FreedomRenameAck&&typeof window.FreedomRenameAck.onPageChange==="function"){
     window.FreedomRenameAck.onPageChange(id);
   }
@@ -6900,8 +7013,11 @@ function saveGoal(key){
     }
   }
   persist(); render();
-  /* Priority: completion > 50% > dormant-return (if present) > ordinary random > rename ack.
-     First genuine contribution stays silent. Progress saves never also rename. */
+  /* Priority: completion > 50% > dormant > positive-pattern > ordinary > rename.
+     First genuine contribution stays silent for messages. Progress still counts for pattern. */
+  if(addedAmount>0&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.record==="function"){
+    window.FreedomPositivePattern.record();
+  }
   if(checkGoalCompletionCelebration(key,prevReached))return true;
   if(checkGoalMilestoneCelebration(key,prevProgress,{addedAmount:addedAmount}))return true;
   if(window.FreedomCompanionDormantReturn&&typeof window.FreedomCompanionDormantReturn.tryGoal==="function"){
@@ -6910,6 +7026,9 @@ function saveGoal(key){
       persist();
       return true;
     }
+  }
+  if(addedAmount>0&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.tryPresent==="function"){
+    if(window.FreedomPositivePattern.tryPresent("goal"))return true;
   }
   if(hadPriorGenuineContribution&&addedAmount>0&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryGoal==="function"){
     let ordinarySlot=null;
@@ -7869,14 +7988,19 @@ function renderLoans(){
     const nextProgress=starting?Math.max(0,(starting-loan.current)/starting):0;
     if(isFirstActualRepayment)loan.collapsed=true;
     persist();render();
-    /* Priority: completion > 50% > dormant-return (if present) > ordinary random.
-       First genuine repayment stays silent. */
+    /* Priority: completion > 50% > dormant > positive-pattern > ordinary.
+       First genuine repayment stays silent for messages. Progress still counts for pattern. */
+    if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.record==="function"){
+      window.FreedomPositivePattern.record();
+    }
     if(checkJourneyCompletionCelebration(loan,prevCurrent)){
       /* completion already marks milestoneExperienced */
     }else if(checkJourneyMilestoneCelebration(loan,prevProgress,nextProgress)){
       /* 50% owns this interaction */
     }else if(window.FreedomCompanionDormantReturn&&typeof window.FreedomCompanionDormantReturn.tryJourney==="function"&&window.FreedomCompanionDormantReturn.tryJourney({loan:loan,loanIndex:i,amount:amount,wasDormant:wasDormantBeforeProgress,prevCurrent:prevCurrent})){
       persist();
+    }else if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.tryPresent==="function"&&window.FreedomPositivePattern.tryPresent("journey")){
+      /* positive-pattern owns this interaction */
     }else if(hadPriorGenuineRepayment&&amount>0&&loan.current<prevCurrent&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryJourney==="function"){
       const ordinary=window.FreedomOrdinaryProgress.tryJourney(loan,i);
       if(ordinary&&ordinary.changed)persist();
@@ -7903,10 +8027,12 @@ function renderLoans(){
     const genuineRename=window.FreedomRenameAck&&typeof window.FreedomRenameAck.isGenuineRename==="function"
       ?window.FreedomRenameAck.isGenuineRename(renameOldName,renameNewName)
       :false;
-    /* TEMP DEV ONLY — renameFlow priority seeds may inject a repayment on Save. */
+    /* TEMP DEV ONLY — renameFlow / positivePattern seeds may inject a repayment on Save. */
     const renameFlow=window.__FREEDOM_RENAME_FLOW__;
+    const patternFlow=window.__FREEDOM_POSITIVE_PATTERN__;
     const injectRepay=(renameFlow&&(renameFlow.kind==="journey-half"||renameFlow.kind==="journey-wake")&&Number(renameFlow.injectRepay)>0)
-      ?Number(renameFlow.injectRepay):0;
+      ?Number(renameFlow.injectRepay)
+      :((patternFlow&&Number(patternFlow.injectRepay)>0)?Number(patternFlow.injectRepay):0);
     let amount=0;
     let prevCurrent=loan.current;
     let prevProgress=null;
@@ -7932,7 +8058,10 @@ function renderLoans(){
       nextProgress=starting?Math.max(0,(starting-loan.current)/starting):0;
     }
     persist();render();
-    /* Priority: completion > 50% > dormant > ordinary > rename. Progress blocks rename. */
+    /* Priority: completion > 50% > dormant > positive-pattern > ordinary > rename. */
+    if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.record==="function"){
+      window.FreedomPositivePattern.record();
+    }
     if(amount>0){
       if(checkJourneyCompletionCelebration(loan,prevCurrent)){
         /* completion owns this Save */
@@ -7940,6 +8069,8 @@ function renderLoans(){
         /* 50% owns this Save */
       }else if(window.FreedomCompanionDormantReturn&&typeof window.FreedomCompanionDormantReturn.tryJourney==="function"&&window.FreedomCompanionDormantReturn.tryJourney({loan:loan,loanIndex:i,amount:amount,wasDormant:wasDormantBeforeProgress,prevCurrent:prevCurrent})){
         persist();
+      }else if(loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.tryPresent==="function"&&window.FreedomPositivePattern.tryPresent("journey")){
+        /* positive-pattern owns this Save */
       }else if(hadPriorGenuineRepayment&&loan.current<prevCurrent&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryJourney==="function"){
         const ordinary=window.FreedomOrdinaryProgress.tryJourney(loan,i);
         if(ordinary&&ordinary.changed)persist();
@@ -8748,6 +8879,35 @@ function freedomBootNavPreview(open){
   else setTimeout(boot,0);
   window.addEventListener("load",function(){ setTimeout(boot,0); });
 })();
+/* TEMP DEV ONLY — boot positive-pattern FLOW (real repay path). */
+(function(){
+  if(!window.__FREEDOM_POSITIVE_PATTERN__)return;
+  const flow=window.__FREEDOM_POSITIVE_PATTERN__;
+  let booted=false;
+  function boot(){
+    if(booted)return;
+    booted=true;
+    freedomBootNavPreview(function(){
+      document.body.classList.remove("home183");
+      if(typeof window.hideHome==="function")window.hideHome();
+      if(typeof window.page==="function")window.page(flow.pageKind||"journey");
+      if(!flow.autoRepay)return;
+      setTimeout(function(){
+        const amount=Number(flow.injectRepay)||50;
+        const input=document.querySelector("#loanRepayment_0")||document.querySelector("[id^='loanRepayment_']");
+        const btn=document.querySelector("[data-add-repayment='0']")||document.querySelector("[data-add-repayment]");
+        if(input){
+          input.value=String(amount);
+          input.dispatchEvent(new Event("input",{bubbles:true}));
+        }
+        if(btn)btn.click();
+      },220);
+    });
+  }
+  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(boot,0); });
+  else setTimeout(boot,0);
+  window.addEventListener("load",function(){ setTimeout(boot,0); });
+})();
 /* TEMP DEV ONLY — boot dormant-item return FLOW (real repay/save path). */
 (function(){
   if(!window.__FREEDOM_DORMANT_FLOW__)return;
@@ -9077,6 +9237,12 @@ window.FreedomCompanionMessage=(function(){
       .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
       .replace(/"/g,"&quot;");
   }
+  /* Keep single-letter words (I, a, …) attached to the following word so they
+     cannot sit alone at the end of a wrapped CompanionMessage body line.
+     Require whitespace/start before the letter so apostrophe tails (isn’t) stay intact. */
+  function protectSingleLetterOrphans(text){
+    return String(text==null?"":text).replace(/(^|[\s([{“"'])([A-Za-z])[ \t]+(?=\S)/g,"$1$2\u00A0");
+  }
   /* One continuous path: rounded rect perimeter + left speech-bubble tail */
   function layoutOutline(root, svg, path, glowSvg, glowPaths, glowFadePaths, glowMaskPath){
     const W=root.offsetWidth;
@@ -9390,7 +9556,7 @@ window.FreedomCompanionMessage=(function(){
     /* Continuous sentence flow — do not force \n fragments onto nowrap block lines */
     let messageText=String(opts.message||"").replace(/\n+/g," ").replace(/\s+/g," ").trim();
     if(opts.inlineEmoji)messageText+=" "+String(opts.inlineEmoji);
-    textEl.textContent=messageText;
+    textEl.textContent=protectSingleLetterOrphans(messageText);
     copy.appendChild(textEl);
     row.appendChild(copy);
 
@@ -10900,7 +11066,7 @@ window.FreedomOrdinaryProgress=(function(){
   }
   function rollOrdinary(){
     /* Force only while a TEMP URL preview seed is active — never in production. */
-    if(window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__){
+    if(window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_POSITIVE_PATTERN__){
       const force=window.__FREEDOM_ORDINARY_FORCE__;
       if(force==="on")return true;
       if(force==="off")return false;
@@ -10987,9 +11153,216 @@ window.FreedomOrdinaryProgress=(function(){
   return{tryJourney:tryJourney,tryGoal:tryGoal,onPageChange:onPageChange,clearHost:clearHost};
 })();
 
+/* Whole-app positive-pattern CompanionMessage.
+   After 3 genuine positive financial updates across ≥2 calendar months: 30% chance.
+   Failed rolls keep eligibility. A shown message resets tracking.
+   Priority: after dormant, before ordinary / rename. TEMP:
+   window.__FREEDOM_POSITIVE_PATTERN_FORCE__ = "on"|"off" while flow seed is set. */
+window.FreedomPositivePattern=(function(){
+  const OWNER="positive-pattern";
+  const APPEAR_DELAY_MS=400;
+  const CHANCE=0.3;
+  const STATE_KEY="freedom50-positive-pattern-v1";
+  const companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
+  const pools={
+    patricia:[
+      "Okay, I see what you’re doing here. Very nice.",
+      "You’ve been getting things done lately. I’ve noticed.",
+      "This is becoming a bit of a thing, isn’t it? I like it."
+    ],
+    veronica:[
+      "You’ve been making steady progress. It’s lovely to see.",
+      "There’s a nice rhythm developing here.",
+      "You’ve been moving things forward consistently. That’s worth noticing."
+    ],
+    kevin:[
+      "You’ve been making solid progress lately. Good work.",
+      "Things have been moving in the right direction. Nice work.",
+      "You’ve been getting through this steadily. It shows."
+    ]
+  };
+  let showTimer=null;
+  function selectedCompanion(){
+    const select=window.freedomCompanionSelect;
+    const id=select&&typeof select.getSelected==="function"?select.getSelected():"";
+    if(id==="patricia"||id==="veronica"||id==="kevin")return id;
+    try{
+      const v=localStorage.getItem("freedom50-companion-id-v1")||"";
+      if(v==="patricia"||v==="veronica"||v==="kevin")return v;
+    }catch(e){}
+    return "patricia";
+  }
+  function inDemo(){
+    return !!(window.freedomDemo&&typeof window.freedomDemo.isActive==="function"&&window.freedomDemo.isActive());
+  }
+  function isEstablishedUser(){
+    try{
+      if(localStorage.getItem("freedom50-welcome-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-look-around-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-first-time-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-companion-pending-v1")==="1")return false;
+      if(localStorage.getItem("freedom50-companion-first-setup-pending-v1")==="1")return false;
+      const companion=selectedCompanion();
+      return !!companionNames[companion];
+    }catch(e){return false;}
+  }
+  function pageIsActive(pageId){
+    const page=document.getElementById(pageId);
+    return !!page&&page.classList.contains("active")&&!document.body.classList.contains("home183");
+  }
+  function hostFor(kind){
+    return document.getElementById(kind==="goal"?"freedomGoalsCompanionMsgHost":"freedomJourneyCompanionMsgHost");
+  }
+  function cancelPending(){
+    if(showTimer){clearTimeout(showTimer);showTimer=null;}
+  }
+  function clearHost(host){
+    if(!host||host.dataset.companionMessageOwner!==OWNER)return;
+    cancelPending();
+    host.classList.remove("is-entering");
+    host.innerHTML="";
+    host.hidden=true;
+    delete host.dataset.companionMessageOwner;
+    if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+    }
+  }
+  function syncPage(){
+    const active=document.activeElement;
+    if(active&&typeof active.blur==="function")active.blur();
+    window.scrollTo(0,0);
+    if(document.documentElement)document.documentElement.scrollTop=0;
+    if(document.body)document.body.scrollTop=0;
+    if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+      requestAnimationFrame(function(){ window.FreedomCompanionMessage.syncScrim(); });
+    }
+  }
+  function monthKey(date){
+    const d=date instanceof Date?date:new Date(date||Date.now());
+    if(isNaN(d.getTime())){
+      const n=new Date();
+      return n.getFullYear()+"-"+String(n.getMonth()+1).padStart(2,"0");
+    }
+    return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+  }
+  function readState(){
+    try{
+      const v=JSON.parse(localStorage.getItem(STATE_KEY)||"null");
+      if(v&&typeof v==="object"){
+        return {
+          updates:Array.isArray(v.updates)?v.updates.filter(Boolean):[],
+          lastLineByCompanion:(v.lastLineByCompanion&&typeof v.lastLineByCompanion==="object")
+            ?v.lastLineByCompanion
+            :{patricia:-1,veronica:-1,kevin:-1}
+        };
+      }
+    }catch(e){}
+    return{updates:[],lastLineByCompanion:{patricia:-1,veronica:-1,kevin:-1}};
+  }
+  function writeState(st){
+    try{localStorage.setItem(STATE_KEY,JSON.stringify(st));}catch(e){}
+  }
+  function isEligible(st){
+    if(!st||!Array.isArray(st.updates)||st.updates.length<3)return false;
+    const months={};
+    st.updates.forEach(function(u){
+      if(u&&u.month)months[u.month]=true;
+    });
+    return Object.keys(months).length>=2;
+  }
+  function rollPattern(){
+    if(window.__FREEDOM_POSITIVE_PATTERN__){
+      const force=window.__FREEDOM_POSITIVE_PATTERN_FORCE__;
+      if(force==="on")return true;
+      if(force==="off")return false;
+    }
+    return Math.random()<CHANCE;
+  }
+  function pickLine(companion,lastLine){
+    const list=pools[companion]||[];
+    if(!list.length)return{index:-1,message:""};
+    if(list.length===1)return{index:0,message:list[0]};
+    let index=Math.floor(Math.random()*list.length);
+    if(index===lastLine)index=(index+1+Math.floor(Math.random()*(list.length-1)))%list.length;
+    return{index:index,message:list[index]};
+  }
+  function present(kind,message){
+    if(!window.FreedomCompanionMessage||!message)return false;
+    const pageId=kind==="goal"?"goals":"journey";
+    const host=hostFor(kind);
+    const companion=selectedCompanion();
+    if(!host||!companionNames[companion]||!pageIsActive(pageId)||inDemo())return false;
+    cancelPending();
+    showTimer=setTimeout(function(){
+      showTimer=null;
+      if(!pageIsActive(pageId))return;
+      if(window.FreedomCompanionFirstCreated&&typeof window.FreedomCompanionFirstCreated.hideAll==="function"){
+        window.FreedomCompanionFirstCreated.hideAll();
+      }
+      if(window.FreedomCompanionJourneyRepayment&&typeof window.FreedomCompanionJourneyRepayment.hide==="function"){
+        window.FreedomCompanionJourneyRepayment.hide();
+      }
+      if(window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.clearHost==="function"){
+        window.FreedomOrdinaryProgress.clearHost(hostFor("journey"));
+        window.FreedomOrdinaryProgress.clearHost(hostFor("goal"));
+      }
+      if(window.FreedomRenameAck&&typeof window.FreedomRenameAck.clearHost==="function"){
+        window.FreedomRenameAck.clearHost(hostFor("journey"));
+        window.FreedomRenameAck.clearHost(hostFor("goal"));
+      }
+      host.dataset.companionMessageOwner=OWNER;
+      host.hidden=false;
+      /* Same shell as ordinary progress: standard 13px, no rename/welcome-back 14px variant. */
+      window.FreedomCompanionMessage.mount(host,{
+        name:companionNames[companion],
+        message:message,
+        dismissible:true,
+        onDismiss:function(){ clearHost(host); }
+      });
+      syncPage();
+    },APPEAR_DELAY_MS);
+    return true;
+  }
+  function record(){
+    if(inDemo()||!isEstablishedUser())return false;
+    const st=readState();
+    const now=new Date();
+    st.updates.push({month:monthKey(now),at:now.toISOString()});
+    writeState(st);
+    return true;
+  }
+  function tryPresent(kind){
+    kind=kind==="goal"?"goal":"journey";
+    if(inDemo()||!isEstablishedUser())return false;
+    const st=readState();
+    if(!isEligible(st))return false;
+    if(!rollPattern())return false;
+    const companion=selectedCompanion();
+    const last=st.lastLineByCompanion[companion];
+    const picked=pickLine(companion,last);
+    if(!picked.message)return false;
+    st.lastLineByCompanion[companion]=picked.index;
+    st.updates=[];
+    writeState(st);
+    return present(kind,picked.message);
+  }
+  function onPageChange(pageId){
+    if(pageId!=="journey")clearHost(hostFor("journey"));
+    if(pageId!=="goals")clearHost(hostFor("goal"));
+  }
+  return{
+    record:record,
+    tryPresent:tryPresent,
+    onPageChange:onPageChange,
+    clearHost:clearHost,
+    isEligible:function(){ return isEligible(readState()); }
+  };
+})();
+
 /* Occasional rename / repurpose CompanionMessage for Journeys and Goals.
    Genuine rename only (meaningful → different meaningful). Production chance 33%.
-   Lower priority than completion > 50% > dormant > ordinary. TEMP:
+   Lower priority than completion > 50% > dormant > positive-pattern > ordinary. TEMP:
    window.__FREEDOM_RENAME_FORCE__ = "on"|"off" while __FREEDOM_RENAME_FLOW__ is set. */
 window.FreedomRenameAck=(function(){
   const OWNER="rename-ack";
@@ -11227,7 +11600,7 @@ window.FreedomWelcomeBack=(function(){
     });
   }
   function otherTempFlowActive(){
-    return !!(window.__FREEDOM_MILESTONE_PREVIEW__||window.__FREEDOM_COMPLETION_PREVIEW__||window.__FREEDOM_COMPLETION_FLOW__||window.__FREEDOM_MILESTONE_FLOW__||window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_RENAME_FLOW__||window.__FREEDOM_JOURNEY_CARD_PREVIEW__||window.__FREEDOM_VICTORIES_PREVIEW__||window.__FREEDOM_MORE_PREVIEW__||window.__FREEDOM_ARCHIVE_PREVIEW__);
+    return !!(window.__FREEDOM_MILESTONE_PREVIEW__||window.__FREEDOM_COMPLETION_PREVIEW__||window.__FREEDOM_COMPLETION_FLOW__||window.__FREEDOM_MILESTONE_FLOW__||window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_RENAME_FLOW__||window.__FREEDOM_POSITIVE_PATTERN__||window.__FREEDOM_JOURNEY_CARD_PREVIEW__||window.__FREEDOM_VICTORIES_PREVIEW__||window.__FREEDOM_MORE_PREVIEW__||window.__FREEDOM_ARCHIVE_PREVIEW__);
   }
   function host(){
     return document.getElementById("freedomCompanionMsgHost");
@@ -11585,7 +11958,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
       const removed=(await Promise.all(registrations.map(registration=>registration.unregister()))).some(Boolean);
       const reloadKey="freedom50-local-sw-cleared-v1";
       /* Never reload during TEMP milestone/completion preview — that replayed the message. */
-      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)&&!window.__FREEDOM_MILESTONE_PREVIEW__&&!window.__FREEDOM_COMPLETION_PREVIEW__&&!window.__FREEDOM_COMPLETION_FLOW__&&!window.__FREEDOM_MILESTONE_FLOW__&&!window.__FREEDOM_ORDINARY_FLOW__&&!window.__FREEDOM_DORMANT_FLOW__&&!window.__FREEDOM_RENAME_FLOW__&&!window.__FREEDOM_WELCOME_BACK__&&!window.__FREEDOM_JOURNEY_CARD_PREVIEW__&&!window.__FREEDOM_VICTORIES_PREVIEW__&&!window.__FREEDOM_MORE_PREVIEW__&&!window.__FREEDOM_ARCHIVE_PREVIEW__){
+      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)&&!window.__FREEDOM_MILESTONE_PREVIEW__&&!window.__FREEDOM_COMPLETION_PREVIEW__&&!window.__FREEDOM_COMPLETION_FLOW__&&!window.__FREEDOM_MILESTONE_FLOW__&&!window.__FREEDOM_ORDINARY_FLOW__&&!window.__FREEDOM_DORMANT_FLOW__&&!window.__FREEDOM_RENAME_FLOW__&&!window.__FREEDOM_POSITIVE_PATTERN__&&!window.__FREEDOM_WELCOME_BACK__&&!window.__FREEDOM_JOURNEY_CARD_PREVIEW__&&!window.__FREEDOM_VICTORIES_PREVIEW__&&!window.__FREEDOM_MORE_PREVIEW__&&!window.__FREEDOM_ARCHIVE_PREVIEW__){
         sessionStorage.setItem(reloadKey,"1");
         location.reload();
       }
