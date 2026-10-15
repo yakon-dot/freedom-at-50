@@ -1067,7 +1067,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.overview-active-v300 .app{
     position:relative;z-index:1;background:transparent;
   }
-  body.journey-active-v313 .app{position:relative;z-index:1;background:transparent}
+  body.journey-active-v313 .app{
+    position:relative;z-index:1;background:transparent;
+    min-height:100vh;min-height:100dvh;min-height:-webkit-fill-available;
+  }
   body.overview-active-v300 .app>header,
   body.journey-active-v313 .app>header{display:none}
   body.overview-active-v300 .app>main,
@@ -1187,17 +1190,39 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.overview-active-v300 #overview .overview-chevron{display:none}
 
-  body.journey-active-v313{background:transparent}
-  html:has(body.journey-active-v313){background:#070809}
+  body.journey-active-v313{
+    background:transparent;
+    min-height:100vh;
+    min-height:100dvh;
+    min-height:-webkit-fill-available;
+  }
+  html:has(body.journey-active-v313){
+    background:#070809!important;
+    min-height:100%;
+    min-height:100vh;
+    min-height:100dvh;
+    min-height:-webkit-fill-available;
+  }
+  /* Full-viewport wallpaper shell — keep -190px framing; size image tall enough that
+     the offset cannot leave a solid letterbox strip above the bottom nav. */
   body.journey-active-v313::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-    background:
+    width:100%;height:100%;
+    min-height:100vh;min-height:100dvh;min-height:-webkit-fill-available;
+    background-color:#070809;
+    background-image:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
-      #070809 url("./journey-wallpaper.png") center -190px/cover no-repeat;
+      url("./journey-wallpaper.png");
+    background-position:0 0,center -190px;
+    background-size:100% 100%,auto calc(100vh + 190px);
+    background-size:100% 100%,auto calc(100dvh + 190px);
+    background-repeat:no-repeat;
   }
   body.journey-active-v313 .app::before{display:none}
   body.journey-active-v313 #journey{
     position:relative;z-index:1;
+    box-sizing:border-box;
+    min-height:100vh;min-height:100dvh;min-height:-webkit-fill-available;
     padding:calc(env(safe-area-inset-top,0px) + 10px) 18px calc(112px + var(--safe-bottom));
   }
   body.journey-active-v313 #journey>.eyebrow{display:none}
@@ -5659,6 +5684,63 @@ function freedomSeedNavPreviewState(extra){
     window.__FREEDOM_DEMO_COMPLETE_FLOW__={kind:kind,companion:companion,seeded:true,pageKind:pageKind};
   }catch(e){}
 })();
+/* TEMP DEV ONLY — Demo Journey empty/near-empty shell (wallpaper full-height check).
+   ?demoJourneyEmpty=1
+   Enters sandboxed Demo with no active journeys. Do not ship. */
+(function(){
+  try{
+    const raw=String(new URLSearchParams(location.search).get("demoJourneyEmpty")||"").toLowerCase();
+    if(raw!=="1"&&raw!=="true"&&raw!=="yes")return;
+    const seedKey="freedom50-demo-journey-empty-seed-v1";
+    if(sessionStorage.getItem(seedKey)==="1"){
+      window.__FREEDOM_DEMO_JOURNEY_EMPTY__={seeded:false};
+      return;
+    }
+    localStorage.setItem("freedom50-welcome-complete-v1","1");
+    localStorage.setItem("freedom50-look-around-complete-v1","1");
+    localStorage.setItem("freedom50-first-time-complete-v1","1");
+    localStorage.setItem("freedom50-companion-id-v1","patricia");
+    localStorage.removeItem("freedom50-companion-pending-v1");
+    localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
+    localStorage.setItem("freedom50-companion-first-created-responses-v1",JSON.stringify({journey:"complete",goals:"complete"}));
+    const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return d.toISOString();};
+    const emptyBase={
+      archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],customGoals:[],
+      hiddenBuiltInGoals:{houseFund:true,holidayFund:true,personalSavings:true},
+      deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalNames:{},goalTargets:{},goalHasTarget:{},goalPlanMode:{},goalPlannedMonthly:{},goalDate:{},
+      goalLifetimeAdded:{},goalLifeHappensTotal:{},goalLastLifeHappens:{},goalStartingBalance:{},
+      goalLastBalanceCorrection:{},goalCollapsed:{},goalOrder:[],
+      goalCompletionExperienced:{},goalCompletedAt:{},goalMilestoneExperienced:{},
+      loans:[],
+      housePocket:0,housePocketMonthly:0,housePocketArchived:true,
+      housePocketCompletedAt:null,housePocketArchiveRemoved:true,
+      houseFund:0,holidayFund:0,holidayMonthly:0,personalSavings:0,pensions:[],
+      overviewExcludeHousePocket:true
+    };
+    const demoState=Object.assign({},emptyBase,{
+      archivedJourneys:[{
+        name:"Phone Loan",starting:1200,current:0,payment:0,collapsed:true,payoffMode:"monthly",freedomDate:null,
+        lastRepaymentAmount:1200,lastRepaymentDate:daysAgo(45),archivedAt:daysAgo(30)
+      }],
+      loans:[],
+      customGoals:[],
+      pensions:[{id:"pension-demo-1",name:"Workplace Pension",value:12000,personal:200,employer:200,collapsed:false,showInOverview:true}]
+    });
+    localStorage.setItem("freedom50-mobile-v1",JSON.stringify(emptyBase));
+    sessionStorage.setItem("freedom50-demo-session-v1",JSON.stringify({
+      demoMode:true,
+      state:demoState,
+      demoSession:{
+        dismissedNotes:{journeyFirst:true,goalsFirst:true,home:true},
+        visited:{journey:true,goals:true},
+        triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}
+      }
+    }));
+    sessionStorage.setItem(seedKey,"1");
+    window.__FREEDOM_DEMO_JOURNEY_EMPTY__={seeded:true};
+  }catch(e){}
+})();
 /* TEMP DEV ONLY — seed for Victories page preview.
    ?victoriesPreview=1
    Do not ship. */
@@ -10087,6 +10169,36 @@ function freedomBootNavPreview(open){
   window.addEventListener("load",function(){ setTimeout(bootVictoriesPreview,0); });
 })();
 
+/* TEMP DEV ONLY — boot Demo Journey empty shell (wallpaper full-height check). */
+(function(){
+  if(!window.__FREEDOM_DEMO_JOURNEY_EMPTY__)return;
+  let booted=false;
+  function boot(){
+    if(booted)return;
+    booted=true;
+    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
+      const el=document.getElementById(id);
+      if(!el)return;
+      el.hidden=true;
+      if(id==="demoEntryOverlay"||id==="demoWelcomeOverlay")return;
+      if(el.parentNode)el.parentNode.removeChild(el);
+    });
+    const updateBanner=document.getElementById("updateBanner");
+    if(updateBanner)updateBanner.hidden=true;
+    document.body.classList.add("demo-mode-active");
+    const demoWrap=document.getElementById("demo183Wrap");
+    if(demoWrap){
+      demoWrap.hidden=false;
+      demoWrap.style.removeProperty("display");
+    }
+    if(typeof window.hideHome==="function")window.hideHome();
+    if(typeof window.page==="function")window.page("journey");
+    window.scrollTo(0,0);
+  }
+  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(boot,0); });
+  else setTimeout(boot,0);
+  window.addEventListener("load",function(){ setTimeout(boot,0); });
+})();
 /* TEMP DEV ONLY — boot Demo completion FLOW (sandboxed Demo, near-complete item). */
 (function(){
   if(!window.__FREEDOM_DEMO_COMPLETE_FLOW__)return;
@@ -13290,7 +13402,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
       const removed=(await Promise.all(registrations.map(registration=>registration.unregister()))).some(Boolean);
       const reloadKey="freedom50-local-sw-cleared-v1";
       /* Never reload during TEMP milestone/completion preview — that replayed the message. */
-      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)&&!window.__FREEDOM_MILESTONE_PREVIEW__&&!window.__FREEDOM_COMPLETION_PREVIEW__&&!window.__FREEDOM_COMPLETION_FLOW__&&!window.__FREEDOM_CLOSE_CHAPTER_FLOW__&&!window.__FREEDOM_MILESTONE_FLOW__&&!window.__FREEDOM_ORDINARY_FLOW__&&!window.__FREEDOM_DORMANT_FLOW__&&!window.__FREEDOM_RENAME_FLOW__&&!window.__FREEDOM_POSITIVE_PATTERN__&&!window.__FREEDOM_WELCOME_BACK__&&!window.__FREEDOM_JOURNEY_CARD_PREVIEW__&&!window.__FREEDOM_VICTORIES_PREVIEW__&&!window.__FREEDOM_MORE_PREVIEW__&&!window.__FREEDOM_ARCHIVE_PREVIEW__&&!window.__FREEDOM_DEMO_COMPLETE_FLOW__){
+      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)&&!window.__FREEDOM_MILESTONE_PREVIEW__&&!window.__FREEDOM_COMPLETION_PREVIEW__&&!window.__FREEDOM_COMPLETION_FLOW__&&!window.__FREEDOM_CLOSE_CHAPTER_FLOW__&&!window.__FREEDOM_MILESTONE_FLOW__&&!window.__FREEDOM_ORDINARY_FLOW__&&!window.__FREEDOM_DORMANT_FLOW__&&!window.__FREEDOM_RENAME_FLOW__&&!window.__FREEDOM_POSITIVE_PATTERN__&&!window.__FREEDOM_WELCOME_BACK__&&!window.__FREEDOM_JOURNEY_CARD_PREVIEW__&&!window.__FREEDOM_VICTORIES_PREVIEW__&&!window.__FREEDOM_MORE_PREVIEW__&&!window.__FREEDOM_ARCHIVE_PREVIEW__&&!window.__FREEDOM_DEMO_COMPLETE_FLOW__&&!window.__FREEDOM_DEMO_JOURNEY_EMPTY__){
         sessionStorage.setItem(reloadKey,"1");
         location.reload();
       }
