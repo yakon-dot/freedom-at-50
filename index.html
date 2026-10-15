@@ -1189,17 +1189,22 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 
   body.journey-active-v313{background:transparent}
   html:has(body.journey-active-v313){background:#070809!important}
-  /* Wallpaper stays on a fixed viewport shell (inset:0) — not on content height.
-     Keep -190px framing; size the image tall enough that the offset cannot letterbox. */
+  /* Original Journey wallpaper framing restored (center -190px / cover). */
   body.journey-active-v313::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
-    background-color:#070809;
-    background-image:
+    background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
-      url("./journey-wallpaper.png");
-    background-position:0 0,center -190px;
-    background-size:100% 100%,auto calc(100% + 190px);
-    background-repeat:no-repeat;
+      #070809 url("./journey-wallpaper.png") center -190px/cover no-repeat;
+  }
+  /* Subtle bottom blend only — softens the small letterbox into the nav without reframing. */
+  body.journey-active-v313::after{
+    content:"";position:fixed;left:0;right:0;bottom:0;z-index:0;pointer-events:none;
+    height:calc(88px + env(safe-area-inset-bottom,0px));
+    background:linear-gradient(to bottom,
+      rgba(7,8,9,0) 0%,
+      rgba(7,8,9,.22) 38%,
+      rgba(7,8,9,.62) 72%,
+      #070809 100%);
   }
   body.journey-active-v313 .app::before{display:none}
   body.journey-active-v313 #journey{
@@ -1886,11 +1891,22 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   /* ===== Pension page (v315) — matches Journey/Goals system ===== */
   body.pension-active-v315{background:transparent}
   html:has(body.pension-active-v315){background:#070809}
+  /* Original Pension wallpaper framing kept (center -150px / cover). */
   body.pension-active-v315::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
       #070809 url("./pension-wallpaper.png") center -150px/cover no-repeat;
+  }
+  /* Same subtle bottom blend as Journey for the smaller Pension gap. */
+  body.pension-active-v315::after{
+    content:"";position:fixed;left:0;right:0;bottom:0;z-index:0;pointer-events:none;
+    height:calc(72px + env(safe-area-inset-bottom,0px));
+    background:linear-gradient(to bottom,
+      rgba(7,8,9,0) 0%,
+      rgba(7,8,9,.2) 36%,
+      rgba(7,8,9,.58) 70%,
+      #070809 100%);
   }
   body.pension-active-v315 .app::before{display:none}
   body.pension-active-v315 .app{position:relative;z-index:1;background:transparent}
