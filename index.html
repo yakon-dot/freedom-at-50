@@ -4094,7 +4094,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       <div class="subwrap183" id="sub183">
         <button class="sub183" type="button" data-more183="archive">Archive</button>
         <button class="sub183" type="button" data-more183="companion" hidden aria-hidden="true" tabindex="-1">Companion</button>
-        <button class="sub183" type="button" data-more183="reset">Reset Freedom</button>
+        <button class="sub183" type="button" data-more183="reset" id="resetFreedomMoreBtn" hidden aria-hidden="true" tabindex="-1">Reset Freedom</button>
       </div>
     </nav>
     <div class="freedom-companion-msg-host" id="freedomCompanionMsgHost" aria-live="polite"></div>
@@ -5530,6 +5530,135 @@ function freedomSeedNavPreviewState(extra){
     window.__FREEDOM_MILESTONE_FLOW__={kind:kind,companion:companion,seeded:true,pageKind:pageKind};
   }catch(e){}
 })();
+/* TEMP DEV ONLY — Demo Journey/Goal completion FLOW (sandboxed demo session).
+   ?demoCompleteFlow=journey-patricia|goal-patricia|journey50-patricia|goal50-patricia
+   Enters Demo with a near-complete (or near-50%) item so live Freedom*Flow can be tested.
+   Real localStorage is an isolation probe only — exit Demo must restore it untouched.
+   Do not ship. */
+(function(){
+  try{
+    const raw=String(new URLSearchParams(location.search).get("demoCompleteFlow")||"").toLowerCase();
+    const match=raw.match(/^(journey|goal|journey50|goal50)-(patricia|veronica|kevin)$/);
+    if(!match)return;
+    const kind=match[1];
+    const companion=match[2];
+    const seedKey="freedom50-demo-complete-flow-seed-v1";
+    const pageKind=kind.indexOf("goal")===0?"goals":"journey";
+    if(sessionStorage.getItem(seedKey)===raw){
+      window.__FREEDOM_DEMO_COMPLETE_FLOW__={kind:kind,companion:companion,seeded:false,pageKind:pageKind};
+      return;
+    }
+    localStorage.setItem("freedom50-welcome-complete-v1","1");
+    localStorage.setItem("freedom50-look-around-complete-v1","1");
+    localStorage.setItem("freedom50-first-time-complete-v1","1");
+    localStorage.setItem("freedom50-companion-id-v1",companion);
+    localStorage.removeItem("freedom50-companion-pending-v1");
+    localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
+    localStorage.setItem("freedom50-companion-first-created-responses-v1",JSON.stringify({journey:"complete",goals:"complete"}));
+    const daysAgo=n=>{const d=new Date();d.setDate(d.getDate()-n);return d.toISOString();};
+    const freedomDate=(function(){
+      const d=new Date();d.setMonth(d.getMonth()+24);
+      return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-01`;
+    })();
+    const goalDate=freedomDate.slice(0,7);
+    const realProbe={
+      archivedJourneys:[],archivedGoals:[],archivedPensions:[],
+      victories:[{
+        id:"real-isolation-probe-victory",kind:"journey",name:"REAL ISOLATION PROBE",
+        amount:1,completedAt:daysAgo(90),archivedAt:daysAgo(90)
+      }],
+      customGoals:[],
+      hiddenBuiltInGoals:{houseFund:true,holidayFund:true,personalSavings:true},
+      deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalNames:{},goalTargets:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalHasTarget:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalPlanMode:{houseFund:"monthly",holidayFund:"monthly",personalSavings:"monthly"},
+      goalPlannedMonthly:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalDate:{houseFund:null,holidayFund:null,personalSavings:null},
+      goalLifetimeAdded:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLifeHappensTotal:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastLifeHappens:{},goalStartingBalance:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastBalanceCorrection:{},goalCollapsed:{},goalOrder:[],
+      goalCompletionExperienced:{},goalCompletedAt:{},goalMilestoneExperienced:{},
+      loans:[{
+        id:"real-isolation-probe-loan",name:"REAL ISOLATION PROBE",
+        starting:999,current:999,payment:10,collapsed:false,payoffMode:"monthly",freedomDate:null,
+        lastRepaymentAmount:0,lastRepaymentDate:null,firstRepaymentCompanionConsumed:true,
+        milestoneExperienced:false,completionExperienced:false
+      }],
+      housePocket:0,housePocketMonthly:0,housePocketArchived:true,
+      housePocketCompletedAt:null,housePocketArchiveRemoved:true,
+      houseFund:0,holidayFund:0,holidayMonthly:0,personalSavings:0,pensions:[],
+      overviewExcludeHousePocket:true
+    };
+    const creditCurrent=kind==="journey50"?1800:(kind==="journey"?50:200);
+    const creditPayment=kind==="journey"?50:100;
+    const creditCollapsed=!(kind==="journey"||kind==="journey50");
+    const tripCurrent=kind==="goal50"?2200:(kind==="goal"?5400:0);
+    const tripCollapsed=!(kind==="goal"||kind==="goal50");
+    const demoState={
+      archivedJourneys:[{
+        name:"Phone Loan",starting:1200,current:0,payment:0,collapsed:true,payoffMode:"monthly",freedomDate:null,
+        lastRepaymentAmount:1200,lastRepaymentDate:daysAgo(45),archivedAt:daysAgo(30)
+      }],
+      archivedGoals:[{
+        name:"Festival Weekend",type:"custom",current:350,target:1000,hasTarget:true,startingBalance:350,
+        lifetimeAdded:350,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:0,goalDate:null,archivedAt:daysAgo(60)
+      }],
+      archivedPensions:[],victories:[],
+      customGoals:[
+        {name:"House Deposit",current:10000,target:40000,hasTarget:true,startingBalance:10000,lifetimeAdded:10000,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:300,goalDate:null,milestoneExperienced:false,completionExperienced:false},
+        {name:"Runaway Money",current:1000,target:10000,hasTarget:true,startingBalance:1000,lifetimeAdded:1000,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:100,goalDate:null,milestoneExperienced:false,completionExperienced:false},
+        {
+          name:"Trip to Japan",current:tripCurrent,target:5500,hasTarget:true,startingBalance:0,
+          lifetimeAdded:tripCurrent,lifeHappensTotal:0,planMode:kind.indexOf("goal")===0?"monthly":"date",
+          plannedMonthly:kind.indexOf("goal")===0?100:0,goalDate:kind.indexOf("goal")===0?null:goalDate,
+          milestoneExperienced:kind==="goal",completionExperienced:false
+        }
+      ],
+      hiddenBuiltInGoals:{houseFund:true,holidayFund:true,personalSavings:true},
+      deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalNames:{},goalTargets:{},goalHasTarget:{},goalPlanMode:{},goalPlannedMonthly:{},goalDate:{},
+      goalLifetimeAdded:{},goalLifeHappensTotal:{},goalLastLifeHappens:{},goalStartingBalance:{},goalLastBalanceCorrection:{},
+      goalCollapsed:{"custom:0":true,"custom:1":true,"custom:2":tripCollapsed},
+      goalOrder:["custom:0","custom:1","custom:2"],
+      goalCompletionExperienced:{},goalCompletedAt:{},goalMilestoneExperienced:{},
+      loans:[
+        {
+          name:"Credit Card",starting:3000,current:creditCurrent,payment:creditPayment,collapsed:creditCollapsed,
+          payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:creditPayment,lastRepaymentDate:daysAgo(10),
+          firstRepaymentCompanionConsumed:true,milestoneExperienced:kind==="journey",completionExperienced:false
+        },
+        {
+          name:"Car Loan",starting:15000,current:7500,payment:0,collapsed:true,payoffMode:"date",freedomDate:freedomDate,
+          lastRepaymentAmount:312.5,lastRepaymentDate:daysAgo(21),firstRepaymentCompanionConsumed:true,
+          milestoneExperienced:true,completionExperienced:false
+        },
+        {
+          name:"Long Story",starting:6000,current:4500,payment:150,collapsed:true,payoffMode:"monthly",freedomDate:null,
+          lastRepaymentAmount:150,lastRepaymentDate:daysAgo(5),firstRepaymentCompanionConsumed:true,
+          milestoneExperienced:false,completionExperienced:false
+        }
+      ],
+      housePocket:0,housePocketMonthly:0,housePocketArchived:true,housePocketCompletedAt:null,housePocketArchiveRemoved:true,
+      houseFund:0,holidayFund:0,holidayMonthly:0,personalSavings:0,
+      pensions:[{id:"pension-demo-1",name:"Workplace Pension",value:12000,personal:200,employer:200,collapsed:false,showInOverview:true}],
+      overviewExcludeHousePocket:true
+    };
+    localStorage.setItem("freedom50-mobile-v1",JSON.stringify(realProbe));
+    sessionStorage.setItem("freedom50-demo-session-v1",JSON.stringify({
+      demoMode:true,
+      state:demoState,
+      demoSession:{
+        dismissedNotes:{journeyFirst:true,goalsFirst:true,home:true},
+        visited:{journey:true,goals:true},
+        triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}
+      }
+    }));
+    sessionStorage.setItem(seedKey,raw);
+    window.__FREEDOM_DEMO_COMPLETE_FLOW__={kind:kind,companion:companion,seeded:true,pageKind:pageKind};
+  }catch(e){}
+})();
 /* TEMP DEV ONLY — seed for Victories page preview.
    ?victoriesPreview=1
    Do not ship. */
@@ -5873,6 +6002,21 @@ function syncDemoUi(){
   applyDemoButtonState(byId("demo183"));
   closeDemoMenu();
 }
+function isInternalTestMode(){
+  try{
+    if(new URLSearchParams(location.search).get("internalTest")==="1")return true;
+  }catch(e){}
+  return false;
+}
+function syncInternalTestUi(){
+  const btn=byId("resetFreedomMoreBtn")||document.querySelector('[data-more183="reset"]');
+  if(!btn)return;
+  const show=isInternalTestMode();
+  btn.hidden=!show;
+  btn.setAttribute("aria-hidden",show?"false":"true");
+  if(show)btn.removeAttribute("tabindex");
+  else btn.setAttribute("tabindex","-1");
+}
 function closeDemoMenu(){
   const menu=byId("demoMenu");
   const btn=byId("demo183");
@@ -6173,14 +6317,7 @@ function markGoalCompletionExperienced(key,completedAt){
 }
 function checkJourneyCompletionCelebration(loan,prevCurrent){
   if(!loan||prevCurrent<=0||loan.current>0)return false;
-  if(demoMode){
-    launchConfetti();
-    if(demoSession.triggered.creditCardComplete||loan.name!=="Credit Card")return true;
-    demoSession.triggered.creditCardComplete=true;
-    persistDemoSession();
-    setTimeout(()=>showPatriciaNoteIfNeeded("creditCardComplete"),650);
-    return true;
-  }
+  /* Demo uses the same FreedomCompletionFlow path; persist() keeps Demo sandboxed. */
   if(loan.completionExperienced)return false;
   loan.completionExperienced=true;
   loan.milestoneExperienced=true; /* completion outranks 50%; consume milestone */
@@ -6203,7 +6340,8 @@ function checkJourneyCompletionCelebration(loan,prevCurrent){
   return true;
 }
 function checkJourneyMilestoneCelebration(loan,prevProgress,nextProgress){
-  if(demoMode||!loan)return false;
+  if(!loan)return false;
+  /* Demo uses the same FreedomMilestoneFlow path; persist() keeps Demo sandboxed. */
   if(!(prevProgress<.5&&nextProgress>=.5))return false;
   if(loan.milestoneExperienced||loan.completionExperienced)return false;
   if((Number(loan.current)||0)<=0)return false;
@@ -6217,7 +6355,8 @@ function checkJourneyMilestoneCelebration(loan,prevProgress,nextProgress){
   return true;
 }
 function checkGoalCompletionCelebration(key,prevReached){
-  if(demoMode||prevReached||!key)return false;
+  if(prevReached||!key)return false;
+  /* Demo uses the same FreedomCompletionFlow path; persist() keeps Demo sandboxed. */
   if(!isGoalReached(key))return false;
   if(isGoalCompletionExperienced(key))return false;
   const completedAt=markGoalCompletionExperienced(key);
@@ -6240,7 +6379,8 @@ function checkGoalCompletionCelebration(key,prevReached){
 }
 function checkGoalMilestoneCelebration(key,prevProgress,opts){
   opts=opts||{};
-  if(demoMode||!key)return false;
+  if(!key)return false;
+  /* Demo uses the same FreedomMilestoneFlow path; persist() keeps Demo sandboxed. */
   /* Genuine contribution only; planning/target edits must not celebrate. */
   if(!(opts.addedAmount>0))return false;
   if(prevProgress==null)return false;
@@ -9526,6 +9666,7 @@ byId("closeAddJourney").addEventListener("click",()=>{const card=byId("addJourne
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}const isFirstCreated=state.loans.length===0;state.loans.push({name,starting,current,payment,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:null,lastRepaymentDate:null,firstRepaymentCompanionConsumed:false,milestoneExperienced:false,completionExperienced:false});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();if(isFirstCreated&&window.FreedomCompanionFirstCreated)window.FreedomCompanionFirstCreated.trigger("journey");});
 document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));
 if(demoMode)syncDemoUi();
+syncInternalTestUi();
 byId("demo183")?.addEventListener("click",handleDemo183Click);
 byId("demoEnterBtn")?.addEventListener("click",confirmEnterDemo);
 byId("demoEntryClose")?.addEventListener("click",closeDemoEntryFlow);
@@ -9946,6 +10087,38 @@ function freedomBootNavPreview(open){
   window.addEventListener("load",function(){ setTimeout(bootVictoriesPreview,0); });
 })();
 
+/* TEMP DEV ONLY — boot Demo completion FLOW (sandboxed Demo, near-complete item). */
+(function(){
+  if(!window.__FREEDOM_DEMO_COMPLETE_FLOW__)return;
+  const flow=window.__FREEDOM_DEMO_COMPLETE_FLOW__;
+  let booted=false;
+  function bootDemoCompleteFlow(){
+    if(booted)return;
+    booted=true;
+    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
+      const el=document.getElementById(id);
+      if(!el)return;
+      el.hidden=true;
+      if(id==="demoEntryOverlay"||id==="demoWelcomeOverlay")return;
+      if(el.parentNode)el.parentNode.removeChild(el);
+    });
+    const updateBanner=document.getElementById("updateBanner");
+    if(updateBanner)updateBanner.hidden=true;
+    document.body.classList.add("demo-mode-active");
+    const demoWrap=document.getElementById("demo183Wrap");
+    if(demoWrap){
+      demoWrap.hidden=false;
+      demoWrap.style.removeProperty("display");
+    }
+    if(typeof window.hideHome==="function")window.hideHome();
+    const pageId=flow.pageKind||(String(flow.kind||"").indexOf("goal")===0?"goals":"journey");
+    if(typeof window.page==="function")window.page(pageId);
+    window.scrollTo(0,0);
+  }
+  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(bootDemoCompleteFlow,0); });
+  else setTimeout(bootDemoCompleteFlow,0);
+  window.addEventListener("load",function(){ setTimeout(bootDemoCompleteFlow,0); });
+})();
 /* TEMP DEV ONLY — boot interactive completion FLOW (near-complete item, no onboarding). */
 (function(){
   if(!window.__FREEDOM_COMPLETION_FLOW__)return;
@@ -10050,6 +10223,7 @@ function freedomBootNavPreview(open){
   window.hideHome=hideHome;
 
   if(more)more.addEventListener("click",()=>{
+    syncInternalTestUi();
     const expanded=more.getAttribute("aria-expanded")==="true";
     more.setAttribute("aria-expanded",expanded?"false":"true");
     if(sub)sub.classList.toggle("open",!expanded);
@@ -13116,7 +13290,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
       const removed=(await Promise.all(registrations.map(registration=>registration.unregister()))).some(Boolean);
       const reloadKey="freedom50-local-sw-cleared-v1";
       /* Never reload during TEMP milestone/completion preview — that replayed the message. */
-      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)&&!window.__FREEDOM_MILESTONE_PREVIEW__&&!window.__FREEDOM_COMPLETION_PREVIEW__&&!window.__FREEDOM_COMPLETION_FLOW__&&!window.__FREEDOM_CLOSE_CHAPTER_FLOW__&&!window.__FREEDOM_MILESTONE_FLOW__&&!window.__FREEDOM_ORDINARY_FLOW__&&!window.__FREEDOM_DORMANT_FLOW__&&!window.__FREEDOM_RENAME_FLOW__&&!window.__FREEDOM_POSITIVE_PATTERN__&&!window.__FREEDOM_WELCOME_BACK__&&!window.__FREEDOM_JOURNEY_CARD_PREVIEW__&&!window.__FREEDOM_VICTORIES_PREVIEW__&&!window.__FREEDOM_MORE_PREVIEW__&&!window.__FREEDOM_ARCHIVE_PREVIEW__){
+      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)&&!window.__FREEDOM_MILESTONE_PREVIEW__&&!window.__FREEDOM_COMPLETION_PREVIEW__&&!window.__FREEDOM_COMPLETION_FLOW__&&!window.__FREEDOM_CLOSE_CHAPTER_FLOW__&&!window.__FREEDOM_MILESTONE_FLOW__&&!window.__FREEDOM_ORDINARY_FLOW__&&!window.__FREEDOM_DORMANT_FLOW__&&!window.__FREEDOM_RENAME_FLOW__&&!window.__FREEDOM_POSITIVE_PATTERN__&&!window.__FREEDOM_WELCOME_BACK__&&!window.__FREEDOM_JOURNEY_CARD_PREVIEW__&&!window.__FREEDOM_VICTORIES_PREVIEW__&&!window.__FREEDOM_MORE_PREVIEW__&&!window.__FREEDOM_ARCHIVE_PREVIEW__&&!window.__FREEDOM_DEMO_COMPLETE_FLOW__){
         sessionStorage.setItem(reloadKey,"1");
         location.reload();
       }
