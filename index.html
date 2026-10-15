@@ -2609,8 +2609,19 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
   color:rgba(236,232,224,.78);font-size:24px;line-height:1;
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
+  outline:none;
+}
+.freedom-confirm-removal-close:focus,
+.freedom-confirm-removal-close:focus-visible{
+  outline:none;box-shadow:none;
 }
 .freedom-confirm-removal-close:active{color:rgba(239,203,170,.95)}
+.freedom-confirm-removal-card:focus,
+.freedom-confirm-removal-card:focus-visible{
+  outline:none;box-shadow:
+    0 22px 48px rgba(0,0,0,.42),
+    0 6px 16px rgba(0,0,0,.28);
+}
 .freedom-confirm-removal-emoji{
   margin:0 0 14px;font-size:42px;line-height:1;
 }
@@ -2625,19 +2636,50 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
 .freedom-confirm-removal-actions{
   width:100%;display:flex;flex-direction:column;gap:10px;
 }
+.freedom-confirm-removal-overlay *,
+.freedom-confirm-removal-overlay *:focus,
+.freedom-confirm-removal-overlay *:focus-visible,
+.freedom-confirm-removal-overlay *:active{
+  outline:none!important;
+  outline-width:0!important;
+  outline-color:transparent!important;
+  -webkit-tap-highlight-color:transparent;
+}
 .freedom-confirm-removal-btn{
   width:100%;border:0;border-radius:16px;padding:14px 16px;font-size:15px;font-weight:720;
   cursor:pointer;-webkit-tap-highlight-color:transparent;
   transition:transform var(--motion-press) ease-out,-webkit-transform var(--motion-press) ease-out;
   font-family:inherit;
+  outline:none!important;
+  box-shadow:none;
+  -webkit-appearance:none;appearance:none;
+}
+.freedom-confirm-removal-btn:focus,
+.freedom-confirm-removal-btn:focus-visible,
+.freedom-confirm-removal-btn:active{
+  outline:none!important;
+  box-shadow:none!important;
 }
 .freedom-confirm-removal-btn:active{transform:scale(.98)}
 .freedom-confirm-removal-btn.is-secondary{
   background:#1a1d22;color:rgba(245,244,240,.92);
   box-shadow:inset 0 0 0 1px rgba(255,255,255,.06);
 }
+.freedom-confirm-removal-btn.is-secondary:focus,
+.freedom-confirm-removal-btn.is-secondary:focus-visible,
+.freedom-confirm-removal-btn.is-secondary:active{
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)!important;
+}
 .freedom-confirm-removal-btn.is-primary{
   background:var(--purple);color:#17141c;
+  /* Lilac fill only — no blue browser/iOS focus stroke */
+  box-shadow:none!important;
+}
+.freedom-confirm-removal-btn.is-primary:focus,
+.freedom-confirm-removal-btn.is-primary:focus-visible,
+.freedom-confirm-removal-btn.is-primary:active{
+  outline:none!important;
+  box-shadow:none!important;
 }
 @keyframes freedomConfirmRemovalEnter{
   from{opacity:0;transform:translateY(10px) scale(.98)}
@@ -2780,12 +2822,37 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-close-ready .patr
   18%{transform:scale(.94) translateZ(0);opacity:.96;filter:blur(0)}
   100%{transform:scale(.72) translateZ(0);opacity:0;filter:blur(8px)}
 }
+/* Close-chapter — fine left→right particle dissolve (canvas capture + dust). */
+.freedom-chapter-modal-dissolve-root{
+  position:fixed;inset:0;pointer-events:none;z-index:9900;overflow:hidden;
+}
+.freedom-chapter-modal-dissolve-view,
+.freedom-chapter-modal-dissolve-dust{
+  position:fixed;pointer-events:none;
+  transform-origin:top left;
+}
+.freedom-confirm-removal-card.is-dispersing{
+  pointer-events:none!important;
+}
+.freedom-confirm-removal-overlay.is-dispersing{
+  pointer-events:none!important;
+}
+.freedom-confirm-removal-card.is-dispersing-reduced{
+  pointer-events:none!important;
+  animation:freedomChapterModalFadeReduced 280ms ease forwards;
+}
+@keyframes freedomChapterModalFadeReduced{
+  from{opacity:1;transform:none}
+  to{opacity:0;transform:scale(.98)}
+}
 @media (prefers-reduced-motion:reduce){
   .demo183.is-demo-active,.demo183.is-demo-active.demo183{animation:none!important}
   .demo183.is-demo-active::before,.demo183.is-demo-active .demo183-pulse{animation:none!important}
   .demo183-wrap .subwrap183,.demo183-wrap .subwrap183 .sub183{transition:none!important}
   .demo183-wrap .subwrap183.open .sub183{opacity:1!important;transform:none!important}
   .freedom-victory-dispersed{animation:freedomVictoryDispersedReduced 260ms ease forwards}
+  .freedom-chapter-modal-dissolve-root,
+  .freedom-chapter-modal-crumble-root{display:none!important}
 }
 @keyframes demo183BreatheActive{
   0%,100%{opacity:1}
@@ -4363,6 +4430,92 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     window.__FREEDOM_COMPLETION_FLOW__={kind:kind,companion:companion,seeded:true};
   }catch(e){}
 })();
+/* TEMP DEV ONLY — close-chapter dissolve preview (completed item + modal ready).
+   ?closeChapterFlow=journey-patricia|journey-veronica|journey-kevin|goal-patricia|goal-veronica|goal-kevin
+   Opens Journey/Goals with a finished card and the “Ready to close this chapter?” modal.
+   Do not ship. */
+(function(){
+  try{
+    const raw=String(new URLSearchParams(location.search).get("closeChapterFlow")||"").toLowerCase();
+    const match=raw.match(/^(journey|goal)-(patricia|veronica|kevin)$/);
+    if(!match)return;
+    const kind=match[1];
+    const companion=match[2];
+    const seedKey="freedom50-close-chapter-flow-seed-v1";
+    if(sessionStorage.getItem(seedKey)===raw){
+      window.__FREEDOM_CLOSE_CHAPTER_FLOW__={
+        kind:kind,companion:companion,seeded:false,pageKind:kind==="goal"?"goals":"journey",
+        recordId:kind==="goal"?"close-chapter-goal-kitchen":"close-chapter-journey-car"
+      };
+      return;
+    }
+    localStorage.setItem("freedom50-welcome-complete-v1","1");
+    localStorage.setItem("freedom50-look-around-complete-v1","1");
+    localStorage.setItem("freedom50-first-time-complete-v1","1");
+    localStorage.setItem("freedom50-companion-id-v1",companion);
+    localStorage.removeItem("freedom50-companion-pending-v1");
+    localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
+    localStorage.setItem("freedom50-companion-first-created-responses-v1",JSON.stringify({journey:"complete",goals:"complete"}));
+    const completedAt=new Date().toISOString();
+    const base={
+      archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],customGoals:[],
+      hiddenBuiltInGoals:{houseFund:true,holidayFund:true,personalSavings:true},
+      deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalNames:{},goalTargets:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalHasTarget:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalPlanMode:{houseFund:"monthly",holidayFund:"monthly",personalSavings:"monthly"},
+      goalPlannedMonthly:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalDate:{houseFund:null,holidayFund:null,personalSavings:null},
+      goalLifetimeAdded:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLifeHappensTotal:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastLifeHappens:{},goalStartingBalance:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastBalanceCorrection:{},goalCollapsed:{},goalOrder:[],
+      goalCompletionExperienced:{},goalCompletedAt:{},goalMilestoneExperienced:{},
+      loans:[],
+      housePocket:0,housePocketMonthly:0,housePocketArchived:true,
+      housePocketCompletedAt:null,housePocketArchiveRemoved:true,
+      houseFund:0,holidayFund:0,holidayMonthly:0,personalSavings:0,pensions:[],
+      overviewExcludeHousePocket:true
+    };
+    if(kind==="journey"){
+      base.loans=[{
+        id:"close-chapter-journey-car",
+        name:"Car Loan",starting:2400,current:0,payment:0,collapsed:false,
+        payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:100,lastRepaymentDate:completedAt,
+        firstRepaymentCompanionConsumed:true,milestoneExperienced:true,completionExperienced:true,
+        completedAt:completedAt,ordinarySkipNext:true,ordinaryLastLine:0
+      },{
+        id:"close-chapter-journey-cc",
+        name:"Credit Card",starting:1200,current:400,payment:80,collapsed:true,
+        payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:80,lastRepaymentDate:completedAt,
+        firstRepaymentCompanionConsumed:true,milestoneExperienced:true,completionExperienced:false,
+        ordinarySkipNext:false,ordinaryLastLine:-1
+      }];
+    }else{
+      base.customGoals=[{
+        id:"close-chapter-goal-kitchen",
+        name:"New Kitchen",current:5000,startingBalance:0,target:5000,hasTarget:true,
+        lifetimeAdded:5000,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:100,goalDate:null,
+        milestoneExperienced:true,completionExperienced:true,completedAt:completedAt,
+        ordinarySkipNext:true,ordinaryLastLine:0
+      },{
+        id:"close-chapter-goal-rainy",
+        name:"Rainy Day",current:200,startingBalance:0,target:1000,hasTarget:true,
+        lifetimeAdded:200,lifeHappensTotal:0,planMode:"monthly",plannedMonthly:40,goalDate:null,
+        milestoneExperienced:false,completionExperienced:false,
+        ordinarySkipNext:false,ordinaryLastLine:-1
+      }];
+      base.goalCollapsed={"custom:0":false,"custom:1":true};
+    }
+    localStorage.setItem("freedom50-mobile-v1",JSON.stringify(base));
+    sessionStorage.removeItem("freedom50-demo-session-v1");
+    sessionStorage.setItem(seedKey,raw);
+    window.__FREEDOM_CLOSE_CHAPTER_FLOW__={
+      kind:kind,companion:companion,seeded:true,pageKind:kind==="goal"?"goals":"journey",
+      recordId:kind==="goal"?"close-chapter-goal-kitchen":"close-chapter-journey-car"
+    };
+  }catch(e){}
+})();
 /* TEMP DEV ONLY — shared onboarding skip + light state for Archive IA previews. */
 function freedomSeedNavPreviewState(extra){
   localStorage.setItem("freedom50-welcome-complete-v1","1");
@@ -5535,6 +5688,27 @@ state.customGoals.forEach(g=>{
   if(g.lifeHappensTotal===undefined)g.lifeHappensTotal=0;
   if(g.startingBalance===undefined)g.startingBalance=Number(g.current)||0;
 });
+function freedomNewRecordId(prefix){
+  return String(prefix||"rec")+"-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);
+}
+function ensureLoanRecordId(loan){
+  if(!loan)return "";
+  if(!loan.id)loan.id=freedomNewRecordId("journey");
+  return String(loan.id);
+}
+function ensureGoalRecordId(goal){
+  if(!goal)return "";
+  if(!goal.id)goal.id=freedomNewRecordId("goal");
+  return String(goal.id);
+}
+function goalRecordIdFromKey(key){
+  if(!key)return "";
+  if(String(key).startsWith("custom:")){
+    const g=state.customGoals[Number(String(key).slice(7))];
+    return ensureGoalRecordId(g);
+  }
+  return String(key);
+}
 if(Array.isArray(state.loans)){
   state.loans.forEach(loan=>{
     if(loan.collapsed===undefined)loan.collapsed=true;
@@ -5560,6 +5734,7 @@ if(Array.isArray(state.loans)){
       loan.lastMeaningfulProgressAt=loan.lastRepaymentDate||null;
     }
     if(loan.dormantLastLine===undefined)loan.dormantLastLine=-1;
+    ensureLoanRecordId(loan);
   });
 }
 if(Array.isArray(state.pensions)){
@@ -5611,6 +5786,7 @@ if(Array.isArray(state.customGoals)){
       g.lastMeaningfulProgressAt=(Number(g.lifetimeAdded)||0)>0?new Date().toISOString():null;
     }
     if(g.dormantLastLine===undefined)g.dormantLastLine=-1;
+    ensureGoalRecordId(g);
   });
 }
 ["houseFund","holidayFund","personalSavings"].forEach(k=>{
@@ -6014,6 +6190,7 @@ function checkJourneyCompletionCelebration(loan,prevCurrent){
   const payload={
     kind:"journey",
     itemName:loan.name||"Journey",
+    recordId:ensureLoanRecordId(loan),
     loanIndex:loanIndex>=0?loanIndex:undefined,
     amount:Number(loan.starting)||0,
     completedAt:loan.completedAt
@@ -6050,6 +6227,7 @@ function checkGoalCompletionCelebration(key,prevReached){
     kind:"goal",
     itemName:goalDisplayName(key),
     goalKey:key,
+    recordId:goalRecordIdFromKey(key),
     amount:amount,
     completedAt:completedAt
   };
@@ -6080,76 +6258,82 @@ function checkGoalMilestoneCelebration(key,prevProgress,opts){
   },420);
   return true;
 }
-/* Move a completed active Journey/Goal into Victories (not Archive).
-   Used by Confirm Removal “Yes, one step closer”. */
+/* Commit a completed Journey/Goal into Victories by stable record id.
+   State removal happens HERE — call only AFTER fragmentation finishes.
+   opts.skipAnimation (default true when recordId set from modal finalize). */
 function moveCompletedItemToVictories(kind,itemName,opts){
   opts=opts||{};
   const name=String(itemName||"").trim();
-  if(!name)return false;
   if(!Array.isArray(state.victories))state.victories=[];
   const completedAt=opts.completedAt||new Date().toISOString();
   const afterMove=()=>{ if(typeof opts.onDone==="function")opts.onDone(); };
-  if(kind==="goal"){
-    const goalKey=opts.goalKey||"";
-    if(goalKey&&!goalKey.startsWith("custom:")){
-      const amount=opts.amount!=null?Number(opts.amount):getGoalTargetAmount(goalKey)||getGoalCurrentBalance(goalKey);
-      const card=document.querySelector(`#goalsList > .goal-card[data-goal-key="${CSS.escape(goalKey)}"]`);
-      const finish=()=>{
-      state.victories.unshift({
-        id:"victory-"+Date.now().toString(36),
-        kind:"goal",name:name,amount:amount,
-        completedAt:(state.goalCompletedAt&&state.goalCompletedAt[goalKey])||completedAt
-      });
+  const recordId=opts.recordId!=null&&opts.recordId!==""?String(opts.recordId):"";
+  /* Modal-driven path: commit only — animation already ran on [data-record-id]. */
+  if(recordId&&opts.skipAnimation!==false){
+    if(kind==="goal"){
+      if(builtInGoalMeta&&builtInGoalMeta[recordId]){
+        const already=state.victories.some(v=>v&&v.kind==="goal"&&v.recordId===recordId);
+        if(already){afterMove();return true;}
+        const amount=opts.amount!=null?Number(opts.amount):getGoalTargetAmount(recordId)||getGoalCurrentBalance(recordId);
+        state.victories.unshift({
+          id:"victory-"+Date.now().toString(36),
+          recordId:recordId,
+          kind:"goal",name:name||goalDisplayName(recordId),amount:amount,
+          completedAt:(state.goalCompletedAt&&state.goalCompletedAt[recordId])||completedAt
+        });
         if(!state.hiddenBuiltInGoals)state.hiddenBuiltInGoals={};
-        state.hiddenBuiltInGoals[goalKey]=true;
+        state.hiddenBuiltInGoals[recordId]=true;
         if(!state.goalCompletionExperienced)state.goalCompletionExperienced={};
-        state.goalCompletionExperienced[goalKey]=true;
+        state.goalCompletionExperienced[recordId]=true;
         persist();render();
         afterMove();
-      };
-      if(card&&freedomMotion&&typeof freedomMotion.exitCard==="function")freedomMotion.exitCard(card,finish);
-      else finish();
-      return true;
-    }
-    const i=goalKey&&goalKey.startsWith("custom:")
-      ?Number(goalKey.slice(7))
-      :state.customGoals.findIndex(g=>g&&g.name===name);
-    if(i<0||!state.customGoals[i])return false;
-    const goal=state.customGoals[i];
-    const amount=opts.amount!=null?Number(opts.amount):(Number(goal.target)||Number(goal.current)||0);
-    const card=document.querySelector(`#goalsList > .goal-card[data-goal-key="custom:${i}"]`);
-    const finish=()=>{
+        return true;
+      }
+      const i=state.customGoals.findIndex(g=>g&&String(g.id)===recordId);
+      if(i<0||!state.customGoals[i])return false;
+      const goal=state.customGoals[i];
+      const already=state.victories.some(v=>v&&v.kind==="goal"&&v.recordId===recordId);
+      if(already){afterMove();return true;}
+      const amount=opts.amount!=null?Number(opts.amount):(Number(goal.target)||Number(goal.current)||0);
       state.victories.unshift({
         id:"victory-"+Date.now().toString(36),
+        recordId:recordId,
         kind:"goal",name:goal.name||name,amount:amount,
         completedAt:goal.completedAt||completedAt
       });
       state.customGoals.splice(i,1);
       persist();render();
       afterMove();
-    };
-    if(card&&freedomMotion&&typeof freedomMotion.exitCard==="function")freedomMotion.exitCard(card,finish);
-    else finish();
-    return true;
-  }
-  const i=opts.loanIndex!=null?Number(opts.loanIndex):state.loans.findIndex(l=>l&&l.name===name);
-  if(i<0||!state.loans[i])return false;
-  const loan=state.loans[i];
-  const amount=opts.amount!=null?Number(opts.amount):(Number(loan.starting)||0);
-  const card=document.querySelector(`#loanList > .loan-card[data-loan-index="${i}"]`);
-  const finish=()=>{
+      return true;
+    }
+    const i=state.loans.findIndex(l=>l&&String(l.id)===recordId);
+    if(i<0||!state.loans[i])return false;
+    const loan=state.loans[i];
+    const already=state.victories.some(v=>v&&v.kind==="journey"&&v.recordId===recordId);
+    if(already){afterMove();return true;}
+    const amount=opts.amount!=null?Number(opts.amount):(Number(loan.starting)||0);
     state.victories.unshift({
       id:"victory-"+Date.now().toString(36),
+      recordId:recordId,
       kind:"journey",name:loan.name||name,amount:amount,
       completedAt:loan.completedAt||completedAt
     });
     state.loans.splice(i,1);
     persist();render();
     afterMove();
-  };
-  if(card&&freedomMotion&&typeof freedomMotion.exitCard==="function")freedomMotion.exitCard(card,finish);
-  else finish();
-  return true;
+    return true;
+  }
+  /* Legacy fallback — still resolve by recordId when provided, never by “first card”. */
+  if(!recordId)return false;
+  const card=document.querySelector(`[data-record-id="${CSS.escape(recordId)}"]`);
+  const finish=()=>moveCompletedItemToVictories(kind,name,{
+    recordId:recordId,amount:opts.amount,completedAt:completedAt,skipAnimation:true,onDone:opts.onDone
+  });
+  if(card&&freedomMotion&&typeof freedomMotion.dissolveChapterCard==="function"){
+    freedomMotion.dissolveChapterCard(card,finish);
+    return true;
+  }
+  return finish();
 }
 window.moveCompletedItemToVictories=moveCompletedItemToVictories;
 /* Back-compat alias for earlier preview wiring. */
@@ -6711,6 +6895,417 @@ const freedomMotion={
     card.addEventListener("animationend",finish,{once:true});
     setTimeout(finish,320);
   },
+  /* Legacy no-op — Journey/Goal cards must never fragment on close-chapter. */
+  dissolveChapterCard(card,done){
+    if(typeof done==="function")done();
+  },
+  /* Close-chapter: rasterise the confirm MODAL, then irregularly crumble it away. */
+  disperseCloseChapterModal(modal,overlay,done){
+    if(typeof done!=="function")done=function(){};
+    if(!modal){done();return}
+    let finished=false;
+    let root=null;
+    const finish=()=>{
+      if(finished)return;
+      finished=true;
+      try{ if(root&&root.parentNode)root.parentNode.removeChild(root); }catch(e){}
+      try{
+        modal.classList.remove("is-dispersing","is-dispersing-reduced");
+        modal.style.visibility="";
+        modal.style.opacity="";
+        modal.style.filter="";
+        modal.style.transform="";
+        if(overlay){
+          overlay.classList.remove("is-dispersing");
+          overlay.style.opacity="";
+          overlay.style.transition="";
+        }
+      }catch(e){}
+      done();
+    };
+    modal.classList.add("is-dispersing");
+    if(overlay)overlay.classList.add("is-dispersing");
+    const reducedNow=!!(this.reduced||(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches));
+    if(reducedNow){
+      modal.classList.add("is-dispersing-reduced");
+      if(overlay){
+        overlay.style.transition="opacity 280ms ease";
+        overlay.style.opacity="0";
+      }
+      modal.addEventListener("animationend",finish,{once:true});
+      setTimeout(finish,320);
+      return;
+    }
+    /* Fine left→right particle dissolve — modal material becomes dust */
+    const HOLD_MS=200;
+    const WAVE_MS=1550;
+    const TAIL_MS=350;
+    const TOTAL_MS=HOLD_MS+WAVE_MS+TAIL_MS; /* ~2100ms */
+    const rect=modal.getBoundingClientRect();
+    const cssW=Math.max(1,Math.round(rect.width));
+    const cssH=Math.max(1,Math.round(rect.height));
+    const scale=Math.min(2,window.devicePixelRatio||1);
+    const copyComputedTree=function(src,dst){
+      const cs=window.getComputedStyle(src);
+      let css="";
+      for(let i=0;i<cs.length;i++){
+        const prop=cs[i];
+        css+=prop+":"+cs.getPropertyValue(prop)+";";
+      }
+      dst.style.cssText=css;
+      const sc=src.children,dc=dst.children;
+      for(let i=0;i<sc.length;i++){
+        if(dc[i])copyComputedTree(sc[i],dc[i]);
+      }
+    };
+    const paintFallbackModal=function(ctx,w,h){
+      const radius=26;
+      ctx.clearRect(0,0,w,h);
+      ctx.fillStyle="rgba(13,16,19,0.92)";
+      ctx.beginPath();
+      if(ctx.roundRect)ctx.roundRect(0,0,w,h,radius);
+      else{
+        ctx.moveTo(radius,0);ctx.arcTo(w,0,w,h,radius);ctx.arcTo(w,h,0,h,radius);ctx.arcTo(0,h,0,0,radius);ctx.arcTo(0,0,w,0,radius);ctx.closePath();
+      }
+      ctx.fill();
+      ctx.fillStyle="#f5f4f0";
+      ctx.textAlign="center";
+      ctx.font="760 22px system-ui,sans-serif";
+      const title=(modal.querySelector(".freedom-confirm-removal-title")||{}).textContent||"Ready to close this chapter?";
+      ctx.fillText(title,w/2,72);
+      ctx.fillStyle="rgba(190,188,182,0.78)";
+      ctx.font="450 15px system-ui,sans-serif";
+      const body=(modal.querySelector(".freedom-confirm-removal-body")||{}).textContent||"";
+      const words=body.split(/\s+/);let line="",y=108;
+      words.forEach(function(word){
+        const test=line?line+" "+word:word;
+        if(ctx.measureText(test).width>w-52){ctx.fillText(line,w/2,y);y+=22;line=word;}
+        else line=test;
+      });
+      if(line)ctx.fillText(line,w/2,y);
+      const emoji=(modal.querySelector(".freedom-confirm-removal-emoji")||{}).textContent||"🥳";
+      ctx.font="42px system-ui,sans-serif";
+      ctx.fillText(emoji,w/2,44);
+      const btnY=h-118;
+      ctx.fillStyle="#1a1d22";
+      if(ctx.roundRect){ctx.beginPath();ctx.roundRect(26,btnY,w-52,48,16);ctx.fill();}
+      else{ctx.fillRect(26,btnY,w-52,48);}
+      ctx.fillStyle="rgba(245,244,240,0.92)";
+      ctx.font="720 15px system-ui,sans-serif";
+      ctx.fillText("Not yet",w/2,btnY+30);
+      ctx.fillStyle="#aa8fc9";
+      if(ctx.roundRect){ctx.beginPath();ctx.roundRect(26,btnY+58,w-52,48,16);ctx.fill();}
+      else{ctx.fillRect(26,btnY+58,w-52,48);}
+      ctx.fillStyle="#17141c";
+      ctx.fillText("Yes, one step closer",w/2,btnY+88);
+    };
+    const rasterizeModal=function(cb){
+      try{
+        const clone=modal.cloneNode(true);
+        clone.querySelectorAll("[id]").forEach(function(n){ n.removeAttribute("id"); });
+        copyComputedTree(modal,clone);
+        clone.style.margin="0";
+        clone.style.position="relative";
+        clone.style.left="0";
+        clone.style.top="0";
+        clone.style.right="auto";
+        clone.style.bottom="auto";
+        clone.style.transform="none";
+        clone.style.animation="none";
+        clone.style.width=cssW+"px";
+        clone.style.height=cssH+"px";
+        clone.style.boxSizing="border-box";
+        clone.style.opacity="1";
+        clone.style.visibility="visible";
+        clone.style.filter="none";
+        const wrap=document.createElement("div");
+        wrap.setAttribute("xmlns","http://www.w3.org/1999/xhtml");
+        wrap.style.cssText="width:"+cssW+"px;height:"+cssH+"px;margin:0;padding:0;background:transparent;";
+        wrap.appendChild(clone);
+        const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+cssW+'" height="'+cssH+'"><foreignObject width="100%" height="100%">'+new XMLSerializer().serializeToString(wrap)+"</foreignObject></svg>";
+        const img=new Image();
+        const url="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+        let settled=false;
+        const settle=function(canvas){
+          if(settled)return;
+          settled=true;
+          cb(canvas);
+        };
+        img.onload=function(){
+          const canvas=document.createElement("canvas");
+          canvas.width=Math.max(1,Math.round(cssW*scale));
+          canvas.height=Math.max(1,Math.round(cssH*scale));
+          const ctx=canvas.getContext("2d");
+          ctx.setTransform(scale,0,0,scale,0,0);
+          ctx.clearRect(0,0,cssW,cssH);
+          try{ ctx.drawImage(img,0,0,cssW,cssH); }catch(e){}
+          try{
+            const sample=ctx.getImageData(Math.floor(canvas.width/2),Math.floor(canvas.height/2),1,1).data;
+            if((sample[0]+sample[1]+sample[2])<8&&sample[3]<8)paintFallbackModal(ctx,cssW,cssH);
+          }catch(e){ paintFallbackModal(ctx,cssW,cssH); }
+          settle(canvas);
+        };
+        img.onerror=function(){
+          const canvas=document.createElement("canvas");
+          canvas.width=Math.max(1,Math.round(cssW*scale));
+          canvas.height=Math.max(1,Math.round(cssH*scale));
+          const ctx=canvas.getContext("2d");
+          ctx.setTransform(scale,0,0,scale,0,0);
+          paintFallbackModal(ctx,cssW,cssH);
+          settle(canvas);
+        };
+        img.src=url;
+        setTimeout(function(){
+          if(settled)return;
+          const canvas=document.createElement("canvas");
+          canvas.width=Math.max(1,Math.round(cssW*scale));
+          canvas.height=Math.max(1,Math.round(cssH*scale));
+          const ctx=canvas.getContext("2d");
+          ctx.setTransform(scale,0,0,scale,0,0);
+          paintFallbackModal(ctx,cssW,cssH);
+          settle(canvas);
+        },280);
+      }catch(err){
+        const canvas=document.createElement("canvas");
+        canvas.width=Math.max(1,Math.round(cssW*scale));
+        canvas.height=Math.max(1,Math.round(cssH*scale));
+        const ctx=canvas.getContext("2d");
+        ctx.setTransform(scale,0,0,scale,0,0);
+        paintFallbackModal(ctx,cssW,cssH);
+        cb(canvas);
+      }
+    };
+
+    rasterizeModal(function(sourceCanvas){
+      if(finished||!sourceCanvas){finish();return;}
+      const bw=sourceCanvas.width;
+      const bh=sourceCanvas.height;
+      root=document.createElement("div");
+      root.className="freedom-chapter-modal-dissolve-root";
+      root.setAttribute("aria-hidden","true");
+      const view=document.createElement("canvas");
+      view.className="freedom-chapter-modal-dissolve-view";
+      view.width=bw;
+      view.height=bh;
+      view.style.cssText="left:"+rect.left+"px;top:"+rect.top+"px;width:"+cssW+"px;height:"+cssH+"px;";
+      const dust=document.createElement("canvas");
+      dust.className="freedom-chapter-modal-dissolve-dust";
+      dust.width=bw;
+      dust.height=bh;
+      /* Dust canvas slightly larger in CSS space so flecks can drift left of the card */
+      const dustPad=Math.round(48*scale);
+      dust.width=bw+dustPad;
+      dust.height=bh+Math.round(32*scale);
+      dust.style.cssText="left:"+(rect.left-48)+"px;top:"+(rect.top-8)+"px;width:"+(cssW+48)+"px;height:"+(cssH+16)+"px;";
+      const vctx=view.getContext("2d",{alpha:true});
+      const dctx=dust.getContext("2d",{alpha:true});
+      vctx.drawImage(sourceCanvas,0,0);
+      root.appendChild(view);
+      root.appendChild(dust);
+      document.body.appendChild(root);
+      requestAnimationFrame(function(){
+        requestAnimationFrame(function(){
+          modal.style.visibility="hidden";
+        });
+      });
+
+      let srcData=null;
+      try{ srcData=sourceCanvas.getContext("2d").getImageData(0,0,bw,bh); }catch(e){ srcData=null; }
+      /* Soft dissolve mask — wide feathered front, low-amplitude noise (not torn) */
+      const mask=document.createElement("canvas");
+      mask.width=bw;
+      mask.height=bh;
+      const mctx=mask.getContext("2d");
+      const rowNoise=new Float32Array(bh);
+      for(let y=0;y<bh;y++){
+        rowNoise[y]=Math.sin(y*0.038)*0.55+Math.sin(y*0.09)*0.3+Math.sin(y*0.19)*0.15;
+      }
+
+      /* Pixel-dust grid — dense enough that the card becomes the cloud */
+      const step=Math.max(1,Math.round(1.35*scale));
+      const softBand=Math.max(28,Math.round(bw*0.16));
+      const particles=[];
+      /* Slightly richer Freedom accents — still trace-only, not confetti */
+      const accentRgb=[
+        [255,186,132],[255,148,78],[255,98,122],[218,104,212],[186,154,220],[255,210,120]
+      ];
+      /* Lift lilac/pink/peach/gold ~10–15%; leave dark shell dark */
+      const enrichParticleColor=function(r,g,b){
+        const max=Math.max(r,g,b);
+        const min=Math.min(r,g,b);
+        const lum=(r*0.299+g*0.587+b*0.114);
+        if(lum<52||max<70)return [r,g,b]; /* dark modal body stays dark */
+        const sat=max===0?0:(max-min)/max;
+        const warm=(r>g&&r>90)||(r>140&&g>100&&b<140); /* peach / warm gold */
+        const lilacPink=(b>r*0.75&&b>90&&r>80)||(r>150&&b>140&&g<r*0.95);
+        const lightText=lum>170&&sat<0.22;
+        if(lightText){
+          /* Soft warm lift on pale text flecks — not a screen wash */
+          return [
+            Math.min(255,r+8),
+            Math.min(255,g+5),
+            Math.min(255,b+2)
+          ];
+        }
+        if(!warm&&!lilacPink&&sat<0.12)return [r,g,b];
+        const amount=(warm||lilacPink)?0.13:0.08;
+        const mid=(r+g+b)/3;
+        let nr=mid+(r-mid)*(1+amount);
+        let ng=mid+(g-mid)*(1+amount);
+        let nb=mid+(b-mid)*(1+amount);
+        /* Tiny luminosity kiss for coloured flecks only */
+        const lift=lum<160?10:6;
+        nr+=lift*amount*2.2;
+        ng+=lift*amount*1.6;
+        nb+=lift*amount*1.8;
+        return [
+          Math.max(0,Math.min(255,Math.round(nr))),
+          Math.max(0,Math.min(255,Math.round(ng))),
+          Math.max(0,Math.min(255,Math.round(nb)))
+        ];
+      };
+      if(srcData){
+        const data=srcData.data;
+        for(let y=0;y<bh;y+=step){
+          for(let x=0;x<bw;x+=step){
+            const i=(y*bw+x)*4;
+            const a=data[i+3];
+            if(a<18)continue;
+            let r=data[i],g=data[i+1],b=data[i+2];
+            /* Trace accent only — modal material must dominate */
+            if(Math.random()<0.022){
+              const ac=accentRgb[(Math.random()*accentRgb.length)|0];
+              r=ac[0];g=ac[1];b=ac[2];
+            }else{
+              const en=enrichParticleColor(r,g,b);
+              r=en[0];g=en[1];b=en[2];
+            }
+            const nx=(x/bw)+rowNoise[y]*0.012+(Math.random()-0.5)*0.018;
+            particles.push({
+              ox:x,oy:y,
+              x:x,y:y,
+              r:r,g:g,b:b,a:Math.min(1,a/255),
+              thresh:Math.max(0,Math.min(1,nx)),
+              size:Math.max(0.85,step*(0.7+Math.random()*0.45)),
+              vx:-(6+Math.random()*16),
+              vy:(-2+Math.random()*10),
+              life:700+Math.random()*650,
+              age:0,
+              alive:false,
+              done:false
+            });
+          }
+        }
+      }
+
+      const waveEase=function(t){
+        return t*t*(3-2*t);
+      };
+      let rafId=0;
+      let startTs=0;
+      let lastTs=0;
+      const tick=function(ts){
+        if(!startTs)startTs=ts;
+        if(!lastTs)lastTs=ts;
+        const elapsed=ts-startTs;
+        const dt=Math.min(34,ts-lastTs)/1000;
+        lastTs=ts;
+
+        let waveT=0;
+        if(elapsed>HOLD_MS){
+          waveT=waveEase(Math.min(1,(elapsed-HOLD_MS)/WAVE_MS));
+        }
+        const front=waveT*(bw+softBand*0.6);
+        const band=softBand;
+
+        /* Dust first — fills dissolved side so it never reads as black holes */
+        dctx.clearRect(0,0,dust.width,dust.height);
+        const originX=dustPad;
+        const originY=Math.round(8*scale);
+        let aliveCount=0;
+        for(let i=0;i<particles.length;i++){
+          const p=particles[i];
+          if(p.done)continue;
+          if(!p.alive){
+            if(waveT<=0)continue;
+            const release=p.thresh*bw;
+            /* Release slightly before full erase so dust replaces material */
+            if(front+band*0.35<release)continue;
+            p.alive=true;
+            p.x=p.ox;
+            p.y=p.oy;
+            p.age=0;
+          }
+          p.age+=dt*1000;
+          const lifeP=Math.min(1,p.age/p.life);
+          p.vx*=0.99;
+          p.vy+=14*dt;
+          p.x+=p.vx*dt*scale;
+          p.y+=p.vy*dt*scale;
+          /* Hold opacity longer so the cloud stays dense behind the front */
+          const fade=lifeP<0.55?1:1-((lifeP-0.55)/0.45);
+          const alpha=Math.max(0,p.a*fade*0.96);
+          if(alpha>0.02){
+            dctx.fillStyle="rgba("+p.r+","+p.g+","+p.b+","+alpha+")";
+            const s=Math.max(0.65,p.size*(1-lifeP*0.25));
+            dctx.fillRect(originX+p.x,originY+p.y,s,s);
+            aliveCount++;
+          }
+          if(lifeP>=1)p.done=true;
+        }
+
+        /* Intact modal with wide soft feather — no jagged tear */
+        vctx.clearRect(0,0,bw,bh);
+        vctx.globalCompositeOperation="source-over";
+        vctx.globalAlpha=1;
+        vctx.drawImage(sourceCanvas,0,0);
+        if(waveT>0){
+          mctx.clearRect(0,0,bw,bh);
+          /* Horizontal gradient mask, gently warped per few rows */
+          const gradH=Math.max(2,Math.round(2*scale));
+          for(let y=0;y<bh;y+=gradH){
+            const warp=rowNoise[y]*band*0.22;
+            const edge=front+warp;
+            const g=mctx.createLinearGradient(edge-band,0,edge+band*0.45,0);
+            g.addColorStop(0,"rgba(0,0,0,1)");
+            g.addColorStop(0.55,"rgba(0,0,0,0.72)");
+            g.addColorStop(0.82,"rgba(0,0,0,0.28)");
+            g.addColorStop(1,"rgba(0,0,0,0)");
+            mctx.fillStyle=g;
+            mctx.fillRect(0,y,bw,Math.min(gradH,bh-y));
+          }
+          /* Micro-dust notches only inside the soft band — keeps edge grainy, not chunky */
+          mctx.fillStyle="#000";
+          for(let y=0;y<bh;y+=Math.max(2,step)){
+            const warp=rowNoise[y]*band*0.22;
+            const edge=front+warp;
+            for(let n=0;n<2;n++){
+              const t=0.35+(((y*13+n*29)%100)/100)*0.5;
+              const gx=edge-band+band*t;
+              mctx.globalAlpha=0.35*(1-t);
+              mctx.fillRect(gx,y,1.1,1.1);
+            }
+          }
+          mctx.globalAlpha=1;
+          vctx.globalCompositeOperation="destination-out";
+          vctx.drawImage(mask,0,0);
+          vctx.globalCompositeOperation="source-over";
+        }
+
+        if(elapsed<TOTAL_MS||aliveCount>20){
+          rafId=requestAnimationFrame(tick);
+        }else{
+          finish();
+        }
+      };
+      rafId=requestAnimationFrame(tick);
+      setTimeout(function(){
+        if(finished)return;
+        try{cancelAnimationFrame(rafId);}catch(e){}
+        finish();
+      },TOTAL_MS+400);
+    });
+  },
   exitCompletedVictory(card,done){
     if(!card){done();return}
     if(this.reduced){
@@ -6798,6 +7393,7 @@ const freedomMotion={
     setTimeout(()=>el.classList.remove("freedom-value-flash"),240);
   }
 };
+window.freedomMotion=freedomMotion;
 window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change",e=>{freedomMotion.reduced=e.matches});
 
 /* Per-record dormancy: 3+ calendar months since last genuine financial progress. */
@@ -7567,6 +8163,7 @@ function renderSavingsGoalCard(key){
   card.className="card goal-card"+(collapsed?" is-collapsed":"")+(isMeaningfulProgressDormant(goalProgressSlot&&goalProgressSlot.lastMeaningfulProgressAt)?" is-dormant":"");
   card.dataset.goalKey=key;
   card.dataset.goalIndex=String(resolvedGoalOrder().indexOf(key));
+  card.dataset.recordId=isCustom?ensureGoalRecordId(state.customGoals[customIndex]):String(key);
   const titleHtml=!collapsed
     ? (isCustom
       ? `<input class="goal-title-input" data-goal-name="${customIndex}" type="text" value="${esc(name)}" aria-label="Goal name">`
@@ -7656,13 +8253,9 @@ function renderGoals(){
       window.FreedomConfirmRemoval.show({
         kind:"goal",
         itemName:goalDisplayName(key),
-        onConfirm:function(){
-          moveCompletedItemToVictories("goal",goalDisplayName(key),{
-            goalKey:key,
-            amount:getGoalTargetAmount(key)||getGoalCurrentBalance(key),
-            completedAt:completedAt
-          });
-        }
+        recordId:String(key),
+        amount:getGoalTargetAmount(key)||getGoalCurrentBalance(key),
+        completedAt:completedAt
       });
       return;
     }
@@ -7686,13 +8279,9 @@ function renderGoals(){
       window.FreedomConfirmRemoval.show({
         kind:"goal",
         itemName:goal.name||"Goal",
-        onConfirm:function(){
-          moveCompletedItemToVictories("goal",goal.name||"Goal",{
-            goalKey:goalKey,
-            amount:Number(goal.target)||Number(goal.current)||0,
-            completedAt:goal.completedAt||new Date().toISOString()
-          });
-        }
+        recordId:ensureGoalRecordId(goal),
+        amount:Number(goal.target)||Number(goal.current)||0,
+        completedAt:goal.completedAt||new Date().toISOString()
       });
       return;
     }
@@ -7998,6 +8587,7 @@ function renderLoans(){
     const card=document.createElement("article");
     card.className="card loan-card"+(loan.collapsed?" is-collapsed":"")+(loan.current<=0?" completed":"")+(isMeaningfulProgressDormant(loan.lastMeaningfulProgressAt)?" is-dormant":"");
     card.dataset.loanIndex=String(i);
+    card.dataset.recordId=ensureLoanRecordId(loan);
     card.innerHTML=`<div class="journey-card-head" data-toggle-loan="${i}"><div class="journey-head-main">${titleHtml}<div class="loan-amount" data-loan-amount-for="${i}">${euro2(loan.current)}</div>${loanCorrectBalanceFieldsHtml(i,loanCorrectBalanceInputId(i),!!loanCorrectBalanceOpen[i])}</div><div class="pill ${loan.current<=0?"complete":""}">${loan.current<=0?"Complete ✓":pct.toFixed(1)+"% returned"}</div><button class="journey-chevron" type="button" aria-label="Toggle ${esc(loan.name)}"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button></div><div class="progress"><span data-progress-key="loan-${i}" style="width:${pct}%"></span></div>${wrapCardBody(buildLoanExpandedBody(i,loan),loan.collapsed)}`;
     freedomMotion.decorateNewCard(card,"journey",i);list.appendChild(card);
   });
@@ -8303,13 +8893,9 @@ function renderLoans(){
       window.FreedomConfirmRemoval.show({
         kind:"journey",
         itemName:loan.name||"Journey",
-        onConfirm:function(){
-          moveCompletedItemToVictories("journey",loan.name||"Journey",{
-            loanIndex:i,
-            amount:Number(loan.starting)||0,
-            completedAt:loan.completedAt||new Date().toISOString()
-          });
-        }
+        recordId:ensureLoanRecordId(loan),
+        amount:Number(loan.starting)||0,
+        completedAt:loan.completedAt||new Date().toISOString()
       });
       return;
     }
@@ -9389,6 +9975,45 @@ function freedomBootNavPreview(open){
   if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(bootCompletionFlow,0); });
   else setTimeout(bootCompletionFlow,0);
   window.addEventListener("load",function(){ setTimeout(bootCompletionFlow,0); });
+})();
+/* TEMP DEV ONLY — boot close-chapter dissolve (completed card + modal ready). */
+(function(){
+  if(!window.__FREEDOM_CLOSE_CHAPTER_FLOW__)return;
+  const flow=window.__FREEDOM_CLOSE_CHAPTER_FLOW__;
+  let booted=false;
+  function boot(){
+    if(booted)return;
+    booted=true;
+    freedomBootNavPreview(function(){
+      document.body.classList.remove("home183");
+      if(typeof window.hideHome==="function")window.hideHome();
+      const pageId=flow.pageKind||(flow.kind==="goal"?"goals":"journey");
+      if(typeof window.page==="function")window.page(pageId);
+      setTimeout(function(){
+        if(!window.FreedomConfirmRemoval||typeof window.FreedomConfirmRemoval.show!=="function")return;
+        if(flow.kind==="goal"){
+          window.FreedomConfirmRemoval.show({
+            kind:"goal",
+            itemName:"New Kitchen",
+            recordId:flow.recordId||"close-chapter-goal-kitchen",
+            amount:5000,
+            completedAt:new Date().toISOString()
+          });
+        }else{
+          window.FreedomConfirmRemoval.show({
+            kind:"journey",
+            itemName:"Car Loan",
+            recordId:flow.recordId||"close-chapter-journey-car",
+            amount:2400,
+            completedAt:new Date().toISOString()
+          });
+        }
+      },180);
+    });
+  }
+  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(boot,0); });
+  else setTimeout(boot,0);
+  window.addEventListener("load",function(){ setTimeout(boot,0); });
 })();
 
 
@@ -10556,6 +11181,12 @@ window.FreedomConfirmRemoval=(function(){
   const notYetBtn=document.getElementById("freedomConfirmRemovalNotYet");
   const yesBtn=document.getElementById("freedomConfirmRemovalYes");
   let active=null;
+  function clearCompletionTarget(){
+    try{
+      window.completionTargetId=null;
+      window.completionTargetType=null;
+    }catch(e){}
+  }
   function bodyCopy(kind,itemName){
     const name=String(itemName||"This item");
     if(kind==="goal"){
@@ -10563,37 +11194,90 @@ window.FreedomConfirmRemoval=(function(){
     }
     return name+" will be removed from your active Journey and added to your completed history.";
   }
-  function hide(reason){
+  function hideCancel(){
     if(!overlay)return;
     overlay.hidden=true;
     const cb=active;
     active=null;
-    if(!cb)return;
-    if(reason==="confirm"&&typeof cb.onConfirm==="function")cb.onConfirm();
-    else if(typeof cb.onCancel==="function")cb.onCancel();
+    clearCompletionTarget();
+    if(cb&&typeof cb.onCancel==="function")cb.onCancel();
   }
   function show(opts){
     opts=opts||{};
     if(!overlay||!bodyEl)return;
+    const type=opts.kind==="goal"?"goal":"journey";
+    const recordId=String(opts.recordId||"").trim();
     active={
-      kind:opts.kind==="goal"?"goal":"journey",
+      completionTargetId:recordId,
+      completionTargetType:type,
       itemName:opts.itemName||"",
-      onConfirm:opts.onConfirm,
+      amount:opts.amount,
+      completedAt:opts.completedAt,
+      onDone:typeof opts.onDone==="function"?opts.onDone:(typeof opts.onConfirm==="function"?opts.onConfirm:null),
       onCancel:opts.onCancel
     };
-    bodyEl.textContent=bodyCopy(active.kind,active.itemName);
+    window.completionTargetId=recordId||null;
+    window.completionTargetType=type;
+    bodyEl.textContent=bodyCopy(type,active.itemName);
     overlay.hidden=false;
-    try{ yesBtn&&yesBtn.focus(); }catch(e){}
+    /* Focus the dialog shell — not the lilac CTA — so no browser/iOS blue focus ring */
+    try{
+      const dialog=overlay.querySelector(".freedom-confirm-removal-card");
+      if(dialog){
+        if(!dialog.hasAttribute("tabindex"))dialog.setAttribute("tabindex","-1");
+        dialog.focus({preventScroll:true});
+      }
+    }catch(e){}
   }
-  function onCancel(){ hide("cancel"); }
-  function onConfirm(){ hide("confirm"); }
-  closeBtn&&closeBtn.addEventListener("click",onCancel);
-  notYetBtn&&notYetBtn.addEventListener("click",onCancel);
-  yesBtn&&yesBtn.addEventListener("click",onConfirm);
+  function onConfirmYes(){
+    if(!overlay||!active||overlay.hidden)return;
+    const target=active;
+    active=null;
+    const recordId=String(target.completionTargetId||"").trim();
+    const type=target.completionTargetType==="goal"?"goal":"journey";
+    const modal=overlay.querySelector(".freedom-confirm-removal-card");
+    /* Keep modal visible — it is the animation target. Journey/Goal cards stay static. */
+    try{ if(yesBtn)yesBtn.blur(); }catch(e){}
+    try{ if(document.activeElement&&document.activeElement.blur)document.activeElement.blur(); }catch(e){}
+    if(yesBtn)yesBtn.disabled=true;
+    if(notYetBtn)notYetBtn.disabled=true;
+    if(closeBtn)closeBtn.disabled=true;
+    const commit=function(){
+      overlay.hidden=true;
+      if(yesBtn)yesBtn.disabled=false;
+      if(notYetBtn)notYetBtn.disabled=false;
+      if(closeBtn)closeBtn.disabled=false;
+      if(typeof window.moveCompletedItemToVictories==="function"&&recordId){
+        window.moveCompletedItemToVictories(type,target.itemName,{
+          recordId:recordId,
+          amount:target.amount,
+          completedAt:target.completedAt,
+          skipAnimation:true
+        });
+      }
+      clearCompletionTarget();
+      if(typeof target.onDone==="function")target.onDone();
+    };
+    const motion=window.freedomMotion||(typeof freedomMotion!=="undefined"?freedomMotion:null);
+    if(modal&&motion&&typeof motion.disperseCloseChapterModal==="function"){
+      motion.disperseCloseChapterModal(modal,overlay,commit);
+      return;
+    }
+    commit();
+  }
+  closeBtn&&closeBtn.addEventListener("click",hideCancel);
+  notYetBtn&&notYetBtn.addEventListener("click",hideCancel);
+  yesBtn&&yesBtn.addEventListener("click",onConfirmYes);
   overlay&&overlay.addEventListener("click",function(e){
-    if(e.target===overlay)onCancel();
+    if(e.target===overlay)hideCancel();
   });
-  return {show:show,hide:function(){ hide("cancel"); }};
+  return {
+    show:show,
+    hide:hideCancel,
+    getTarget:function(){
+      return active?{id:active.completionTargetId,type:active.completionTargetType}:null;
+    }
+  };
 })();
 
 /* Real Journey/Goal completion flow: CompanionMessage + 100% confetti → dismiss → close-chapter modal → optional Victories. */
@@ -10637,23 +11321,22 @@ window.FreedomCompletionFlow=(function(){
   }
   function showCloseChapter(opts){
     if(!window.FreedomConfirmRemoval||typeof window.FreedomConfirmRemoval.show!=="function")return;
+    let recordId=opts.recordId||"";
+    if(!recordId){
+      if(opts.kind==="goal"&&opts.goalKey){
+        recordId=goalRecordIdFromKey(opts.goalKey);
+      }else if(opts.loanIndex!=null&&state.loans[Number(opts.loanIndex)]){
+        recordId=ensureLoanRecordId(state.loans[Number(opts.loanIndex)]);
+      }
+    }
     window.FreedomConfirmRemoval.show({
       kind:opts.kind,
       itemName:opts.itemName,
-      onConfirm:function(){
-        if(typeof window.moveCompletedItemToVictories==="function"){
-          window.moveCompletedItemToVictories(opts.kind,opts.itemName,{
-            goalKey:opts.goalKey,
-            loanIndex:opts.loanIndex,
-            amount:opts.amount,
-            completedAt:opts.completedAt
-          });
-        }
-        if(typeof opts.onMoved==="function")opts.onMoved();
-      },
-      onCancel:function(){
-        if(typeof opts.onCancel==="function")opts.onCancel();
-      }
+      recordId:recordId,
+      amount:opts.amount,
+      completedAt:opts.completedAt,
+      onDone:opts.onMoved,
+      onCancel:opts.onCancel
     });
   }
   function present(opts){
@@ -10690,6 +11373,7 @@ window.FreedomCompletionFlow=(function(){
           showCloseChapter({
             kind:kind,
             itemName:opts.itemName,
+            recordId:opts.recordId,
             goalKey:opts.goalKey,
             loanIndex:opts.loanIndex,
             amount:opts.amount,
@@ -12075,7 +12759,7 @@ window.FreedomWelcomeBack=(function(){
     });
   }
   function otherTempFlowActive(){
-    return !!(window.__FREEDOM_MILESTONE_PREVIEW__||window.__FREEDOM_COMPLETION_PREVIEW__||window.__FREEDOM_COMPLETION_FLOW__||window.__FREEDOM_MILESTONE_FLOW__||window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_RENAME_FLOW__||window.__FREEDOM_POSITIVE_PATTERN__||window.__FREEDOM_JOURNEY_CARD_PREVIEW__||window.__FREEDOM_VICTORIES_PREVIEW__||window.__FREEDOM_MORE_PREVIEW__||window.__FREEDOM_ARCHIVE_PREVIEW__);
+    return !!(window.__FREEDOM_MILESTONE_PREVIEW__||window.__FREEDOM_COMPLETION_PREVIEW__||window.__FREEDOM_COMPLETION_FLOW__||window.__FREEDOM_CLOSE_CHAPTER_FLOW__||window.__FREEDOM_MILESTONE_FLOW__||window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_RENAME_FLOW__||window.__FREEDOM_POSITIVE_PATTERN__||window.__FREEDOM_JOURNEY_CARD_PREVIEW__||window.__FREEDOM_VICTORIES_PREVIEW__||window.__FREEDOM_MORE_PREVIEW__||window.__FREEDOM_ARCHIVE_PREVIEW__);
   }
   function host(){
     return document.getElementById("freedomCompanionMsgHost");
@@ -12383,22 +13067,17 @@ window.FreedomWelcomeBack=(function(){
           }
           /* Next step in completion flow: Confirm Removal system card. */
           if(window.FreedomConfirmRemoval&&typeof window.FreedomConfirmRemoval.show==="function"){
+            const previewRecordId=preview.kind==="goal"
+              ?(document.querySelector('#goalsList > .goal-card[data-goal-key="custom:0"]')||{}).dataset?.recordId
+              :(document.querySelector('#loanList > .loan-card[data-loan-index="0"]')||{}).dataset?.recordId;
             window.FreedomConfirmRemoval.show({
               kind:preview.kind,
               itemName:itemName,
-              onConfirm:function(){
-                const goVictories=function(){
-                  if(typeof window.page==="function")window.page("victories");
-                };
-                if(typeof window.moveCompletedItemToVictories==="function"){
-                  window.moveCompletedItemToVictories(preview.kind,itemName,{
-                    goalKey:preview.kind==="goal"?"custom:0":undefined,
-                    loanIndex:preview.kind==="journey"?0:undefined,
-                    amount:preview.kind==="goal"?5000:1000,
-                    completedAt:new Date().toISOString(),
-                    onDone:goVictories
-                  });
-                }else goVictories();
+              recordId:previewRecordId||"",
+              amount:preview.kind==="goal"?5000:1000,
+              completedAt:new Date().toISOString(),
+              onDone:function(){
+                if(typeof window.page==="function")window.page("victories");
               }
             });
           }
@@ -12433,7 +13112,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
       const removed=(await Promise.all(registrations.map(registration=>registration.unregister()))).some(Boolean);
       const reloadKey="freedom50-local-sw-cleared-v1";
       /* Never reload during TEMP milestone/completion preview — that replayed the message. */
-      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)&&!window.__FREEDOM_MILESTONE_PREVIEW__&&!window.__FREEDOM_COMPLETION_PREVIEW__&&!window.__FREEDOM_COMPLETION_FLOW__&&!window.__FREEDOM_MILESTONE_FLOW__&&!window.__FREEDOM_ORDINARY_FLOW__&&!window.__FREEDOM_DORMANT_FLOW__&&!window.__FREEDOM_RENAME_FLOW__&&!window.__FREEDOM_POSITIVE_PATTERN__&&!window.__FREEDOM_WELCOME_BACK__&&!window.__FREEDOM_JOURNEY_CARD_PREVIEW__&&!window.__FREEDOM_VICTORIES_PREVIEW__&&!window.__FREEDOM_MORE_PREVIEW__&&!window.__FREEDOM_ARCHIVE_PREVIEW__){
+      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)&&!window.__FREEDOM_MILESTONE_PREVIEW__&&!window.__FREEDOM_COMPLETION_PREVIEW__&&!window.__FREEDOM_COMPLETION_FLOW__&&!window.__FREEDOM_CLOSE_CHAPTER_FLOW__&&!window.__FREEDOM_MILESTONE_FLOW__&&!window.__FREEDOM_ORDINARY_FLOW__&&!window.__FREEDOM_DORMANT_FLOW__&&!window.__FREEDOM_RENAME_FLOW__&&!window.__FREEDOM_POSITIVE_PATTERN__&&!window.__FREEDOM_WELCOME_BACK__&&!window.__FREEDOM_JOURNEY_CARD_PREVIEW__&&!window.__FREEDOM_VICTORIES_PREVIEW__&&!window.__FREEDOM_MORE_PREVIEW__&&!window.__FREEDOM_ARCHIVE_PREVIEW__){
         sessionStorage.setItem(reloadKey,"1");
         location.reload();
       }
