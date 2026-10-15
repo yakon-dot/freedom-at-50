@@ -2212,7 +2212,8 @@ body.demo-mode-active.journey-active-v313 #journey .loan-card{
 body.journey-active-v313 #journey .freedom-companion-msg-flow-slot + .journey-actions,
 body.journey-active-v313 #journey .freedom-companion-msg-host.is-page-response:not([hidden]) + .journey-actions,
 body.goals-active-v314 #goals .freedom-companion-msg-flow-slot + .goals-actions,
-body.goals-active-v314 #goals .freedom-companion-msg-host.is-page-response:not([hidden]) + .goals-actions{
+body.goals-active-v314 #goals .freedom-companion-msg-host.is-page-response:not([hidden]) + .goals-actions,
+body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:not([hidden]) + .pension-actions{
   margin-top:clamp(8px,1.2vh,14px);
 }
 /* Journey/Goals page-response scrim only (not Home first-setup).
@@ -4163,7 +4164,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 <div class="journey-actions"><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><div class="add-journey-head"><h2>Add a new journey</h2><button class="add-journey-close" id="closeAddJourney" type="button" aria-label="Close">×</button></div><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">How much did you borrow?</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">How much is left to pay?</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">How much do you want to pay each month?</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomGoalsCompanionMsgHost" aria-live="polite" hidden></div>
 <div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><div class="add-goal-head"><h2>Add a new goal</h2><button class="add-goal-close" id="closeAddGoal" type="button" aria-label="Close">×</button></div><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
-<section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
+<section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>Built a little at a time.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomPensionCompanionMsgHost" aria-live="polite" hidden></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="victories"><div class="victories-page"><div class="victories-confetti" aria-hidden="true"><span class="is-sparkle" style="left:18%;top:10%;background:#ffb078"></span><span class="is-diamond" style="left:34%;top:8%;background:#ff3f9b"></span><span class="is-confetti" style="left:52%;top:12%;background:#a855d8;transform:rotate(-28deg)"></span><span class="is-sparkle" style="left:66%;top:9%;background:#ff8a45"></span><span class="is-diamond" style="left:78%;top:14%;background:#d060c8"></span><span class="is-confetti" style="left:24%;top:16%;background:#ff4c97;transform:rotate(22deg)"></span><span class="is-sparkle" style="left:42%;top:18%;background:#efcbaa"></span><span class="is-diamond" style="left:58%;top:17%;background:#ffb078"></span><span class="is-confetti" style="left:72%;top:20%;background:#e889b4;transform:rotate(-16deg)"></span><span class="is-sparkle" style="left:12%;top:22%;background:#a855d8"></span><span class="is-diamond" style="left:86%;top:22%;background:#ff8a45"></span><span class="is-confetti" style="left:30%;top:28%;background:#ff3f9b;transform:rotate(12deg)"></span><span class="is-sparkle" style="left:48%;top:30%;background:#d060c8"></span><span class="is-diamond" style="left:64%;top:27%;background:#ff4c97"></span><span class="is-confetti" style="left:16%;top:34%;background:#ffb078;transform:rotate(-20deg)"></span><span class="is-sparkle" style="left:38%;top:36%;background:#ff8a45"></span><span class="is-diamond" style="left:55%;top:38%;background:#e889b4"></span><span class="is-confetti" style="left:70%;top:35%;background:#a855d8;transform:rotate(18deg)"></span><span class="is-sparkle" style="left:82%;top:40%;background:#ff3f9b"></span><span class="is-diamond" style="left:22%;top:42%;background:#efcbaa"></span><span class="is-confetti" style="left:44%;top:44%;background:#ff8a45;transform:rotate(-10deg)"></span><span class="is-sparkle" style="left:60%;top:46%;background:#d060c8"></span><span class="is-diamond" style="left:76%;top:48%;background:#ffb078"></span><span class="is-confetti" style="left:10%;top:48%;background:#ff4c97;transform:rotate(26deg)"></span><span class="is-sparkle" style="left:33%;top:50%;background:#a855d8"></span><span class="is-diamond" style="left:50%;top:52%;background:#e889b4"></span><span class="is-confetti" style="left:68%;top:51%;background:#ff3f9b;transform:rotate(-14deg)"></span><span class="is-sparkle" style="left:88%;top:50%;background:#ff8a45"></span></div><header class="victories-hero"><h1 class="victories-title">Victories<span class="victories-title-trophy" aria-hidden="true">🏆</span></h1><p class="victories-subtitle">The things you finished along the way.</p></header><div class="victories-sections" id="victoriesSections"></div></div></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
@@ -4961,6 +4962,169 @@ function freedomSeedNavPreviewState(extra){
     window.__FREEDOM_RENAME_FORCE__=renameForce;
   }catch(e){}
 })();
+/* TEMP DEV ONLY — Freedom Date recognition FLOW (real repay path; force message).
+   ?freedomDateFlow=on-patricia|on-veronica|on-kevin
+   Seeds a monthly Journey where a €200 repayment moves calculated Freedom Date ≥30 days earlier.
+   Do not ship. */
+(function(){
+  try{
+    const raw=String(new URLSearchParams(location.search).get("freedomDateFlow")||"").toLowerCase();
+    const match=raw.match(/^on-(patricia|veronica|kevin)$/);
+    if(!match)return;
+    const companion=match[1];
+    const seedKey="freedom50-freedom-date-flow-seed-v1";
+    if(sessionStorage.getItem(seedKey)===raw){
+      window.__FREEDOM_DATE_FLOW__={kind:"on",companion:companion,seeded:false,autoRepay:true,injectRepay:200};
+      window.__FREEDOM_DATE_FORCE__="on";
+      window.__FREEDOM_ORDINARY_FORCE__="off";
+      return;
+    }
+    localStorage.setItem("freedom50-welcome-complete-v1","1");
+    localStorage.setItem("freedom50-look-around-complete-v1","1");
+    localStorage.setItem("freedom50-first-time-complete-v1","1");
+    localStorage.setItem("freedom50-companion-id-v1",companion);
+    localStorage.removeItem("freedom50-companion-pending-v1");
+    localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
+    localStorage.setItem("freedom50-companion-first-created-responses-v1",JSON.stringify({journey:"complete",goals:"complete"}));
+    localStorage.setItem("freedom50-mobile-v1",JSON.stringify({
+      archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],customGoals:[],
+      hiddenBuiltInGoals:{houseFund:true,holidayFund:true,personalSavings:true},
+      deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalNames:{},goalTargets:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalHasTarget:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalPlanMode:{houseFund:"monthly",holidayFund:"monthly",personalSavings:"monthly"},
+      goalPlannedMonthly:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalDate:{houseFund:null,holidayFund:null,personalSavings:null},
+      goalLifetimeAdded:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLifeHappensTotal:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastLifeHappens:{},goalStartingBalance:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastBalanceCorrection:{},goalCollapsed:{},goalOrder:[],
+      goalCompletionExperienced:{},goalCompletedAt:{},goalMilestoneExperienced:{},
+      goalOrdinaryProgress:{},
+      freedomDateCompanionLastAt:null,freedomDateCompanionLastLine:-1,
+      loans:[{
+        name:"Car Loan",starting:3000,current:2400,payment:100,collapsed:false,
+        payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:100,lastRepaymentDate:new Date().toISOString(),
+        firstRepaymentCompanionConsumed:true,milestoneExperienced:false,completionExperienced:false,
+        ordinarySkipNext:false,ordinaryLastLine:-1,
+        lastMeaningfulProgressAt:new Date().toISOString(),dormantLastLine:-1
+      }],
+      housePocket:0,housePocketMonthly:0,housePocketArchived:true,
+      housePocketCompletedAt:null,housePocketArchiveRemoved:true,
+      houseFund:0,holidayFund:0,holidayMonthly:0,personalSavings:0,pensions:[],
+      overviewExcludeHousePocket:true
+    }));
+    sessionStorage.removeItem("freedom50-demo-session-v1");
+    sessionStorage.setItem(seedKey,raw);
+    window.__FREEDOM_DATE_FLOW__={kind:"on",companion:companion,seeded:true,autoRepay:true,injectRepay:200};
+    window.__FREEDOM_DATE_FORCE__="on";
+    window.__FREEDOM_ORDINARY_FORCE__="off";
+  }catch(e){}
+})();
+/* TEMP DEV ONLY — Pension recognition FLOW (real Save path; force ordinary roll).
+   ?pensionFlow=on-patricia|on-veronica|on-kevin
+   Seeds an existing pension; increase value on Save. Do not ship. */
+(function(){
+  try{
+    const raw=String(new URLSearchParams(location.search).get("pensionFlow")||"").toLowerCase();
+    const match=raw.match(/^on-(patricia|veronica|kevin)$/);
+    if(!match)return;
+    const companion=match[1];
+    const seedKey="freedom50-pension-flow-seed-v1";
+    if(sessionStorage.getItem(seedKey)===raw){
+      window.__FREEDOM_PENSION_FLOW__={kind:"on",companion:companion,seeded:false,autoSave:true,injectValue:12500};
+      window.__FREEDOM_ORDINARY_FORCE__="on";
+      return;
+    }
+    localStorage.setItem("freedom50-welcome-complete-v1","1");
+    localStorage.setItem("freedom50-look-around-complete-v1","1");
+    localStorage.setItem("freedom50-first-time-complete-v1","1");
+    localStorage.setItem("freedom50-companion-id-v1",companion);
+    localStorage.removeItem("freedom50-companion-pending-v1");
+    localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
+    localStorage.setItem("freedom50-companion-first-created-responses-v1",JSON.stringify({journey:"complete",goals:"complete"}));
+    localStorage.setItem("freedom50-mobile-v1",JSON.stringify({
+      archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],customGoals:[],
+      hiddenBuiltInGoals:{houseFund:true,holidayFund:true,personalSavings:true},
+      deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalNames:{},goalTargets:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalHasTarget:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalPlanMode:{houseFund:"monthly",holidayFund:"monthly",personalSavings:"monthly"},
+      goalPlannedMonthly:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalDate:{houseFund:null,holidayFund:null,personalSavings:null},
+      goalLifetimeAdded:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLifeHappensTotal:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastLifeHappens:{},goalStartingBalance:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastBalanceCorrection:{},goalCollapsed:{},goalOrder:[],
+      goalCompletionExperienced:{},goalCompletedAt:{},goalMilestoneExperienced:{},
+      goalOrdinaryProgress:{},
+      loans:[],
+      housePocket:0,housePocketMonthly:0,housePocketArchived:true,
+      housePocketCompletedAt:null,housePocketArchiveRemoved:true,
+      houseFund:0,holidayFund:0,holidayMonthly:0,personalSavings:0,
+      pensions:[{
+        id:"pension-temp-1",name:"Irish Life",value:12000,personal:200,employer:200,
+        collapsed:false,showInOverview:true,ordinarySkipNext:false,ordinaryLastLine:-1
+      }],
+      overviewExcludeHousePocket:true
+    }));
+    sessionStorage.removeItem("freedom50-demo-session-v1");
+    sessionStorage.setItem(seedKey,raw);
+    window.__FREEDOM_PENSION_FLOW__={kind:"on",companion:companion,seeded:true,autoSave:true,injectValue:12500};
+    window.__FREEDOM_ORDINARY_FORCE__="on";
+  }catch(e){}
+})();
+/* TEMP DEV ONLY — Holiday Goal ordinary progress FLOW (explicit holiday category; force roll).
+   ?holidayFlow=on-patricia|on-veronica|on-kevin
+   Seeds built-in Holiday Fund with prior contribution. Add money to see holiday copy.
+   Do not ship. */
+(function(){
+  try{
+    const raw=String(new URLSearchParams(location.search).get("holidayFlow")||"").toLowerCase();
+    const match=raw.match(/^on-(patricia|veronica|kevin)$/);
+    if(!match)return;
+    const companion=match[1];
+    const seedKey="freedom50-holiday-flow-seed-v1";
+    if(sessionStorage.getItem(seedKey)===raw){
+      window.__FREEDOM_HOLIDAY_FLOW__={kind:"on",companion:companion,seeded:false,autoAdd:true,injectAdd:120};
+      window.__FREEDOM_ORDINARY_FORCE__="on";
+      return;
+    }
+    localStorage.setItem("freedom50-welcome-complete-v1","1");
+    localStorage.setItem("freedom50-look-around-complete-v1","1");
+    localStorage.setItem("freedom50-first-time-complete-v1","1");
+    localStorage.setItem("freedom50-companion-id-v1",companion);
+    localStorage.removeItem("freedom50-companion-pending-v1");
+    localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
+    localStorage.setItem("freedom50-companion-first-created-responses-v1",JSON.stringify({journey:"complete",goals:"complete"}));
+    localStorage.setItem("freedom50-mobile-v1",JSON.stringify({
+      archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],customGoals:[],
+      hiddenBuiltInGoals:{houseFund:true,holidayFund:false,personalSavings:true},
+      deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalNames:{},goalTargets:{houseFund:0,holidayFund:2000,personalSavings:0},
+      goalHasTarget:{houseFund:false,holidayFund:true,personalSavings:false},
+      goalPlanMode:{houseFund:"monthly",holidayFund:"monthly",personalSavings:"monthly"},
+      goalPlannedMonthly:{houseFund:0,holidayFund:100,personalSavings:0},
+      goalDate:{houseFund:null,holidayFund:null,personalSavings:null},
+      goalLifetimeAdded:{houseFund:0,holidayFund:300,personalSavings:0},
+      goalLifeHappensTotal:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastLifeHappens:{},goalStartingBalance:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastBalanceCorrection:{},goalCollapsed:{holidayFund:false},goalOrder:["holidayFund"],
+      goalCompletionExperienced:{},goalCompletedAt:{},goalMilestoneExperienced:{holidayFund:false},
+      goalOrdinaryProgress:{holidayFund:{ordinarySkipNext:false,ordinaryLastLine:-1}},
+      goalMeaningfulProgress:{holidayFund:{lastMeaningfulProgressAt:new Date().toISOString(),dormantLastLine:-1}},
+      loans:[],
+      housePocket:0,housePocketMonthly:0,housePocketArchived:true,
+      housePocketCompletedAt:null,housePocketArchiveRemoved:true,
+      houseFund:0,holidayFund:300,holidayMonthly:0,personalSavings:0,pensions:[],
+      overviewExcludeHousePocket:true
+    }));
+    sessionStorage.removeItem("freedom50-demo-session-v1");
+    sessionStorage.setItem(seedKey,raw);
+    window.__FREEDOM_HOLIDAY_FLOW__={kind:"on",companion:companion,seeded:true,autoAdd:true,injectAdd:120};
+    window.__FREEDOM_ORDINARY_FORCE__="on";
+  }catch(e){}
+})();
 /* TEMP DEV ONLY — Journey card layout preview (YOUR PLAN / MONEY MOVEMENTS).
    ?journeyCard=collapsed|plan|money|monthly|date|demo|demo-collapsed|demo-plan|demo-money|demo-date
    Real Journey UI. Do not ship. */
@@ -5400,6 +5564,15 @@ if(Array.isArray(state.loans)){
     if(loan.dormantLastLine===undefined)loan.dormantLastLine=-1;
   });
 }
+if(Array.isArray(state.pensions)){
+  state.pensions.forEach(p=>{
+    if(!p)return;
+    if(p.ordinarySkipNext===undefined)p.ordinarySkipNext=false;
+    if(p.ordinaryLastLine===undefined)p.ordinaryLastLine=-1;
+  });
+}
+if(state.freedomDateCompanionLastAt===undefined)state.freedomDateCompanionLastAt=null;
+if(state.freedomDateCompanionLastLine===undefined)state.freedomDateCompanionLastLine=-1;
 if(!state.goalCompletedAt||typeof state.goalCompletedAt!=="object")state.goalCompletedAt={};
 if(!state.goalMilestoneExperienced||typeof state.goalMilestoneExperienced!=="object")state.goalMilestoneExperienced={};
 if(!state.goalOrdinaryProgress||typeof state.goalOrdinaryProgress!=="object")state.goalOrdinaryProgress={};
@@ -6316,6 +6489,34 @@ function freedomForecast(balance,payment){
   const line2=d.toLocaleDateString("en-IE",{month:"long",year:"numeric"});
   return{line1,line2};
 }
+/* Calculated Freedom Date (monthly plan only) as a Date at month-start, or null. */
+function calculatedFreedomDate(balance,payment){
+  const b=Number(balance)||0,p=Number(payment)||0;
+  if(!(b>0)||!(p>0))return null;
+  const m=Math.ceil(b/p);
+  if(!isFinite(m)||m<=0)return null;
+  const d=new Date();
+  d.setHours(0,0,0,0);
+  d.setDate(1);
+  d.setMonth(d.getMonth()+m);
+  return d;
+}
+function freedomDateImprovedByDays(prevDate,nextDate){
+  if(!prevDate||!nextDate)return 0;
+  const prev=prevDate instanceof Date?prevDate.getTime():NaN;
+  const next=nextDate instanceof Date?nextDate.getTime():NaN;
+  if(!isFinite(prev)||!isFinite(next))return 0;
+  return(prev-next)/(24*60*60*1000);
+}
+function goalHasHolidayTravelCategory(key){
+  if(key==="holidayFund")return true;
+  if(typeof key==="string"&&key.startsWith("custom:")){
+    const g=state.customGoals&&state.customGoals[Number(key.slice(7))];
+    const cat=String(g&&g.category||"").trim().toLowerCase();
+    return cat==="holiday"||cat==="travel";
+  }
+  return false;
+}
 function freedomDateInputValue(freedomDate){
   if(!freedomDate)return"";
   if(/^\d{4}-\d{2}$/.test(freedomDate))return freedomDate;
@@ -6647,6 +6848,9 @@ function page(id){
   }
   if(window.FreedomRenameAck&&typeof window.FreedomRenameAck.onPageChange==="function"){
     window.FreedomRenameAck.onPageChange(id);
+  }
+  if(window.FreedomDateRecognition&&typeof window.FreedomDateRecognition.onPageChange==="function"){
+    window.FreedomDateRecognition.onPageChange(id);
   }
   if(id==="home"){
     journeyNoteShowToken++;
@@ -7041,7 +7245,10 @@ function saveGoal(key){
       }
       ordinarySlot=state.goalOrdinaryProgress[key];
     }
-    const ordinary=window.FreedomOrdinaryProgress.tryGoal(key,ordinarySlot);
+    const ordinary=window.FreedomOrdinaryProgress.tryGoal(key,ordinarySlot,{
+      addedAmount:addedAmount,
+      holidayCategory:goalHasHolidayTravelCategory(key)
+    });
     if(ordinary&&ordinary.changed)persist();
   }
   /* Rename only when this Save did not include a contribution (financial owns progress saves). */
@@ -7973,6 +8180,7 @@ function renderLoans(){
     const amount=Math.max(0,Number(input?.value)||0);
     if(!amount){input?.focus();return;}
     const prevCurrent=loan.current;
+    const prevFreedomDate=calculatedFreedomDate(prevCurrent,loan.payment);
     const isFirstActualRepayment=loan.firstRepaymentCompanionConsumed!==true&&!loan.lastRepaymentDate;
     const hadPriorGenuineRepayment=loan.firstRepaymentCompanionConsumed===true||!!loan.lastRepaymentDate;
     const wasDormantBeforeProgress=isMeaningfulProgressDormant(loan.lastMeaningfulProgressAt);
@@ -7988,8 +8196,8 @@ function renderLoans(){
     const nextProgress=starting?Math.max(0,(starting-loan.current)/starting):0;
     if(isFirstActualRepayment)loan.collapsed=true;
     persist();render();
-    /* Priority: completion > 50% > dormant > positive-pattern > ordinary.
-       First genuine repayment stays silent for messages. Progress still counts for pattern. */
+    /* Priority: completion > 50% > dormant > positive-pattern > freedom-date > ordinary.
+       First genuine repayment stays silent for ordinary/freedom-date. Progress still counts for pattern. */
     if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.record==="function"){
       window.FreedomPositivePattern.record();
     }
@@ -8001,6 +8209,8 @@ function renderLoans(){
       persist();
     }else if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.tryPresent==="function"&&window.FreedomPositivePattern.tryPresent("journey")){
       /* positive-pattern owns this interaction */
+    }else if(hadPriorGenuineRepayment&&amount>0&&loan.current<prevCurrent&&window.FreedomDateRecognition&&typeof window.FreedomDateRecognition.tryJourney==="function"&&window.FreedomDateRecognition.tryJourney({loan:loan,prevFreedomDate:prevFreedomDate,nextFreedomDate:calculatedFreedomDate(loan.current,loan.payment),amount:amount})){
+      persist();
     }else if(hadPriorGenuineRepayment&&amount>0&&loan.current<prevCurrent&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryJourney==="function"){
       const ordinary=window.FreedomOrdinaryProgress.tryJourney(loan,i);
       if(ordinary&&ordinary.changed)persist();
@@ -8035,6 +8245,7 @@ function renderLoans(){
       :((patternFlow&&Number(patternFlow.injectRepay)>0)?Number(patternFlow.injectRepay):0);
     let amount=0;
     let prevCurrent=loan.current;
+    let prevFreedomDate=null;
     let prevProgress=null;
     let nextProgress=null;
     let wasDormantBeforeProgress=false;
@@ -8042,6 +8253,7 @@ function renderLoans(){
     if(injectRepay>0){
       amount=injectRepay;
       prevCurrent=loan.current;
+      prevFreedomDate=calculatedFreedomDate(prevCurrent,loan.payment);
       hadPriorGenuineRepayment=loan.firstRepaymentCompanionConsumed===true||!!loan.lastRepaymentDate;
       wasDormantBeforeProgress=isMeaningfulProgressDormant(loan.lastMeaningfulProgressAt);
       const starting=Math.max(0,Number(loan.starting)||0);
@@ -8058,7 +8270,7 @@ function renderLoans(){
       nextProgress=starting?Math.max(0,(starting-loan.current)/starting):0;
     }
     persist();render();
-    /* Priority: completion > 50% > dormant > positive-pattern > ordinary > rename. */
+    /* Priority: completion > 50% > dormant > positive-pattern > freedom-date > ordinary > rename. */
     if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.record==="function"){
       window.FreedomPositivePattern.record();
     }
@@ -8071,6 +8283,8 @@ function renderLoans(){
         persist();
       }else if(loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.tryPresent==="function"&&window.FreedomPositivePattern.tryPresent("journey")){
         /* positive-pattern owns this Save */
+      }else if(hadPriorGenuineRepayment&&loan.current<prevCurrent&&window.FreedomDateRecognition&&typeof window.FreedomDateRecognition.tryJourney==="function"&&window.FreedomDateRecognition.tryJourney({loan:loan,prevFreedomDate:prevFreedomDate,nextFreedomDate:calculatedFreedomDate(loan.current,loan.payment),amount:amount})){
+        persist();
       }else if(hadPriorGenuineRepayment&&loan.current<prevCurrent&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryJourney==="function"){
         const ordinary=window.FreedomOrdinaryProgress.tryJourney(loan,i);
         if(ordinary&&ordinary.changed)persist();
@@ -8244,12 +8458,20 @@ function savePension(i){
   const personalEl=byId(`pensionPersonal_${i}`);
   const employerEl=byId(`pensionEmployer_${i}`);
   const overviewEl=byId(`pensionOverview_${i}`);
+  const prevValue=Number(p.value)||0;
   if(nameEl){const n=nameEl.value.trim();if(n)p.name=n;}
   if(valueEl)p.value=Math.max(0,Number(valueEl.value)||0);
   if(personalEl)p.personal=Math.max(0,Number(personalEl.value)||0);
   if(employerEl)p.employer=Math.max(0,Number(employerEl.value)||0);
   if(overviewEl)p.showInOverview=overviewEl.checked;
+  const nextValue=Number(p.value)||0;
+  const valueIncreased=nextValue>prevValue;
   persist(); render();
+  /* Pension recognition: occasional ordinary-progress style on genuine value increase only. */
+  if(valueIncreased&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryPension==="function"){
+    const ordinary=window.FreedomOrdinaryProgress.tryPension(p);
+    if(ordinary&&ordinary.changed)persist();
+  }
 }
 function renderPensionCard(i){
   const p=state.pensions[i];
@@ -8685,7 +8907,7 @@ byId("toggleAddPension").addEventListener("click",()=>{const card=byId("addPensi
 function closeAddPensionForm(){const card=byId("addPensionCard");if(!card)return;["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>{const el=byId(id);if(el)el.value=""});card.hidden=true}
 byId("closeAddPension").addEventListener("click",closeAddPensionForm);
 ["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>{const el=byId(id);if(!el)return;el.addEventListener("focus",()=>{setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"center"}),50)})});
-byId("addPension").addEventListener("click",()=>{const name=byId("newPensionName").value.trim();const value=Math.max(0,Number(byId("newPensionValue").value)||0);const personal=Math.max(0,Number(byId("newPensionPersonal").value)||0);const employer=Math.max(0,Number(byId("newPensionEmployer").value)||0);if(!name){byId("newPensionName").focus();return}state.pensions.push({id:"pension-"+Date.now(),name,value,personal,employer,collapsed:true,showInOverview:true});freedomMotion.markNew("pension",state.pensions.length-1);persist();["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>byId(id).value="");byId("addPensionCard").hidden=true;render()});
+byId("addPension").addEventListener("click",()=>{const name=byId("newPensionName").value.trim();const value=Math.max(0,Number(byId("newPensionValue").value)||0);const personal=Math.max(0,Number(byId("newPensionPersonal").value)||0);const employer=Math.max(0,Number(byId("newPensionEmployer").value)||0);if(!name){byId("newPensionName").focus();return}state.pensions.push({id:"pension-"+Date.now(),name,value,personal,employer,collapsed:true,showInOverview:true,ordinarySkipNext:false,ordinaryLastLine:-1});freedomMotion.markNew("pension",state.pensions.length-1);persist();["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>byId(id).value="");byId("addPensionCard").hidden=true;render()});
 byId("toggleAddGoal").addEventListener("click",()=>{const card=byId("addGoalCard");card.hidden=!card.hidden;if(!card.hidden){byId("newGoalName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 /* Visible X uses the same toggle-close path as ＋ Add goal (no save / no companion). */
 byId("closeAddGoal").addEventListener("click",()=>{const card=byId("addGoalCard");if(!card||card.hidden)return;byId("toggleAddGoal").click()});
@@ -8736,6 +8958,7 @@ fillForm();render();const initial=location.hash.slice(1);if(initial==="archiveHu
 /* Bridge for whole-app welcome-back (defined outside this IIFE) to inspect pending
    completion celebrations without exposing the full app state. */
 window.FreedomWelcomeBackBridge={
+  getState:function(){return state;},
   findPendingCompletion:function(){
     if(Array.isArray(state.loans)){
       for(let i=0;i<state.loans.length;i++){
@@ -8873,6 +9096,93 @@ function freedomBootNavPreview(open){
       if(typeof window.hideHome==="function")window.hideHome();
       const pageId=flow.pageKind||(String(flow.kind||"").startsWith("goal")?"goals":"journey");
       if(typeof window.page==="function")window.page(pageId);
+    });
+  }
+  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(boot,0); });
+  else setTimeout(boot,0);
+  window.addEventListener("load",function(){ setTimeout(boot,0); });
+})();
+/* TEMP DEV ONLY — boot Freedom Date recognition FLOW (auto genuine repay). */
+(function(){
+  if(!window.__FREEDOM_DATE_FLOW__)return;
+  const flow=window.__FREEDOM_DATE_FLOW__;
+  let booted=false;
+  function boot(){
+    if(booted)return;
+    booted=true;
+    freedomBootNavPreview(function(){
+      document.body.classList.remove("home183");
+      if(typeof window.hideHome==="function")window.hideHome();
+      if(typeof window.page==="function")window.page("journey");
+      if(!flow.autoRepay)return;
+      setTimeout(function(){
+        const amount=Number(flow.injectRepay)||200;
+        const input=document.querySelector("#loanRepayment_0")||document.querySelector("[id^='loanRepayment_']");
+        const btn=document.querySelector("[data-add-repayment='0']")||document.querySelector("[data-add-repayment]");
+        if(input){
+          input.value=String(amount);
+          input.dispatchEvent(new Event("input",{bubbles:true}));
+        }
+        if(btn)btn.click();
+      },220);
+    });
+  }
+  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(boot,0); });
+  else setTimeout(boot,0);
+  window.addEventListener("load",function(){ setTimeout(boot,0); });
+})();
+/* TEMP DEV ONLY — boot Pension recognition FLOW (auto value increase + Save). */
+(function(){
+  if(!window.__FREEDOM_PENSION_FLOW__)return;
+  const flow=window.__FREEDOM_PENSION_FLOW__;
+  let booted=false;
+  function boot(){
+    if(booted)return;
+    booted=true;
+    freedomBootNavPreview(function(){
+      document.body.classList.remove("home183");
+      if(typeof window.hideHome==="function")window.hideHome();
+      if(typeof window.page==="function")window.page("pension");
+      if(!flow.autoSave)return;
+      setTimeout(function(){
+        const next=Number(flow.injectValue)||12500;
+        const input=document.querySelector("#pensionValue_0")||document.querySelector("[id^='pensionValue_']");
+        const btn=document.querySelector("[data-save-pension='0']")||document.querySelector("[data-save-pension]");
+        if(input){
+          input.value=String(next);
+          input.dispatchEvent(new Event("input",{bubbles:true}));
+        }
+        if(btn)btn.click();
+      },260);
+    });
+  }
+  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(boot,0); });
+  else setTimeout(boot,0);
+  window.addEventListener("load",function(){ setTimeout(boot,0); });
+})();
+/* TEMP DEV ONLY — boot Holiday Goal ordinary FLOW (auto contribution). */
+(function(){
+  if(!window.__FREEDOM_HOLIDAY_FLOW__)return;
+  const flow=window.__FREEDOM_HOLIDAY_FLOW__;
+  let booted=false;
+  function boot(){
+    if(booted)return;
+    booted=true;
+    freedomBootNavPreview(function(){
+      document.body.classList.remove("home183");
+      if(typeof window.hideHome==="function")window.hideHome();
+      if(typeof window.page==="function")window.page("goals");
+      if(!flow.autoAdd)return;
+      setTimeout(function(){
+        const amount=Number(flow.injectAdd)||120;
+        const input=document.querySelector("#goalAdd_holidayFund")||document.querySelector("[id^='goalAdd_holiday']");
+        const btn=document.querySelector("[data-save-goal='holidayFund']")||document.querySelector("[data-save-goal]");
+        if(input){
+          input.value=String(amount);
+          input.dispatchEvent(new Event("input",{bubbles:true}));
+        }
+        if(btn)btn.click();
+      },280);
     });
   }
   if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(boot,0); });
@@ -10954,12 +11264,12 @@ window.FreedomCompanionDormantReturn=(function(){
 })();
 
 
-
-/* Occasional ordinary progress CompanionMessage for Journeys and Goals.
+/* Occasional ordinary progress CompanionMessage for Journeys, Goals, and Pension.
    Production: 30% chance after the first genuine progress action, with per-record
    cooldown (next eligible action silent). Never competes with completion / 50% /
-   dormant-return. Preview-only force (ordinaryFlow/dormantFlow seeds) via
-   window.__FREEDOM_ORDINARY_FORCE__ = "on"|"off". */
+   dormant-return / freedom-date. Holiday/travel Goals reuse this same roll and
+   only swap copy when an explicit category is provided by the caller.
+   Preview-only force via window.__FREEDOM_ORDINARY_FORCE__ = "on"|"off". */
 window.FreedomOrdinaryProgress=(function(){
   const OWNER="ordinary-progress";
   const APPEAR_DELAY_MS=400;
@@ -11016,7 +11326,29 @@ window.FreedomOrdinaryProgress=(function(){
         "Another bit added. Nice work.",
         "That goal is moving in the right direction."
       ]
+    },
+    pension:{
+      patricia:[
+        "Future you is going to be very pleased with this.",
+        "Look at that pension growing. Very responsible of you. Almost suspiciously so.",
+        "Ooh, more for future you. She has excellent taste."
+      ],
+      veronica:[
+        "You’re doing something really good for your future self.",
+        "It’s lovely to see this growing for the years ahead.",
+        "A little more security for future you. That’s always worth building."
+      ],
+      kevin:[
+        "That pension is building nicely. Good work.",
+        "More put away for the future. Solid progress.",
+        "Future you is in a better position because of this. Nice work."
+      ]
     }
+  };
+  const holidayPools={
+    patricia:"Another {amount} in the holiday fund. I can smell the holiday coming. I'm packing my flip-flops. Obviously, I'm coming.",
+    veronica:"Another {amount} towards some well-earned time away. Future you will be glad you made space for it.",
+    kevin:"{amount} added to the holiday fund. The plan is working. Your break is getting closer."
   };
   let showTimer=null;
   function selectedCompanion(){
@@ -11037,7 +11369,14 @@ window.FreedomOrdinaryProgress=(function(){
     return !!page&&page.classList.contains("active")&&!document.body.classList.contains("home183");
   }
   function hostFor(kind){
-    return document.getElementById(kind==="goal"?"freedomGoalsCompanionMsgHost":"freedomJourneyCompanionMsgHost");
+    if(kind==="goal")return document.getElementById("freedomGoalsCompanionMsgHost");
+    if(kind==="pension")return document.getElementById("freedomPensionCompanionMsgHost");
+    return document.getElementById("freedomJourneyCompanionMsgHost");
+  }
+  function pageIdFor(kind){
+    if(kind==="goal")return"goals";
+    if(kind==="pension")return"pension";
+    return"journey";
   }
   function cancelPending(){
     if(showTimer){clearTimeout(showTimer);showTimer=null;}
@@ -11066,12 +11405,19 @@ window.FreedomOrdinaryProgress=(function(){
   }
   function rollOrdinary(){
     /* Force only while a TEMP URL preview seed is active — never in production. */
-    if(window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_POSITIVE_PATTERN__){
+    if(window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_POSITIVE_PATTERN__||window.__FREEDOM_PENSION_FLOW__||window.__FREEDOM_HOLIDAY_FLOW__){
       const force=window.__FREEDOM_ORDINARY_FORCE__;
       if(force==="on")return true;
       if(force==="off")return false;
     }
     return Math.random()<0.3;
+  }
+  function formatCompanionAmount(amount){
+    const n=Number(amount)||0;
+    if(Math.abs(n-Math.round(n))<0.001){
+      return new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Math.round(n));
+    }
+    return new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
   }
   function pickLine(kind,companion,lastLine){
     const list=(pools[kind]&&pools[kind][companion])||[];
@@ -11081,10 +11427,15 @@ window.FreedomOrdinaryProgress=(function(){
     if(index===lastLine)index=(index+1+Math.floor(Math.random()*(list.length-1)))%list.length;
     return{index:index,message:list[index]};
   }
+  function holidayMessage(companion,amount){
+    const tmpl=holidayPools[companion];
+    if(!tmpl)return"";
+    return String(tmpl).split("{amount}").join(formatCompanionAmount(amount));
+  }
   /* Slot must be provided by the app layer (custom goal object or goalOrdinaryProgress entry). */
   function present(kind,message){
     if(!window.FreedomCompanionMessage||!message)return false;
-    const pageId=kind==="goal"?"goals":"journey";
+    const pageId=pageIdFor(kind);
     const host=hostFor(kind);
     const companion=selectedCompanion();
     if(!host||!companionNames[companion]||!pageIsActive(pageId)||inDemo())return false;
@@ -11097,6 +11448,9 @@ window.FreedomOrdinaryProgress=(function(){
       }
       if(window.FreedomCompanionJourneyRepayment&&typeof window.FreedomCompanionJourneyRepayment.hide==="function"){
         window.FreedomCompanionJourneyRepayment.hide();
+      }
+      if(window.FreedomDateRecognition&&typeof window.FreedomDateRecognition.clearHost==="function"){
+        window.FreedomDateRecognition.clearHost(hostFor("journey"));
       }
       host.dataset.companionMessageOwner=OWNER;
       host.hidden=false;
@@ -11129,7 +11483,8 @@ window.FreedomOrdinaryProgress=(function(){
     const shown=present("journey",picked.message);
     return{changed:true,shown:!!shown};
   }
-  function tryGoal(key,slot){
+  function tryGoal(key,slot,opts){
+    opts=opts||{};
     if(!key||!slot||inDemo())return{changed:false,shown:false};
     if(slot.ordinarySkipNext===undefined)slot.ordinarySkipNext=false;
     if(slot.ordinaryLastLine===undefined)slot.ordinaryLastLine=-1;
@@ -11139,18 +11494,206 @@ window.FreedomOrdinaryProgress=(function(){
     }
     if(!rollOrdinary())return{changed:false,shown:false};
     const companion=selectedCompanion();
-    const picked=pickLine("goal",companion,Number(slot.ordinaryLastLine));
-    if(!picked.message)return{changed:false,shown:false};
-    slot.ordinaryLastLine=picked.index;
+    const addedAmount=Number(opts.addedAmount)||0;
+    let message="";
+    let index=Number(slot.ordinaryLastLine);
+    if(opts.holidayCategory&&addedAmount>0){
+      message=holidayMessage(companion,addedAmount);
+      index=0;
+    }else{
+      const picked=pickLine("goal",companion,index);
+      message=picked.message;
+      index=picked.index;
+    }
+    if(!message)return{changed:false,shown:false};
+    slot.ordinaryLastLine=index;
     slot.ordinarySkipNext=true;
-    const shown=present("goal",picked.message);
+    const shown=present("goal",message);
+    return{changed:true,shown:!!shown};
+  }
+  function tryPension(pension){
+    if(!pension||inDemo())return{changed:false,shown:false};
+    if(pension.ordinarySkipNext===undefined)pension.ordinarySkipNext=false;
+    if(pension.ordinaryLastLine===undefined)pension.ordinaryLastLine=-1;
+    if(pension.ordinarySkipNext){
+      pension.ordinarySkipNext=false;
+      return{changed:true,shown:false};
+    }
+    if(!rollOrdinary())return{changed:false,shown:false};
+    const companion=selectedCompanion();
+    const picked=pickLine("pension",companion,Number(pension.ordinaryLastLine));
+    if(!picked.message)return{changed:false,shown:false};
+    pension.ordinaryLastLine=picked.index;
+    pension.ordinarySkipNext=true;
+    const shown=present("pension",picked.message);
     return{changed:true,shown:!!shown};
   }
   function onPageChange(pageId){
     if(pageId!=="journey")clearHost(hostFor("journey"));
     if(pageId!=="goals")clearHost(hostFor("goal"));
+    if(pageId!=="pension")clearHost(hostFor("pension"));
   }
-  return{tryJourney:tryJourney,tryGoal:tryGoal,onPageChange:onPageChange,clearHost:clearHost};
+  return{tryJourney:tryJourney,tryGoal:tryGoal,tryPension:tryPension,onPageChange:onPageChange,clearHost:clearHost};
+})();
+
+/* Freedom Date recognition — calculated monthly Freedom Date moves ≥30 days earlier
+   from genuine financial progress. Global 60-day cooldown. Priority after positive-pattern,
+   before ordinary. TEMP: window.__FREEDOM_DATE_FORCE__ = "on" while seed is set. */
+window.FreedomDateRecognition=(function(){
+  const OWNER="freedom-date";
+  const APPEAR_DELAY_MS=400;
+  const MIN_IMPROVE_DAYS=30;
+  const COOLDOWN_MS=60*24*60*60*1000;
+  const companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
+  const pools={
+    patricia:[
+      "Ooh, look at that. Freedom just got a little closer.",
+      "Look at that. Freedom just shuffled a little closer.",
+      "Well, hello there. Your Freedom Date is coming your way."
+    ],
+    veronica:[
+      "Your Freedom Date just moved a little closer. That’s lovely to see.",
+      "You’ve brought your Freedom Date a little closer.",
+      "Freedom is a little closer than it was before. That’s something to feel good about."
+    ],
+    kevin:[
+      "Your Freedom Date just moved closer. Good result.",
+      "Freedom just got a little closer. Nice work.",
+      "That Freedom Date is moving the right way. Good to see."
+    ]
+  };
+  let showTimer=null;
+  function selectedCompanion(){
+    const select=window.freedomCompanionSelect;
+    const id=select&&typeof select.getSelected==="function"?select.getSelected():"";
+    if(id==="patricia"||id==="veronica"||id==="kevin")return id;
+    try{
+      const v=localStorage.getItem("freedom50-companion-id-v1")||"";
+      if(v==="patricia"||v==="veronica"||v==="kevin")return v;
+    }catch(e){}
+    return "patricia";
+  }
+  function inDemo(){
+    return !!(window.freedomDemo&&typeof window.freedomDemo.isActive==="function"&&window.freedomDemo.isActive());
+  }
+  function pageIsActive(pageId){
+    const page=document.getElementById(pageId);
+    return !!page&&page.classList.contains("active")&&!document.body.classList.contains("home183");
+  }
+  function hostFor(){
+    return document.getElementById("freedomJourneyCompanionMsgHost");
+  }
+  function cancelPending(){
+    if(showTimer){clearTimeout(showTimer);showTimer=null;}
+  }
+  function clearHost(host){
+    host=host||hostFor();
+    if(!host||host.dataset.companionMessageOwner!==OWNER)return;
+    cancelPending();
+    host.classList.remove("is-entering");
+    host.innerHTML="";
+    host.hidden=true;
+    delete host.dataset.companionMessageOwner;
+    if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+    }
+  }
+  function syncPage(){
+    const active=document.activeElement;
+    if(active&&typeof active.blur==="function")active.blur();
+    window.scrollTo(0,0);
+    if(document.documentElement)document.documentElement.scrollTop=0;
+    if(document.body)document.body.scrollTop=0;
+    if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+      requestAnimationFrame(function(){ window.FreedomCompanionMessage.syncScrim(); });
+    }
+  }
+  function cooldownActive(stateRef){
+    if(window.__FREEDOM_DATE_FLOW__&&window.__FREEDOM_DATE_FORCE__==="on")return false;
+    const last=stateRef&&stateRef.freedomDateCompanionLastAt;
+    if(!last)return false;
+    const t=new Date(last).getTime();
+    if(!isFinite(t))return false;
+    return(Date.now()-t)<COOLDOWN_MS;
+  }
+  function pickLine(companion,lastLine){
+    const list=pools[companion]||[];
+    if(!list.length)return{index:-1,message:""};
+    if(list.length===1)return{index:0,message:list[0]};
+    let index=Math.floor(Math.random()*list.length);
+    if(index===lastLine)index=(index+1+Math.floor(Math.random()*(list.length-1)))%list.length;
+    return{index:index,message:list[index]};
+  }
+  function present(message){
+    if(!window.FreedomCompanionMessage||!message)return false;
+    const host=hostFor();
+    const companion=selectedCompanion();
+    if(!host||!companionNames[companion]||!pageIsActive("journey")||inDemo())return false;
+    cancelPending();
+    showTimer=setTimeout(function(){
+      showTimer=null;
+      if(!pageIsActive("journey"))return;
+      if(window.FreedomCompanionFirstCreated&&typeof window.FreedomCompanionFirstCreated.hideAll==="function"){
+        window.FreedomCompanionFirstCreated.hideAll();
+      }
+      if(window.FreedomCompanionJourneyRepayment&&typeof window.FreedomCompanionJourneyRepayment.hide==="function"){
+        window.FreedomCompanionJourneyRepayment.hide();
+      }
+      if(window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.clearHost==="function"){
+        window.FreedomOrdinaryProgress.clearHost(document.getElementById("freedomJourneyCompanionMsgHost"));
+        window.FreedomOrdinaryProgress.clearHost(document.getElementById("freedomGoalsCompanionMsgHost"));
+      }
+      host.dataset.companionMessageOwner=OWNER;
+      host.hidden=false;
+      window.FreedomCompanionMessage.mount(host,{
+        name:companionNames[companion],
+        message:message,
+        dismissible:true,
+        onDismiss:function(){ clearHost(host); }
+      });
+      syncPage();
+    },APPEAR_DELAY_MS);
+    return true;
+  }
+  function improvedDaysBetween(prevDate,nextDate){
+    if(!prevDate||!nextDate)return 0;
+    const prev=prevDate instanceof Date?prevDate.getTime():new Date(prevDate).getTime();
+    const next=nextDate instanceof Date?nextDate.getTime():new Date(nextDate).getTime();
+    if(!isFinite(prev)||!isFinite(next))return 0;
+    return(prev-next)/(24*60*60*1000);
+  }
+  /* Returns true when Freedom Date owns this action (blocks ordinary). Caller persist(). */
+  function tryJourney(opts){
+    opts=opts||{};
+    const loan=opts.loan;
+    const amount=Number(opts.amount)||0;
+    const prevFreedomDate=opts.prevFreedomDate||null;
+    const nextFreedomDate=opts.nextFreedomDate||null;
+    if(!loan||inDemo())return false;
+    if(!(amount>0))return false;
+    const improvedDays=improvedDaysBetween(prevFreedomDate,nextFreedomDate);
+    const forceOn=!!(window.__FREEDOM_DATE_FLOW__&&window.__FREEDOM_DATE_FORCE__==="on");
+    if(!forceOn&&!(improvedDays>=MIN_IMPROVE_DAYS))return false;
+    /* Bridge to app state without closing over private bindings. */
+    const stateRef=window.FreedomWelcomeBackBridge&&typeof window.FreedomWelcomeBackBridge.getState==="function"
+      ?window.FreedomWelcomeBackBridge.getState()
+      :null;
+    if(!stateRef)return false;
+    if(cooldownActive(stateRef))return false;
+    const companion=selectedCompanion();
+    const lastLine=Number(stateRef.freedomDateCompanionLastLine);
+    const picked=pickLine(companion,isFinite(lastLine)?lastLine:-1);
+    if(!picked.message)return false;
+    stateRef.freedomDateCompanionLastLine=picked.index;
+    stateRef.freedomDateCompanionLastAt=new Date().toISOString();
+    present(picked.message);
+    return true;
+  }
+  function onPageChange(pageId){
+    if(pageId!=="journey")clearHost(hostFor());
+  }
+  return{tryJourney:tryJourney,onPageChange:onPageChange,clearHost:clearHost};
 })();
 
 /* Whole-app positive-pattern CompanionMessage.
