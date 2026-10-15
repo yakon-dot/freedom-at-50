@@ -11695,90 +11695,26 @@ window.FreedomMilestoneFlow=(function(){
 })();
 
 
-/* One-time companion response to the first actual repayment on each Journey.
-   Uses the shared STANDARD CompanionMessage entrance (no private animation path). */
+/* Journey host helper kept for milestone/completion clear paths.
+   Ordinary first repayment below 50% is intentionally silent (no companion message). */
 (function(){
-  if(!window.FreedomCompanionMessage)return;
   const host=document.getElementById("freedomJourneyCompanionMsgHost");
   const owner="first-journey-repayment";
-  const APPEAR_DELAY_MS=400;
-  const companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
-  /* Kevin wording not yet approved — omit so Kevin does not show this event. */
-  const definitions={
-    patricia:{message:"First payment. Look at you, making moves. That balance has no idea who it’s dealing with."},
-    veronica:{message:"Your first payment. That balance is a little lighter now. You’ve made a lovely start."}
-  };
-  let showTimer=null;
-  function selectedCompanion(){
-    const select=window.freedomCompanionSelect;
-    return select&&typeof select.getSelected==="function"?select.getSelected():"";
-  }
-  function inDemo(){
-    return !!(window.freedomDemo&&typeof window.freedomDemo.isActive==="function"&&window.freedomDemo.isActive());
-  }
-  function journeyIsActive(){
-    const page=document.getElementById("journey");
-    return !!page&&page.classList.contains("active")&&!document.body.classList.contains("home183");
-  }
-  function cancelPending(){
-    if(showTimer){clearTimeout(showTimer);showTimer=null;}
-  }
-  function syncPage(){
-    const active=document.activeElement;
-    if(active&&typeof active.blur==="function")active.blur();
-    window.scrollTo(0,0);
-    if(document.documentElement)document.documentElement.scrollTop=0;
-    if(document.body)document.body.scrollTop=0;
-    if(typeof window.FreedomCompanionMessage.syncScrim==="function"){
-      window.FreedomCompanionMessage.syncScrim();
-      requestAnimationFrame(function(){ window.FreedomCompanionMessage.syncScrim(); });
-    }
-  }
   function hide(){
-    if(!host||host.dataset.companionMessageOwner!==owner){
-      cancelPending();
-      return;
-    }
-    cancelPending();
+    if(!host||host.dataset.companionMessageOwner!==owner)return;
     host.classList.remove("is-entering");
     host.innerHTML="";
     host.hidden=true;
     delete host.dataset.companionMessageOwner;
-    if(typeof window.FreedomCompanionMessage.syncScrim==="function")window.FreedomCompanionMessage.syncScrim();
-  }
-  function showMessage(selected,definition){
-    if(!host||!journeyIsActive()||!definition||!companionNames[selected])return;
-    host.dataset.companionMessageOwner=owner;
-    host.hidden=false;
-    window.FreedomCompanionMessage.mount(host,{
-      name:companionNames[selected],
-      message:definition.message,
-      largeEmoji:"👏",
-      dismissible:true,
-      onDismiss:hide
-    });
-    syncPage();
-  }
-  function triggerFirstPayment(result){
-    result=result||{};
-    /* A halfway/completion achievement owns this interaction. The per-Journey
-       first-payment flag has already been consumed before this point. */
-    if(result.crossedHalfway||result.completed)return;
-    const selected=selectedCompanion();
-    const definition=definitions[selected];
-    if(!host||inDemo()||!journeyIsActive()||!definition||!companionNames[selected])return;
-    cancelPending();
-    /* After repayment save + card collapse, wait briefly before the bubble. */
-    showTimer=setTimeout(function(){
-      showTimer=null;
-      showMessage(selected,definition);
-    },APPEAR_DELAY_MS);
+    if(typeof window.FreedomCompanionMessage!=="undefined"&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+    }
   }
   function onPageChange(pageId){
     if(pageId!=="journey")hide();
   }
   window.FreedomCompanionJourneyRepayment={
-    triggerFirstPayment:triggerFirstPayment,
+    triggerFirstPayment:function(){ /* product: silent */ },
     onPageChange:onPageChange,
     hide:hide
   };
