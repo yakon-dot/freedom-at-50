@@ -1,0 +1,133 @@
+Freedom at 50 — Inspection Notes
+(Nothing was changed)
+
+Freedom at 50 is a personal finance progress app you can add to your iPhone Home Screen. Your journeys, goals, and pension figures live only on that phone (in Safari’s local storage), not in the cloud.
+
+--------------------------------------------------
+1. Most important problems right now
+--------------------------------------------------
+
+1. Several Save buttons do not work
+   On Goals, Save for House Fund, Holiday Fund, and Personal Savings, and on Pension, Save Pension, call a missing step in the app. Your typed numbers are not written into the phone’s saved copy.
+   What still works: editing journeys (when you leave a field), adding journeys/goals, House Pocket “Record Payment,” and custom goals when you change a field and leave it.
+
+2. Delete buttons do nothing
+   Delete appears on goals, but tapping it has no effect.
+
+3. “Restore original starting journeys” can wipe your real journeys with one tap
+   It replaces your current journeys with the built-in starter list, with no “Are you sure?” warning.
+
+4. No real Backup
+   More → Backup & export is wording only. If Safari clears site data, or the app is removed in a way that clears storage, your figures can be gone with no easy restore.
+
+5. The Home screen is duplicated
+   Two nearly identical Home menus were left in the file (different version labels). On iPhone this can make menus/buttons feel odd, double-fire, or unreliable.
+
+6. Bottom “Home” is unreliable
+   The floating menu button is the dependable way home; the bottom Home tab can fail to show the Home wallpaper menu.
+
+7. Offline / update helper is half-finished
+   The background updater was set to “always try the live site” and clear old caches, but it no longer keeps a proper offline copy. Offline use is weak; update banners can feel confusing.
+
+8. Half-built More items
+   Demo Mode, Companion, Reports, and Backup are placeholders or unreachable. Not urgent for daily use, but they look unfinished.
+
+9. App file is very heavy
+   The Home wallpaper is embedded twice inside the page, so the main file is huge (~490KB of HTML alone, plus large Overview/Journey images). First open on mobile data can feel slow.
+
+--------------------------------------------------
+2. What to fix first, and why
+--------------------------------------------------
+
+Priority 1 — Make Goals/Pension Save work
+Why: You’re editing real money figures that silently don’t stick.
+
+Priority 2 — Add a confirm (or safer wording) before restoring starter journeys
+Why: One accidental tap can replace your journeys.
+
+Priority 3 — Make Delete work, or remove the button
+Why: A dead Delete button invites confusion and false confidence.
+
+Priority 4 — Clean up the duplicate Home menu
+Why: Daily navigation on iPhone should feel single and predictable.
+
+Priority 5 — Add a simple Backup / Export
+Why: Protects everything else if the phone clears app data.
+
+Priority 6 — Fix offline/update behaviour carefully
+Why: Improves reliability without redesign.
+
+Priority 7 — Polish later (Demo, Companion, Reports, speed, small UI bugs)
+Why: Nice to have after the app is trustworthy.
+
+--------------------------------------------------
+3. What you’d notice on your iPhone after each fix
+--------------------------------------------------
+
+1. Save fixed
+   Change House Fund / Holiday / Savings / Pension → tap Save → see “Saved locally ✓” and the number still there after closing and reopening the app.
+
+2. Restore warning
+   Restore starter journeys asks for confirmation; Cancel leaves your journeys alone.
+
+3. Delete fixed or removed
+   Delete either removes/hides a goal as intended, or the button disappears so you aren’t misled.
+
+4. Home cleaned up
+   One Home menu; buttons respond once; version label consistent.
+
+5. Backup
+   A way to copy/export your figures (and later restore them).
+
+6. Offline/update
+   Opens more reliably without network; updates feel clearer, less “stuck on old version.”
+
+7. Polish
+   Demo/Companion/Reports become real or stop looking unfinished; app may open faster.
+
+--------------------------------------------------
+4. Risks to your existing data and design
+--------------------------------------------------
+
+Saved journeys, goals, pension
+- Low risk if we change things carefully and keep the same storage name (freedom50-mobile-v1)
+- Higher risk if we rename that storage or change how data is loaded — the app could “forget” your figures
+
+Wallpapers / look
+- Low risk if we don’t touch wallpaper files or redesign screens
+- Higher risk if we replace images or restyle
+
+House Pocket / progress math
+- Low risk for Save/Home/Delete fixes
+- Higher risk if we change how House Pocket links to House Fund — totals you see could change
+
+Design redesign
+- Not needed for the first fixes
+- Big visual rewrites should wait for your approval
+
+Already risky in the app today (before any new work):
+- The restore-journeys button
+- Having no backup
+
+A careful first pass can fix Save, confirmations, Delete, and Home without changing wallpapers or wiping data — as long as we keep the same storage name and data shape, and you approve before anything ships.
+
+--------------------------------------------------
+5. Recommended order of work
+--------------------------------------------------
+
+1. Fix Save for House Fund, Holiday Fund, Personal Savings, and Pension
+2. Add confirmation before restoring original journeys
+3. Fix or remove Delete
+4. Remove the duplicate Home and make Home navigation reliable
+5. Add Backup / Export (and ideally Restore)
+6. Stabilise updates / offline without changing your look
+7. Finish or tidy More placeholders (Demo, Companion, Reports)
+8. Optional speed/cleanup (duplicate wallpaper weight, small Overview quirks)
+
+--------------------------------------------------
+Bottom line
+--------------------------------------------------
+
+The app is usable for journeys and House Pocket, but Goals/Pension Save is broken, Delete is fake, journey restore is dangerous, and there’s no real backup. Fix trust and safety first; leave design and new features until you say go.
+
+No files were changed.
