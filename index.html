@@ -2332,8 +2332,9 @@ body.goals-active-v314 #goals .freedom-companion-msg-host.is-page-response:not([
   /* Clearance from the absolute dismiss X when there is no emoji column */
   padding-right:28px;
 }
-/* Rename / repurpose acknowledgement only — slightly larger body copy */
-.freedom-companion-msg.is-rename-ack .freedom-companion-msg-text{
+/* Approved text-only body size — rename ack + whole-app welcome-back */
+.freedom-companion-msg.is-rename-ack .freedom-companion-msg-text,
+.freedom-companion-msg.is-welcome-back .freedom-companion-msg-text{
   font-size:14px;
 }
 .freedom-companion-msg-name{
@@ -4657,6 +4658,79 @@ function freedomSeedNavPreviewState(extra){
     sessionStorage.setItem(seedKey,raw);
     window.__FREEDOM_DORMANT_FLOW__={kind:kind,companion:companion,seeded:true,pageKind:pageKind};
     window.__FREEDOM_ORDINARY_FORCE__=ordinaryForce;
+  }catch(e){}
+})();
+/* TEMP DEV ONLY — whole-app welcome-back FLOW seeds (simulate 60+ day absence).
+   ?welcomeBack=on|consumed|vs-completion -patricia|veronica|kevin
+   Production uses real last-open timestamps. Do not ship. */
+(function(){
+  try{
+    const raw=String(new URLSearchParams(location.search).get("welcomeBack")||"").toLowerCase();
+    const match=raw.match(/^(on|consumed|vs-completion)-(patricia|veronica|kevin)$/);
+    if(!match)return;
+    const kind=match[1];
+    const companion=match[2];
+    const seedKey="freedom50-welcome-back-flow-seed-v1";
+    const LAST_OPEN_KEY="freedom50-last-app-open-at-v1";
+    const ACK_KEY="freedom50-welcome-back-acked-open-at-v1";
+    const seventyFiveDaysAgo=Date.now()-(75*24*60*60*1000);
+    if(sessionStorage.getItem(seedKey)===raw){
+      window.__FREEDOM_WELCOME_BACK__={kind:kind,companion:companion,seeded:false};
+      window.__FREEDOM_WELCOME_BACK_FORCE__=kind;
+      return;
+    }
+    localStorage.setItem("freedom50-welcome-complete-v1","1");
+    localStorage.setItem("freedom50-look-around-complete-v1","1");
+    localStorage.setItem("freedom50-first-time-complete-v1","1");
+    localStorage.setItem("freedom50-companion-id-v1",companion);
+    localStorage.removeItem("freedom50-companion-pending-v1");
+    localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
+    localStorage.setItem("freedom50-companion-first-created-responses-v1",JSON.stringify({journey:"complete",goals:"complete"}));
+    const base={
+      archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],customGoals:[],
+      hiddenBuiltInGoals:{houseFund:true,holidayFund:true,personalSavings:true},
+      deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalNames:{},goalTargets:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalHasTarget:{houseFund:false,holidayFund:false,personalSavings:false},
+      goalPlanMode:{houseFund:"monthly",holidayFund:"monthly",personalSavings:"monthly"},
+      goalPlannedMonthly:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalDate:{houseFund:null,holidayFund:null,personalSavings:null},
+      goalLifetimeAdded:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLifeHappensTotal:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastLifeHappens:{},goalStartingBalance:{houseFund:0,holidayFund:0,personalSavings:0},
+      goalLastBalanceCorrection:{},goalCollapsed:{},goalOrder:[],
+      goalCompletionExperienced:{},goalCompletedAt:{},goalMilestoneExperienced:{},
+      goalOrdinaryProgress:{},goalMeaningfulProgress:{},
+      loans:[{
+        name:"Car Loan",starting:1000,current:700,payment:50,collapsed:true,
+        payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:100,lastRepaymentDate:new Date().toISOString(),
+        firstRepaymentCompanionConsumed:true,milestoneExperienced:false,completionExperienced:false,
+        ordinarySkipNext:false,ordinaryLastLine:-1,
+        lastMeaningfulProgressAt:new Date().toISOString(),dormantLastLine:-1
+      }],
+      housePocket:0,housePocketMonthly:0,housePocketArchived:true,
+      housePocketCompletedAt:null,housePocketArchiveRemoved:true,
+      houseFund:0,holidayFund:0,holidayMonthly:0,personalSavings:0,pensions:[],
+      overviewExcludeHousePocket:true
+    };
+    if(kind==="vs-completion"){
+      base.loans=[{
+        name:"Car Loan",starting:1000,current:0,payment:50,collapsed:false,
+        payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:50,lastRepaymentDate:new Date().toISOString(),
+        firstRepaymentCompanionConsumed:true,milestoneExperienced:true,completionExperienced:false,
+        completedAt:new Date().toISOString(),
+        ordinarySkipNext:false,ordinaryLastLine:-1,
+        lastMeaningfulProgressAt:new Date().toISOString(),dormantLastLine:-1
+      }];
+    }
+    localStorage.setItem("freedom50-mobile-v1",JSON.stringify(base));
+    localStorage.setItem(LAST_OPEN_KEY,String(seventyFiveDaysAgo));
+    if(kind==="consumed")localStorage.setItem(ACK_KEY,String(seventyFiveDaysAgo));
+    else localStorage.removeItem(ACK_KEY);
+    sessionStorage.removeItem("freedom50-demo-session-v1");
+    sessionStorage.setItem(seedKey,raw);
+    window.__FREEDOM_WELCOME_BACK__={kind:kind,companion:companion,seeded:true};
+    window.__FREEDOM_WELCOME_BACK_FORCE__=kind;
   }catch(e){}
 })();
 /* TEMP DEV ONLY — rename / repurpose FLOW seeds (real edit+Save path; force on/off).
@@ -8526,6 +8600,55 @@ document.addEventListener("click",e=>{
   closeDemoMenu();
 });
 fillForm();render();const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(["overview","journey","goals","pension","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
+/* Bridge for whole-app welcome-back (defined outside this IIFE) to inspect pending
+   completion celebrations without exposing the full app state. */
+window.FreedomWelcomeBackBridge={
+  findPendingCompletion:function(){
+    if(Array.isArray(state.loans)){
+      for(let i=0;i<state.loans.length;i++){
+        const loan=state.loans[i];
+        if(!loan)continue;
+        if((Number(loan.current)||0)<=0&&!loan.completionExperienced){
+          return {
+            kind:"journey",
+            itemName:loan.name||"Journey",
+            loanIndex:i,
+            amount:Number(loan.starting)||0,
+            completedAt:loan.completedAt||new Date().toISOString(),
+            mark:function(){
+              loan.completionExperienced=true;
+              loan.milestoneExperienced=true;
+              if(!loan.completedAt)loan.completedAt=new Date().toISOString();
+              persist();
+            }
+          };
+        }
+      }
+    }
+    const keys=[];
+    if(Array.isArray(state.customGoals)){
+      state.customGoals.forEach(function(_,i){ keys.push("custom:"+i); });
+    }
+    ["houseFund","holidayFund","personalSavings"].forEach(function(k){ keys.push(k); });
+    for(let k=0;k<keys.length;k++){
+      const key=keys[k];
+      if(isGoalReached(key)&&!isGoalCompletionExperienced(key)){
+        return {
+          kind:"goal",
+          itemName:goalDisplayName(key),
+          goalKey:key,
+          amount:getGoalTargetAmount(key)||getGoalCurrentBalance(key),
+          completedAt:new Date().toISOString(),
+          mark:function(){
+            markGoalCompletionExperienced(key);
+            persist();
+          }
+        };
+      }
+    }
+    return null;
+  }
+};
 })();
 
 /* TEMP DEV ONLY — shared boot helper: strip onboarding chrome for nav previews. */
@@ -8636,6 +8759,28 @@ function freedomBootNavPreview(open){
       if(typeof window.hideHome==="function")window.hideHome();
       const pageId=flow.pageKind||(String(flow.kind||"").indexOf("goal")===0?"goals":"journey");
       if(typeof window.page==="function")window.page(pageId);
+    });
+  }
+  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(boot,0); });
+  else setTimeout(boot,0);
+  window.addEventListener("load",function(){ setTimeout(boot,0); });
+})();
+/* TEMP DEV ONLY — boot whole-app welcome-back FLOW (simulate 60+ day return). */
+(function(){
+  if(!window.__FREEDOM_WELCOME_BACK__)return;
+  let booted=false;
+  function boot(){
+    if(booted)return;
+    booted=true;
+    freedomBootNavPreview(function(){
+      document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315","archive-active-v316","victories-active-v317");
+      document.body.classList.add("home183");
+      if(typeof window.showHome==="function")window.showHome();
+      setTimeout(function(){
+        if(window.FreedomWelcomeBack&&typeof window.FreedomWelcomeBack.tryOnAppOpen==="function"){
+          window.FreedomWelcomeBack.tryOnAppOpen();
+        }
+      },80);
     });
   }
   if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",function(){ setTimeout(boot,0); });
@@ -9205,6 +9350,7 @@ window.FreedomCompanionMessage=(function(){
     const textOnly=opts.textOnly!=null?!!opts.textOnly:!opts.largeEmoji;
     if(textOnly)root.classList.add("is-text-only");
     if(opts.renameAck)root.classList.add("is-rename-ack");
+    if(opts.welcomeBack)root.classList.add("is-welcome-back");
 
     const layout=createOutline(root);
 
@@ -10938,6 +11084,231 @@ window.FreedomRenameAck=(function(){
   };
 })();
 
+/* Whole-app welcome-back — after 60+ days without opening Freedom.
+   Separate from dormant Journey/Goal return (which needs financial progress).
+   Priority: pending completion celebration wins; welcome-back does not queue. */
+window.FreedomWelcomeBack=(function(){
+  const OWNER="welcome-back";
+  const APPEAR_DELAY_MS=400;
+  const THRESHOLD_MS=60*24*60*60*1000;
+  const LAST_OPEN_KEY="freedom50-last-app-open-at-v1";
+  const ACK_KEY="freedom50-welcome-back-acked-open-at-v1";
+  const LAST_LINE_KEY="freedom50-welcome-back-last-line-v1";
+  const companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
+  const pools={
+    patricia:[
+      "Oh, hello you. Nice to see you again.",
+      "Well, look who’s here. Come on in.",
+      "There you are! Lovely to have you back."
+    ],
+    veronica:[
+      "It’s lovely to see you again. Welcome back.",
+      "Welcome back. It’s nice to have you here.",
+      "Hello again. I’m glad you’re here."
+    ],
+    kevin:[
+      "Good to see you again. Welcome back.",
+      "Back again. Good to see you.",
+      "Nice to see you again. Let’s see where things are."
+    ]
+  };
+  let showTimer=null;
+  let openHandled=false;
+  function selectedCompanion(){
+    const select=window.freedomCompanionSelect;
+    const id=select&&typeof select.getSelected==="function"?select.getSelected():"";
+    if(id==="patricia"||id==="veronica"||id==="kevin")return id;
+    try{
+      const v=localStorage.getItem("freedom50-companion-id-v1")||"";
+      if(v==="patricia"||v==="veronica"||v==="kevin")return v;
+    }catch(e){}
+    return "patricia";
+  }
+  function inDemo(){
+    return !!(window.freedomDemo&&typeof window.freedomDemo.isActive==="function"&&window.freedomDemo.isActive());
+  }
+  function readKey(key){
+    try{return localStorage.getItem(key)||"";}catch(e){return "";}
+  }
+  function writeKey(key,value){
+    try{
+      if(value==null||value==="")localStorage.removeItem(key);
+      else localStorage.setItem(key,String(value));
+    }catch(e){}
+  }
+  function isEstablishedUser(){
+    try{
+      if(localStorage.getItem("freedom50-welcome-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-look-around-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-first-time-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-companion-pending-v1")==="1")return false;
+      if(localStorage.getItem("freedom50-companion-first-setup-pending-v1")==="1")return false;
+      const companion=selectedCompanion();
+      if(!companionNames[companion])return false;
+      const select=window.freedomCompanionSelect;
+      if(select&&typeof select.isPending==="function"&&select.isPending())return false;
+      if(select&&typeof select.isFirstSetupPending==="function"&&select.isFirstSetupPending())return false;
+      return true;
+    }catch(e){return false;}
+  }
+  function onboardingVisible(){
+    return ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect"].some(function(id){
+      const el=document.getElementById(id);
+      return !!el&&!el.hidden;
+    });
+  }
+  function otherTempFlowActive(){
+    return !!(window.__FREEDOM_MILESTONE_PREVIEW__||window.__FREEDOM_COMPLETION_PREVIEW__||window.__FREEDOM_COMPLETION_FLOW__||window.__FREEDOM_MILESTONE_FLOW__||window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_RENAME_FLOW__||window.__FREEDOM_JOURNEY_CARD_PREVIEW__||window.__FREEDOM_VICTORIES_PREVIEW__||window.__FREEDOM_MORE_PREVIEW__||window.__FREEDOM_ARCHIVE_PREVIEW__);
+  }
+  function host(){
+    return document.getElementById("freedomCompanionMsgHost");
+  }
+  function cancelPending(){
+    if(showTimer){clearTimeout(showTimer);showTimer=null;}
+  }
+  function clearHost(){
+    const h=host();
+    if(!h||h.dataset.companionMessageOwner!==OWNER)return;
+    cancelPending();
+    h.classList.remove("is-entering");
+    h.innerHTML="";
+    h.hidden=true;
+    delete h.dataset.companionMessageOwner;
+    if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+    }
+  }
+  function readLastLines(){
+    try{
+      const v=JSON.parse(localStorage.getItem(LAST_LINE_KEY)||"null");
+      return v&&typeof v==="object"?v:{patricia:-1,veronica:-1,kevin:-1};
+    }catch(e){return {patricia:-1,veronica:-1,kevin:-1};}
+  }
+  function writeLastLine(companion,index){
+    const v=readLastLines();
+    v[companion]=index;
+    try{localStorage.setItem(LAST_LINE_KEY,JSON.stringify(v));}catch(e){}
+  }
+  function pickLine(companion){
+    const list=pools[companion]||[];
+    if(!list.length)return{index:-1,message:""};
+    const last=readLastLines()[companion];
+    if(list.length===1)return{index:0,message:list[0]};
+    let index=Math.floor(Math.random()*list.length);
+    if(index===last)index=(index+1+Math.floor(Math.random()*(list.length-1)))%list.length;
+    return{index:index,message:list[index]};
+  }
+  function findPendingCompletion(){
+    const bridge=window.FreedomWelcomeBackBridge;
+    if(!bridge||typeof bridge.findPendingCompletion!=="function")return null;
+    return bridge.findPendingCompletion();
+  }
+  function presentPendingCompletion(pending){
+    if(!pending||!window.FreedomCompletionFlow||typeof window.FreedomCompletionFlow.present!=="function")return false;
+    if(typeof pending.mark==="function")pending.mark();
+    window.FreedomCompletionFlow.present({
+      kind:pending.kind,
+      itemName:pending.itemName,
+      loanIndex:pending.loanIndex,
+      goalKey:pending.goalKey,
+      amount:pending.amount,
+      completedAt:pending.completedAt
+    });
+    return true;
+  }
+  function homeReady(){
+    const home=document.getElementById("mobile183");
+    return document.body.classList.contains("home183")&&
+      !!home&&home.getAttribute("aria-hidden")!=="true"&&
+      !onboardingVisible();
+  }
+  function present(message){
+    if(!window.FreedomCompanionMessage||!message)return false;
+    const h=host();
+    const companion=selectedCompanion();
+    if(!h||!companionNames[companion]||inDemo())return false;
+    cancelPending();
+    showTimer=setTimeout(function(){
+      showTimer=null;
+      if(inDemo()||onboardingVisible())return;
+      if(window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.hide==="function"){
+        window.FreedomFirstCompanionSetup.hide();
+      }
+      if(window.FreedomCompanionFirstCreated&&typeof window.FreedomCompanionFirstCreated.hideAll==="function"){
+        window.FreedomCompanionFirstCreated.hideAll();
+      }
+      /* Prefer Home for whole-app return. */
+      if(typeof window.showHome==="function")window.showHome();
+      if(!homeReady()&&!window.__FREEDOM_WELCOME_BACK__)return;
+      h.dataset.companionMessageOwner=OWNER;
+      h.hidden=false;
+      window.FreedomCompanionMessage.mount(h,{
+        name:companionNames[companion],
+        message:message,
+        dismissible:true,
+        welcomeBack:true,
+        onDismiss:function(){ clearHost(); }
+      });
+      if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+        window.FreedomCompanionMessage.syncScrim();
+      }
+    },APPEAR_DELAY_MS);
+    return true;
+  }
+  function tryOnAppOpen(){
+    if(openHandled)return false;
+    if(inDemo())return false;
+    if(otherTempFlowActive())return false;
+    if(!isEstablishedUser())return false;
+    if(onboardingVisible()&&!window.__FREEDOM_WELCOME_BACK__)return false;
+    openHandled=true;
+    const force=window.__FREEDOM_WELCOME_BACK_FORCE__;
+    const prevRaw=readKey(LAST_OPEN_KEY);
+    const prev=prevRaw?Number(prevRaw):NaN;
+    const now=Date.now();
+    writeKey(LAST_OPEN_KEY,String(now));
+    let longAbsence=!!prevRaw&&!isNaN(prev)&&(now-prev>=THRESHOLD_MS);
+    if(force==="on"||force==="vs-completion"||force==="consumed")longAbsence=true;
+    if(force==="off")longAbsence=false;
+    if(!longAbsence)return false;
+    const returnKey=prevRaw||("force-"+String(force||"on"));
+    if(readKey(ACK_KEY)===returnKey)return false;
+    const pending=findPendingCompletion();
+    if(pending){
+      writeKey(ACK_KEY,returnKey);
+      presentPendingCompletion(pending);
+      return false;
+    }
+    const companion=selectedCompanion();
+    const picked=pickLine(companion);
+    if(!picked.message)return false;
+    writeKey(ACK_KEY,returnKey);
+    writeLastLine(companion,picked.index);
+    return present(picked.message);
+  }
+  return{
+    tryOnAppOpen:tryOnAppOpen,
+    clearHost:clearHost,
+    THRESHOLD_MS:THRESHOLD_MS
+  };
+})();
+
+/* Production: attempt welcome-back once the established app is ready.
+   TEMP welcomeBack= seeds use their own boot (do not race here). */
+(function(){
+  if(window.__FREEDOM_WELCOME_BACK__)return;
+  function boot(){
+    if(!window.FreedomWelcomeBack||typeof window.FreedomWelcomeBack.tryOnAppOpen!=="function")return;
+    window.FreedomWelcomeBack.tryOnAppOpen();
+  }
+  function schedule(){
+    setTimeout(boot,120);
+  }
+  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",schedule);
+  else schedule();
+  window.addEventListener("load",schedule);
+})();
+
 /* TEMP DEV ONLY — boot 50% milestone CompanionMessage preview (no onboarding).
    Uses approved copy/emojis + shared standard entrance + milestone flourish. */
 (function(){
@@ -11145,7 +11516,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
       const removed=(await Promise.all(registrations.map(registration=>registration.unregister()))).some(Boolean);
       const reloadKey="freedom50-local-sw-cleared-v1";
       /* Never reload during TEMP milestone/completion preview — that replayed the message. */
-      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)&&!window.__FREEDOM_MILESTONE_PREVIEW__&&!window.__FREEDOM_COMPLETION_PREVIEW__&&!window.__FREEDOM_COMPLETION_FLOW__&&!window.__FREEDOM_MILESTONE_FLOW__&&!window.__FREEDOM_ORDINARY_FLOW__&&!window.__FREEDOM_DORMANT_FLOW__&&!window.__FREEDOM_RENAME_FLOW__&&!window.__FREEDOM_JOURNEY_CARD_PREVIEW__&&!window.__FREEDOM_VICTORIES_PREVIEW__&&!window.__FREEDOM_MORE_PREVIEW__&&!window.__FREEDOM_ARCHIVE_PREVIEW__){
+      if(removed&&navigator.serviceWorker.controller&&!sessionStorage.getItem(reloadKey)&&!window.__FREEDOM_MILESTONE_PREVIEW__&&!window.__FREEDOM_COMPLETION_PREVIEW__&&!window.__FREEDOM_COMPLETION_FLOW__&&!window.__FREEDOM_MILESTONE_FLOW__&&!window.__FREEDOM_ORDINARY_FLOW__&&!window.__FREEDOM_DORMANT_FLOW__&&!window.__FREEDOM_RENAME_FLOW__&&!window.__FREEDOM_WELCOME_BACK__&&!window.__FREEDOM_JOURNEY_CARD_PREVIEW__&&!window.__FREEDOM_VICTORIES_PREVIEW__&&!window.__FREEDOM_MORE_PREVIEW__&&!window.__FREEDOM_ARCHIVE_PREVIEW__){
         sessionStorage.setItem(reloadKey,"1");
         location.reload();
       }
