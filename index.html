@@ -2032,6 +2032,25 @@ body.goals-active-v314 #goals .freedom-companion-msg-host.is-page-response:not([
 .freedom-companion-msg-host.is-first-journey-repayment .freedom-companion-msg-text{
   font-size:13px;
 }
+.freedom-companion-msg-host.is-first-journey-repayment.is-sequencing.is-entering{
+  animation:freedomFirstRepaymentBubbleIn 300ms ease-out both;
+}
+.freedom-companion-msg-host.is-first-journey-repayment.is-sequencing .freedom-companion-msg-emoji-glyph{
+  opacity:0;
+  transform:scale(.92);
+  transition:opacity 180ms ease-out,transform 220ms ease-out;
+}
+.freedom-companion-msg-host.is-first-journey-repayment.is-sequencing .freedom-companion-msg-emoji::before{
+  opacity:0;
+  transition:opacity 260ms ease-out;
+}
+.freedom-companion-msg-host.is-first-journey-repayment.is-sequencing .freedom-companion-msg-emoji.is-visible .freedom-companion-msg-emoji-glyph{
+  opacity:1;
+  transform:none;
+}
+.freedom-companion-msg-host.is-first-journey-repayment.is-sequencing .freedom-companion-msg-emoji.is-glowing::before{
+  opacity:.98;
+}
 /* TL peach edge glow — independent layer behind the card */
 .freedom-companion-msg-host::before{
   content:"";position:absolute;z-index:0;pointer-events:none;
@@ -2150,6 +2169,10 @@ body.goals-active-v314 #goals .freedom-companion-msg-host.is-page-response:not([
   user-select:none;pointer-events:none;
   z-index:1;
 }
+.freedom-companion-msg-emoji-glyph{
+  position:relative;z-index:1;display:block;
+  font-size:inherit;line-height:inherit;
+}
 /* Small warm glow BEHIND the native emoji (emoji stays crisp) */
 .freedom-companion-msg-emoji::before{
   content:"";position:absolute;left:50%;top:52%;
@@ -2248,8 +2271,16 @@ body.goals-active-v314 #goals .freedom-companion-msg-host.is-page-response:not([
   from{opacity:0;transform:translateY(10px) scale(.98)}
   to{opacity:1;transform:none}
 }
+@keyframes freedomFirstRepaymentBubbleIn{
+  from{opacity:0}
+  to{opacity:1}
+}
 @media (prefers-reduced-motion:reduce){
   .freedom-companion-msg-host.is-entering{animation:none}
+  .freedom-companion-msg-host.is-first-journey-repayment.is-sequencing .freedom-companion-msg-emoji-glyph,
+  .freedom-companion-msg-host.is-first-journey-repayment.is-sequencing .freedom-companion-msg-emoji::before{
+    opacity:1;transform:none;transition:none;
+  }
   .freedom-companion-msg-host::before,
   .freedom-companion-msg-host::after{animation:none}
   .freedom-companion-msg-travelling-glow,
@@ -7033,7 +7064,10 @@ window.FreedomCompanionMessage=(function(){
       const big=document.createElement("span");
       big.className="freedom-companion-msg-emoji";
       big.setAttribute("aria-hidden","true");
-      big.textContent=String(opts.largeEmoji);
+      const glyph=document.createElement("span");
+      glyph.className="freedom-companion-msg-emoji-glyph";
+      glyph.textContent=String(opts.largeEmoji);
+      big.appendChild(glyph);
       row.appendChild(big);
     }
     inner.appendChild(row);
@@ -7440,6 +7474,7 @@ window.FreedomCompanionMessage=(function(){
   };
   const pendingByLoan=new Map();
   const appearanceTimers=new Set();
+  let activeSequence=null;
   function selectedCompanion(){
     const select=window.freedomCompanionSelect;
     return select&&typeof select.getSelected==="function"?select.getSelected():"";
@@ -7451,7 +7486,27 @@ window.FreedomCompanionMessage=(function(){
     const page=document.getElementById("journey");
     return !!page&&page.classList.contains("active")&&!document.body.classList.contains("home183");
   }
+  function reducedMotion(){
+    return !!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }
+  function cancelSequence(){
+    if(activeSequence){
+      activeSequence.cancelled=true;
+      activeSequence.timers.forEach(function(timer){clearTimeout(timer);});
+      activeSequence.timers.clear();
+      activeSequence=null;
+    }
+    if(host)host.classList.remove("is-sequencing");
+  }
+  function scheduleSequence(sequence,callback,delay){
+    const timer=setTimeout(function(){
+      sequence.timers.delete(timer);
+      if(!sequence.cancelled)callback();
+    },delay);
+    sequence.timers.add(timer);
+  }
   function hide(){
+    cancelSequence();
     if(!host||host.dataset.companionMessageOwner!==owner)return;
     host.classList.remove("is-entering");
     host.innerHTML="";
@@ -7467,16 +7522,45 @@ window.FreedomCompanionMessage=(function(){
   }
   function showFirstPayment(selected,definition){
     if(!host||inDemo()||!journeyIsActive()||!definition||!companionNames[selected])return;
+    cancelSequence();
     host.dataset.companionMessageOwner=owner;
     host.classList.add("is-first-journey-repayment");
+    const shouldSequence=!reducedMotion();
+    host.classList.toggle("is-sequencing",shouldSequence);
     host.hidden=false;
-    window.FreedomCompanionMessage.mount(host,{
+    const card=window.FreedomCompanionMessage.mount(host,{
       name:companionNames[selected],
       message:definition.message,
       largeEmoji:"👏",
       dismissible:true,
       onDismiss:hide
     });
+    if(shouldSequence&&card){
+      const textEl=card.querySelector(".freedom-companion-msg-text");
+      const emojiEl=card.querySelector(".freedom-companion-msg-emoji");
+      const fullText=textEl?textEl.textContent:"";
+      card.style.minHeight=card.offsetHeight+"px";
+      if(textEl)textEl.textContent="";
+      if(emojiEl)emojiEl.classList.remove("is-visible","is-glowing");
+      const sequence={cancelled:false,timers:new Set()};
+      activeSequence=sequence;
+      let typedLength=0;
+      function finishTyping(){
+        if(emojiEl)emojiEl.classList.add("is-visible");
+        scheduleSequence(sequence,function(){
+          if(emojiEl)emojiEl.classList.add("is-glowing");
+        },120);
+      }
+      function typeNext(){
+        if(!textEl||typedLength>=fullText.length){finishTyping();return;}
+        typedLength+=1;
+        textEl.textContent=fullText.slice(0,typedLength);
+        const character=fullText.charAt(typedLength-1);
+        const pause=/[.!?]/.test(character)?75:(character===","?45:22);
+        scheduleSequence(sequence,typeNext,pause);
+      }
+      scheduleSequence(sequence,typeNext,300);
+    }
     host.classList.remove("is-entering");
     void host.offsetWidth;
     host.classList.add("is-entering");
