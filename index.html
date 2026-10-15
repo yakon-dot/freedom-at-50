@@ -1196,16 +1196,16 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
       #070809 url("./journey-wallpaper.png") center -190px/cover no-repeat;
   }
-  /* Non-layout fade: covers the -190px letterbox ABOVE the nav (nav ≈ 74px + safe). */
+  /* Non-layout fade: covers the -190px letterbox ABOVE the nav (WebKit-safe stops only). */
   body.journey-active-v313::after{
     content:"";position:fixed;left:0;right:0;bottom:0;z-index:0;pointer-events:none;
     height:calc(190px + 28px);
     background:linear-gradient(to bottom,
-      rgba(7,8,9,0) 0,
-      rgba(7,8,9,0) 28px,
-      rgba(7,8,9,.2) calc(28px + 0.32 * (190px - (74px + env(safe-area-inset-bottom,0px)))),
-      rgba(7,8,9,.55) calc(28px + 0.7 * (190px - (74px + env(safe-area-inset-bottom,0px)))),
-      #070809 calc(100% - (74px + env(safe-area-inset-bottom,0px))),
+      rgba(7,8,9,0) 0%,
+      rgba(7,8,9,0) 14%,
+      rgba(7,8,9,.2) 36%,
+      rgba(7,8,9,.55) 58%,
+      #070809 76%,
       #070809 100%);
   }
   body.journey-active-v313 .app::before{display:none}
@@ -1900,16 +1900,16 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
       #070809 url("./pension-wallpaper.png") center -150px/cover no-repeat;
   }
-  /* Non-layout fade: covers the -150px letterbox ABOVE the nav (nav ≈ 74px + safe). */
+  /* Non-layout fade: covers the -150px letterbox ABOVE the nav (WebKit-safe stops only). */
   body.pension-active-v315::after{
     content:"";position:fixed;left:0;right:0;bottom:0;z-index:0;pointer-events:none;
     height:calc(150px + 24px);
     background:linear-gradient(to bottom,
-      rgba(7,8,9,0) 0,
-      rgba(7,8,9,0) 24px,
-      rgba(7,8,9,.18) calc(24px + 0.32 * (150px - (74px + env(safe-area-inset-bottom,0px)))),
-      rgba(7,8,9,.52) calc(24px + 0.7 * (150px - (74px + env(safe-area-inset-bottom,0px)))),
-      #070809 calc(100% - (74px + env(safe-area-inset-bottom,0px))),
+      rgba(7,8,9,0) 0%,
+      rgba(7,8,9,0) 14%,
+      rgba(7,8,9,.18) 34%,
+      rgba(7,8,9,.52) 56%,
+      #070809 74%,
       #070809 100%);
   }
   body.pension-active-v315 .app::before{display:none}
@@ -13429,7 +13429,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1933",
+        "./service-worker.js?v=1934",
         { updateViaCache: "none" }
       );
 
