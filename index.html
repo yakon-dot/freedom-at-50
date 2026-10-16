@@ -5743,6 +5743,8 @@ function freedomSeedNavPreviewState(extra){
 })();
 const KEY="freedom50-mobile-v1";
 const DEMO_SESSION_KEY="freedom50-demo-session-v1";
+/* Device-local internal-test permission. Survives Reset; not part of user data. */
+const INTERNAL_TEST_KEY="freedom50-internal-test-v1";
 const FREEDOM_SHARE_URL=location.origin+location.pathname.replace(/[^/]*$/,"");
 const FREEDOM_WALLPAPERS={
   overview:"./overview-wallpaper.png",
@@ -6066,10 +6068,21 @@ function syncDemoUi(){
   applyDemoButtonState(byId("demo183"));
   closeDemoMenu();
 }
+function applyInternalTestQuery(){
+  /* ?internalTest=1 enables and persists; ?internalTest=0 disables. No other values write. */
+  try{
+    const raw=String(new URLSearchParams(location.search).get("internalTest")||"").toLowerCase();
+    if(raw==="1"||raw==="true"||raw==="yes")localStorage.setItem(INTERNAL_TEST_KEY,"1");
+    else if(raw==="0"||raw==="false"||raw==="no")localStorage.removeItem(INTERNAL_TEST_KEY);
+  }catch(e){}
+}
 function isInternalTestMode(){
   try{
-    if(new URLSearchParams(location.search).get("internalTest")==="1")return true;
+    const raw=String(new URLSearchParams(location.search).get("internalTest")||"").toLowerCase();
+    if(raw==="1"||raw==="true"||raw==="yes")return true;
+    if(raw==="0"||raw==="false"||raw==="no")return false;
   }catch(e){}
+  try{return localStorage.getItem(INTERNAL_TEST_KEY)==="1";}catch(e){}
   return false;
 }
 function syncInternalTestUi(){
@@ -6782,11 +6795,13 @@ function continueFromWelcome(){
 }
 function clearFreedomStorageKeys(){
   const isFreedomKey=k=>!!k&&(k==="freedom50-mobile-v1"||k==="freedom50-demo-session-v1"||k.startsWith("freedom50-")||k.startsWith("freedom-"));
+  /* Keep device-local internal-test permission so Reset can be reused after onboarding. */
+  const preserveKey=k=>k===INTERNAL_TEST_KEY;
   try{
     const localKeys=[];
     for(let i=0;i<localStorage.length;i++){
       const k=localStorage.key(i);
-      if(isFreedomKey(k))localKeys.push(k);
+      if(isFreedomKey(k)&&!preserveKey(k))localKeys.push(k);
     }
     localKeys.forEach(k=>localStorage.removeItem(k));
   }catch(e){}
@@ -6794,7 +6809,7 @@ function clearFreedomStorageKeys(){
     const sessionKeys=[];
     for(let i=0;i<sessionStorage.length;i++){
       const k=sessionStorage.key(i);
-      if(isFreedomKey(k))sessionKeys.push(k);
+      if(isFreedomKey(k)&&!preserveKey(k))sessionKeys.push(k);
     }
     sessionKeys.forEach(k=>sessionStorage.removeItem(k));
   }catch(e){}
@@ -6841,9 +6856,9 @@ function buildFreshUserState(){
   };
 }
 function resetFreedomFreshStart(){
-  // Development/testing only: wipe all Freedom storage, write a clean empty user state,
-  // and reload. Demo session is cleared so the next Demo entry uses buildCanonicalDemoState().
-  const ok=window.confirm("Reset Freedom to a fresh start?\n\nThis clears saved data on this device for testing. Demo Mode content is unchanged and still available from DEMO MODE.");
+  // Development/testing only: wipe Freedom user/onboarding/demo storage, write a clean empty
+  // user state, and reload. Internal-test permission is preserved separately.
+  const ok=window.confirm("Reset Freedom on this device?\n\nThis permanently deletes your local Freedom setup and data on this device — onboarding, companion, journeys, goals, pensions, archive, victories, and any Demo session.\n\nYou will start again as a brand-new user.\n\nCancel keeps everything as it is.");
   if(!ok)return;
   clearFreedomStorageKeys();
   try{localStorage.setItem(KEY,JSON.stringify(buildFreshUserState()));}catch(e){}
@@ -9731,6 +9746,7 @@ byId("closeAddJourney").addEventListener("click",()=>{const card=byId("addJourne
 byId("addJourney").addEventListener("click",()=>{const name=byId("newJourneyName").value.trim();const starting=Math.max(0,Number(byId("newJourneyStarting").value)||0);const currentRaw=byId("newJourneyCurrent").value.trim();const current=currentRaw===""?starting:Math.max(0,Number(currentRaw)||0);const payment=Math.max(0,Number(byId("newJourneyPayment").value)||0);if(!name){byId("newJourneyName").focus();return}if(!starting){alert("Enter the starting amount for this journey.");byId("newJourneyStarting").focus();return}if(current>starting){alert("The current balance cannot be higher than the starting amount. If the balance has grown, use the higher figure as the starting amount.");byId("newJourneyCurrent").focus();return}const isFirstCreated=state.loans.length===0;state.loans.push({name,starting,current,payment,collapsed:true,payoffMode:"monthly",freedomDate:null,lastRepaymentAmount:null,lastRepaymentDate:null,firstRepaymentCompanionConsumed:false,milestoneExperienced:false,completionExperienced:false});freedomMotion.markNew("journey",state.loans.length-1);persist();["newJourneyName","newJourneyStarting","newJourneyCurrent","newJourneyPayment"].forEach(id=>byId(id).value="");byId("addJourneyCard").hidden=true;render();if(isFirstCreated&&window.FreedomCompanionFirstCreated)window.FreedomCompanionFirstCreated.trigger("journey");});
 document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("click",()=>{persist();render()}));
 if(demoMode)syncDemoUi();
+applyInternalTestQuery();
 syncInternalTestUi();
 byId("demo183")?.addEventListener("click",handleDemo183Click);
 byId("demoEnterBtn")?.addEventListener("click",confirmEnterDemo);
