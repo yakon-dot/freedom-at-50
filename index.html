@@ -6069,7 +6069,10 @@ function syncDemoUi(){
   closeDemoMenu();
 }
 function applyInternalTestQuery(){
-  /* ?internalTest=1 enables and persists; ?internalTest=0 disables. No other values write. */
+  /* ?internalTest=1 enables and persists; ?internalTest=0 disables. No other values write.
+     Note: iOS Home Screen PWAs use separate storage from Safari, and start_url is "./"
+     with no query — so URL enable must also be done inside the installed app, or use
+     the Home brand unlock below. */
   try{
     const raw=String(new URLSearchParams(location.search).get("internalTest")||"").toLowerCase();
     if(raw==="1"||raw==="true"||raw==="yes")localStorage.setItem(INTERNAL_TEST_KEY,"1");
@@ -6085,6 +6088,13 @@ function isInternalTestMode(){
   try{return localStorage.getItem(INTERNAL_TEST_KEY)==="1";}catch(e){}
   return false;
 }
+function setInternalTestEnabled(on){
+  try{
+    if(on)localStorage.setItem(INTERNAL_TEST_KEY,"1");
+    else localStorage.removeItem(INTERNAL_TEST_KEY);
+  }catch(e){}
+  syncInternalTestUi();
+}
 function syncInternalTestUi(){
   const btn=byId("resetFreedomMoreBtn")||document.querySelector('[data-more183="reset"]');
   if(!btn)return;
@@ -6095,6 +6105,35 @@ function syncInternalTestUi(){
   else btn.setAttribute("tabindex","-1");
 }
 window.syncInternalTestUi=syncInternalTestUi;
+window.isInternalTestMode=isInternalTestMode;
+window.setInternalTestEnabled=setInternalTestEnabled;
+/* Installed iOS PWA cannot inherit Safari localStorage. Hidden Home unlock:
+   tap the Freedom brand 7× quickly → confirm → persist flag in THIS app context. */
+function wireInternalTestBrandUnlock(){
+  const brand=document.querySelector(".brand183");
+  if(!brand||brand.dataset.internalUnlockBound==="1")return;
+  brand.dataset.internalUnlockBound="1";
+  let taps=0,resetTimer=null;
+  brand.addEventListener("click",function(){
+    taps+=1;
+    if(resetTimer)clearTimeout(resetTimer);
+    resetTimer=setTimeout(function(){taps=0;},2800);
+    if(taps<7)return;
+    taps=0;
+    if(resetTimer){clearTimeout(resetTimer);resetTimer=null;}
+    if(!isInternalTestMode()){
+      const ok=window.confirm("Enable Freedom internal testing on this device?\n\nThis adds Reset Freedom under More for testing only.");
+      if(!ok)return;
+      setInternalTestEnabled(true);
+      window.alert("Internal testing enabled.\n\nOpen More — you should see Archive and Reset Freedom.");
+      return;
+    }
+    const ok=window.confirm("Disable Freedom internal testing on this device?\n\nReset Freedom will be hidden. Your Freedom data is not deleted.");
+    if(!ok)return;
+    setInternalTestEnabled(false);
+    window.alert("Internal testing disabled.\n\nMore shows Archive only again.");
+  });
+}
 function closeDemoMenu(){
   const menu=byId("demoMenu");
   const btn=byId("demo183");
@@ -9748,6 +9787,7 @@ document.querySelectorAll("[data-save]").forEach(btn=>btn.addEventListener("clic
 if(demoMode)syncDemoUi();
 applyInternalTestQuery();
 syncInternalTestUi();
+wireInternalTestBrandUnlock();
 byId("demo183")?.addEventListener("click",handleDemo183Click);
 byId("demoEnterBtn")?.addEventListener("click",confirmEnterDemo);
 byId("demoEntryClose")?.addEventListener("click",closeDemoEntryFlow);
