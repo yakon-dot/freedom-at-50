@@ -1189,12 +1189,12 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 
   body.journey-active-v313{background:transparent}
   html:has(body.journey-active-v313){background:#070809}
-  /* Wallpaper framing restored from 942e28 — center -190px / cover only. */
+  /* Wallpaper framing — center -140px / cover (eased down 50px from -190). */
   body.journey-active-v313::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
-      #070809 url("./journey-wallpaper.png?v=3") center -190px/cover no-repeat;
+      #070809 url("./journey-wallpaper.png?v=3") center -140px/cover no-repeat;
   }
   body.journey-active-v313 .app::before{display:none}
   body.journey-active-v313 #journey{
@@ -1492,15 +1492,15 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 
   body.goals-active-v314{background:transparent}
   html:has(body.goals-active-v314){background:#070809!important}
-  /* Same fixed viewport wallpaper shell as Journey — compensate -380px so no letterbox. */
+  /* Same fixed viewport wallpaper shell as Journey — compensate -330px so no letterbox. */
   body.goals-active-v314::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background-color:#070809;
     background-image:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
       url("./goals-wallpaper.png");
-    background-position:0 0,center -380px;
-    background-size:100% 100%,auto calc(100% + 380px);
+    background-position:0 0,center -330px;
+    background-size:100% 100%,auto calc(100% + 330px);
     background-repeat:no-repeat;
   }
   body.goals-active-v314 .app::before{display:none}
