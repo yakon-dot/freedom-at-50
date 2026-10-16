@@ -1189,12 +1189,12 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 
   body.journey-active-v313{background:transparent}
   html:has(body.journey-active-v313){background:#070809}
-  /* Wallpaper framing restored from 942e28 — center -190px / cover only. */
+  /* Wallpaper framing — center -140px / cover (eased down 50px from -190). */
   body.journey-active-v313::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
-      #070809 url("./journey-wallpaper.png?v=3") center -190px/cover no-repeat;
+      #070809 url("./journey-wallpaper.png?v=3") center -140px/cover no-repeat;
   }
   body.journey-active-v313 .app::before{display:none}
   body.journey-active-v313 #journey{
