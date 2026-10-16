@@ -651,9 +651,9 @@ html:has(#freedomMakeItYours.is-present:not([hidden])) body{
 <link rel="manifest" href="./manifest.webmanifest">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <link rel="preload" as="image" href="./overview-wallpaper.png">
-<link rel="preload" as="image" href="./journey-wallpaper.png">
+<link rel="preload" as="image" href="./journey-wallpaper.png?v=3">
 <link rel="preload" as="image" href="./goals-wallpaper.png">
-<link rel="preload" as="image" href="./pension-wallpaper.png">
+<link rel="preload" as="image" href="./pension-wallpaper.png?v=3">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Freedom at 50 — Web app v1.8.6.2.2.2</title>
@@ -1194,7 +1194,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
-      #070809 url("./journey-wallpaper.png") center -190px/cover no-repeat;
+      #070809 url("./journey-wallpaper.png?v=3") center -190px/cover no-repeat;
   }
   body.journey-active-v313 .app::before{display:none}
   body.journey-active-v313 #journey{
@@ -1886,7 +1886,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background:
       linear-gradient(rgba(0,0,0,.10),rgba(0,0,0,.10)),
-      #070809 url("./pension-wallpaper.png") center -150px/cover no-repeat;
+      #070809 url("./pension-wallpaper.png?v=3") center -150px/cover no-repeat;
   }
   body.pension-active-v315 .app::before{display:none}
   body.pension-active-v315 .app{position:relative;z-index:1;background:transparent}
@@ -5746,9 +5746,9 @@ const DEMO_SESSION_KEY="freedom50-demo-session-v1";
 const FREEDOM_SHARE_URL=location.origin+location.pathname.replace(/[^/]*$/,"");
 const FREEDOM_WALLPAPERS={
   overview:"./overview-wallpaper.png",
-  journey:"./journey-wallpaper.png",
+  journey:"./journey-wallpaper.png?v=3",
   goals:"./goals-wallpaper.png",
-  pension:"./pension-wallpaper.png",
+  pension:"./pension-wallpaper.png?v=3",
   archive:"./archive-wallpaper.png"
 };
 const freedomWallpapers={
@@ -13405,7 +13405,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1935",
+        "./service-worker.js?v=1936",
         { updateViaCache: "none" }
       );
 
