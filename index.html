@@ -6081,6 +6081,7 @@ function syncInternalTestUi(){
   if(show)btn.removeAttribute("tabindex");
   else btn.setAttribute("tabindex","-1");
 }
+window.syncInternalTestUi=syncInternalTestUi;
 function closeDemoMenu(){
   const menu=byId("demoMenu");
   const btn=byId("demo183");
@@ -10317,7 +10318,7 @@ function freedomBootNavPreview(open){
   window.hideHome=hideHome;
 
   if(more)more.addEventListener("click",()=>{
-    syncInternalTestUi();
+    if(typeof window.syncInternalTestUi==="function")window.syncInternalTestUi();
     const expanded=more.getAttribute("aria-expanded")==="true";
     more.setAttribute("aria-expanded",expanded?"false":"true");
     if(sub)sub.classList.toggle("open",!expanded);
