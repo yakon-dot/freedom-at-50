@@ -4477,12 +4477,15 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 <script>
 (function(){
 "use strict";
+/* All destructive development preview entry points are disabled in distributed builds.
+   Keep this false until dev preview tooling is extracted into a non-distributed harness. */
+const FREEDOM_DEV_TOOLS_ENABLED=false;
 /* TEMP DEV ONLY — seed for 50% milestone CompanionMessage preview.
    ?milestonePreview=journey-patricia|journey-veronica|journey-kevin|goal-patricia|goal-veronica|goal-kevin
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("milestonePreview")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("milestonePreview")||"").toLowerCase();
     const match=raw.match(/^(journey|goal)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -4534,7 +4537,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("completionPreview")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("completionPreview")||"").toLowerCase();
     const match=raw.match(/^(journey|goal)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -4593,7 +4596,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("completionFlow")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("completionFlow")||"").toLowerCase();
     const match=raw.match(/^(journey|goal)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -4654,7 +4657,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("closeChapterFlow")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("closeChapterFlow")||"").toLowerCase();
     const match=raw.match(/^(journey|goal)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -4736,6 +4739,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 })();
 /* TEMP DEV ONLY — shared onboarding skip + light state for Archive IA previews. */
 function freedomSeedNavPreviewState(extra){
+  if(!FREEDOM_DEV_TOOLS_ENABLED)return;
   localStorage.setItem("freedom50-welcome-complete-v1","1");
   localStorage.setItem("freedom50-look-around-complete-v1","1");
   localStorage.setItem("freedom50-first-time-complete-v1","1");
@@ -4770,7 +4774,7 @@ function freedomSeedNavPreviewState(extra){
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("morePreview")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("morePreview")||"").toLowerCase();
     if(raw!=="1"&&raw!=="true"&&raw!=="yes")return;
     freedomSeedNavPreviewState({});
     window.__FREEDOM_MORE_PREVIEW__=true;
@@ -4781,7 +4785,7 @@ function freedomSeedNavPreviewState(extra){
    Do not ship. */
 (function(){
   try{
-    const params=new URLSearchParams(location.search);
+    const params=new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "");
     const raw=String(params.get("archivePreview")||params.get("archiveHubPreview")||params.get("archivedPreview")||"").toLowerCase();
     if(raw!=="1"&&raw!=="true"&&raw!=="yes")return;
     freedomSeedNavPreviewState({
@@ -4809,7 +4813,7 @@ function freedomSeedNavPreviewState(extra){
    Production remains genuine 30% random. Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("ordinaryFlow")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("ordinaryFlow")||"").toLowerCase();
     const match=raw.match(/^(journey-on|journey-off|journey-cooldown|journey-first|journey-half|journey-done|goal-on|goal-off|goal-cooldown|goal-first|goal-half|goal-done|goalopen-on)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -4929,7 +4933,7 @@ function freedomSeedNavPreviewState(extra){
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("dormantFlow")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("dormantFlow")||"").toLowerCase();
     const match=raw.match(/^(journey-wake|goal-wake|goalopen-wake|journey-view|goal-view|journey-half|goal-done|journey-vsordinary|journey-woken|goal-woken)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -5037,7 +5041,7 @@ function freedomSeedNavPreviewState(extra){
    Production uses real last-open timestamps. Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("welcomeBack")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("welcomeBack")||"").toLowerCase();
     const match=raw.match(/^(on|consumed|vs-completion)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -5110,7 +5114,7 @@ function freedomSeedNavPreviewState(extra){
    Production remains genuine 30% once eligible. Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("positivePattern")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("positivePattern")||"").toLowerCase();
     const match=raw.match(/^(not-ready|same-month|on|vs-half)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -5222,7 +5226,7 @@ function freedomSeedNavPreviewState(extra){
    Production remains genuine 33% random. Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("renameFlow")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("renameFlow")||"").toLowerCase();
     const match=raw.match(/^(journey-on|journey-off|journey-same|journey-half|journey-wake|journey-create|goal-on|goal-off|goal-same|goal-half|goal-wake|goal-create)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -5337,7 +5341,7 @@ function freedomSeedNavPreviewState(extra){
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("freedomDateFlow")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("freedomDateFlow")||"").toLowerCase();
     const match=raw.match(/^on-(patricia|veronica|kevin)$/);
     if(!match)return;
     const companion=match[1];
@@ -5395,7 +5399,7 @@ function freedomSeedNavPreviewState(extra){
    Seeds an existing pension; increase value on Save. Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("pensionFlow")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("pensionFlow")||"").toLowerCase();
     const match=raw.match(/^on-(patricia|veronica|kevin)$/);
     if(!match)return;
     const companion=match[1];
@@ -5449,7 +5453,7 @@ function freedomSeedNavPreviewState(extra){
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("holidayFlow")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("holidayFlow")||"").toLowerCase();
     const match=raw.match(/^on-(patricia|veronica|kevin)$/);
     if(!match)return;
     const companion=match[1];
@@ -5499,7 +5503,7 @@ function freedomSeedNavPreviewState(extra){
    Real Journey UI. Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("journeyCard")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("journeyCard")||"").toLowerCase();
     if(!/^(collapsed|plan|money|monthly|date|demo|demo-collapsed|demo-plan|demo-money|demo-date)$/.test(raw))return;
     const seedKey="freedom50-journey-card-seed-v3";
     const isDemoKind=/^demo/.test(raw);
@@ -5636,7 +5640,7 @@ function freedomSeedNavPreviewState(extra){
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("milestoneFlow")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("milestoneFlow")||"").toLowerCase();
     const match=raw.match(/^(journey2?|goal2?|goalopen|journeycomplete|goalcomplete)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -5753,7 +5757,7 @@ function freedomSeedNavPreviewState(extra){
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("demoCompleteFlow")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("demoCompleteFlow")||"").toLowerCase();
     const match=raw.match(/^(journey|goal|journey50|goal50)-(patricia|veronica|kevin)$/);
     if(!match)return;
     const kind=match[1];
@@ -5880,7 +5884,7 @@ function freedomSeedNavPreviewState(extra){
    Enters sandboxed Demo with no active journeys. Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("demoJourneyEmpty")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("demoJourneyEmpty")||"").toLowerCase();
     if(raw!=="1"&&raw!=="true"&&raw!=="yes")return;
     const seedKey="freedom50-demo-journey-empty-seed-v1";
     if(sessionStorage.getItem(seedKey)==="1"){
@@ -5937,7 +5941,7 @@ function freedomSeedNavPreviewState(extra){
    Do not ship. */
 (function(){
   try{
-    const raw=String(new URLSearchParams(location.search).get("victoriesPreview")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("victoriesPreview")||"").toLowerCase();
     if(raw!=="1"&&raw!=="true"&&raw!=="yes")return;
     freedomSeedNavPreviewState({});
     window.__FREEDOM_VICTORIES_PREVIEW__={
@@ -6289,14 +6293,15 @@ function applyInternalTestQuery(){
      with no query — so URL enable must also be done inside the installed app, or use
      the Home brand unlock below. */
   try{
-    const raw=String(new URLSearchParams(location.search).get("internalTest")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("internalTest")||"").toLowerCase();
     if(raw==="1"||raw==="true"||raw==="yes")localStorage.setItem(INTERNAL_TEST_KEY,"1");
     else if(raw==="0"||raw==="false"||raw==="no")localStorage.removeItem(INTERNAL_TEST_KEY);
   }catch(e){}
 }
 function isInternalTestMode(){
+  if(!FREEDOM_DEV_TOOLS_ENABLED)return false;
   try{
-    const raw=String(new URLSearchParams(location.search).get("internalTest")||"").toLowerCase();
+    const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("internalTest")||"").toLowerCase();
     if(raw==="1"||raw==="true"||raw==="yes")return true;
     if(raw==="0"||raw==="false"||raw==="no")return false;
   }catch(e){}
@@ -6304,6 +6309,7 @@ function isInternalTestMode(){
   return false;
 }
 function setInternalTestEnabled(on){
+  if(!FREEDOM_DEV_TOOLS_ENABLED)return;
   try{
     if(on)localStorage.setItem(INTERNAL_TEST_KEY,"1");
     else localStorage.removeItem(INTERNAL_TEST_KEY);
@@ -6325,6 +6331,7 @@ window.setInternalTestEnabled=setInternalTestEnabled;
 /* Installed iOS PWA cannot inherit Safari localStorage. Hidden Home unlock:
    tap the Freedom brand 7× quickly → confirm → persist flag in THIS app context. */
 function wireInternalTestBrandUnlock(){
+  if(!FREEDOM_DEV_TOOLS_ENABLED)return;
   const brand=document.querySelector(".brand183");
   if(!brand||brand.dataset.internalUnlockBound==="1")return;
   brand.dataset.internalUnlockBound="1";
@@ -7111,6 +7118,7 @@ function buildFreshUserState(){
   };
 }
 function resetFreedomFreshStart(){
+  if(!FREEDOM_DEV_TOOLS_ENABLED)return;
   // Development/testing only: wipe Freedom user/onboarding/demo storage, write a clean empty
   // user state, and reload. Internal-test permission is preserved separately.
   const ok=window.confirm("Reset Freedom on this device?\n\nThis permanently deletes your local Freedom setup and data on this device — onboarding, companion, journeys, goals, pensions, archive, victories, and any Demo session.\n\nYou will start again as a brand-new user.\n\nCancel keeps everything as it is.");
