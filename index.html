@@ -8,7 +8,10 @@
 <style>html,body{background:#0b0c0e;color:#f5f4f0}
 #freedomSplash{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;background:#000;padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) env(safe-area-inset-bottom,0px) env(safe-area-inset-left,0px)}
 #freedomSplash[hidden]{display:none!important}
-#freedomSplash .freedom-splash-logo{display:block;width:clamp(168px,48vw,196px);height:auto;margin:0;object-fit:contain}
+#freedomSplash .freedom-splash-particles{position:absolute;inset:0;display:block;width:100%;height:100%;pointer-events:none}
+#freedomSplash .freedom-splash-logo{position:relative;z-index:1;display:block;width:clamp(168px,48vw,196px);height:auto;margin:0;object-fit:contain}
+#freedomSplash.is-particle-loading .freedom-splash-logo{opacity:0}
+#freedomSplash.is-logo-final .freedom-splash-logo{opacity:1}
 /* Slow fade so Welcome (or Home) softens in underneath */
 #freedomSplash.is-exiting{opacity:0;transition:opacity 1.05s ease;pointer-events:none}
 @media (prefers-reduced-motion:reduce){#freedomSplash.is-exiting{transition:none}}
@@ -3120,9 +3123,165 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 </style>
 </head>
 <body class="home183 overview-active-v300">
-<div id="freedomSplash" class="freedom-splash" role="presentation" aria-hidden="true">
+<div id="freedomSplash" class="freedom-splash is-particle-loading" role="presentation" aria-hidden="true">
+  <canvas class="freedom-splash-particles" id="freedomSplashParticles" aria-hidden="true"></canvas>
   <img class="freedom-splash-logo" src="./assets/freedom-logo-horizontal.png" alt="" width="1547" height="302">
 </div>
+<noscript><style>#freedomSplash .freedom-splash-logo{opacity:1!important}</style></noscript>
+<script>
+(function(){
+  "use strict";
+  var splash=document.getElementById("freedomSplash");
+  var canvas=document.getElementById("freedomSplashParticles");
+  var logo=splash&&splash.querySelector(".freedom-splash-logo");
+  if(!splash||!canvas||!logo)return;
+
+  var ctx=canvas.getContext&&canvas.getContext("2d",{alpha:true});
+  var reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var frame=0;
+  var PEACH="239,203,170";
+  var MAX_PARTICLES=900;
+  var ASSEMBLY_MS=1760;
+  var RESOLVE_START_MS=1390;
+  var RESOLVE_END_MS=1740;
+
+  function clamp01(value){return Math.max(0,Math.min(1,value));}
+  function smoothstep(value){var t=clamp01(value);return t*t*(3-2*t);}
+  function easeInOutSine(value){return -(Math.cos(Math.PI*clamp01(value))-1)/2;}
+  function mix(from,to,amount){return from+(to-from)*amount;}
+
+  function showStatic(){
+    cancelAnimationFrame(frame);
+    if(ctx)ctx.clearRect(0,0,canvas.width,canvas.height);
+    canvas.style.opacity="0";
+    logo.style.opacity="1";
+    splash.classList.remove("is-particle-loading");
+    splash.classList.add("is-logo-final");
+  }
+
+  if(!ctx||reduced){showStatic();return;}
+
+  function resizeCanvas(){
+    var ratio=Math.min(2,window.devicePixelRatio||1);
+    var width=Math.max(1,window.innerWidth);
+    var height=Math.max(1,window.innerHeight);
+    canvas.width=Math.round(width*ratio);
+    canvas.height=Math.round(height*ratio);
+    canvas.style.width=width+"px";
+    canvas.style.height=height+"px";
+    ctx.setTransform(ratio,0,0,ratio,0,0);
+    return {width:width,height:height};
+  }
+
+  function logoTargetPoints(){
+    var rect=logo.getBoundingClientRect();
+    var sampleWidth=Math.max(1,Math.round(rect.width));
+    var sampleHeight=Math.max(1,Math.round(rect.height));
+    var sample=document.createElement("canvas");
+    sample.width=sampleWidth;
+    sample.height=sampleHeight;
+    var sampleCtx=sample.getContext("2d",{alpha:true,willReadFrequently:true});
+    sampleCtx.drawImage(logo,0,0,sampleWidth,sampleHeight);
+    var pixels=sampleCtx.getImageData(0,0,sampleWidth,sampleHeight).data;
+    var candidates=[];
+    var step=2;
+    var x,y,alpha,i,j,temp;
+
+    for(y=0;y<sampleHeight;y+=step){
+      for(x=0;x<sampleWidth;x+=step){
+        alpha=pixels[(y*sampleWidth+x)*4+3];
+        if(alpha>56)candidates.push({
+          x:rect.left+x+step*.5,
+          y:rect.top+y+step*.5,
+          alpha:alpha/255
+        });
+      }
+    }
+
+    for(i=candidates.length-1;i>0;i-=1){
+      j=Math.floor(Math.random()*(i+1));
+      temp=candidates[i];
+      candidates[i]=candidates[j];
+      candidates[j]=temp;
+    }
+    return candidates.slice(0,MAX_PARTICLES);
+  }
+
+  function makeParticles(points,width,height){
+    return points.map(function(target,index){
+      var edge=Math.floor(Math.random()*4);
+      var outside=28+Math.random()*72;
+      var startX,startY;
+      if(edge===0){startX=-outside;startY=Math.random()*height;}
+      else if(edge===1){startX=width+outside;startY=Math.random()*height;}
+      else if(edge===2){startX=Math.random()*width;startY=-outside;}
+      else{startX=Math.random()*width;startY=height+outside;}
+
+      var travelX=target.x-startX;
+      var travelY=target.y-startY;
+      var travelLength=Math.max(1,Math.hypot(travelX,travelY));
+      var curve=(Math.random()>.5?1:-1)*(34+Math.random()*62);
+      return {
+        tx:target.x,ty:target.y,sx:startX,sy:startY,
+        delay:Math.random()*250+(index%11)*5,
+        duration:1160+Math.random()*230,
+        arcX:(-travelY/travelLength)*curve,
+        arcY:(travelX/travelLength)*curve,
+        size:1.05+Math.random()*1.35,
+        alpha:.45+target.alpha*.5
+      };
+    });
+  }
+
+  function play(){
+    try{
+      var viewport=resizeCanvas();
+      var targets=logoTargetPoints();
+      if(!targets.length)throw new Error("Logo pixels unavailable");
+      var particles=makeParticles(targets,viewport.width,viewport.height);
+      var startedAt=0;
+      logo.style.opacity="0";
+      canvas.style.opacity="1";
+
+      function draw(timestamp){
+        if(!splash.isConnected)return;
+        if(!startedAt)startedAt=timestamp;
+        var elapsed=timestamp-startedAt;
+        ctx.clearRect(0,0,viewport.width,viewport.height);
+
+        particles.forEach(function(particle){
+          var local=clamp01((elapsed-particle.delay)/particle.duration);
+          if(local<=0)return;
+          var eased=easeInOutSine(local);
+          var arc=Math.sin(Math.PI*local)*(1-local*.2);
+          var x=mix(particle.sx,particle.tx,eased)+particle.arcX*arc;
+          var y=mix(particle.sy,particle.ty,eased)+particle.arcY*arc;
+          var appear=smoothstep(local/.18);
+          var settle=local>.84?1-smoothstep((local-.84)/.16)*.16:1;
+          var alpha=particle.alpha*appear*settle;
+          var size=particle.size*(1-local*.12);
+          ctx.fillStyle="rgba("+PEACH+","+alpha+")";
+          ctx.fillRect(x-size*.5,y-size*.5,size,size);
+        });
+
+        var resolve=smoothstep((elapsed-RESOLVE_START_MS)/(RESOLVE_END_MS-RESOLVE_START_MS));
+        logo.style.opacity=String(resolve);
+        canvas.style.opacity=String(1-resolve*.72);
+        if(elapsed<ASSEMBLY_MS+140){frame=requestAnimationFrame(draw);return;}
+        showStatic();
+      }
+      frame=requestAnimationFrame(draw);
+    }catch(error){showStatic();}
+  }
+
+  function start(){requestAnimationFrame(function(){requestAnimationFrame(play);});}
+  if(logo.complete&&logo.naturalWidth)start();
+  else{
+    logo.addEventListener("load",start,{once:true});
+    logo.addEventListener("error",showStatic,{once:true});
+  }
+})();
+</script>
 <div id="freedomWelcome" class="freedom-welcome" hidden>
   <div class="freedom-welcome-inner">
     <h1 class="freedom-welcome-headline">Your future.<br>A little more yours.</h1>
