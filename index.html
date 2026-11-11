@@ -41,6 +41,7 @@
   font-size:14px;line-height:1.55;color:rgba(245,244,240,.55);
 }
 #freedomWelcomeComeIn.freedom-welcome-come-in,
+#freedomLookContinue.freedom-welcome-come-in,
 #freedomMakeYoursStart.freedom-welcome-come-in{
   position:relative;
   display:inline-flex;align-items:center;justify-content:center;gap:18px;
@@ -49,6 +50,7 @@
 }
 /* Stroke-only sheen: highlight on the outline, left → right */
 #freedomWelcomeComeIn .freedom-welcome-sheen,
+#freedomLookContinue .freedom-welcome-sheen,
 #freedomMakeYoursStart .freedom-welcome-sheen{
   position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:1;
   box-sizing:border-box;padding:1.5px;opacity:0;
@@ -71,21 +73,26 @@
   mask-composite:exclude;
 }
 #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
+#freedomLookContinue.freedom-welcome-come-in.is-visible:not(.is-armed),
 #freedomMakeItYours.is-ready #freedomMakeYoursStart.freedom-welcome-come-in:not(.is-armed){
   pointer-events:auto;
   animation:freedomWelcomeComeInIn .75s ease-out .5s forwards;
 }
 /* After entrance, keep Start my Freedom tappable without relying on animation fill. */
+#freedomLookContinue.freedom-welcome-come-in.is-armed,
 #freedomMakeYoursStart.freedom-welcome-come-in.is-armed{
   opacity:1;transform:translateY(0);pointer-events:auto;
 }
 #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
 #freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen,
+#freedomLookContinue.is-sheening .freedom-welcome-sheen,
+#freedomLookContinue.is-sheen-looping .freedom-welcome-sheen,
 #freedomMakeYoursStart.is-sheening .freedom-welcome-sheen,
 #freedomMakeYoursStart.is-sheen-looping .freedom-welcome-sheen{
   animation:freedomWelcomeComeInSheen 2.8s ease-in-out forwards;
 }
 #freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap,
+#freedomLookContinue.is-sheening .freedom-welcome-arrow-wrap,
 #freedomMakeYoursStart.is-sheening .freedom-welcome-arrow-wrap{
   animation:freedomWelcomeArrowNudge 1.65s ease-in-out .12s 1 both;
 }
@@ -107,17 +114,23 @@
 }
 @media (prefers-reduced-motion:reduce){
   #freedomWelcomeComeIn.freedom-welcome-come-in,
+  #freedomLookContinue.freedom-welcome-come-in,
   #freedomMakeYoursStart.freedom-welcome-come-in{
     opacity:1;transform:none;pointer-events:auto;
   }
   #freedomWelcome.is-ready #freedomWelcomeComeIn.freedom-welcome-come-in,
+  #freedomLookContinue.freedom-welcome-come-in.is-visible:not(.is-armed),
   #freedomMakeItYours.is-ready #freedomMakeYoursStart.freedom-welcome-come-in:not(.is-armed),
   #freedomWelcomeComeIn.is-sheening .freedom-welcome-sheen,
   #freedomWelcomeComeIn.is-sheen-looping .freedom-welcome-sheen,
   #freedomWelcomeComeIn.is-sheening .freedom-welcome-arrow-wrap,
+  #freedomLookContinue.is-sheening .freedom-welcome-sheen,
+  #freedomLookContinue.is-sheen-looping .freedom-welcome-sheen,
+  #freedomLookContinue.is-sheening .freedom-welcome-arrow-wrap,
   #freedomMakeYoursStart.is-sheening .freedom-welcome-sheen,
   #freedomMakeYoursStart.is-sheen-looping .freedom-welcome-sheen,
   #freedomMakeYoursStart.is-sheening .freedom-welcome-arrow-wrap{animation:none}
+  #freedomLookContinue.freedom-welcome-come-in.is-armed,
   #freedomMakeYoursStart.freedom-welcome-come-in.is-armed{
     opacity:1;transform:none;pointer-events:auto;
   }
@@ -138,7 +151,7 @@
   opacity:0;transition:opacity .85s ease;
 }
 #freedomLookAround[hidden]{display:none!important}
-#freedomLookAround.is-ready{opacity:1}
+#freedomLookAround.is-ready{opacity:1;pointer-events:auto}
 /* Exit-only: slower soft crossfade into Home (entrance stays .85s). */
 #freedomLookAround.is-exiting{opacity:0;transition:opacity 1.35s ease}
 @media (prefers-reduced-motion:reduce){#freedomLookAround{transition:none}}
@@ -361,14 +374,21 @@
 .freedom-look-inner .freedom-welcome-support.freedom-look-support.is-visible{
   opacity:1;
 }
-/* Quiet sage clarification — body sans, fade only (not handwriting) */
-.freedom-look-demo-note{
-  margin:16px auto 0;max-width:16rem;
-  font-family:inherit;font-size:13px;font-weight:400;line-height:1.45;
-  color:var(--green,#84bd91);text-align:center;
+/* Calm Demo explanation using the existing Freedom glass language. */
+.freedom-look-demo-card{
+  margin:16px auto 0;max-width:18rem;padding:15px 17px;
+  border:1px solid rgba(132,189,145,.32);border-radius:19px;
+  background:rgba(45,72,55,.46);
+  box-shadow:0 0 28px rgba(105,169,123,.2),inset 0 1px 0 rgba(218,241,224,.08);
+  backdrop-filter:blur(13px);-webkit-backdrop-filter:blur(13px);
   opacity:0;transition:opacity .6s ease;
 }
-.freedom-look-demo-note.is-visible{opacity:1}
+.freedom-look-demo-card p{
+  margin:0;font-family:inherit;font-size:13px;font-weight:400;line-height:1.48;
+  color:rgba(235,244,237,.88);text-align:center;
+}
+.freedom-look-demo-card.is-visible{opacity:1}
+#freedomLookContinue{margin-top:18px}
 @keyframes freedomLookHandwrite{
   0%{clip-path:inset(0 100% 0 0)}
   18%{clip-path:inset(0 74% 0 0)}
@@ -380,7 +400,7 @@
   .freedom-look-handwrite-line{clip-path:none}
   .freedom-look-handwrite-line.is-writing{animation:none}
   .freedom-look-inner .freedom-welcome-support.freedom-look-support{opacity:1;transition:none}
-  .freedom-look-demo-note{opacity:1;transition:none}
+  .freedom-look-demo-card{opacity:1;transition:none}
 }
 /* —— First-time Exit Demo: solid Freedom near-black/charcoal (--bg / #0b0c0e) —— */
 #freedomMakeItYours{
@@ -2866,8 +2886,8 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-close-ready .patr
   .freedom-chapter-modal-crumble-root{display:none!important}
 }
 @keyframes demo183BreatheActive{
-  0%,100%{opacity:1}
-  50%{opacity:.65}
+  0%,100%{opacity:.9;box-shadow:0 0 0 1px rgba(132,189,145,.44),0 0 13px 3px rgba(96,170,117,.34)}
+  50%{opacity:1;box-shadow:0 0 0 1px rgba(157,211,172,.7),0 0 27px 8px rgba(96,185,123,.64)}
 }
 @keyframes freedomVictoryDispersedReduced{
   from{opacity:1;transform:scale(1)}to{opacity:0;transform:scale(.92)}
@@ -2889,20 +2909,25 @@ body.home183 .patricia-note[data-note-id="home"].patricia-note-close-ready .patr
 .demo183:not(.is-demo-active):active{opacity:.55}
 .demo183.is-demo-active{
   min-height:42px;padding:0 14px;border-radius:14px;
-  border-color:rgba(132,189,145,.42);background:transparent;
+  border-color:rgba(132,189,145,.6);background:rgba(132,189,145,.16);
   color:#17150b;font-size:10px;font-weight:800;letter-spacing:.13em;
   backdrop-filter:none;-webkit-backdrop-filter:none;
   animation:none;opacity:1;will-change:auto;
+  box-shadow:0 0 16px 4px rgba(96,170,117,.36);
 }
 .demo183.is-demo-active::before{
   content:"";z-index:0;background:#b0cdb8;
+  box-shadow:0 0 0 1px rgba(132,189,145,.52),0 0 18px 5px rgba(96,170,117,.42);
   animation:demo183BreatheActive 1.5s ease-in-out infinite;
-  will-change:opacity;
+  will-change:opacity,box-shadow;
 }
 .demo183.is-demo-active .demo183-pulse{
-  position:relative;z-index:1;
-  animation:demo183BreatheActive 1.5s ease-in-out infinite;
-  will-change:opacity;
+  position:relative;z-index:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;
+  white-space:nowrap;animation:none;opacity:1;
+}
+.demo183-exit-icon{
+  display:block;width:13px;height:13px;flex:0 0 13px;
+  fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round;
 }
 body.home183 .demo183{
   min-height:36px;padding:0 12px;border-radius:14px;
@@ -2911,9 +2936,10 @@ body.home183 .demo183{
   animation:none;opacity:1;box-shadow:none;
 }
 body.home183 .demo183.is-demo-active{
-  border-color:rgba(132,189,145,.42);background:transparent;color:#17150b;
+  border-color:rgba(132,189,145,.6);background:rgba(132,189,145,.16);color:#17150b;
   backdrop-filter:none;-webkit-backdrop-filter:none;
   animation:none;opacity:1;will-change:auto;
+  box-shadow:0 0 16px 4px rgba(96,170,117,.36);
 }
 @media(min-width:821px){.demo183-wrap{display:none!important}}
 @media(min-width:821px){.mobile183{display:none!important}}
@@ -3326,7 +3352,18 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       <span class="freedom-look-handwrite-line" id="freedomLookLine2">around first.</span>
     </h1>
     <p class="freedom-welcome-support freedom-look-support" id="freedomLookSupport">We've put a few things in so you can see how Freedom feels before you make it yours.</p>
-    <p class="freedom-look-demo-note" id="freedomLookDemoNote">You'll be in Demo Mode.</p>
+    <div class="freedom-look-demo-card" id="freedomLookDemoCard">
+      <p>You'll explore Freedom with sample information. When you're ready, exit Demo Mode to make it yours.</p>
+    </div>
+    <button class="demo-outline-btn demo-enter-btn freedom-welcome-come-in" id="freedomLookContinue" type="button">
+      <span class="freedom-welcome-sheen" aria-hidden="true"></span>
+      Continue
+      <span class="freedom-welcome-arrow-wrap">
+        <svg class="freedom-welcome-arrow" viewBox="0 0 18 12" aria-hidden="true" focusable="false">
+          <path d="M1.2 6H16.2M11.2 1.6 16.5 6 11.2 10.4" fill="none" stroke="currentColor" stroke-width="1.35" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+    </button>
   </div>
 </div>
 </div>
@@ -3447,6 +3484,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   var welcome=document.getElementById("freedomWelcome");
   var comeIn=document.getElementById("freedomWelcomeComeIn");
   var lookAround=document.getElementById("freedomLookAround");
+  var lookContinue=document.getElementById("freedomLookContinue");
   function welcomeDone(){
     try{return localStorage.getItem(WELCOME_KEY)==="1";}catch(e){return false;}
   }
@@ -3465,20 +3503,18 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   /* Brief pause after support is fully visible, then soft fade of Demo Mode line. */
   var LOOK_DEMO_NOTE_GAP_MS=750;
   var LOOK_DEMO_NOTE_FADE_MS=600;
-  /* Reading hold after Demo Mode line is fully visible (extends total bridge slightly). */
-  var LOOK_DEMO_NOTE_READ_MS=4800;
   var LOOK_LINE1_AT_MS=LOOK_BG_ALONE_MS;
   var LOOK_LINE2_AT_MS=LOOK_LINE1_AT_MS+LOOK_LINE_WRITE_MS+LOOK_LINE_GAP_MS;
   var LOOK_SUPPORT_AT_MS=LOOK_LINE2_AT_MS+LOOK_LINE_WRITE_MS;
   var LOOK_DEMO_NOTE_AT_MS=LOOK_SUPPORT_AT_MS+LOOK_SUPPORT_FADE_MS+LOOK_DEMO_NOTE_GAP_MS;
-  var LOOK_SEQUENCE_MS=LOOK_DEMO_NOTE_AT_MS+LOOK_DEMO_NOTE_FADE_MS+LOOK_DEMO_NOTE_READ_MS;
+  var LOOK_CONTINUE_AT_MS=LOOK_DEMO_NOTE_AT_MS+LOOK_DEMO_NOTE_FADE_MS+350;
   var sheenLoopTimers={};
   var lookSequenceTimers=[];
   var lookAdvanceLock=false;
   var lookLine1=document.getElementById("freedomLookLine1");
   var lookLine2=document.getElementById("freedomLookLine2");
   var lookSupport=document.getElementById("freedomLookSupport");
-  var lookDemoNote=document.getElementById("freedomLookDemoNote");
+  var lookDemoCard=document.getElementById("freedomLookDemoCard");
   function clearSheenLoop(key){
     if(sheenLoopTimers[key]){
       clearTimeout(sheenLoopTimers[key]);
@@ -3498,6 +3534,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       if(!btn.isConnected)return;
       /* Keep looping only while the owning screen is still visible. */
       if(btn===comeIn&&(!welcome||welcome.hidden||welcomeDone()))return;
+      if(btn===lookContinue&&(!lookAround||lookAround.hidden||lookAroundDone()))return;
       if(key==="makeYoursStart"){
         var sage=document.getElementById("freedomMakeItYours");
         if(!sage||sage.hidden||!sage.classList.contains("is-present"))return;
@@ -3530,7 +3567,17 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     if(lookLine1)lookLine1.classList.remove("is-writing");
     if(lookLine2)lookLine2.classList.remove("is-writing");
     if(lookSupport)lookSupport.classList.remove("is-visible");
-    if(lookDemoNote)lookDemoNote.classList.remove("is-visible");
+    if(lookDemoCard)lookDemoCard.classList.remove("is-visible");
+    stopButtonSheen(lookContinue,"lookContinue");
+    if(lookContinue){
+      lookContinue.disabled=false;
+      lookContinue.classList.remove("is-visible","is-armed","is-sheening","is-sheen-looping");
+    }
+  }
+  function revealLookContinue(){
+    if(!lookContinue||!lookAround||lookAround.hidden||lookAroundDone())return;
+    lookContinue.classList.add("is-visible");
+    if(prefersReducedMotion())lookContinue.classList.add("is-armed");
   }
   function startLookAroundWriting(){
     resetLookAroundWriting();
@@ -3538,11 +3585,8 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       if(lookLine1)lookLine1.classList.add("is-writing");
       if(lookLine2)lookLine2.classList.add("is-writing");
       if(lookSupport)lookSupport.classList.add("is-visible");
-      if(lookDemoNote)lookDemoNote.classList.add("is-visible");
-      queueLookTimer(function(){
-        if(!lookAround||lookAround.hidden||lookAroundDone())return;
-        advanceLookAroundToDemo();
-      },LOOK_DEMO_NOTE_READ_MS);
+      if(lookDemoCard)lookDemoCard.classList.add("is-visible");
+      revealLookContinue();
       return;
     }
     /* Wallpaper alone → line 1 → line 2 → support fade → pause → Demo Mode fade → read → Home. */
@@ -3561,13 +3605,13 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       lookSupport.classList.add("is-visible");
     },LOOK_SUPPORT_AT_MS);
     queueLookTimer(function(){
-      if(!lookAround||lookAround.hidden||lookAroundDone()||!lookDemoNote)return;
-      lookDemoNote.classList.add("is-visible");
+      if(!lookAround||lookAround.hidden||lookAroundDone()||!lookDemoCard)return;
+      lookDemoCard.classList.add("is-visible");
     },LOOK_DEMO_NOTE_AT_MS);
     queueLookTimer(function(){
       if(!lookAround||lookAround.hidden||lookAroundDone())return;
-      advanceLookAroundToDemo();
-    },LOOK_SEQUENCE_MS);
+      revealLookContinue();
+    },LOOK_CONTINUE_AT_MS);
   }
   function showWelcome(){
     if(!welcome||welcomeDone())return false;
@@ -3656,7 +3700,11 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   function advanceLookAroundToDemo(){
     if(lookAdvanceLock||lookAroundDone())return;
     lookAdvanceLock=true;
+    /* The deliberate Continue tap completes this step immediately, so a refresh
+       during the visual crossfade resumes in Demo rather than replaying it. */
+    try{localStorage.setItem(LOOK_KEY,"1");}catch(e){}
     resetLookAroundWriting();
+    if(lookContinue)lookContinue.disabled=true;
     /* Activate Demo under the bridge, then soft-fade the bridge away. */
     triggerEnterDemo();
     if(!lookAround||!lookAround.isConnected){
@@ -4087,6 +4135,23 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       queueSheenLoop(comeIn,"comeIn");
     });
   }
+  if(lookContinue){
+    lookContinue.addEventListener("click",function(e){
+      e.preventDefault();
+      advanceLookAroundToDemo();
+    });
+    lookContinue.addEventListener("animationend",function(e){
+      if(e.animationName==="freedomWelcomeComeInIn"&&e.target===lookContinue){
+        lookContinue.classList.add("is-armed");
+        lookContinue.classList.remove("is-sheen-looping");
+        lookContinue.classList.add("is-sheening");
+        return;
+      }
+      if(e.animationName!=="freedomWelcomeComeInSheen")return;
+      if(!e.target||!e.target.classList||!e.target.classList.contains("freedom-welcome-sheen"))return;
+      queueSheenLoop(lookContinue,"lookContinue");
+    });
+  }
   function markMakeYoursLineComplete(e){
     if(e.animationName!=="freedomMakeYoursHandwrite")return;
     if(e.target)e.target.classList.add("is-complete");
@@ -4269,7 +4334,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   <div class="overview-mobile">
     <div class="overview-hero">
       <h1>One step closer.</h1>
-      <p>A little more of your future is yours.</p>
+      <p>A little more of your future freedom is yours.</p>
     </div>
 
     <div class="overview-cards">
@@ -4284,7 +4349,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
           <div class="overview-card-main">
             <div class="overview-card-label">Money returned</div>
             <div class="overview-card-value" id="overviewReturned">€0</div>
-            <div class="overview-card-detail">Money you have already moved back towards your future.</div>
+            <div class="overview-card-detail">The total amount you've already paid back towards your freedom.</div>
           </div>
         </div>
       </article>
@@ -4326,7 +4391,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
             <div class="overview-card-label">Freedom progress</div>
             <div class="overview-card-value" id="overviewProgress">0%</div>
             <div class="overview-progress"><span id="overviewProgressBar" data-progress-key="overviewProgressBar"></span></div>
-            <div class="overview-card-detail">Based on the commitments listed in your Freedom Journey.</div>
+            <div class="overview-card-detail">Your overall progress towards freedom, based on your Journey commitments. Savings Goals are tracked separately.</div>
           </div>
         </div>
       </article>
@@ -4350,7 +4415,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
     </div>
   </div>
 </section>
-<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>One balance at a time.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomJourneyCompanionMsgHost" aria-live="polite" hidden></div>
+<section class="page" id="journey"><div class="eyebrow">Freedom Journey</div><div class="journey-hero"><h1>Pieces of your future, being returned.</h1><p>Your financial commitments, one step closer to being cleared.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomJourneyCompanionMsgHost" aria-live="polite" hidden></div>
 <div class="journey-actions"><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><div class="add-journey-head"><h2>Add a new journey</h2><button class="add-journey-close" id="closeAddJourney" type="button" aria-label="Close">×</button></div><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">How much did you borrow?</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">How much is left to pay?</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">How much do you want to pay each month?</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomGoalsCompanionMsgHost" aria-live="polite" hidden></div>
 <div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><div class="add-goal-head"><h2>Add a new goal</h2><button class="add-goal-close" id="closeAddGoal" type="button" aria-label="Close">×</button></div><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
@@ -6145,6 +6210,7 @@ const PATRICIA_NOTE_COPY={
 function resetDemoSession(){demoSession={dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};}
 const DEMO_BTN_CLASS="demo183";
 const DEMO_BTN_LABEL="DEMO MODE";
+const DEMO_BTN_ACTIVE_LABEL="Exit Demo Mode";
 function ensureDemoButtonLabel(btn){
   if(!btn)return null;
   let pulse=btn.querySelector(".demo183-pulse");
@@ -6165,17 +6231,22 @@ function cancelDemoButtonAnimations(btn){
 }
 function applyDemoButtonState(btn){
   if(!btn)return;
-  ensureDemoButtonLabel(btn);
+  const pulse=ensureDemoButtonLabel(btn);
   if(demoMode){
     btn.className=DEMO_BTN_CLASS;
     btn.classList.add("is-demo-active");
     btn.removeAttribute("data-demo-active");
+    btn.setAttribute("aria-label",DEMO_BTN_ACTIVE_LABEL);
+    btn.setAttribute("aria-expanded","false");
+    if(pulse)pulse.innerHTML='<svg class="demo183-exit-icon" viewBox="0 0 18 18" aria-hidden="true" focusable="false"><path d="M7.2 3.2H3.5v11.6h3.7M10.1 5.8 13.4 9l-3.3 3.2M6.2 9h7.2"/></svg><span>'+DEMO_BTN_ACTIVE_LABEL+'</span>';
     btn.style.cssText="";
     return;
   }
   cancelDemoButtonAnimations(btn);
   btn.className=DEMO_BTN_CLASS;
   btn.removeAttribute("data-demo-active");
+  btn.setAttribute("aria-label","Demo Mode");
+  if(pulse)pulse.textContent=DEMO_BTN_LABEL;
   btn.style.cssText="";
   void btn.offsetHeight;
 }
@@ -6793,7 +6864,7 @@ function closeDemoEntryFlow(){
 }
 function handleDemo183Click(e){
   e.stopPropagation();
-  if(demoMode)toggleDemoMenu();
+  if(demoMode)exitDemo();
   else openDemoEntryFlow();
 }
 let demoWelcomeBtnTimer=null;
@@ -6934,8 +7005,9 @@ function exitDemo(){
      the uncovered destination — Companion Selection follows Start my Freedom. */
   if(firstExit){
     if(typeof window.hideHome==="function")window.hideHome();
-  }else if(typeof window.showHome==="function"){
-    window.showHome();
+  }else{
+    if(typeof window.hideHome==="function")window.hideHome();
+    if(typeof page==="function")page("overview");
   }
   render();
   applyDemoButtonState(byId("demo183"));
@@ -9804,6 +9876,12 @@ function render(){
 const overviewReturnedEl=byId("overviewReturned");const overviewProgressEl=byId("overviewProgress");if(overviewReturnedEl){const rv=euro0(loanReturned+hpReturned);if(overviewReturnedEl.textContent!==rv){freedomMotion.flashValue(overviewReturnedEl);overviewReturnedEl.textContent=rv;}}if(overviewProgressEl){const pv=Math.round(pct)+"%";if(overviewProgressEl.textContent!==pv){freedomMotion.flashValue(overviewProgressEl);overviewProgressEl.textContent=pv;}}if(byId("overviewProgressBar"))byId("overviewProgressBar").style.width=Math.min(100,pct)+"%";if(byId("overviewHouse"))byId("overviewHouse").textContent=euro0(state.houseFund);if(byId("overviewHoliday"))byId("overviewHoliday").textContent=euro0(state.holidayFund);if(byId("overviewSavings"))byId("overviewSavings").textContent=euro0(state.personalSavings);updateOverviewPensionCard();byId("monthlyFreedom").textContent=euro0(monthly);
 const hp=state.housePocket,hpm=state.housePocketMonthly;const hpProgress=Math.max(0,Math.min(100,(HOUSE_POCKET_START-hp)/HOUSE_POCKET_START*100));const next=nextLoan();
 const cleanEmptyOverview=!!state.overviewExcludeHousePocket&&!(state.loans&&state.loans.length);
+const victoryProgress=byId("pocketBar")?.parentElement;
+const victoryValue=byId("pocketOverview");
+const victoryEstimate=byId("pocketMonths");
+if(victoryProgress)victoryProgress.hidden=false;
+if(victoryValue)victoryValue.hidden=false;
+if(victoryEstimate)victoryEstimate.hidden=false;
 if(hp>0){
   byId("pocketBar").style.width=hpProgress+"%";
   byId("victoryLabel").textContent="First victory";
@@ -9836,12 +9914,15 @@ if(hp>0){
 }else if(cleanEmptyOverview){
   byId("pocketBar").style.width="0%";
   byId("victoryLabel").textContent="Next victory";
-  byId("victoryName").textContent="No active journeys";
-  byId("victoryPill").hidden=false;byId("victoryPill").textContent="Queued up";
+  byId("victoryName").textContent="No active Journeys or Goals";
+  byId("victoryPill").hidden=true;
   byId("victoryPill").classList.remove("complete");
-  byId("pocketOverview").textContent="€0 remaining";
-  byId("pocketMessage").textContent="This is your next finish line.";
+  byId("pocketOverview").textContent="";
+  byId("pocketOverview").hidden=true;
+  if(victoryProgress)victoryProgress.hidden=true;
+  byId("pocketMessage").textContent="Add a Journey or Goal to see what you're working towards next.";
   byId("pocketMonths").textContent="";
+  byId("pocketMonths").hidden=true;
 }else{
   byId("pocketBar").style.width="100%";
   byId("victoryLabel").textContent="Freedom milestone";
