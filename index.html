@@ -1208,9 +1208,9 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.overview-active-v300 #overview .overview-card-detail-row span:last-child{
     flex:0 0 auto;
   }
-  /* Empty Next Victory: align explanation with heading and show full text. */
+  /* Empty Next Victory: share the same left content edge as the other cards. */
   body.overview-active-v300 #overview .victory-card.is-empty-victory .overview-card-detail-row{
-    display:block;padding-left:60px;box-sizing:border-box;
+    display:block;padding-left:0;box-sizing:border-box;
     white-space:normal;min-width:0;
   }
   body.overview-active-v300 #overview .victory-card.is-empty-victory #pocketMessage{
@@ -4377,9 +4377,9 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
           <div class="overview-card-main">
             <div class="overview-card-label">Money returned</div>
             <div class="overview-card-value" id="overviewReturned">€0</div>
-            <div class="overview-card-detail">The total amount you've already paid back towards your freedom.</div>
           </div>
         </div>
+        <div class="overview-card-detail">The total amount you've already paid back towards your freedom.</div>
       </article>
 
       <article class="overview-card victory-card" id="victoryCard" data-page-link="goals">
@@ -4419,9 +4419,9 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
             <div class="overview-card-label">Freedom progress</div>
             <div class="overview-card-value" id="overviewProgress">0%</div>
             <div class="overview-progress"><span id="overviewProgressBar" data-progress-key="overviewProgressBar"></span></div>
-            <div class="overview-card-detail">Your overall progress towards freedom, based on your Journey commitments. Savings Goals are tracked separately.</div>
           </div>
         </div>
+        <div class="overview-card-detail">Your overall progress towards freedom, based on your Journey commitments. Savings Goals are tracked separately.</div>
       </article>
 
       <article class="overview-card" id="overviewPensionCard" data-page-link="pension" hidden>
