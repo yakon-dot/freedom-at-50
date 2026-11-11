@@ -6299,7 +6299,6 @@ function applyInternalTestQuery(){
   }catch(e){}
 }
 function isInternalTestMode(){
-  if(!FREEDOM_DEV_TOOLS_ENABLED)return false;
   try{
     const raw=String(new URLSearchParams(FREEDOM_DEV_TOOLS_ENABLED ? location.search : "").get("internalTest")||"").toLowerCase();
     if(raw==="1"||raw==="true"||raw==="yes")return true;
@@ -6309,7 +6308,6 @@ function isInternalTestMode(){
   return false;
 }
 function setInternalTestEnabled(on){
-  if(!FREEDOM_DEV_TOOLS_ENABLED)return;
   try{
     if(on)localStorage.setItem(INTERNAL_TEST_KEY,"1");
     else localStorage.removeItem(INTERNAL_TEST_KEY);
@@ -6331,7 +6329,6 @@ window.setInternalTestEnabled=setInternalTestEnabled;
 /* Installed iOS PWA cannot inherit Safari localStorage. Hidden Home unlock:
    tap the Freedom brand 7× quickly → confirm → persist flag in THIS app context. */
 function wireInternalTestBrandUnlock(){
-  if(!FREEDOM_DEV_TOOLS_ENABLED)return;
   const brand=document.querySelector(".brand183");
   if(!brand||brand.dataset.internalUnlockBound==="1")return;
   brand.dataset.internalUnlockBound="1";
@@ -7118,7 +7115,6 @@ function buildFreshUserState(){
   };
 }
 function resetFreedomFreshStart(){
-  if(!FREEDOM_DEV_TOOLS_ENABLED)return;
   // Development/testing only: wipe Freedom user/onboarding/demo storage, write a clean empty
   // user state, and reload. Internal-test permission is preserved separately.
   const ok=window.confirm("Reset Freedom on this device?\n\nThis permanently deletes your local Freedom setup and data on this device — onboarding, companion, journeys, goals, pensions, archive, victories, and any Demo session.\n\nYou will start again as a brand-new user.\n\nCancel keeps everything as it is.");
