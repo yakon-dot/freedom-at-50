@@ -784,12 +784,15 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
      Sit fully below the yellow paper, right-aligned with the note cards (16px inset). */
   body.notes-active-v318 #notes .notes-actions{
     position:fixed;z-index:3;
+    left:auto;
     /* Align with note cards: main 18px + #notes 16px horizontal inset. */
     right:34px;
     /* ~14px below the yellow scrap bottom (~61.5vw). */
     top:calc(env(safe-area-inset-top,0px) + 61.5vw + 14px);
     display:flex;justify-content:flex-end;align-items:center;
     margin:0;pointer-events:none;
+    /* Avoid any inherited transform/filter creating a fixed containing block. */
+    transform:none;filter:none;will-change:auto;
   }
   body.notes-active-v318 #notes #toggleAddNote{
     pointer-events:auto;
@@ -801,26 +804,26 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
       0 2px 4px rgba(40,28,12,.12);
   }
   body.notes-active-v318 #notes #toggleAddNote:active{opacity:.86;transform:translateY(1px)}
-  /* Notes-only Exit Demo Mode: plain outline pill, static black label. */
+  /* Notes-only Exit Demo Mode: plain outline pill, static dark slate label. */
   body.notes-active-v318 .demo183.is-demo-active{
     background:transparent;
-    border:1.5px solid #1c1712;
-    border-color:#1c1712;
-    color:#1c1712;
+    border:1.5px solid #0E1220;
+    border-color:#0E1220;
+    color:#0E1220;
     backdrop-filter:none;-webkit-backdrop-filter:none;
-    animation:none;opacity:1;will-change:auto;
+    animation:none!important;opacity:1;will-change:auto;
     box-shadow:none;
   }
   body.notes-active-v318 .demo183.is-demo-active::before,
   body.notes-active-v318 .demo183.is-demo-active::after{
-    content:none;display:none;animation:none;box-shadow:none;border:0;background:transparent;
+    content:none;display:none;animation:none!important;box-shadow:none;border:0;background:transparent;
   }
   body.notes-active-v318 .demo183.is-demo-active .demo183-pulse{
-    color:#1c1712;
-    animation:none;opacity:1;
+    color:#0E1220;
+    animation:none!important;opacity:1;
   }
   body.notes-active-v318 .demo183.is-demo-active .demo183-exit-icon{
-    stroke:currentColor;
+    stroke:#0E1220;
   }
   body.notes-active-v318 #notes #addNoteCard{
     position:relative;z-index:6;margin:0 0 12px;
@@ -3533,10 +3536,14 @@ body.journey-active-v313 #journey .goal-section + .journey-card-footer{margin-to
 @keyframes freedomCardNew{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes freedomCardExit{from{opacity:1;transform:translateY(0);max-height:900px;margin-bottom:14px}to{opacity:0;transform:translateY(-8px);max-height:0;margin-bottom:0;padding-top:0;padding-bottom:0}}
 @keyframes freedomPageEnter{from{opacity:.92;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+/* Notes: opacity-only enter — transform on #notes makes position:fixed Add note
+   resolve against the page box and jump when the enter animation ends. */
+@keyframes freedomNotesPageEnter{from{opacity:.92}to{opacity:1}}
 @keyframes freedomLandscapeSignWrite{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 @keyframes freedomBodyIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 @keyframes freedomValueFade{0%{opacity:.58}100%{opacity:1}}
 .page.freedom-page-enter{animation:freedomPageEnter var(--motion-page) var(--motion-ease) both}
+#notes.freedom-page-enter{animation:freedomNotesPageEnter var(--motion-page) var(--motion-ease) both}
 .freedom-card-pre-enter{opacity:0;transform:translateY(10px);will-change:opacity,transform}
 .freedom-card-enter{animation:freedomCardEnter var(--motion-enter) var(--motion-ease) both;animation-delay:var(--motion-delay,0ms)}
 .freedom-card-new{animation:freedomCardNew var(--motion-new) var(--motion-ease) both}
