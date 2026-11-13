@@ -745,14 +745,23 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 
 
   /* —— Notes page (light lined wallpaper + glass cards) —— */
-  body.notes-active-v318{background:transparent;overscroll-behavior-y:none}
+  body.notes-active-v318{
+    background:transparent;overscroll-behavior-y:none;
+    /* Shared Notes header origin: wallpaper, description, Add note and list padding
+       all measure from the same safe-area top so Safari and standalone PWA stay aligned. */
+    --notes-safe-top:env(safe-area-inset-top,0px);
+    --notes-paper-bottom:61.5vw;
+    --notes-desc-top:39.2vw;
+  }
   html:has(body.notes-active-v318){background:#f0d8c2!important;overscroll-behavior-y:none}
   body.notes-active-v318::before{
     content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
     background-color:#f0d8c2;
     background-image:url("./notes-wallpaper.jpg");
-    /* Pin wallpaper to the top — any offset creates a blank peach band above the paper. */
-    background-position:center top;
+    /* Start wallpaper below the status bar / notch. Do not pin to physical top —
+       that puts the yellow paper under the translucent status bar in iOS PWA while
+       the HTML description (safe-area aware) drifts below the scrap. */
+    background-position:center var(--notes-safe-top);
     background-size:100% auto;
     background-repeat:no-repeat;
   }
@@ -763,13 +772,13 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.notes-active-v318 #notes{
     position:relative;z-index:5;
     /* Compact stack: paper → ~14px → Add note → ~22px → first card. */
-    padding:calc(env(safe-area-inset-top,0px) + 61.5vw + 72px) 16px calc(180px + var(--safe-bottom));
+    padding:calc(var(--notes-safe-top) + var(--notes-paper-bottom) + 72px) 16px calc(180px + var(--safe-bottom));
     min-height:calc(100dvh + 75vw);
   }
   body.notes-active-v318 #notes .notes-hero{
     position:fixed;left:0;right:0;z-index:2;pointer-events:none;
-    /* Under the wallpaper handwritten underline; clear of overlap. */
-    top:calc(env(safe-area-inset-top,0px) + 39.2vw);
+    /* Same origin as wallpaper so description stays inside the yellow paper. */
+    top:calc(var(--notes-safe-top) + var(--notes-desc-top));
     padding:0 44px;
     text-align:center;box-sizing:border-box;
   }
@@ -787,8 +796,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     left:auto;
     /* Align with note cards: main 18px + #notes 16px horizontal inset. */
     right:34px;
-    /* ~14px below the yellow scrap bottom (~61.5vw). */
-    top:calc(env(safe-area-inset-top,0px) + 61.5vw + 14px);
+    /* ~14px below the yellow scrap bottom. */
+    top:calc(var(--notes-safe-top) + var(--notes-paper-bottom) + 14px);
     display:flex;justify-content:flex-end;align-items:center;
     margin:0;pointer-events:none;
     /* Avoid any inherited transform/filter creating a fixed containing block. */
@@ -4685,6 +4694,11 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
       <button class="navbtn183" type="button" data-go183="pension">
         <svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-3.8 0-6-2.1-6-5.8 3.8 0 6 2.1 6 5.8Z"/><path d="M12 11c3.8 0 6-2.1 6-5.8-3.8 0-6 2.1-6 5.8Z"/><path d="M8.5 21h7"/></svg>
         <span>Pension</span>
+      </button>
+
+      <button class="navbtn183" type="button" data-go183="notes">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5.5" y="3.5" width="13" height="17" rx="1.8"/><path d="M8.5 2.8v2.2M12 2.8v2.2M15.5 2.8v2.2"/><path d="M8.5 9.5h7M8.5 13h7M8.5 16.5h4.5"/></svg>
+        <span>Notes</span>
       </button>
 
       <button class="morebtn183" id="more183" type="button" aria-expanded="false">
