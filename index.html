@@ -762,27 +762,30 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.notes-active-v318 .app>main{padding-top:0;overscroll-behavior-y:none}
   body.notes-active-v318 #notes{
     position:relative;z-index:5;
-    /* First card starts clearly below the fixed Add note button; scroll still carries cards over the paper. */
-    padding:calc(env(safe-area-inset-top,0px) + 54vw + 68px) 16px calc(180px + var(--safe-bottom));
+    /* First card starts clearly below the fixed Add note button (now under the yellow paper). */
+    padding:calc(env(safe-area-inset-top,0px) + 76vw + 52px) 16px calc(180px + var(--safe-bottom));
     min-height:calc(100dvh + 75vw);
   }
   body.notes-active-v318 #notes .notes-hero{
     position:fixed;left:0;right:0;z-index:2;pointer-events:none;
-    /* Slightly closer under the wallpaper underline; keep a clear gap. */
+    /* Under the wallpaper handwritten underline; clear of overlap. */
     top:calc(env(safe-area-inset-top,0px) + 39.2vw);
-    padding:0 96px 0 48px;
+    padding:0 44px;
     text-align:center;box-sizing:border-box;
   }
   body.notes-active-v318 #notes .notes-hero-desc{
-    margin:0 auto;max-width:12.8rem;
+    margin:0 auto;max-width:15rem;
     font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
-    font-size:clamp(16.5px,4.35vw,18.5px);line-height:1.2;font-weight:500;
+    font-size:clamp(18px,4.75vw,20px);line-height:1.2;font-weight:500;
     letter-spacing:.01em;color:#3a3128;text-align:center;
   }
-  /* Stationary; under the list so scrolling cards pass over without being blocked. */
+  /* Stationary; under the list so scrolling cards pass over without being blocked.
+     Sit fully below the yellow paper, right-aligned with the note cards (16px inset). */
   body.notes-active-v318 #notes .notes-actions{
-    position:fixed;right:16px;z-index:3;
-    top:calc(env(safe-area-inset-top,0px) + 54vw);
+    position:fixed;z-index:3;
+    /* Align with note cards: main 18px + #notes 16px horizontal inset. */
+    right:34px;
+    top:calc(env(safe-area-inset-top,0px) + 76vw);
     display:flex;justify-content:flex-end;align-items:center;
     margin:0;pointer-events:none;
   }
