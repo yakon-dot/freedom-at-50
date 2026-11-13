@@ -761,10 +761,9 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.notes-active-v318 .app>main{padding-top:0}
   body.notes-active-v318 #notes{
     position:relative;z-index:5;
-    /* Cards start under the paper so they can scroll over it while staying opaque.
-       Extra bottom space lets short lists still scroll cards through the header. */
-    padding:calc(env(safe-area-inset-top,0px) + 50vw) 16px calc(180px + var(--safe-bottom));
-    min-height:calc(100dvh + 55vw);
+    /* First card starts clearly below the fixed Add note button; scroll still carries cards over the paper. */
+    padding:calc(env(safe-area-inset-top,0px) + 54vw + 68px) 16px calc(180px + var(--safe-bottom));
+    min-height:calc(100dvh + 75vw);
   }
   body.notes-active-v318 #notes .notes-hero{
     position:fixed;left:0;right:0;z-index:2;pointer-events:none;
@@ -773,11 +772,12 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     text-align:center;box-sizing:border-box;
   }
   body.notes-active-v318 #notes .notes-hero-desc{
-    margin:0 auto;max-width:15.2rem;
-    font-size:12px;line-height:1.35;font-weight:500;
-    color:#2a2218;text-align:center;
+    margin:2px auto 0;max-width:15.6rem;
+    font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
+    font-size:clamp(17px,4.6vw,20px);line-height:1.2;font-weight:500;
+    letter-spacing:.015em;color:#2a2218;text-align:center;
   }
-  /* Below cards so scrolling notes pass over the button without being blocked. */
+  /* Stationary; under the list so scrolling cards pass over without being blocked. */
   body.notes-active-v318 #notes .notes-actions{
     position:fixed;right:16px;z-index:3;
     top:calc(env(safe-area-inset-top,0px) + 54vw);
@@ -802,23 +802,24 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.notes-active-v318 #notes .note-card.card{
     position:relative;overflow:hidden;
-    border:1px solid rgba(80,55,30,.09);
+    border:1px solid rgba(80,55,30,.08);
     border-left:0;
     border-radius:20px;
-    padding:11px 12px 10px 20px;
-    /* Accent painted in the same background as the body — no separate strip = no white seam. */
-    background-color:rgba(255,251,244,.94);
+    padding:11px 12px 10px 21px;
+    /* Accent strip + body fill abut at 12px — no gap/seam between colour and card. */
+    background-color:transparent;
     background-image:
-      linear-gradient(180deg,var(--note-accent-hi,var(--note-accent)) 0%,var(--note-accent) 48%,var(--note-accent-lo,var(--note-accent)) 100%),
-      linear-gradient(125deg,rgba(255,255,255,.42) 0%,rgba(255,255,255,.14) 28%,rgba(255,255,255,0) 52%);
-    background-size:11px 100%,100% 100%;
-    background-position:left top,left top;
+      linear-gradient(180deg,var(--note-accent-hi,var(--note-accent)) 0%,var(--note-accent) 46%,var(--note-accent-lo,var(--note-accent)) 100%),
+      linear-gradient(125deg,rgba(255,255,255,.38) 0%,rgba(255,255,255,.1) 32%,rgba(255,255,255,0) 55%),
+      linear-gradient(180deg,rgba(255,251,244,.97),rgba(255,251,244,.97));
+    background-size:12px 100%,calc(100% - 12px) 100%,calc(100% - 12px) 100%;
+    background-position:left top,12px top,12px top;
     background-repeat:no-repeat;
-    backdrop-filter:blur(14px) saturate(1.03);-webkit-backdrop-filter:blur(14px) saturate(1.03);
+    backdrop-filter:blur(12px) saturate(1.02);-webkit-backdrop-filter:blur(12px) saturate(1.02);
     box-shadow:
-      0 10px 22px rgba(55,35,15,.13),
-      0 3px 6px rgba(55,35,15,.07),
-      inset 0 1px 0 rgba(255,255,255,.55);
+      0 10px 22px rgba(55,35,15,.12),
+      0 3px 6px rgba(55,35,15,.06),
+      inset 0 1px 0 rgba(255,255,255,.58);
     color:#1c1712;
   }
   body.notes-active-v318 #notes .note-card::before,
@@ -827,13 +828,13 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     padding-top:10px;padding-bottom:10px;
   }
   body.notes-active-v318 #notes .note-card[data-color="yellow"]{
-    --note-accent:#ffd52a;--note-accent-hi:#ffe56a;--note-accent-lo:#efc110;
+    --note-accent:#ffd52a;--note-accent-hi:#ffe66e;--note-accent-lo:#efc110;
   }
   body.notes-active-v318 #notes .note-card[data-color="peach"]{
-    --note-accent:#e39668;--note-accent-hi:#efb48a;--note-accent-lo:#d07a48;
+    --note-accent:#e39668;--note-accent-hi:#f0b58c;--note-accent-lo:#d07a48;
   }
   body.notes-active-v318 #notes .note-card[data-color="sage"]{
-    --note-accent:#84bd91;--note-accent-hi:#9dcea8;--note-accent-lo:#6aa678;
+    --note-accent:#84bd91;--note-accent-hi:#9fceb0;--note-accent-lo:#6aa678;
   }
   body.notes-active-v318 #notes .note-card-head{
     display:flex;align-items:flex-start;gap:8px;cursor:pointer;position:relative;z-index:1;
@@ -841,62 +842,62 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.notes-active-v318 #notes .note-head-main{min-width:0;flex:1}
   body.notes-active-v318 #notes .note-title-row{
-    display:flex;align-items:center;gap:8px;min-width:0;
+    display:flex;align-items:center;gap:7px;min-width:0;
   }
   body.notes-active-v318 #notes .note-pin-icon{
-    flex:0 0 auto;width:20px;height:20px;margin-top:1px;
-    filter:drop-shadow(0 1px 1px rgba(40,28,12,.2));
+    flex:0 0 auto;width:17px;height:17px;margin-top:0;
+    filter:drop-shadow(0 1px 1px rgba(40,28,12,.18));
   }
-  body.notes-active-v318 #notes .note-pin-icon svg{width:20px;height:20px;display:block}
+  body.notes-active-v318 #notes .note-pin-icon svg{width:17px;height:17px;display:block}
   body.notes-active-v318 #notes .note-title{
-    margin:0;font-size:15.5px;font-weight:740;letter-spacing:-.02em;
-    color:#1c1712;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    margin:0;font-size:15.5px;font-weight:760;letter-spacing:-.02em;line-height:1.25;
+    color:#17130f;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   body.notes-active-v318 #notes .note-preview{
-    margin:4px 0 0;font-size:13px;line-height:1.35;color:rgba(40,32,24,.7);
+    margin:5px 0 0;font-size:13px;line-height:1.35;color:rgba(32,26,20,.78);
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   }
   body.notes-active-v318 #notes .note-check-preview{
-    margin:7px 0 0;display:grid;gap:5px;
+    margin:6px 0 0;display:grid;gap:3.5px;
   }
   body.notes-active-v318 #notes .note-check-preview-row{
     display:flex;align-items:center;gap:8px;min-width:0;
   }
   body.notes-active-v318 #notes .note-check-preview-box{
     flex:0 0 15px;width:15px;height:15px;border-radius:3.5px;
-    border:1.55px solid rgba(40,32,24,.55);background:transparent;
+    border:1.6px solid rgba(40,32,24,.55);background:transparent;
     display:grid;place-items:center;box-sizing:border-box;
   }
   body.notes-active-v318 #notes .note-check-preview-box.is-checked{
-    background:transparent;border-color:#ffd52a;border-width:1.8px;
+    background:#ffd52a;border-color:#ffd52a;
   }
   body.notes-active-v318 #notes .note-check-preview-box svg{width:10px;height:10px;opacity:0}
   body.notes-active-v318 #notes .note-check-preview-box.is-checked svg{opacity:1}
   body.notes-active-v318 #notes .note-check-preview-text{
-    min-width:0;font-size:12.5px;line-height:1.25;color:rgba(40,32,24,.74);
+    min-width:0;font-size:12.5px;line-height:1.25;color:rgba(32,26,20,.8);
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   body.notes-active-v318 #notes .note-check-preview-row.is-checked .note-check-preview-text{
-    text-decoration:line-through;color:rgba(40,32,24,.48);
+    text-decoration:line-through;color:rgba(40,32,24,.5);
   }
   body.notes-active-v318 #notes .note-card:not(.is-collapsed) .note-preview,
   body.notes-active-v318 #notes .note-card:not(.is-collapsed) .note-check-preview{display:none}
   body.notes-active-v318 #notes .note-meta{
-    display:flex;align-items:center;gap:4px;flex:0 0 auto;margin-left:auto;padding-top:1px;
+    display:flex;align-items:center;gap:2px;flex:0 0 auto;margin-left:auto;padding-top:0;align-self:center;
   }
   body.notes-active-v318 #notes .note-date{
-    font-size:11px;font-weight:600;color:rgba(40,32,24,.52);white-space:nowrap;
+    font-size:11px;font-weight:620;color:rgba(40,32,24,.55);white-space:nowrap;line-height:1;
   }
   body.notes-active-v318 #notes .note-chevron{
-    display:grid;place-items:center;width:24px;height:24px;padding:0;border:0;
-    background:transparent;color:rgba(40,32,24,.55);transition:transform var(--motion-chevron) ease;
+    display:grid;place-items:center;width:22px;height:22px;padding:0;border:0;margin:0;
+    background:transparent;color:rgba(40,32,24,.52);transition:transform var(--motion-chevron) ease;
   }
-  body.notes-active-v318 #notes .note-chevron svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  body.notes-active-v318 #notes .note-chevron svg{width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
   body.notes-active-v318 #notes .note-card:not(.is-collapsed) .note-chevron{transform:rotate(180deg)}
   body.notes-active-v318 #notes .note-body-wrap{margin-top:0;position:relative;z-index:1}
   body.notes-active-v318 #notes .note-body{margin-top:6px;padding-bottom:0}
   body.notes-active-v318 #notes .note-body-text{
-    margin:0 0 6px;font-size:13.5px;line-height:1.4;color:rgba(40,32,24,.78);
+    margin:0 0 5px;font-size:13.5px;line-height:1.4;color:rgba(32,26,20,.8);
     white-space:pre-wrap;
   }
   body.notes-active-v318 #notes .note-field{margin-top:5px}
@@ -930,9 +931,9 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.notes-active-v318 #notes .note-color-btn.is-active{
     border-color:#1c1712;box-shadow:0 0 0 2px rgba(255,255,255,.7);
   }
-  body.notes-active-v318 #notes .note-checklist{display:grid;gap:4px;margin-top:3px}
+  body.notes-active-v318 #notes .note-checklist{display:grid;gap:2.5px;margin-top:2px}
   body.notes-active-v318 #notes .note-check-row{
-    display:flex;align-items:center;gap:10px;min-height:26px;
+    display:flex;align-items:center;gap:9px;min-height:28px;
   }
   body.notes-active-v318 #notes .note-check-box{
     flex:0 0 22px;width:22px;height:22px;border-radius:5px;
@@ -941,19 +942,19 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.notes-active-v318 #notes .note-check-box svg{width:13px;height:13px;opacity:0}
   body.notes-active-v318 #notes .note-check-box.is-checked{
-    background:transparent;border-color:#ffd52a;border-width:2px;
+    background:#ffd52a;border-color:#ffd52a;border-width:1.7px;
   }
   body.notes-active-v318 #notes .note-check-box.is-checked svg{opacity:1}
   body.notes-active-v318 #notes .note-check-label,
   body.notes-active-v318 #notes .note-check-text{
     flex:1;min-width:0;margin:0;background:transparent;border:0;border-bottom:1px solid transparent;
-    color:#1c1712;font-size:14px;line-height:1.35;padding:2px 0;outline:none;
+    color:#1c1712;font-size:14px;line-height:1.3;padding:3px 0;outline:none;
   }
   body.notes-active-v318 #notes .note-check-label{pointer-events:none}
   body.notes-active-v318 #notes .note-check-text:focus{border-bottom-color:rgba(80,55,30,.22)}
   body.notes-active-v318 #notes .note-check-row.is-checked .note-check-label,
   body.notes-active-v318 #notes .note-check-row.is-checked .note-check-text{
-    text-decoration:line-through;color:rgba(40,32,24,.48);
+    text-decoration:line-through;color:rgba(40,32,24,.5);
   }
   body.notes-active-v318 #notes .note-check-remove{
     flex:0 0 auto;border:0;background:transparent;color:rgba(40,32,24,.42);
@@ -964,16 +965,18 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     color:#1c1712;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;
   }
   body.notes-active-v318 #notes .note-footer{
-    display:flex;flex-wrap:wrap;gap:7px;margin-top:7px;
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;
   }
   body.notes-active-v318 #notes .note-footer .mini-btn{
-    border-color:rgba(80,55,30,.22);color:#1c1712;background:rgba(255,255,255,.45);
+    border:1px solid rgba(80,55,30,.16);color:rgba(28,23,18,.82);
+    background:rgba(255,255,255,.38);padding:7px 12px;font-weight:680;font-size:12.5px;
+    box-shadow:none;
   }
   body.notes-active-v318 #notes .note-footer .mini-btn.danger{
-    border-color:rgba(160,60,50,.35);color:#8a2f28;
+    border-color:rgba(160,60,50,.28);color:#8a2f28;background:rgba(255,255,255,.32);
   }
   body.notes-active-v318 #notes .note-footer .mini-btn.is-pinned{
-    border-color:rgba(255,213,42,.75);color:#5c4a08;background:rgba(255,213,42,.28);
+    border-color:rgba(255,213,42,.55);color:#5c4a08;background:rgba(255,213,42,.22);
   }
   body.notes-active-v318 #notes .notes-empty{
     margin:52px 2px 0;padding:18px 8px;text-align:center;
@@ -10394,10 +10397,10 @@ function buildDemoNotes(){
   ];
 }
 function notePinSvg(){
-  return`<span class="note-pin-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M8.35 3.1h7.3c.85 0 1.45.75 1.3 1.58l-.72 4.05c1.72.95 2.82 2.55 2.82 4.52 0 .66-.54 1.2-1.2 1.2H7.15c-.66 0-1.2-.54-1.2-1.2 0-1.97 1.1-3.57 2.82-4.52L8.05 4.68c-.15-.83.45-1.58 1.3-1.58Z" fill="#ffd52a" stroke="#1c1712" stroke-width="1.45" stroke-linejoin="round"/><circle cx="12" cy="10.15" r="1.15" fill="#1c1712"/><path d="M12 13.45V21" stroke="#1c1712" stroke-width="2" stroke-linecap="round"/></svg></span>`;
+  return`<span class="note-pin-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M9.2 2.8h5.6c.55 0 1 .45 1 1v1.35c0 .9-.35 1.75-.95 2.4L13.4 9.1v2.15c1.35.35 2.35 1.55 2.35 3 0 .55-.45 1-1 1H9.25c-.55 0-1-.45-1-1 0-1.45 1-2.65 2.35-3V9.1L7.15 7.55c-.6-.65-.95-1.5-.95-2.4V3.8c0-.55.45-1 1-1Z" fill="#ffd52a" stroke="#1c1712" stroke-width="1.35" stroke-linejoin="round"/><path d="M12 15.25V21.1" stroke="#1c1712" stroke-width="1.85" stroke-linecap="round"/></svg></span>`;
 }
 function noteCheckSvg(){
-  return`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.5 10 17l8.5-9.5" fill="none" stroke="#1c1712" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  return`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.2 12.6 9.8 17.2 18.8 6.8" fill="none" stroke="#1c1712" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
 function noteChecklistHtml(note,editing){
   const rows=(note.checklist||[]).map((item,idx)=>{
