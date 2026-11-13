@@ -801,6 +801,26 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
       0 2px 4px rgba(40,28,12,.12);
   }
   body.notes-active-v318 #notes #toggleAddNote:active{opacity:.86;transform:translateY(1px)}
+  /* Notes-only Exit Demo Mode: solid slate pill (no green glow). */
+  body.notes-active-v318 .demo183.is-demo-active{
+    background:#0E1220;
+    border:1px solid transparent;
+    border-color:transparent;
+    color:#f7f3ea;
+    backdrop-filter:none;-webkit-backdrop-filter:none;
+    animation:none;opacity:1;will-change:auto;
+    box-shadow:0 4px 12px rgba(14,18,32,.28),0 1px 3px rgba(14,18,32,.18);
+  }
+  body.notes-active-v318 .demo183.is-demo-active::before,
+  body.notes-active-v318 .demo183.is-demo-active::after{
+    content:none;display:none;animation:none;box-shadow:none;border:0;background:transparent;
+  }
+  body.notes-active-v318 .demo183.is-demo-active .demo183-pulse{
+    color:#f7f3ea;
+  }
+  body.notes-active-v318 .demo183.is-demo-active .demo183-exit-icon{
+    stroke:#f7f3ea;
+  }
   body.notes-active-v318 #notes #addNoteCard{
     position:relative;z-index:6;margin:0 0 12px;
   }
