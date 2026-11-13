@@ -801,7 +801,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
       0 2px 4px rgba(40,28,12,.12);
   }
   body.notes-active-v318 #notes #toggleAddNote:active{opacity:.86;transform:translateY(1px)}
-  /* Notes-only Exit Demo Mode: outline pill, black label opacity pulse. */
+  /* Notes-only Exit Demo Mode: plain outline pill, static black label. */
   body.notes-active-v318 .demo183.is-demo-active{
     background:transparent;
     border:1.5px solid #1c1712;
@@ -815,14 +815,9 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.notes-active-v318 .demo183.is-demo-active::after{
     content:none;display:none;animation:none;box-shadow:none;border:0;background:transparent;
   }
-  @keyframes notesExitDemoPulse{
-    0%,100%{opacity:1}
-    50%{opacity:0}
-  }
   body.notes-active-v318 .demo183.is-demo-active .demo183-pulse{
     color:#1c1712;
-    animation:notesExitDemoPulse 1.8s ease-in-out infinite;
-    will-change:opacity;
+    animation:none;opacity:1;
   }
   body.notes-active-v318 .demo183.is-demo-active .demo183-exit-icon{
     stroke:currentColor;
