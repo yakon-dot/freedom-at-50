@@ -728,6 +728,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   transform:rotate(45deg);transition:transform .2s ease;
 }
 #pension .pension-demo-intro[open] .pension-demo-total::after{transform:rotate(225deg)}
+#pension .pension-demo-intro .pension-demo-total::after{border-color:#142019}
 #pension .pension-demo-intro:not([open]) .pension-demo-total{margin-bottom:0}
 #pension .pension-demo-intro .pension-demo-total:focus-visible{outline:2px solid var(--gold);outline-offset:4px;border-radius:4px}
 @media(prefers-reduced-motion:reduce){#pension .pension-demo-intro .pension-demo-total::after{transition:none}}
@@ -1986,8 +1987,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.pension-active-v315 #pension .pension-demo-intro{
     display:block;margin:0 0 12px;padding:14px 15px 13px;
-    border:1px solid rgba(220,190,150,.18);border-left:5px solid #8BAE95;border-radius:18px;
-    background:rgba(18,20,24,.14);
+    border:1px solid #8BAE95;border-radius:18px;
+    background:#8BAE95;
     backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
     box-shadow:none;
   }
@@ -1998,14 +1999,14 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.pension-active-v315 #pension .pension-demo-intro:not([open]) .pension-demo-total{margin-bottom:0}
   body.pension-active-v315 #pension .pension-demo-total span{
-    font-size:12px;font-weight:600;color:rgba(190,188,182,.58);
+    font-size:12px;font-weight:600;color:#142019;
   }
   body.pension-active-v315 #pension .pension-demo-total strong{
     flex:0 0 auto;font-size:22px;line-height:1;font-weight:720;
-    letter-spacing:-.025em;color:rgba(236,232,224,.84);
+    letter-spacing:-.025em;color:#101813;
   }
   body.pension-active-v315 #pension .pension-demo-intro p{
-    margin:0;font-size:13px;line-height:1.48;color:rgba(200,198,192,.62);
+    margin:0;font-size:13px;line-height:1.48;color:#203027;
   }
   body.pension-active-v315 #pension .pension-actions{justify-content:flex-end;margin:0 0 clamp(6px,1vh,10px)}
   body.pension-active-v315 #pension #pensionList{margin-top:clamp(18px,3.5vh,32px);gap:18px}
