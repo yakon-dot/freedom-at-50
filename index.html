@@ -1994,8 +1994,26 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.pension-active-v315 #pension .pension-demo-intro::before{display:none}
   body.pension-active-v315 #pension .pension-demo-total{
     display:flex;align-items:baseline;justify-content:space-between;gap:14px;
-    border-bottom:3px solid #8BAE95;padding-bottom:12px;
+    position:relative;padding-bottom:15px;
     margin-bottom:8px;
+  }
+  /* Grow the sage rule from left to right whenever the Pension page opens. */
+  body.pension-active-v315 #pension .pension-demo-total::before{
+    content:"";position:absolute;left:0;right:0;bottom:0;height:3px;
+    background:#8BAE95;border-radius:3px;transform-origin:left center;
+    transform:scaleX(1);pointer-events:none;
+  }
+  body.pension-active-v315 #pension.active .pension-demo-total::before{
+    animation:pensionTotalLineGrow .85s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes pensionTotalLineGrow{
+    from{transform:scaleX(0)}
+    to{transform:scaleX(1)}
+  }
+  @media(prefers-reduced-motion:reduce){
+    body.pension-active-v315 #pension.active .pension-demo-total::before{
+      animation:none;transform:scaleX(1);
+    }
   }
   body.pension-active-v315 #pension .pension-demo-intro:not([open]) .pension-demo-total{margin-bottom:0}
   body.pension-active-v315 #pension .pension-demo-total span{
