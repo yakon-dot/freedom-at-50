@@ -762,8 +762,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.notes-active-v318 .app>main{padding-top:0;overscroll-behavior-y:none}
   body.notes-active-v318 #notes{
     position:relative;z-index:5;
-    /* First card starts clearly below the fixed Add note button (now under the yellow paper). */
-    padding:calc(env(safe-area-inset-top,0px) + 76vw + 52px) 16px calc(180px + var(--safe-bottom));
+    /* Compact stack: paper → ~14px → Add note → ~22px → first card. */
+    padding:calc(env(safe-area-inset-top,0px) + 61.5vw + 72px) 16px calc(180px + var(--safe-bottom));
     min-height:calc(100dvh + 75vw);
   }
   body.notes-active-v318 #notes .notes-hero{
@@ -785,7 +785,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     position:fixed;z-index:3;
     /* Align with note cards: main 18px + #notes 16px horizontal inset. */
     right:34px;
-    top:calc(env(safe-area-inset-top,0px) + 76vw);
+    /* ~14px below the yellow scrap bottom (~61.5vw). */
+    top:calc(env(safe-area-inset-top,0px) + 61.5vw + 14px);
     display:flex;justify-content:flex-end;align-items:center;
     margin:0;pointer-events:none;
   }
