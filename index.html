@@ -690,6 +690,7 @@ html:has(#freedomMakeItYours.is-present:not([hidden])) body{
 <link rel="preload" as="image" href="./journey-wallpaper.png?v=3">
 <link rel="preload" as="image" href="./goals-wallpaper.png">
 <link rel="preload" as="image" href="./pension-wallpaper.png?v=3">
+<link rel="preload" as="image" href="./notes-wallpaper.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Freedom at 50 — Web app v1.8.6.2.2.2</title>
@@ -703,13 +704,13 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 /* Short guidance shown only when a section contains no cards. */
 .freedom-list-empty{margin:14px 0 8px;padding:14px 4px;font-size:14px;line-height:1.5;color:rgba(225,225,219,.78)}
 .success-copy{color:#c9decf;font-size:14px;line-height:1.5;margin:12px 0 0}
-.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(12,13,15,.96);backdrop-filter:blur(18px);border-top:1px solid #292c31;padding:8px 8px calc(8px + var(--safe-bottom));display:grid;grid-template-columns:repeat(5,1fr);gap:3px}.nav-btn{border:0;background:transparent;color:#9799a2;border-radius:15px;min-height:58px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;-webkit-tap-highlight-color:transparent}.nav-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-btn.active{color:#f5f4f0;background:transparent}
+.bottom-nav{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(12,13,15,.96);backdrop-filter:blur(18px);border-top:1px solid #292c31;padding:8px 8px calc(8px + var(--safe-bottom));display:grid;grid-template-columns:repeat(6,1fr);gap:2px}.nav-btn{border:0;background:transparent;color:#9799a2;border-radius:15px;min-height:58px;padding:6px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;-webkit-tap-highlight-color:transparent}.nav-btn svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nav-btn.active{color:#f5f4f0;background:transparent}
 /* Active tab: solid yellow circle and black icon, with original grey inactive tabs */
 .nav-btn .nav-icon-wrap{width:34px;height:34px;flex:0 0 34px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:transparent;color:inherit}
 .nav-btn .nav-icon-wrap svg{flex:0 0 21px}
 .nav-btn .nav-icon-wrap .nav-home-brand-icon{width:28px;height:28px;flex:0 0 28px}
 .nav-btn.active .nav-icon-wrap{background:#ffd52a;color:#101010}
-.nav-btn{min-height:66px;padding:4px 3px}
+.nav-btn{min-height:64px;padding:3px 1px;font-size:9px}.nav-btn .nav-icon-wrap{width:32px;height:32px;flex:0 0 32px}.nav-btn .nav-icon-wrap svg{flex:0 0 19px;width:19px;height:19px}
 .nav-btn.active>span:last-child{color:#f5f4f0}.save-note{position:fixed;left:50%;bottom:calc(86px + var(--safe-bottom));transform:translate(-50%,14px);background:#f0ead0;color:#17150d;padding:10px 14px;border-radius:999px;font-weight:700;font-size:12px;opacity:0;pointer-events:none;transition:.18s;z-index:80}.save-note.show{opacity:1;transform:translate(-50%,0)}
 .nav-home-brand-icon{display:block;width:28px;height:28px;flex:0 0 28px;background:currentColor;-webkit-mask:url("./assets/freedom-logo-m-peak.png") center/contain no-repeat;mask:url("./assets/freedom-logo-m-peak.png") center/contain no-repeat}
 
@@ -741,6 +742,214 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .mini-btn:active{transform:translateY(1px)}
 .add-journey-card[hidden]{display:none}
 .empty-archive{color:var(--muted);font-size:14px;line-height:1.55;margin:0;text-align:center;padding:28px 12px}
+
+
+  /* —— Notes page (light lined wallpaper + glass cards) —— */
+  body.notes-active-v318{background:transparent}
+  html:has(body.notes-active-v318){background:#f0d8c2!important}
+  body.notes-active-v318::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background-color:#f0d8c2;
+    background-image:url("./notes-wallpaper.jpg");
+    background-position:center top;
+    background-size:100% auto;
+    background-repeat:no-repeat;
+  }
+  body.notes-active-v318 .app::before{display:none}
+  body.notes-active-v318 .app{position:relative;z-index:1;background:transparent}
+  body.notes-active-v318 .app>header{display:none}
+  body.notes-active-v318 .app>main{padding-top:0}
+  body.notes-active-v318 #notes{
+    position:relative;z-index:1;
+    padding:calc(env(safe-area-inset-top,0px) + 8px) 18px calc(112px + var(--safe-bottom));
+  }
+  body.notes-active-v318 #notes .notes-hero{
+    position:relative;
+    /* Wallpaper yellow scrap ends ~237px at 390-wide; keep cards below it. */
+    min-height:clamp(220px,34vh,268px);
+    padding:clamp(168px,22.5vw,196px) 28px clamp(18px,3vh,28px);
+    text-align:center;box-sizing:border-box;
+    pointer-events:none;
+  }
+  body.notes-active-v318 #notes .notes-hero-desc{
+    margin:0 auto;max-width:13.8rem;
+    font-size:12.5px;line-height:1.4;font-weight:500;
+    color:#2a2218;text-align:center;
+  }
+  body.notes-active-v318 #notes .notes-actions{
+    display:flex;justify-content:flex-end;align-items:center;
+    margin:0 0 clamp(10px,1.6vh,16px);
+  }
+  body.notes-active-v318 #notes #toggleAddNote{
+    border:0;background:#ffd52a;color:#101010;
+    padding:9px 14px;border-radius:999px;font-size:13px;font-weight:760;
+    box-shadow:0 4px 14px rgba(40,28,12,.12);
+  }
+  body.notes-active-v318 #notes #toggleAddNote:active{opacity:.86}
+  body.notes-active-v318 #notes #notesList{display:grid;gap:14px}
+  body.notes-active-v318 #notes .note-card{
+    position:relative;overflow:hidden;
+    border:1px solid rgba(80,55,30,.12);
+    border-radius:22px;
+    padding:14px 14px 13px 16px;
+    background:rgba(255,252,246,.72);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    box-shadow:0 8px 22px rgba(60,40,20,.10);
+    color:#1c1712;
+  }
+  body.notes-active-v318 #notes .note-card::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
+    background:var(--note-accent,#e7cf63);
+  }
+  body.notes-active-v318 #notes .note-card[data-color="yellow"]{--note-accent:#e7cf63}
+  body.notes-active-v318 #notes .note-card[data-color="peach"]{--note-accent:#efcbaa}
+  body.notes-active-v318 #notes .note-card[data-color="sage"]{--note-accent:#84bd91}
+  body.notes-active-v318 #notes .note-card-head{
+    display:flex;align-items:flex-start;gap:8px;cursor:pointer;
+    -webkit-tap-highlight-color:transparent;
+  }
+  body.notes-active-v318 #notes .note-head-main{min-width:0;flex:1}
+  body.notes-active-v318 #notes .note-title-row{
+    display:flex;align-items:center;gap:7px;min-width:0;
+  }
+  body.notes-active-v318 #notes .note-pin-icon{
+    flex:0 0 auto;width:14px;height:14px;color:#e7cf63;
+  }
+  body.notes-active-v318 #notes .note-pin-icon svg{width:14px;height:14px;display:block;fill:currentColor}
+  body.notes-active-v318 #notes .note-title{
+    margin:0;font-size:16px;font-weight:740;letter-spacing:-.02em;
+    color:#1c1712;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+  body.notes-active-v318 #notes .note-preview{
+    margin:5px 0 0;font-size:13px;line-height:1.4;color:rgba(40,32,24,.68);
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  }
+  body.notes-active-v318 #notes .note-card:not(.is-collapsed) .note-preview{display:none}
+  body.notes-active-v318 #notes .note-meta{
+    display:flex;align-items:center;gap:6px;flex:0 0 auto;margin-left:auto;padding-top:2px;
+  }
+  body.notes-active-v318 #notes .note-date{
+    font-size:11px;font-weight:600;color:rgba(40,32,24,.52);white-space:nowrap;
+  }
+  body.notes-active-v318 #notes .note-chevron{
+    display:grid;place-items:center;width:26px;height:26px;padding:0;border:0;
+    background:transparent;color:rgba(40,32,24,.55);transition:transform var(--motion-chevron) ease;
+  }
+  body.notes-active-v318 #notes .note-chevron svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  body.notes-active-v318 #notes .note-card:not(.is-collapsed) .note-chevron{transform:rotate(180deg)}
+  body.notes-active-v318 #notes .note-body-wrap{margin-top:0}
+  body.notes-active-v318 #notes .note-body{margin-top:12px;padding-bottom:2px}
+  body.notes-active-v318 #notes .note-field{margin-top:10px}
+  body.notes-active-v318 #notes .note-field:first-child{margin-top:0}
+  body.notes-active-v318 #notes .note-field label{
+    margin:0 0 5px;color:rgba(40,32,24,.58);font-size:12px;font-weight:650;
+  }
+  body.notes-active-v318 #notes .note-field input,
+  body.notes-active-v318 #notes .note-field textarea{
+    width:100%;margin:0;background:rgba(255,255,255,.72);color:#1c1712;
+    border:1px solid rgba(80,55,30,.16);border-radius:12px;padding:11px 12px;font-size:15px;
+  }
+  body.notes-active-v318 #notes .note-field textarea{min-height:88px;resize:vertical;line-height:1.45}
+  body.notes-active-v318 #notes .note-field input:focus,
+  body.notes-active-v318 #notes .note-field textarea:focus{
+    border-color:rgba(231,207,99,.7);box-shadow:0 0 0 3px rgba(231,207,99,.18);outline:none;
+  }
+  body.notes-active-v318 #notes .note-color-row{
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;
+  }
+  body.notes-active-v318 #notes .note-color-label{
+    font-size:12px;font-weight:650;color:rgba(40,32,24,.58);margin-right:2px;
+  }
+  body.notes-active-v318 #notes .note-color-btn{
+    width:26px;height:26px;border-radius:50%;border:2px solid rgba(40,32,24,.14);
+    padding:0;cursor:pointer;background:var(--swatch);
+  }
+  body.notes-active-v318 #notes .note-color-btn[data-color="yellow"]{--swatch:#e7cf63}
+  body.notes-active-v318 #notes .note-color-btn[data-color="peach"]{--swatch:#efcbaa}
+  body.notes-active-v318 #notes .note-color-btn[data-color="sage"]{--swatch:#84bd91}
+  body.notes-active-v318 #notes .note-color-btn.is-active{
+    border-color:#1c1712;box-shadow:0 0 0 2px rgba(255,255,255,.7);
+  }
+  body.notes-active-v318 #notes .note-checklist{display:grid;gap:8px;margin-top:12px}
+  body.notes-active-v318 #notes .note-check-row{
+    display:flex;align-items:center;gap:10px;
+  }
+  body.notes-active-v318 #notes .note-check-box{
+    flex:0 0 22px;width:22px;height:22px;border-radius:5px;
+    border:1.6px solid rgba(40,32,24,.55);background:transparent;
+    display:grid;place-items:center;padding:0;cursor:pointer;color:#1c1712;
+  }
+  body.notes-active-v318 #notes .note-check-box svg{width:13px;height:13px;opacity:0}
+  body.notes-active-v318 #notes .note-check-box.is-checked{
+    background:#e7cf63;border-color:#e7cf63;
+  }
+  body.notes-active-v318 #notes .note-check-box.is-checked svg{opacity:1}
+  body.notes-active-v318 #notes .note-check-text{
+    flex:1;min-width:0;margin:0;background:transparent;border:0;border-bottom:1px solid transparent;
+    color:#1c1712;font-size:14px;line-height:1.35;padding:4px 0;outline:none;
+  }
+  body.notes-active-v318 #notes .note-check-text:focus{border-bottom-color:rgba(80,55,30,.22)}
+  body.notes-active-v318 #notes .note-check-row.is-checked .note-check-text{
+    text-decoration:line-through;color:rgba(40,32,24,.48);
+  }
+  body.notes-active-v318 #notes .note-check-remove{
+    flex:0 0 auto;border:0;background:transparent;color:rgba(40,32,24,.42);
+    font-size:18px;line-height:1;padding:2px 6px;cursor:pointer;
+  }
+  body.notes-active-v318 #notes .note-add-check{
+    margin-top:10px;border:1px dashed rgba(80,55,30,.28);background:rgba(255,255,255,.35);
+    color:#1c1712;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;
+  }
+  body.notes-active-v318 #notes .note-footer{
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;
+  }
+  body.notes-active-v318 #notes .note-footer .mini-btn{
+    border-color:rgba(80,55,30,.22);color:#1c1712;background:rgba(255,255,255,.45);
+  }
+  body.notes-active-v318 #notes .note-footer .mini-btn.danger{
+    border-color:rgba(160,60,50,.35);color:#8a2f28;
+  }
+  body.notes-active-v318 #notes .note-footer .mini-btn.is-pinned{
+    border-color:rgba(231,207,99,.7);color:#6a560f;background:rgba(231,207,99,.28);
+  }
+  body.notes-active-v318 #notes .notes-empty{
+    margin:8px 2px 0;padding:18px 8px;text-align:center;
+    font-size:14px;line-height:1.5;color:rgba(40,32,24,.58);
+  }
+  body.notes-active-v318 #notes .add-note-card{
+    border:1px solid rgba(80,55,30,.14);
+    border-radius:22px;
+    padding:16px;
+    background:rgba(255,252,246,.78);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    box-shadow:0 8px 22px rgba(60,40,20,.10);
+    color:#1c1712;margin-bottom:14px;
+  }
+  body.notes-active-v318 #notes .add-note-card[hidden]{display:none!important}
+  body.notes-active-v318 #notes .add-note-head{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px;
+  }
+  body.notes-active-v318 #notes .add-note-head h2{margin:0;font-size:18px;color:#1c1712}
+  body.notes-active-v318 #notes .add-note-close{
+    border:0;background:transparent;color:rgba(40,32,24,.55);font-size:22px;line-height:1;cursor:pointer;
+  }
+  body.notes-active-v318 #notes .add-note-card .empty-note{color:rgba(40,32,24,.58)}
+  body.notes-active-v318 #notes .add-note-card label{color:rgba(40,32,24,.58)}
+  body.notes-active-v318 #notes .add-note-card input,
+  body.notes-active-v318 #notes .add-note-card textarea{
+    background:rgba(255,255,255,.78);color:#1c1712;border:1px solid rgba(80,55,30,.16);
+  }
+  body.notes-active-v318 #notes .add-note-card .save-btn{
+    background:#ffd52a;color:#101010;margin-top:14px;
+  }
+  body.notes-active-v318 #notes .add-note-card label.note-color-btn{
+    width:26px;height:26px;border-radius:50%;border:2px solid rgba(40,32,24,.14);
+    display:inline-block;background:var(--swatch);cursor:pointer;margin:0;
+  }
+  body.notes-active-v318 #notes .add-note-card label.note-color-btn:has(input:checked),
+  body.notes-active-v318 #notes .add-note-card label.note-color-btn.is-active{
+    border-color:#1c1712;box-shadow:0 0 0 2px rgba(255,255,255,.7);
+  }
 
   body.archive-active-v316{background:transparent}
   html:has(body.archive-active-v316){background:#070809}
@@ -4528,6 +4737,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 <section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomGoalsCompanionMsgHost" aria-live="polite" hidden></div>
 <div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><div class="add-goal-head"><h2>Add a new goal</h2><button class="add-goal-close" id="closeAddGoal" type="button" aria-label="Close">×</button></div><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>A little today, more freedom tomorrow.</p></div><details class="card pension-demo-intro" id="pensionDemoIntro"><summary class="pension-demo-total"><span>Combined pension value</span><strong id="pensionDemoCombinedValue">€58,000</strong></summary><p>Keep track of your pensions in one place, including those from previous jobs. Update their values when you receive a statement to see how your retirement savings are developing.</p></details><div class="freedom-companion-msg-host is-page-response" id="freedomPensionCompanionMsgHost" aria-live="polite" hidden></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
+<section class="page" id="notes"><div class="notes-hero"><p class="notes-hero-desc">A little space for things worth remembering.</p></div><div class="notes-actions"><button class="mini-btn" id="toggleAddNote" type="button">＋ Add note</button></div><article class="add-note-card" id="addNoteCard" hidden><div class="add-note-head"><h2>Add a new note</h2><button class="add-note-close" id="closeAddNote" type="button" aria-label="Close">×</button></div><p class="empty-note">Leave yourself a reminder, a thought, or a checklist.</p><label for="newNoteTitle">Title (optional)</label><input id="newNoteTitle" type="text" placeholder="e.g. Holiday ideas"><label for="newNoteBody">Note</label><textarea id="newNoteBody" placeholder="Write anything worth remembering"></textarea><div class="note-color-row" style="margin-top:12px"><span class="note-color-label">Colour</span><label class="note-color-btn" style="--swatch:#e7cf63"><input type="radio" name="newNoteColor" value="yellow" checked hidden aria-label="Yellow"></label><label class="note-color-btn" style="--swatch:#efcbaa"><input type="radio" name="newNoteColor" value="peach" hidden aria-label="Peach"></label><label class="note-color-btn" style="--swatch:#84bd91"><input type="radio" name="newNoteColor" value="sage" hidden aria-label="Sage"></label></div><button class="save-btn" id="addNote" type="button">Add Note</button></article><div class="stack" id="notesList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="victories"><div class="victories-page"><div class="victories-confetti" aria-hidden="true"><span class="is-sparkle" style="left:18%;top:10%;background:#ffb078"></span><span class="is-diamond" style="left:34%;top:8%;background:#ff3f9b"></span><span class="is-confetti" style="left:52%;top:12%;background:#a855d8;transform:rotate(-28deg)"></span><span class="is-sparkle" style="left:66%;top:9%;background:#ff8a45"></span><span class="is-diamond" style="left:78%;top:14%;background:#d060c8"></span><span class="is-confetti" style="left:24%;top:16%;background:#ff4c97;transform:rotate(22deg)"></span><span class="is-sparkle" style="left:42%;top:18%;background:#efcbaa"></span><span class="is-diamond" style="left:58%;top:17%;background:#ffb078"></span><span class="is-confetti" style="left:72%;top:20%;background:#e889b4;transform:rotate(-16deg)"></span><span class="is-sparkle" style="left:12%;top:22%;background:#a855d8"></span><span class="is-diamond" style="left:86%;top:22%;background:#ff8a45"></span><span class="is-confetti" style="left:30%;top:28%;background:#ff3f9b;transform:rotate(12deg)"></span><span class="is-sparkle" style="left:48%;top:30%;background:#d060c8"></span><span class="is-diamond" style="left:64%;top:27%;background:#ff4c97"></span><span class="is-confetti" style="left:16%;top:34%;background:#ffb078;transform:rotate(-20deg)"></span><span class="is-sparkle" style="left:38%;top:36%;background:#ff8a45"></span><span class="is-diamond" style="left:55%;top:38%;background:#e889b4"></span><span class="is-confetti" style="left:70%;top:35%;background:#a855d8;transform:rotate(18deg)"></span><span class="is-sparkle" style="left:82%;top:40%;background:#ff3f9b"></span><span class="is-diamond" style="left:22%;top:42%;background:#efcbaa"></span><span class="is-confetti" style="left:44%;top:44%;background:#ff8a45;transform:rotate(-10deg)"></span><span class="is-sparkle" style="left:60%;top:46%;background:#d060c8"></span><span class="is-diamond" style="left:76%;top:48%;background:#ffb078"></span><span class="is-confetti" style="left:10%;top:48%;background:#ff4c97;transform:rotate(26deg)"></span><span class="is-sparkle" style="left:33%;top:50%;background:#a855d8"></span><span class="is-diamond" style="left:50%;top:52%;background:#e889b4"></span><span class="is-confetti" style="left:68%;top:51%;background:#ff3f9b;transform:rotate(-14deg)"></span><span class="is-sparkle" style="left:88%;top:50%;background:#ff8a45"></span></div><header class="victories-hero"><h1 class="victories-title">Victories<span class="victories-title-trophy" aria-hidden="true">🏆</span></h1><p class="victories-subtitle">The things you finished along the way.</p></header><div class="victories-sections" id="victoriesSections"></div></div></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
@@ -4551,6 +4761,9 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 </button>
 <button class="nav-btn" data-page="pension" type="button">
   <span class="nav-icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-3.8 0-6-2.1-6-5.8 3.8 0 6 2.1 6 5.8Z"/><path d="M12 11c3.8 0 6-2.1 6-5.8-3.8 0-6 2.1-6 5.8Z"/><path d="M8.5 21h7"/></svg></span><span>Pension</span>
+</button>
+<button class="nav-btn" data-page="notes" type="button">
+  <span class="nav-icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8.5L19 7v13.5H7Z"/><path d="M15.5 3.5V7H19"/><path d="M9.5 11h5M9.5 14.5h5M9.5 18h3.5"/></svg></span><span>Notes</span>
 </button>
 </nav>
 <div class="save-note" id="saveNote">Saved locally ✓</div>
@@ -6044,6 +6257,7 @@ const FREEDOM_WALLPAPERS={
   journey:"./journey-wallpaper.png?v=3",
   goals:"./goals-wallpaper.png",
   pension:"./pension-wallpaper.png?v=3",
+  notes:"./notes-wallpaper.jpg",
   archive:"./archive-wallpaper.png"
 };
 const freedomWallpapers={
@@ -6054,11 +6268,11 @@ const freedomWallpapers={
     if("decoding" in img)img.decoding="async";
     img.src=url;
   },
-  preloadAll(){["overview","journey","goals","pension"].forEach(id=>this.preload(id));}
+  preloadAll(){["overview","journey","goals","pension","notes"].forEach(id=>this.preload(id));}
 };
 freedomWallpapers.preloadAll();
 const HOUSE_POCKET_START=1000;
-const defaults={archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},goalNames:{},goalTargets:{houseFund:50000,holidayFund:0,personalSavings:5000},goalCompletionExperienced:{},goalHasTarget:{houseFund:true,holidayFund:false,personalSavings:true},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,housePocketArchiveRemoved:false,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensions:[{id:"pension-1",name:"Pension",value:48951.79,personal:342.50,employer:242.50,collapsed:false,showInOverview:true}]};
+const defaults={archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],notes:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},goalNames:{},goalTargets:{houseFund:50000,holidayFund:0,personalSavings:5000},goalCompletionExperienced:{},goalHasTarget:{houseFund:true,holidayFund:false,personalSavings:true},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,housePocketArchiveRemoved:false,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensions:[{id:"pension-1",name:"Pension",value:48951.79,personal:342.50,employer:242.50,collapsed:false,showInOverview:true}]};
 let state;try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");state=saved&&saved.loans?Object.assign({},defaults,saved):JSON.parse(JSON.stringify(defaults));}catch(e){state=JSON.parse(JSON.stringify(defaults));}
 let demoMode=false;
 let realStateSnapshot=null;
@@ -6104,7 +6318,8 @@ function buildCanonicalDemoState(){
       {id:"pension-demo-previous",name:"Previous employer pension",value:18500,personal:0,employer:0,collapsed:true,showInOverview:true},
       {id:"pension-demo-current",name:"Current employer pension",value:32000,personal:200,employer:200,collapsed:true,showInOverview:true},
       {id:"pension-demo-personal",name:"Personal pension",value:7500,personal:0,employer:0,collapsed:true,showInOverview:true}
-    ]
+    ],
+    notes:buildDemoNotes()
   }));
 }
 try{
@@ -6120,6 +6335,7 @@ if(!Array.isArray(state.archivedJourneys))state.archivedJourneys=[];
 if(!Array.isArray(state.archivedGoals))state.archivedGoals=[];
 if(!Array.isArray(state.archivedPensions))state.archivedPensions=[];
 if(!Array.isArray(state.victories))state.victories=[];
+if(!Array.isArray(state.notes))state.notes=[];
 if(!state.goalCompletionExperienced||typeof state.goalCompletionExperienced!=="object")state.goalCompletionExperienced={};
 if(!Array.isArray(state.customGoals))state.customGoals=[];
 if(state.pensionValue!=null||state.pensionPersonal!=null||state.pensionEmployer!=null){
@@ -7194,6 +7410,7 @@ function buildFreshUserState(){
     holidayMonthly:0,
     personalSavings:0,
     pensions:[],
+    notes:[],
     // Clean-install marker: Overview must not treat absent House Pocket as €1,000 returned / 100% progress.
     overviewExcludeHousePocket:true
   };
@@ -7201,7 +7418,7 @@ function buildFreshUserState(){
 function resetFreedomFreshStart(){
   // Development/testing only: wipe Freedom user/onboarding/demo storage, write a clean empty
   // user state, and reload. Internal-test permission is preserved separately.
-  const ok=window.confirm("Reset Freedom on this device?\n\nThis permanently deletes your local Freedom setup and data on this device — onboarding, companion, journeys, goals, pensions, archive, victories, and any Demo session.\n\nYou will start again as a brand-new user.\n\nCancel keeps everything as it is.");
+  const ok=window.confirm("Reset Freedom on this device?\n\nThis permanently deletes your local Freedom setup and data on this device: onboarding, companion, journeys, goals, pensions, notes, archive, victories, and any Demo session.\n\nYou will start again as a brand-new user.\n\nCancel keeps everything as it is.");
   if(!ok)return;
   clearFreedomStorageKeys();
   try{localStorage.setItem(KEY,JSON.stringify(buildFreshUserState()));}catch(e){}
@@ -8026,6 +8243,7 @@ function page(id){
   document.body.classList.toggle("journey-active-v313",id==="journey");
   document.body.classList.toggle("goals-active-v314",id==="goals");
   document.body.classList.toggle("pension-active-v315",id==="pension");
+  document.body.classList.toggle("notes-active-v318",id==="notes");
   if(id==="archiveHub")id="archive"; /* gateway removed; keep old links working */
   document.body.classList.toggle("archive-active-v316",id==="archive");
   document.body.classList.toggle("victories-active-v317",id==="victories");
@@ -8033,7 +8251,7 @@ function page(id){
   if(window.FreedomCompanionFirstCreated&&typeof window.FreedomCompanionFirstCreated.restoreForPage==="function")window.FreedomCompanionFirstCreated.restoreForPage(id);
   if(id!=="goals")resetGoalSectionUiState();
   if(id!=="journey")resetLoanCorrectBalanceUiState();
-  if(["overview","journey","goals","pension"].includes(id))freedomWallpapers.preload(id);
+  if(["overview","journey","goals","pension","notes"].includes(id))freedomWallpapers.preload(id);
   if(id==="archive"||id==="victories")freedomWallpapers.preload("archive");
   if(id==="pension" && typeof closeAddPensionForm==="function") closeAddPensionForm();
   if(!window.__freedomIgnoreHistory){
@@ -8098,6 +8316,16 @@ function page(id){
           setTimeout(()=>{sec.classList.remove("freedom-card-enter");sec.style.removeProperty("--motion-delay")},freedomMotion.enterDuration()+delay+80);
         });
       });
+    }
+    handleDemoPageVisit(id);
+    return;
+  }
+  if(id==="notes"){
+    ensureNotesArray();
+    renderNotes();
+    if(freedomMotion.activePage!=="notes"){
+      freedomMotion.activePage="notes";
+      freedomMotion.pageEnter("notes");
     }
     handleDemoPageVisit(id);
     return;
@@ -9986,6 +10214,293 @@ function renderArchive(){
     state.archivedPensions.splice(i,1);persist();render();
   }));
 }
+
+function noteAccent(color){
+  const c=String(color||"yellow");
+  return c==="peach"||c==="sage"?c:"yellow";
+}
+function formatNoteDate(iso){
+  const d=iso?new Date(iso):null;
+  if(!d||isNaN(d.getTime()))return"";
+  return d.toLocaleDateString("en-IE",{day:"numeric",month:"short"});
+}
+function notePreviewText(note){
+  const body=(note.body||"").trim();
+  if(body){
+    const line=body.split(/\n/).map(s=>s.trim()).filter(Boolean)[0]||body;
+    return line.length>78?line.slice(0,78)+"...":line;
+  }
+  const items=(note.checklist||[]).map(x=>(x.text||"").trim()).filter(Boolean);
+  if(items.length){
+    const checked=(note.checklist||[]).filter(x=>x&&x.checked).length;
+    return items.length===1?items[0]:`${checked}/${items.length} checklist items`;
+  }
+  return"";
+}
+function noteDisplayTitle(note){
+  const title=(note.title||"").trim();
+  if(title)return title;
+  const body=(note.body||"").trim();
+  if(body){
+    const line=body.split(/\n/)[0].trim();
+    return line.length>42?line.slice(0,42)+"…":line;
+  }
+  const items=(note.checklist||[]).map(x=>(x.text||"").trim()).filter(Boolean);
+  if(items.length)return items[0].length>42?items[0].slice(0,42)+"…":items[0];
+  return"Untitled note";
+}
+function newNoteId(){
+  return"note-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,8);
+}
+function newCheckId(){
+  return"chk-"+Date.now().toString(36)+"-"+Math.random().toString(36).slice(2,7);
+}
+function ensureNotesArray(){
+  if(!Array.isArray(state.notes))state.notes=[];
+  state.notes.forEach(n=>{
+    if(!n||typeof n!=="object")return;
+    if(!n.id)n.id=newNoteId();
+    if(n.title===undefined)n.title="";
+    if(n.body===undefined)n.body="";
+    n.color=noteAccent(n.color);
+    n.pinned=!!n.pinned;
+    if(!n.createdAt)n.createdAt=new Date().toISOString();
+    if(n.collapsed===undefined)n.collapsed=true;
+    if(!Array.isArray(n.checklist))n.checklist=[];
+    n.checklist.forEach(item=>{
+      if(!item.id)item.id=newCheckId();
+      if(item.text===undefined)item.text="";
+      item.checked=!!item.checked;
+    });
+  });
+}
+function sortedNotes(){
+  ensureNotesArray();
+  return state.notes.slice().sort((a,b)=>{
+    if(!!a.pinned!==!!b.pinned)return a.pinned?-1:1;
+    const ta=a.createdAt?new Date(a.createdAt).getTime():0;
+    const tb=b.createdAt?new Date(b.createdAt).getTime():0;
+    return tb-ta;
+  });
+}
+function buildDemoNotes(){
+  return[
+    {
+      id:"demo-note-portugal",title:"Holiday to Portugal",
+      body:"Check flights and accommodation soon.",
+      color:"yellow",pinned:true,collapsed:true,
+      createdAt:demoDaysAgoISO(5),
+      checklist:[]
+    },
+    {
+      id:"demo-note-bills",title:"Things to pay this month",
+      body:"",
+      color:"sage",pinned:false,collapsed:false,
+      createdAt:demoDaysAgoISO(1),
+      checklist:[
+        {id:"demo-chk-rent",text:"Rent",checked:true},
+        {id:"demo-chk-phone",text:"Phone bill",checked:false},
+        {id:"demo-chk-car",text:"Car insurance",checked:false}
+      ]
+    },
+    {
+      id:"demo-note-mom",title:"Send money to mom",
+      body:"€200 for her weekend away.",
+      color:"peach",pinned:false,collapsed:true,
+      createdAt:demoDaysAgoISO(12),
+      checklist:[]
+    }
+  ];
+}
+function notePinSvg(){
+  return`<span class="note-pin-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.5 3.5 20.5 9.5 13 17l-1.5-1.5L9 18.5 5.5 15 8 12.5 6.5 11 14.5 3.5Z"/></svg></span>`;
+}
+function noteCheckSvg(){
+  return`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.5 10 17l8.5-9.5" fill="none" stroke="#1c1712" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function noteChecklistHtml(note){
+  const rows=(note.checklist||[]).map((item,idx)=>`
+    <div class="note-check-row${item.checked?" is-checked":""}" data-note-check-row="${esc(note.id)}" data-check-index="${idx}">
+      <button class="note-check-box${item.checked?" is-checked":""}" type="button" data-note-check-toggle="${esc(note.id)}" data-check-index="${idx}" aria-label="${item.checked?"Uncheck":"Check"} ${esc(item.text||"item")}">${noteCheckSvg()}</button>
+      <input class="note-check-text" type="text" value="${esc(item.text||"")}" data-note-check-text="${esc(note.id)}" data-check-index="${idx}" placeholder="Checklist item" aria-label="Checklist item">
+      <button class="note-check-remove" type="button" data-note-check-remove="${esc(note.id)}" data-check-index="${idx}" aria-label="Remove checklist item">×</button>
+    </div>`).join("");
+  return`<div class="note-checklist" data-note-checklist="${esc(note.id)}">${rows}</div>
+    <button class="note-add-check" type="button" data-note-add-check="${esc(note.id)}">＋ Add checklist item</button>`;
+}
+function noteCardHtml(note){
+  const collapsed=note.collapsed!==false;
+  const title=noteDisplayTitle(note);
+  const preview=notePreviewText(note);
+  const date=formatNoteDate(note.createdAt);
+  const pin=note.pinned?notePinSvg():"";
+  const color=noteAccent(note.color);
+  return`<article class="card note-card${collapsed?" is-collapsed":""}" data-note-id="${esc(note.id)}" data-color="${color}">
+    <div class="note-card-head" data-toggle-note="${esc(note.id)}">
+      <div class="note-head-main">
+        <div class="note-title-row">${pin}<div class="note-title">${esc(title)}</div></div>
+        ${preview?`<p class="note-preview">${esc(preview)}</p>`:""}
+      </div>
+      <div class="note-meta">
+        <span class="note-date">${esc(date)}</span>
+        <button class="note-chevron" type="button" aria-label="Expand or collapse note"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></button>
+      </div>
+    </div>
+    <div class="card-body-wrap note-body-wrap${collapsed?" is-collapsed":""}">
+      <div class="journey-card-body note-body${collapsed?"":" freedom-body-reveal"}">
+        <div class="note-field"><label>Title</label><input type="text" data-note-title="${esc(note.id)}" value="${esc(note.title||"")}" placeholder="Optional title"></div>
+        <div class="note-field"><label>Note</label><textarea data-note-body="${esc(note.id)}" placeholder="Write anything worth remembering">${esc(note.body||"")}</textarea></div>
+        ${noteChecklistHtml(note)}
+        <div class="note-color-row">
+          <span class="note-color-label">Colour</span>
+          <button class="note-color-btn${color==="yellow"?" is-active":""}" type="button" data-note-color="${esc(note.id)}" data-color="yellow" aria-label="Yellow"></button>
+          <button class="note-color-btn${color==="peach"?" is-active":""}" type="button" data-note-color="${esc(note.id)}" data-color="peach" aria-label="Peach"></button>
+          <button class="note-color-btn${color==="sage"?" is-active":""}" type="button" data-note-color="${esc(note.id)}" data-color="sage" aria-label="Sage"></button>
+        </div>
+        <div class="note-footer">
+          <button class="mini-btn${note.pinned?" is-pinned":""}" type="button" data-note-pin="${esc(note.id)}">${note.pinned?"Unpin":"Pin"}</button>
+          <button class="mini-btn danger" type="button" data-note-delete="${esc(note.id)}">Delete</button>
+        </div>
+      </div>
+    </div>
+  </article>`;
+}
+function findNote(id){
+  ensureNotesArray();
+  return state.notes.find(n=>n&&n.id===id)||null;
+}
+function persistNoteField(id,mutator){
+  const note=findNote(id);
+  if(!note)return;
+  mutator(note);
+  persist();
+}
+function renderNotes(){
+  const list=byId("notesList");
+  if(!list)return;
+  ensureNotesArray();
+  const notes=sortedNotes();
+  if(!notes.length){
+    list.innerHTML=`<p class="notes-empty">No notes yet. Tap ＋ Add note to leave something for yourself.</p>`;
+    return;
+  }
+  list.innerHTML=notes.map(noteCardHtml).join("");
+  list.querySelectorAll("[data-toggle-note]").forEach(head=>{
+    head.addEventListener("click",e=>{
+      if(e.target.closest("input,textarea,button.note-check-box,button.note-check-remove,button.note-add-check,button.note-color-btn,button.mini-btn"))return;
+      const id=head.getAttribute("data-toggle-note");
+      const note=findNote(id);
+      if(!note)return;
+      note.collapsed=!(note.collapsed!==false);
+      persist();
+      renderNotes();
+    });
+  });
+  list.querySelectorAll("[data-note-title]").forEach(input=>{
+    input.addEventListener("change",e=>{
+      persistNoteField(e.currentTarget.getAttribute("data-note-title"),n=>{n.title=e.currentTarget.value;});
+      renderNotes();
+    });
+  });
+  list.querySelectorAll("[data-note-body]").forEach(input=>{
+    input.addEventListener("change",e=>{
+      persistNoteField(e.currentTarget.getAttribute("data-note-body"),n=>{n.body=e.currentTarget.value;});
+    });
+  });
+  list.querySelectorAll("[data-note-check-toggle]").forEach(btn=>{
+    btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const id=btn.getAttribute("data-note-check-toggle");
+      const idx=Number(btn.getAttribute("data-check-index"));
+      persistNoteField(id,n=>{
+        if(!n.checklist[idx])return;
+        n.checklist[idx].checked=!n.checklist[idx].checked;
+      });
+      renderNotes();
+    });
+  });
+  list.querySelectorAll("[data-note-check-text]").forEach(input=>{
+    input.addEventListener("change",e=>{
+      const id=e.currentTarget.getAttribute("data-note-check-text");
+      const idx=Number(e.currentTarget.getAttribute("data-check-index"));
+      persistNoteField(id,n=>{
+        if(!n.checklist[idx])return;
+        n.checklist[idx].text=e.currentTarget.value;
+      });
+    });
+  });
+  list.querySelectorAll("[data-note-check-remove]").forEach(btn=>{
+    btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const id=btn.getAttribute("data-note-check-remove");
+      const idx=Number(btn.getAttribute("data-check-index"));
+      persistNoteField(id,n=>{n.checklist.splice(idx,1);});
+      renderNotes();
+    });
+  });
+  list.querySelectorAll("[data-note-add-check]").forEach(btn=>{
+    btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const id=btn.getAttribute("data-note-add-check");
+      persistNoteField(id,n=>{
+        n.checklist.push({id:newCheckId(),text:"",checked:false});
+        n.collapsed=false;
+      });
+      renderNotes();
+      const noteAfter=findNote(id);
+      const lastIdx=noteAfter&&noteAfter.checklist?noteAfter.checklist.length-1:-1;
+      const focusEl=lastIdx>=0?document.querySelector(`[data-note-check-text="${id}"][data-check-index="${lastIdx}"]`):null;
+      if(focusEl)focusEl.focus();
+    });
+  });
+  list.querySelectorAll("[data-note-color]").forEach(btn=>{
+    btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const id=btn.getAttribute("data-note-color");
+      const color=noteAccent(btn.getAttribute("data-color"));
+      persistNoteField(id,n=>{n.color=color;n.collapsed=false;});
+      renderNotes();
+    });
+  });
+  list.querySelectorAll("[data-note-pin]").forEach(btn=>{
+    btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const id=btn.getAttribute("data-note-pin");
+      persistNoteField(id,n=>{n.pinned=!n.pinned;n.collapsed=false;});
+      renderNotes();
+    });
+  });
+  list.querySelectorAll("[data-note-delete]").forEach(btn=>{
+    btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const id=btn.getAttribute("data-note-delete");
+      const note=findNote(id);
+      if(!note)return;
+      const label=noteDisplayTitle(note);
+      if(!confirm(`Delete "${label}"?\n\nThis cannot be undone.`))return;
+      ensureNotesArray();
+      state.notes=state.notes.filter(n=>n.id!==id);
+      persist();
+      renderNotes();
+    });
+  });
+}
+function closeAddNoteForm(){
+  const card=byId("addNoteCard");
+  if(!card)return;
+  card.hidden=true;
+  ["newNoteTitle","newNoteBody"].forEach(id=>{const el=byId(id);if(el)el.value="";});
+  document.querySelectorAll("[name='newNoteColor']").forEach(el=>{el.checked=el.value==="yellow";});
+}
+function openAddNoteForm(){
+  const card=byId("addNoteCard");
+  if(!card)return;
+  card.hidden=false;
+  const title=byId("newNoteTitle");
+  if(title)title.focus();
+  card.scrollIntoView({behavior:"smooth",block:"start"});
+}
+
 function fillForm(){const hp=byId("housePocketRemaining");if(hp)hp.value=state.housePocket}
 function nextLoan(){return state.loans.filter(x=>x.current>0).sort((a,b)=>a.current-b.current)[0]||null}
 function render(){
@@ -10063,7 +10578,7 @@ if(hp>0){
   byId("pocketMonths").textContent="You did it";
 }
 if(hp>0){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="House Pocket";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent=next.name;if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else if(cleanEmptyOverview){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="No active journeys";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=""}else{if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="All clear";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
-renderLoans();renderGoals();renderPensions();renderArchive();
+renderLoans();renderGoals();renderPensions();renderNotes();renderArchive();
 if(document.getElementById("victories")?.classList.contains("active"))renderVictories();
 updateMonthlySummaryCards();
 if(freedomMotion.activePage){
@@ -10075,6 +10590,28 @@ if(freedomMotion.activePage){
 }
 }
 byId("toggleAddPension").addEventListener("click",()=>{const card=byId("addPensionCard");if(card.hidden){["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>{const el=byId(id);if(el)el.value=""});card.hidden=false;byId("newPensionName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}else{["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>{const el=byId(id);if(el)el.value=""});card.hidden=true}});
+byId("toggleAddNote")?.addEventListener("click",()=>{const card=byId("addNoteCard");if(!card)return;if(card.hidden)openAddNoteForm();else closeAddNoteForm();});
+byId("closeAddNote")?.addEventListener("click",()=>closeAddNoteForm());
+byId("addNote")?.addEventListener("click",()=>{
+  ensureNotesArray();
+  const title=(byId("newNoteTitle")?.value||"").trim();
+  const body=(byId("newNoteBody")?.value||"").trim();
+  const colorEl=document.querySelector("input[name='newNoteColor']:checked");
+  const color=noteAccent(colorEl?colorEl.value:"yellow");
+  if(!title&&!body){alert("Add a title or some note text first.");(byId("newNoteBody")||byId("newNoteTitle"))?.focus();return;}
+  state.notes.unshift({
+    id:newNoteId(),title,body,color,pinned:false,collapsed:false,
+    createdAt:new Date().toISOString(),checklist:[]
+  });
+  persist();closeAddNoteForm();renderNotes();
+});
+document.querySelectorAll("label.note-color-btn").forEach(label=>{
+  label.addEventListener("click",()=>{
+    const input=label.querySelector("input[type=radio]");
+    if(input)input.checked=true;
+    document.querySelectorAll("#addNoteCard label.note-color-btn").forEach(l=>l.classList.toggle("is-active",!!l.querySelector("input:checked")));
+  });
+});
 function closeAddPensionForm(){const card=byId("addPensionCard");if(!card)return;["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>{const el=byId(id);if(el)el.value=""});card.hidden=true}
 byId("closeAddPension").addEventListener("click",closeAddPensionForm);
 ["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>{const el=byId(id);if(!el)return;el.addEventListener("focus",()=>{setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"center"}),50)})});
@@ -10128,7 +10665,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#demoMenu")||e.target.closest("#demo183"))return;
   closeDemoMenu();
 });
-fillForm();render();const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(["overview","journey","goals","pension","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
+fillForm();render();const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
 /* Bridge for whole-app welcome-back (defined outside this IIFE) to inspect pending
    completion celebrations without exposing the full app state. */
 window.FreedomWelcomeBackBridge={
@@ -10419,7 +10956,7 @@ function freedomBootNavPreview(open){
     if(booted)return;
     booted=true;
     freedomBootNavPreview(function(){
-      document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315","archive-active-v316","victories-active-v317");
+      document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315","notes-active-v318","archive-active-v316","victories-active-v317");
       document.body.classList.add("home183");
       if(typeof window.showHome==="function")window.showHome();
       setTimeout(function(){
@@ -10685,7 +11222,7 @@ function freedomBootNavPreview(open){
     if(!isMobile())return;
     /* Unresolved / unfinished companion selection must never land on Home. */
     if(window.freedomCompanionSelect&&typeof window.freedomCompanionSelect.isPending==="function"&&window.freedomCompanionSelect.isPending())return;
-    document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315","archive-active-v316","victories-active-v317");
+    document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315","notes-active-v318","archive-active-v316","victories-active-v317");
     closeMore();
     document.body.classList.add("home183");
     if(home)home.setAttribute("aria-hidden","false");
@@ -10748,7 +11285,7 @@ function freedomBootNavPreview(open){
   window.addEventListener("popstate",()=>{
     if(typeof window.page!=="function")return;
     const hash=location.hash.slice(1);
-    const id=["overview","journey","goals","pension","more","archive","victories"].includes(hash)?hash:(hash==="archiveHub"?"archive":"");
+    const id=["overview","journey","goals","pension","notes","more","archive","victories"].includes(hash)?hash:(hash==="archiveHub"?"archive":"");
     if(!id)return;
     window.__freedomIgnoreHistory=true;
     try{ window.page(id); }
@@ -10758,7 +11295,7 @@ function freedomBootNavPreview(open){
   window.addEventListener("load",()=>{
     if(!isMobile()){ hideHome(); return; }
     const hash=location.hash.slice(1);
-    if(["overview","journey","goals","pension","more","archive","victories"].includes(hash)||hash==="archiveHub") return;
+    if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(hash)||hash==="archiveHub") return;
     if(!document.body.classList.contains("home183")) return;
     showHome();
   });
@@ -13788,7 +14325,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1936",
+        "./service-worker.js?v=1937",
         { updateViaCache: "none" }
       );
 
