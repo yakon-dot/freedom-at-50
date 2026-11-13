@@ -3890,21 +3890,6 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   </div>
 </div>
 <script>
-/* Deep-link: ?demo=1 skips onboarding gates so a later boot can enter Demo Mode.
-   Optional hash (#notes, #journey, …) selects the tab after Demo starts. */
-(function(){
-  try{
-    var raw=String(new URLSearchParams(location.search).get("demo")||"").toLowerCase();
-    if(raw!=="1"&&raw!=="true"&&raw!=="yes")return;
-    window.__FREEDOM_DEMO_DEEPLINK__=true;
-    localStorage.setItem("freedom50-welcome-complete-v1","1");
-    localStorage.setItem("freedom50-look-around-complete-v1","1");
-    localStorage.setItem("freedom50-first-time-complete-v1","1");
-    if(!localStorage.getItem("freedom50-companion-id-v1"))localStorage.setItem("freedom50-companion-id-v1","patricia");
-    localStorage.removeItem("freedom50-companion-pending-v1");
-    localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
-  }catch(e){}
-})();
 (function(){
   var WELCOME_KEY="freedom50-welcome-complete-v1";
   var LOOK_KEY="freedom50-look-around-complete-v1";
@@ -7428,31 +7413,6 @@ function enterDemo(){
   handleDemoHomeShown();
 }
 window.enterDemo=enterDemo;
-/* Deep-link boot: ?demo=1 enters Demo Mode after onboarding chrome is cleared. */
-(function(){
-  if(!window.__FREEDOM_DEMO_DEEPLINK__)return;
-  var booted=false;
-  function bootDemoDeeplink(){
-    if(booted)return;
-    booted=true;
-    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
-      var el=document.getElementById(id);
-      if(!el)return;
-      el.hidden=true;
-      if(id==="demoEntryOverlay"||id==="demoWelcomeOverlay")return;
-      if(el.parentNode)el.parentNode.removeChild(el);
-    });
-    if(typeof window.enterDemo==="function")window.enterDemo();
-    var hash=(location.hash||"").replace(/^#/,"");
-    if(hash==="archiveHub")hash="archive";
-    if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(hash)&&typeof page==="function")page(hash);
-    window.scrollTo(0,0);
-  }
-  function schedule(){ setTimeout(bootDemoDeeplink,80); }
-  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",schedule);
-  else schedule();
-  window.addEventListener("load",schedule);
-})();
 function exitDemo(){
   if(!demoMode)return;
   /* First-time journey: cover with sage BEFORE unwinding Demo so Home never flashes. */
@@ -14312,7 +14272,7 @@ window.FreedomWelcomeBack=(function(){
     });
   }
   function otherTempFlowActive(){
-    return !!(window.__FREEDOM_DEMO_DEEPLINK__||window.__FREEDOM_MILESTONE_PREVIEW__||window.__FREEDOM_COMPLETION_PREVIEW__||window.__FREEDOM_COMPLETION_FLOW__||window.__FREEDOM_CLOSE_CHAPTER_FLOW__||window.__FREEDOM_MILESTONE_FLOW__||window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_RENAME_FLOW__||window.__FREEDOM_POSITIVE_PATTERN__||window.__FREEDOM_JOURNEY_CARD_PREVIEW__||window.__FREEDOM_VICTORIES_PREVIEW__||window.__FREEDOM_MORE_PREVIEW__||window.__FREEDOM_ARCHIVE_PREVIEW__);
+    return !!(window.__FREEDOM_MILESTONE_PREVIEW__||window.__FREEDOM_COMPLETION_PREVIEW__||window.__FREEDOM_COMPLETION_FLOW__||window.__FREEDOM_CLOSE_CHAPTER_FLOW__||window.__FREEDOM_MILESTONE_FLOW__||window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_RENAME_FLOW__||window.__FREEDOM_POSITIVE_PATTERN__||window.__FREEDOM_JOURNEY_CARD_PREVIEW__||window.__FREEDOM_VICTORIES_PREVIEW__||window.__FREEDOM_MORE_PREVIEW__||window.__FREEDOM_ARCHIVE_PREVIEW__);
   }
   function host(){
     return document.getElementById("freedomCompanionMsgHost");
