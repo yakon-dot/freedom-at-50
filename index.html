@@ -815,8 +815,14 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.notes-active-v318 .demo183.is-demo-active::after{
     content:none;display:none;animation:none;box-shadow:none;border:0;background:transparent;
   }
+  @keyframes notesExitDemoPulse{
+    0%,100%{opacity:1}
+    50%{opacity:.58}
+  }
   body.notes-active-v318 .demo183.is-demo-active .demo183-pulse{
     color:#f7f3ea;
+    animation:notesExitDemoPulse 1.8s ease-in-out infinite;
+    will-change:opacity;
   }
   body.notes-active-v318 .demo183.is-demo-active .demo183-exit-icon{
     stroke:#f7f3ea;
