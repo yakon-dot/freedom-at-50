@@ -761,47 +761,51 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.notes-active-v318 .app>main{padding-top:0}
   body.notes-active-v318 #notes{
     position:relative;z-index:1;
-    padding:calc(env(safe-area-inset-top,0px) + 8px) 18px calc(112px + var(--safe-bottom));
+    /* Top spacer clears the yellow scrap (paper ends ~60.8vw of wallpaper width). */
+    padding:calc(env(safe-area-inset-top,0px) + 62vw) 16px calc(112px + var(--safe-bottom));
   }
   body.notes-active-v318 #notes .notes-hero{
-    position:relative;
-    /* Wallpaper yellow scrap ends ~237px at 390-wide; keep cards below it. */
-    min-height:clamp(220px,34vh,268px);
-    padding:clamp(168px,22.5vw,196px) 28px clamp(18px,3vh,28px);
+    /* Fixed with the wallpaper so copy stays on the yellow paper while cards scroll. */
+    position:fixed;left:0;right:0;z-index:2;pointer-events:none;
+    top:calc(env(safe-area-inset-top,0px) + 40.5vw);
+    padding:0 42px;
     text-align:center;box-sizing:border-box;
-    pointer-events:none;
   }
   body.notes-active-v318 #notes .notes-hero-desc{
-    margin:0 auto;max-width:13.8rem;
-    font-size:12.5px;line-height:1.4;font-weight:500;
+    margin:0 auto;max-width:15.2rem;
+    font-size:12px;line-height:1.35;font-weight:500;
     color:#2a2218;text-align:center;
   }
   body.notes-active-v318 #notes .notes-actions{
     display:flex;justify-content:flex-end;align-items:center;
-    margin:0 0 clamp(10px,1.6vh,16px);
+    margin:0 0 10px;
   }
   body.notes-active-v318 #notes #toggleAddNote{
     border:0;background:#ffd52a;color:#101010;
-    padding:9px 14px;border-radius:999px;font-size:13px;font-weight:760;
+    padding:8px 13px;border-radius:999px;font-size:13px;font-weight:760;
     box-shadow:0 4px 14px rgba(40,28,12,.12);
   }
   body.notes-active-v318 #notes #toggleAddNote:active{opacity:.86}
-  body.notes-active-v318 #notes #notesList{display:grid;gap:14px}
+  body.notes-active-v318 #notes #notesList{display:grid;gap:11px}
   body.notes-active-v318 #notes .note-card{
     position:relative;overflow:hidden;
-    border:1px solid rgba(80,55,30,.12);
-    border-radius:22px;
-    padding:14px 14px 13px 16px;
-    background:rgba(255,252,246,.72);
-    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-    box-shadow:0 8px 22px rgba(60,40,20,.10);
+    border:1px solid rgba(80,55,30,.10);
+    border-radius:20px;
+    padding:12px 12px 11px 18px;
+    background:rgba(255,252,247,.58);
+    backdrop-filter:blur(18px) saturate(1.05);-webkit-backdrop-filter:blur(18px) saturate(1.05);
+    box-shadow:0 6px 18px rgba(60,40,20,.09), inset 0 1px 0 rgba(255,255,255,.45);
     color:#1c1712;
   }
-  body.notes-active-v318 #notes .note-card::before{
-    content:"";position:absolute;left:0;top:0;bottom:0;width:4px;
-    background:var(--note-accent,#e7cf63);
+  body.notes-active-v318 #notes .note-card.is-collapsed{
+    padding-top:11px;padding-bottom:11px;
   }
-  body.notes-active-v318 #notes .note-card[data-color="yellow"]{--note-accent:#e7cf63}
+  body.notes-active-v318 #notes .note-card::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:8px;
+    background:var(--note-accent,#ffd52a);
+    border-radius:20px 0 0 20px;
+  }
+  body.notes-active-v318 #notes .note-card[data-color="yellow"]{--note-accent:#ffd52a}
   body.notes-active-v318 #notes .note-card[data-color="peach"]{--note-accent:#efcbaa}
   body.notes-active-v318 #notes .note-card[data-color="sage"]{--note-accent:#84bd91}
   body.notes-active-v318 #notes .note-card-head{
@@ -813,32 +817,36 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     display:flex;align-items:center;gap:7px;min-width:0;
   }
   body.notes-active-v318 #notes .note-pin-icon{
-    flex:0 0 auto;width:14px;height:14px;color:#e7cf63;
+    flex:0 0 auto;width:15px;height:15px;color:#ffd52a;
   }
-  body.notes-active-v318 #notes .note-pin-icon svg{width:14px;height:14px;display:block;fill:currentColor}
+  body.notes-active-v318 #notes .note-pin-icon svg{width:15px;height:15px;display:block}
   body.notes-active-v318 #notes .note-title{
-    margin:0;font-size:16px;font-weight:740;letter-spacing:-.02em;
+    margin:0;font-size:15.5px;font-weight:740;letter-spacing:-.02em;
     color:#1c1712;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
   body.notes-active-v318 #notes .note-preview{
-    margin:5px 0 0;font-size:13px;line-height:1.4;color:rgba(40,32,24,.68);
+    margin:4px 0 0;font-size:13px;line-height:1.35;color:rgba(40,32,24,.68);
     display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
   }
   body.notes-active-v318 #notes .note-card:not(.is-collapsed) .note-preview{display:none}
   body.notes-active-v318 #notes .note-meta{
-    display:flex;align-items:center;gap:6px;flex:0 0 auto;margin-left:auto;padding-top:2px;
+    display:flex;align-items:center;gap:4px;flex:0 0 auto;margin-left:auto;padding-top:1px;
   }
   body.notes-active-v318 #notes .note-date{
     font-size:11px;font-weight:600;color:rgba(40,32,24,.52);white-space:nowrap;
   }
   body.notes-active-v318 #notes .note-chevron{
-    display:grid;place-items:center;width:26px;height:26px;padding:0;border:0;
+    display:grid;place-items:center;width:24px;height:24px;padding:0;border:0;
     background:transparent;color:rgba(40,32,24,.55);transition:transform var(--motion-chevron) ease;
   }
   body.notes-active-v318 #notes .note-chevron svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
   body.notes-active-v318 #notes .note-card:not(.is-collapsed) .note-chevron{transform:rotate(180deg)}
   body.notes-active-v318 #notes .note-body-wrap{margin-top:0}
-  body.notes-active-v318 #notes .note-body{margin-top:12px;padding-bottom:2px}
+  body.notes-active-v318 #notes .note-body{margin-top:8px;padding-bottom:1px}
+  body.notes-active-v318 #notes .note-body-text{
+    margin:0 0 8px;font-size:13.5px;line-height:1.4;color:rgba(40,32,24,.78);
+    white-space:pre-wrap;
+  }
   body.notes-active-v318 #notes .note-field{margin-top:10px}
   body.notes-active-v318 #notes .note-field:first-child{margin-top:0}
   body.notes-active-v318 #notes .note-field label{
@@ -849,10 +857,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     width:100%;margin:0;background:rgba(255,255,255,.72);color:#1c1712;
     border:1px solid rgba(80,55,30,.16);border-radius:12px;padding:11px 12px;font-size:15px;
   }
-  body.notes-active-v318 #notes .note-field textarea{min-height:88px;resize:vertical;line-height:1.45}
+  body.notes-active-v318 #notes .note-field textarea{min-height:72px;resize:vertical;line-height:1.45}
   body.notes-active-v318 #notes .note-field input:focus,
   body.notes-active-v318 #notes .note-field textarea:focus{
-    border-color:rgba(231,207,99,.7);box-shadow:0 0 0 3px rgba(231,207,99,.18);outline:none;
+    border-color:rgba(255,213,42,.75);box-shadow:0 0 0 3px rgba(255,213,42,.18);outline:none;
   }
   body.notes-active-v318 #notes .note-color-row{
     display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px;
@@ -864,31 +872,34 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     width:26px;height:26px;border-radius:50%;border:2px solid rgba(40,32,24,.14);
     padding:0;cursor:pointer;background:var(--swatch);
   }
-  body.notes-active-v318 #notes .note-color-btn[data-color="yellow"]{--swatch:#e7cf63}
+  body.notes-active-v318 #notes .note-color-btn[data-color="yellow"]{--swatch:#ffd52a}
   body.notes-active-v318 #notes .note-color-btn[data-color="peach"]{--swatch:#efcbaa}
   body.notes-active-v318 #notes .note-color-btn[data-color="sage"]{--swatch:#84bd91}
   body.notes-active-v318 #notes .note-color-btn.is-active{
     border-color:#1c1712;box-shadow:0 0 0 2px rgba(255,255,255,.7);
   }
-  body.notes-active-v318 #notes .note-checklist{display:grid;gap:8px;margin-top:12px}
+  body.notes-active-v318 #notes .note-checklist{display:grid;gap:7px;margin-top:6px}
   body.notes-active-v318 #notes .note-check-row{
-    display:flex;align-items:center;gap:10px;
+    display:flex;align-items:center;gap:10px;min-height:28px;
   }
   body.notes-active-v318 #notes .note-check-box{
     flex:0 0 22px;width:22px;height:22px;border-radius:5px;
-    border:1.6px solid rgba(40,32,24,.55);background:transparent;
+    border:1.7px solid rgba(40,32,24,.58);background:rgba(255,255,255,.55);
     display:grid;place-items:center;padding:0;cursor:pointer;color:#1c1712;
   }
   body.notes-active-v318 #notes .note-check-box svg{width:13px;height:13px;opacity:0}
   body.notes-active-v318 #notes .note-check-box.is-checked{
-    background:#e7cf63;border-color:#e7cf63;
+    background:#ffd52a;border-color:#ffd52a;
   }
   body.notes-active-v318 #notes .note-check-box.is-checked svg{opacity:1}
+  body.notes-active-v318 #notes .note-check-label,
   body.notes-active-v318 #notes .note-check-text{
     flex:1;min-width:0;margin:0;background:transparent;border:0;border-bottom:1px solid transparent;
-    color:#1c1712;font-size:14px;line-height:1.35;padding:4px 0;outline:none;
+    color:#1c1712;font-size:14px;line-height:1.35;padding:3px 0;outline:none;
   }
+  body.notes-active-v318 #notes .note-check-label{pointer-events:none}
   body.notes-active-v318 #notes .note-check-text:focus{border-bottom-color:rgba(80,55,30,.22)}
+  body.notes-active-v318 #notes .note-check-row.is-checked .note-check-label,
   body.notes-active-v318 #notes .note-check-row.is-checked .note-check-text{
     text-decoration:line-through;color:rgba(40,32,24,.48);
   }
@@ -901,7 +912,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     color:#1c1712;border-radius:999px;padding:8px 12px;font-size:12px;font-weight:700;cursor:pointer;
   }
   body.notes-active-v318 #notes .note-footer{
-    display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;
+    display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;
   }
   body.notes-active-v318 #notes .note-footer .mini-btn{
     border-color:rgba(80,55,30,.22);color:#1c1712;background:rgba(255,255,255,.45);
@@ -910,7 +921,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     border-color:rgba(160,60,50,.35);color:#8a2f28;
   }
   body.notes-active-v318 #notes .note-footer .mini-btn.is-pinned{
-    border-color:rgba(231,207,99,.7);color:#6a560f;background:rgba(231,207,99,.28);
+    border-color:rgba(255,213,42,.75);color:#5c4a08;background:rgba(255,213,42,.28);
   }
   body.notes-active-v318 #notes .notes-empty{
     margin:8px 2px 0;padding:18px 8px;text-align:center;
@@ -918,12 +929,12 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.notes-active-v318 #notes .add-note-card{
     border:1px solid rgba(80,55,30,.14);
-    border-radius:22px;
+    border-radius:20px;
     padding:16px;
-    background:rgba(255,252,246,.78);
-    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-    box-shadow:0 8px 22px rgba(60,40,20,.10);
-    color:#1c1712;margin-bottom:14px;
+    background:rgba(255,252,247,.68);
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    box-shadow:0 6px 18px rgba(60,40,20,.09);
+    color:#1c1712;margin-bottom:12px;
   }
   body.notes-active-v318 #notes .add-note-card[hidden]{display:none!important}
   body.notes-active-v318 #notes .add-note-head{
@@ -950,6 +961,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.notes-active-v318 #notes .add-note-card label.note-color-btn.is-active{
     border-color:#1c1712;box-shadow:0 0 0 2px rgba(255,255,255,.7);
   }
+  body.notes-active-v318 #notes .add-note-card label.note-color-btn[style*="#e7cf63"],
+  body.notes-active-v318 #notes .add-note-card label.note-color-btn[data-swatch="yellow"]{--swatch:#ffd52a}
 
   body.archive-active-v316{background:transparent}
   html:has(body.archive-active-v316){background:#070809}
@@ -4737,7 +4750,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
 <section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomGoalsCompanionMsgHost" aria-live="polite" hidden></div>
 <div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><div class="add-goal-head"><h2>Add a new goal</h2><button class="add-goal-close" id="closeAddGoal" type="button" aria-label="Close">×</button></div><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
 <section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>A little today, more freedom tomorrow.</p></div><details class="card pension-demo-intro" id="pensionDemoIntro"><summary class="pension-demo-total"><span>Combined pension value</span><strong id="pensionDemoCombinedValue">€58,000</strong></summary><p>Keep track of your pensions in one place, including those from previous jobs. Update their values when you receive a statement to see how your retirement savings are developing.</p></details><div class="freedom-companion-msg-host is-page-response" id="freedomPensionCompanionMsgHost" aria-live="polite" hidden></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
-<section class="page" id="notes"><div class="notes-hero"><p class="notes-hero-desc">A little space for things worth remembering.</p></div><div class="notes-actions"><button class="mini-btn" id="toggleAddNote" type="button">＋ Add note</button></div><article class="add-note-card" id="addNoteCard" hidden><div class="add-note-head"><h2>Add a new note</h2><button class="add-note-close" id="closeAddNote" type="button" aria-label="Close">×</button></div><p class="empty-note">Leave yourself a reminder, a thought, or a checklist.</p><label for="newNoteTitle">Title (optional)</label><input id="newNoteTitle" type="text" placeholder="e.g. Holiday ideas"><label for="newNoteBody">Note</label><textarea id="newNoteBody" placeholder="Write anything worth remembering"></textarea><div class="note-color-row" style="margin-top:12px"><span class="note-color-label">Colour</span><label class="note-color-btn" style="--swatch:#e7cf63"><input type="radio" name="newNoteColor" value="yellow" checked hidden aria-label="Yellow"></label><label class="note-color-btn" style="--swatch:#efcbaa"><input type="radio" name="newNoteColor" value="peach" hidden aria-label="Peach"></label><label class="note-color-btn" style="--swatch:#84bd91"><input type="radio" name="newNoteColor" value="sage" hidden aria-label="Sage"></label></div><button class="save-btn" id="addNote" type="button">Add Note</button></article><div class="stack" id="notesList"></div></section>
+<section class="page" id="notes"><div class="notes-hero"><p class="notes-hero-desc">Payments, plans, goals and journeys you don't want to forget.</p></div><div class="notes-actions"><button class="mini-btn" id="toggleAddNote" type="button">＋ Add note</button></div><article class="add-note-card" id="addNoteCard" hidden><div class="add-note-head"><h2>Add a new note</h2><button class="add-note-close" id="closeAddNote" type="button" aria-label="Close">×</button></div><p class="empty-note">Leave yourself a reminder, a thought, or a checklist.</p><label for="newNoteTitle">Title (optional)</label><input id="newNoteTitle" type="text" placeholder="e.g. Holiday ideas"><label for="newNoteBody">Note</label><textarea id="newNoteBody" placeholder="Write anything worth remembering"></textarea><div class="note-color-row" style="margin-top:12px"><span class="note-color-label">Colour</span><label class="note-color-btn" style="--swatch:#ffd52a"><input type="radio" name="newNoteColor" value="yellow" checked hidden aria-label="Yellow"></label><label class="note-color-btn" style="--swatch:#efcbaa"><input type="radio" name="newNoteColor" value="peach" hidden aria-label="Peach"></label><label class="note-color-btn" style="--swatch:#84bd91"><input type="radio" name="newNoteColor" value="sage" hidden aria-label="Sage"></label></div><button class="save-btn" id="addNote" type="button">Add Note</button></article><div class="stack" id="notesList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="victories"><div class="victories-page"><div class="victories-confetti" aria-hidden="true"><span class="is-sparkle" style="left:18%;top:10%;background:#ffb078"></span><span class="is-diamond" style="left:34%;top:8%;background:#ff3f9b"></span><span class="is-confetti" style="left:52%;top:12%;background:#a855d8;transform:rotate(-28deg)"></span><span class="is-sparkle" style="left:66%;top:9%;background:#ff8a45"></span><span class="is-diamond" style="left:78%;top:14%;background:#d060c8"></span><span class="is-confetti" style="left:24%;top:16%;background:#ff4c97;transform:rotate(22deg)"></span><span class="is-sparkle" style="left:42%;top:18%;background:#efcbaa"></span><span class="is-diamond" style="left:58%;top:17%;background:#ffb078"></span><span class="is-confetti" style="left:72%;top:20%;background:#e889b4;transform:rotate(-16deg)"></span><span class="is-sparkle" style="left:12%;top:22%;background:#a855d8"></span><span class="is-diamond" style="left:86%;top:22%;background:#ff8a45"></span><span class="is-confetti" style="left:30%;top:28%;background:#ff3f9b;transform:rotate(12deg)"></span><span class="is-sparkle" style="left:48%;top:30%;background:#d060c8"></span><span class="is-diamond" style="left:64%;top:27%;background:#ff4c97"></span><span class="is-confetti" style="left:16%;top:34%;background:#ffb078;transform:rotate(-20deg)"></span><span class="is-sparkle" style="left:38%;top:36%;background:#ff8a45"></span><span class="is-diamond" style="left:55%;top:38%;background:#e889b4"></span><span class="is-confetti" style="left:70%;top:35%;background:#a855d8;transform:rotate(18deg)"></span><span class="is-sparkle" style="left:82%;top:40%;background:#ff3f9b"></span><span class="is-diamond" style="left:22%;top:42%;background:#efcbaa"></span><span class="is-confetti" style="left:44%;top:44%;background:#ff8a45;transform:rotate(-10deg)"></span><span class="is-sparkle" style="left:60%;top:46%;background:#d060c8"></span><span class="is-diamond" style="left:76%;top:48%;background:#ffb078"></span><span class="is-confetti" style="left:10%;top:48%;background:#ff4c97;transform:rotate(26deg)"></span><span class="is-sparkle" style="left:33%;top:50%;background:#a855d8"></span><span class="is-diamond" style="left:50%;top:52%;background:#e889b4"></span><span class="is-confetti" style="left:68%;top:51%;background:#ff3f9b;transform:rotate(-14deg)"></span><span class="is-sparkle" style="left:88%;top:50%;background:#ff8a45"></span></div><header class="victories-hero"><h1 class="victories-title">Victories<span class="victories-title-trophy" aria-hidden="true">🏆</span></h1><p class="victories-subtitle">The things you finished along the way.</p></header><div class="victories-sections" id="victoriesSections"></div></div></section>
 <section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
@@ -4763,7 +4776,7 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   <span class="nav-icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21V9"/><path d="M12 13c-3.8 0-6-2.1-6-5.8 3.8 0 6 2.1 6 5.8Z"/><path d="M12 11c3.8 0 6-2.1 6-5.8-3.8 0-6 2.1-6 5.8Z"/><path d="M8.5 21h7"/></svg></span><span>Pension</span>
 </button>
 <button class="nav-btn" data-page="notes" type="button">
-  <span class="nav-icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M7 3.5h8.5L19 7v13.5H7Z"/><path d="M15.5 3.5V7H19"/><path d="M9.5 11h5M9.5 14.5h5M9.5 18h3.5"/></svg></span><span>Notes</span>
+  <span class="nav-icon-wrap" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5.5" y="3.5" width="13" height="17" rx="1.8"/><path d="M8.5 2.8v2.2M12 2.8v2.2M15.5 2.8v2.2"/><path d="M8.5 9.5h7M8.5 13h7M8.5 16.5h4.5"/></svg></span><span>Notes</span>
 </button>
 </nav>
 <div class="save-note" id="saveNote">Saved locally ✓</div>
@@ -10230,11 +10243,7 @@ function notePreviewText(note){
     const line=body.split(/\n/).map(s=>s.trim()).filter(Boolean)[0]||body;
     return line.length>78?line.slice(0,78)+"...":line;
   }
-  const items=(note.checklist||[]).map(x=>(x.text||"").trim()).filter(Boolean);
-  if(items.length){
-    const checked=(note.checklist||[]).filter(x=>x&&x.checked).length;
-    return items.length===1?items[0]:`${checked}/${items.length} checklist items`;
-  }
+  /* Checklist-only notes keep a clean collapsed title row (no summary chip). */
   return"";
 }
 function noteDisplayTitle(note){
@@ -10313,29 +10322,61 @@ function buildDemoNotes(){
   ];
 }
 function notePinSvg(){
-  return`<span class="note-pin-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14.5 3.5 20.5 9.5 13 17l-1.5-1.5L9 18.5 5.5 15 8 12.5 6.5 11 14.5 3.5Z"/></svg></span>`;
+  return`<span class="note-pin-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"><path d="M12 2.8a3.1 3.1 0 0 1 1.95 5.5L15.2 12H13.1L12.7 21h-1.4L10.9 12H8.8l1.25-3.7A3.1 3.1 0 0 1 12 2.8Z" fill="currentColor"/><circle cx="12" cy="5.6" r="1.55" fill="#1c1712" opacity=".18"/></svg></span>`;
 }
 function noteCheckSvg(){
   return`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5.5 12.5 10 17l8.5-9.5" fill="none" stroke="#1c1712" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
-function noteChecklistHtml(note){
-  const rows=(note.checklist||[]).map((item,idx)=>`
-    <div class="note-check-row${item.checked?" is-checked":""}" data-note-check-row="${esc(note.id)}" data-check-index="${idx}">
-      <button class="note-check-box${item.checked?" is-checked":""}" type="button" data-note-check-toggle="${esc(note.id)}" data-check-index="${idx}" aria-label="${item.checked?"Uncheck":"Check"} ${esc(item.text||"item")}">${noteCheckSvg()}</button>
+function noteChecklistHtml(note,editing){
+  const rows=(note.checklist||[]).map((item,idx)=>{
+    const box=`<button class="note-check-box${item.checked?" is-checked":""}" type="button" data-note-check-toggle="${esc(note.id)}" data-check-index="${idx}" aria-label="${item.checked?"Uncheck":"Check"} ${esc(item.text||"item")}">${noteCheckSvg()}</button>`;
+    if(editing){
+      return`<div class="note-check-row${item.checked?" is-checked":""}" data-note-check-row="${esc(note.id)}" data-check-index="${idx}">
+      ${box}
       <input class="note-check-text" type="text" value="${esc(item.text||"")}" data-note-check-text="${esc(note.id)}" data-check-index="${idx}" placeholder="Checklist item" aria-label="Checklist item">
       <button class="note-check-remove" type="button" data-note-check-remove="${esc(note.id)}" data-check-index="${idx}" aria-label="Remove checklist item">×</button>
-    </div>`).join("");
-  return`<div class="note-checklist" data-note-checklist="${esc(note.id)}">${rows}</div>
-    <button class="note-add-check" type="button" data-note-add-check="${esc(note.id)}">＋ Add checklist item</button>`;
+    </div>`;
+    }
+    return`<div class="note-check-row${item.checked?" is-checked":""}" data-note-check-row="${esc(note.id)}" data-check-index="${idx}">
+      ${box}
+      <span class="note-check-label">${esc(item.text||"")}</span>
+    </div>`;
+  }).join("");
+  return`<div class="note-checklist" data-note-checklist="${esc(note.id)}">${rows}</div>${editing?`<button class="note-add-check" type="button" data-note-add-check="${esc(note.id)}">＋ Add checklist item</button>`:""}`;
 }
 function noteCardHtml(note){
   const collapsed=note.collapsed!==false;
+  const editing=!!note.editing;
   const title=noteDisplayTitle(note);
   const preview=notePreviewText(note);
   const date=formatNoteDate(note.createdAt);
   const pin=note.pinned?notePinSvg():"";
   const color=noteAccent(note.color);
-  return`<article class="card note-card${collapsed?" is-collapsed":""}" data-note-id="${esc(note.id)}" data-color="${color}">
+  const bodyText=(note.body||"").trim();
+  const viewBody=(!editing && bodyText)?`<p class="note-body-text">${esc(bodyText)}</p>`:"";
+  const editBody=editing?`
+        <div class="note-field"><label>Title</label><input type="text" data-note-title="${esc(note.id)}" value="${esc(note.title||"")}" placeholder="Optional title"></div>
+        <div class="note-field"><label>Note</label><textarea data-note-body="${esc(note.id)}" placeholder="Write anything worth remembering">${esc(note.body||"")}</textarea></div>
+        ${noteChecklistHtml(note,true)}
+        <div class="note-color-row">
+          <span class="note-color-label">Colour</span>
+          <button class="note-color-btn${color==="yellow"?" is-active":""}" type="button" data-note-color="${esc(note.id)}" data-color="yellow" aria-label="Yellow"></button>
+          <button class="note-color-btn${color==="peach"?" is-active":""}" type="button" data-note-color="${esc(note.id)}" data-color="peach" aria-label="Peach"></button>
+          <button class="note-color-btn${color==="sage"?" is-active":""}" type="button" data-note-color="${esc(note.id)}" data-color="sage" aria-label="Sage"></button>
+        </div>
+        <div class="note-footer">
+          <button class="mini-btn" type="button" data-note-done-edit="${esc(note.id)}">Done</button>
+          <button class="mini-btn${note.pinned?" is-pinned":""}" type="button" data-note-pin="${esc(note.id)}">${note.pinned?"Unpin":"Pin"}</button>
+          <button class="mini-btn danger" type="button" data-note-delete="${esc(note.id)}">Delete</button>
+        </div>`:`
+        ${viewBody}
+        ${noteChecklistHtml(note,false)}
+        <div class="note-footer">
+          <button class="mini-btn" type="button" data-note-edit="${esc(note.id)}">Edit</button>
+          <button class="mini-btn${note.pinned?" is-pinned":""}" type="button" data-note-pin="${esc(note.id)}">${note.pinned?"Unpin":"Pin"}</button>
+          <button class="mini-btn danger" type="button" data-note-delete="${esc(note.id)}">Delete</button>
+        </div>`;
+  return`<article class="card note-card${collapsed?" is-collapsed":""}${editing?" is-editing":""}" data-note-id="${esc(note.id)}" data-color="${color}">
     <div class="note-card-head" data-toggle-note="${esc(note.id)}">
       <div class="note-head-main">
         <div class="note-title-row">${pin}<div class="note-title">${esc(title)}</div></div>
@@ -10348,19 +10389,7 @@ function noteCardHtml(note){
     </div>
     <div class="card-body-wrap note-body-wrap${collapsed?" is-collapsed":""}">
       <div class="journey-card-body note-body${collapsed?"":" freedom-body-reveal"}">
-        <div class="note-field"><label>Title</label><input type="text" data-note-title="${esc(note.id)}" value="${esc(note.title||"")}" placeholder="Optional title"></div>
-        <div class="note-field"><label>Note</label><textarea data-note-body="${esc(note.id)}" placeholder="Write anything worth remembering">${esc(note.body||"")}</textarea></div>
-        ${noteChecklistHtml(note)}
-        <div class="note-color-row">
-          <span class="note-color-label">Colour</span>
-          <button class="note-color-btn${color==="yellow"?" is-active":""}" type="button" data-note-color="${esc(note.id)}" data-color="yellow" aria-label="Yellow"></button>
-          <button class="note-color-btn${color==="peach"?" is-active":""}" type="button" data-note-color="${esc(note.id)}" data-color="peach" aria-label="Peach"></button>
-          <button class="note-color-btn${color==="sage"?" is-active":""}" type="button" data-note-color="${esc(note.id)}" data-color="sage" aria-label="Sage"></button>
-        </div>
-        <div class="note-footer">
-          <button class="mini-btn${note.pinned?" is-pinned":""}" type="button" data-note-pin="${esc(note.id)}">${note.pinned?"Unpin":"Pin"}</button>
-          <button class="mini-btn danger" type="button" data-note-delete="${esc(note.id)}">Delete</button>
-        </div>
+        ${editBody}
       </div>
     </div>
   </article>`;
@@ -10391,8 +10420,29 @@ function renderNotes(){
       const id=head.getAttribute("data-toggle-note");
       const note=findNote(id);
       if(!note)return;
-      note.collapsed=!(note.collapsed!==false);
+      if(note.collapsed===false){
+        note.collapsed=true;
+        note.editing=false;
+      }else{
+        note.collapsed=false;
+      }
       persist();
+      renderNotes();
+    });
+  });
+  list.querySelectorAll("[data-note-edit]").forEach(btn=>{
+    btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const id=btn.getAttribute("data-note-edit");
+      persistNoteField(id,n=>{n.editing=true;n.collapsed=false;});
+      renderNotes();
+    });
+  });
+  list.querySelectorAll("[data-note-done-edit]").forEach(btn=>{
+    btn.addEventListener("click",e=>{
+      e.stopPropagation();
+      const id=btn.getAttribute("data-note-done-edit");
+      persistNoteField(id,n=>{n.editing=false;n.collapsed=false;});
       renderNotes();
     });
   });
@@ -10600,7 +10650,7 @@ byId("addNote")?.addEventListener("click",()=>{
   const color=noteAccent(colorEl?colorEl.value:"yellow");
   if(!title&&!body){alert("Add a title or some note text first.");(byId("newNoteBody")||byId("newNoteTitle"))?.focus();return;}
   state.notes.unshift({
-    id:newNoteId(),title,body,color,pinned:false,collapsed:false,
+    id:newNoteId(),title,body,color,pinned:false,collapsed:false,editing:true,
     createdAt:new Date().toISOString(),checklist:[]
   });
   persist();closeAddNoteForm();renderNotes();
