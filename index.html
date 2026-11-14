@@ -10031,9 +10031,10 @@ function setupLoanReorder(list){
 /* ===== Pension contribution estimates (local calendar months) =====
    statementValue / statementMonth = last actual statement baseline.
    autoContrib = opt-in automatic estimates (default OFF).
-   autoEnabledMonth = first month eligible after the latest OFF→ON (no backfill / no jump).
-   contribPeriods = rate schedule (kept when OFF; used only while ON).
-   value = statement (OFF) or statement + completed eligible months (ON). */
+   autoPeriods = [{startMonth, endMonth|null}] ON windows since the statement
+     (endMonth inclusive when closed; null = currently open). OFF months excluded.
+   contribPeriods = rate schedule (kept when OFF; historical rates preserved).
+   value = statement (OFF) or statement + completed months in autoPeriods (ON). */
 function pensionMonthKey(date){
   const d=date instanceof Date?date:new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
@@ -10069,18 +10070,29 @@ function pensionRatesForMonth(p,monthKey){
   });
   return {personal:Math.max(0,personal),employer:Math.max(0,employer)};
 }
+function pensionMonthInAutoPeriods(p,monthKey){
+  const periods=Array.isArray(p&&p.autoPeriods)?p.autoPeriods:[];
+  for(let i=0;i<periods.length;i++){
+    const per=periods[i];
+    if(!per||!per.startMonth)continue;
+    if(String(monthKey)<String(per.startMonth))continue;
+    if(per.endMonth!=null&&per.endMonth!==""&&String(monthKey)>String(per.endMonth))continue;
+    return true;
+  }
+  return false;
+}
 function pensionEstimatedValue(p,date){
   if(!p)return 0;
   let total=Number(p.statementValue)||0;
   const statementMonth=p.statementMonth||pensionMonthKey(date);
   const lastCompleted=pensionLastCompletedMonthKey(date);
-  const enableFrom=p.autoEnabledMonth||pensionMonthAdd(statementMonth,1);
   let month=pensionMonthAdd(statementMonth,1);
-  if(String(month)<String(enableFrom))month=enableFrom;
   /* Guard runaway loops (corrupt keys). */
   for(let i=0;i<1200&&String(month)<=String(lastCompleted);i++){
-    const rates=pensionRatesForMonth(p,month);
-    total+=rates.personal+rates.employer;
+    if(pensionMonthInAutoPeriods(p,month)){
+      const rates=pensionRatesForMonth(p,month);
+      total+=rates.personal+rates.employer;
+    }
     month=pensionMonthAdd(month,1);
   }
   return pensionRoundMoney(total);
@@ -10088,6 +10100,26 @@ function pensionEstimatedValue(p,date){
 function pensionDisplayValue(p,date){
   if(p&&p.autoContrib)return pensionEstimatedValue(p,date);
   return Math.max(0,Number(p&&p.statementValue)||0);
+}
+function pensionNormalizeAutoPeriods(p,date){
+  if(!p)return false;
+  let changed=false;
+  if(!Array.isArray(p.autoPeriods)){
+    p.autoPeriods=[];
+    changed=true;
+    /* Migrate legacy autoEnabledMonth (single window) into autoPeriods. */
+    if(p.autoEnabledMonth){
+      if(p.autoContrib){
+        p.autoPeriods.push({startMonth:p.autoEnabledMonth,endMonth:null});
+      }else{
+        const end=pensionLastCompletedMonthKey(date);
+        if(String(p.autoEnabledMonth)<=String(end)){
+          p.autoPeriods.push({startMonth:p.autoEnabledMonth,endMonth:end});
+        }
+      }
+    }
+  }
+  return changed;
 }
 function ensurePensionTracking(p,date){
   if(!p)return false;
@@ -10110,17 +10142,21 @@ function ensurePensionTracking(p,date){
       changed=true;
     }
   }
-  /* Auto estimates are opt-in. Existing / newly migrated pensions default OFF so any
-     previously accrued estimate is not shown until the user enables the toggle. */
+  /* Auto estimates are opt-in. Existing / newly migrated pensions default OFF. */
   if(p.autoContrib===undefined){
     p.autoContrib=false;
     changed=true;
   }else{
     p.autoContrib=!!p.autoContrib;
   }
-  if(p.autoContrib&&!p.autoEnabledMonth){
-    p.autoEnabledMonth=pensionMonthAdd(p.statementMonth,1);
-    changed=true;
+  if(pensionNormalizeAutoPeriods(p,date))changed=true;
+  if(p.autoContrib){
+    const hasOpen=(Array.isArray(p.autoPeriods)?p.autoPeriods:[]).some(per=>per&&per.endMonth==null);
+    if(!hasOpen){
+      const start=p.autoEnabledMonth||pensionMonthAdd(p.statementMonth,1);
+      p.autoPeriods.push({startMonth:start,endMonth:null});
+      changed=true;
+    }
   }
   return changed;
 }
@@ -10128,16 +10164,30 @@ function pensionEnableAutoContrib(p,date){
   ensurePensionTracking(p,date);
   const nextMonth=pensionMonthAdd(pensionMonthKey(date),1);
   p.autoContrib=true;
-  /* Start from next calendar month — no immediate jump, no backfill of prior months. */
+  const periods=Array.isArray(p.autoPeriods)?p.autoPeriods.slice():[];
+  const hasOpen=periods.some(per=>per&&per.endMonth==null);
+  /* Append a new ON window from next month. Keep closed windows so prior accruals remain. */
+  if(!hasOpen)periods.push({startMonth:nextMonth,endMonth:null});
+  p.autoPeriods=periods;
   p.autoEnabledMonth=nextMonth;
   const personal=Math.max(0,Number(p.personal)||0);
   const employer=Math.max(0,Number(p.employer)||0);
   const kept=(Array.isArray(p.contribPeriods)?p.contribPeriods:[]).filter(per=>per&&per.startMonth&&String(per.startMonth)<String(nextMonth));
-  p.contribPeriods=kept.concat([{startMonth:nextMonth,personal,employer}]);
+  const lastKept=kept.length?kept[kept.length-1]:null;
+  const sameRates=lastKept&&Number(lastKept.personal)===personal&&Number(lastKept.employer)===employer;
+  p.contribPeriods=sameRates?kept:kept.concat([{startMonth:nextMonth,personal,employer}]);
 }
-function pensionDisableAutoContrib(p){
+function pensionDisableAutoContrib(p,date){
   p.autoContrib=false;
-  /* Keep statementValue, periods, and autoEnabledMonth history for safe re-enable. */
+  const lastCompleted=pensionLastCompletedMonthKey(date);
+  const periods=Array.isArray(p.autoPeriods)?p.autoPeriods:[];
+  /* Close the open ON window at the last completed month. Drop empty windows. */
+  p.autoPeriods=periods.map(per=>{
+    if(!per||!per.startMonth)return null;
+    if(per.endMonth!=null&&per.endMonth!=="")return per;
+    if(String(per.startMonth)>String(lastCompleted))return null;
+    return {startMonth:per.startMonth,endMonth:lastCompleted};
+  }).filter(Boolean);
 }
 function pensionResetStatementBaseline(p,statementValue,personal,employer,date){
   const nowKey=pensionMonthKey(date);
@@ -10148,7 +10198,9 @@ function pensionResetStatementBaseline(p,statementValue,personal,employer,date){
   p.employer=Math.max(0,Number(employer)||0);
   p.contribPeriods=[{startMonth:nextMonth,personal:p.personal,employer:p.employer}];
   p.contribTrackingV1=true;
-  if(p.autoContrib)p.autoEnabledMonth=nextMonth;
+  /* New statement accounts for earlier estimates — start fresh ON history if still ON. */
+  p.autoPeriods=p.autoContrib?[{startMonth:nextMonth,endMonth:null}]:[];
+  p.autoEnabledMonth=p.autoContrib?nextMonth:null;
 }
 function pensionSetContributionRates(p,personal,employer,date){
   personal=Math.max(0,Number(personal)||0);
@@ -10159,8 +10211,9 @@ function pensionSetContributionRates(p,personal,employer,date){
   p.personal=personal;
   p.employer=employer;
   if(prevPersonal===personal&&prevEmployer===employer)return;
-  const firstEligible=p.autoContrib&&p.autoEnabledMonth
-    ?pensionMonthMax(pensionMonthAdd(p.statementMonth,1),p.autoEnabledMonth)
+  const open=(Array.isArray(p.autoPeriods)?p.autoPeriods:[]).find(per=>per&&per.endMonth==null);
+  const firstEligible=open&&open.startMonth
+    ?pensionMonthMax(pensionMonthAdd(p.statementMonth,1),open.startMonth)
     :pensionMonthAdd(p.statementMonth,1);
   const applyFrom=pensionMonthMax(firstEligible,pensionMonthKey(date));
   const kept=(Array.isArray(p.contribPeriods)?p.contribPeriods:[]).filter(per=>per&&per.startMonth&&String(per.startMonth)<String(applyFrom));
@@ -10257,7 +10310,7 @@ function savePension(i){
   }else{
     pensionSetContributionRates(p,nextPersonal,nextEmployer,new Date());
     if(nextAuto&&!prevAuto)pensionEnableAutoContrib(p,new Date());
-    else if(!nextAuto&&prevAuto)pensionDisableAutoContrib(p);
+    else if(!nextAuto&&prevAuto)pensionDisableAutoContrib(p,new Date());
     else p.autoContrib=nextAuto;
   }
   syncPensionEstimate(p,new Date());
@@ -11303,7 +11356,8 @@ byId("addPension").addEventListener("click",()=>{
     statementMonth:month,
     contribPeriods:[{startMonth:pensionMonthAdd(month,1),personal,employer}],
     contribTrackingV1:true,
-    autoContrib:false
+    autoContrib:false,
+    autoPeriods:[]
   };
   syncPensionEstimate(pension,now);
   state.pensions.push(pension);
