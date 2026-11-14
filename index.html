@@ -2421,6 +2421,14 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.pension-active-v315 #pension .pension-summary{
     display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;
   }
+  body.pension-active-v315 #pension .pension-estimate-note{
+    grid-column:1 / -1;
+    margin:0;
+    font-size:12px;
+    line-height:1.45;
+    font-weight:500;
+    color:rgba(190,188,182,.58);
+  }
   body.pension-active-v315 #pension .pension-stat{
     background:rgba(18,20,24,.14);
     border:1px solid rgba(220,190,150,.08);
@@ -4868,7 +4876,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <div class="journey-actions"><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><div class="add-journey-head"><h2>Add a new journey</h2><button class="add-journey-close" id="closeAddJourney" type="button" aria-label="Close">×</button></div><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">How much did you borrow?</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">How much is left to pay?</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">How much do you want to pay each month?</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomGoalsCompanionMsgHost" aria-live="polite" hidden></div>
 <div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><div class="add-goal-head"><h2>Add a new goal</h2><button class="add-goal-close" id="closeAddGoal" type="button" aria-label="Close">×</button></div><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
-<section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>A little today, more freedom tomorrow.</p></div><details class="card pension-demo-intro" id="pensionDemoIntro"><summary class="pension-demo-total"><span>Combined pension value</span><strong id="pensionDemoCombinedValue">€58,000</strong></summary><p>Keep track of your pensions in one place, including those from previous jobs. Update their values when you receive a statement to see how your retirement savings are developing.</p></details><div class="freedom-companion-msg-host is-page-response" id="freedomPensionCompanionMsgHost" aria-live="polite" hidden></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
+<section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>A little today, more freedom tomorrow.</p></div><details class="card pension-demo-intro" id="pensionDemoIntro"><summary class="pension-demo-total"><span>Combined pension value</span><strong id="pensionDemoCombinedValue">€58,000</strong></summary><p>Keep track of your pensions in one place, including those from previous jobs. Freedom estimates balances from your last statement plus monthly contributions — not investment growth, fees or market changes. Update the statement balance when a new statement arrives.</p></details><div class="freedom-companion-msg-host is-page-response" id="freedomPensionCompanionMsgHost" aria-live="polite" hidden></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Statement balance</label><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
 <section class="page" id="notes"><div class="notes-hero"><p class="notes-hero-desc">Payments, plans, goals and<br>journeys you don't want to forget.</p></div><div class="notes-actions"><button class="mini-btn" id="toggleAddNote" type="button">＋ Add note</button></div><article class="card note-card add-note-card is-editing" id="addNoteCard" data-color="yellow" hidden></article><div class="stack" id="notesList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="victories"><div class="victories-page"><div class="victories-confetti" aria-hidden="true"><span class="is-sparkle" style="left:18%;top:10%;background:#ffb078"></span><span class="is-diamond" style="left:34%;top:8%;background:#ff3f9b"></span><span class="is-confetti" style="left:52%;top:12%;background:#a855d8;transform:rotate(-28deg)"></span><span class="is-sparkle" style="left:66%;top:9%;background:#ff8a45"></span><span class="is-diamond" style="left:78%;top:14%;background:#d060c8"></span><span class="is-confetti" style="left:24%;top:16%;background:#ff4c97;transform:rotate(22deg)"></span><span class="is-sparkle" style="left:42%;top:18%;background:#efcbaa"></span><span class="is-diamond" style="left:58%;top:17%;background:#ffb078"></span><span class="is-confetti" style="left:72%;top:20%;background:#e889b4;transform:rotate(-16deg)"></span><span class="is-sparkle" style="left:12%;top:22%;background:#a855d8"></span><span class="is-diamond" style="left:86%;top:22%;background:#ff8a45"></span><span class="is-confetti" style="left:30%;top:28%;background:#ff3f9b;transform:rotate(12deg)"></span><span class="is-sparkle" style="left:48%;top:30%;background:#d060c8"></span><span class="is-diamond" style="left:64%;top:27%;background:#ff4c97"></span><span class="is-confetti" style="left:16%;top:34%;background:#ffb078;transform:rotate(-20deg)"></span><span class="is-sparkle" style="left:38%;top:36%;background:#ff8a45"></span><span class="is-diamond" style="left:55%;top:38%;background:#e889b4"></span><span class="is-confetti" style="left:70%;top:35%;background:#a855d8;transform:rotate(18deg)"></span><span class="is-sparkle" style="left:82%;top:40%;background:#ff3f9b"></span><span class="is-diamond" style="left:22%;top:42%;background:#efcbaa"></span><span class="is-confetti" style="left:44%;top:44%;background:#ff8a45;transform:rotate(-10deg)"></span><span class="is-sparkle" style="left:60%;top:46%;background:#d060c8"></span><span class="is-diamond" style="left:76%;top:48%;background:#ffb078"></span><span class="is-confetti" style="left:10%;top:48%;background:#ff4c97;transform:rotate(26deg)"></span><span class="is-sparkle" style="left:33%;top:50%;background:#a855d8"></span><span class="is-diamond" style="left:50%;top:52%;background:#e889b4"></span><span class="is-confetti" style="left:68%;top:51%;background:#ff3f9b;transform:rotate(-14deg)"></span><span class="is-sparkle" style="left:88%;top:50%;background:#ff8a45"></span></div><header class="victories-hero"><h1 class="victories-title">Victories<span class="victories-title-trophy" aria-hidden="true">🏆</span></h1><p class="victories-subtitle">The things you finished along the way.</p></header><div class="victories-sections" id="victoriesSections"></div></div></section>
@@ -6485,6 +6493,7 @@ state.pensions.forEach((p,i)=>{
   p.personal=Number(p.personal)||0;
   p.employer=Number(p.employer)||0;
 });
+/* Pension contribution tracking is applied after helper fns are defined (boot sync below). */
 if(!state.hiddenBuiltInGoals)state.hiddenBuiltInGoals={houseFund:false,holidayFund:false,personalSavings:false};
 if(!state.deletedBuiltInGoals)state.deletedBuiltInGoals={houseFund:false,holidayFund:false,personalSavings:false};
 if(!state.goalNames)state.goalNames={};
@@ -9998,9 +10007,143 @@ function setupLoanReorder(list){
     card.addEventListener("pointercancel",onEnd);
   });
 }
+/* ===== Pension contribution estimates (local calendar months) =====
+   statementValue / statementMonth = last actual statement baseline.
+   contribPeriods = rate schedule; months after statementMonth accrue personal+employer.
+   value = derived estimate (statement + completed months). Never backfills pre-migration. */
+function pensionMonthKey(date){
+  const d=date instanceof Date?date:new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
+}
+function pensionMonthAdd(monthKey,delta){
+  const parts=String(monthKey||"").split("-");
+  const y=Number(parts[0]);
+  const m=Number(parts[1]);
+  if(!y||!m)return pensionMonthKey(new Date());
+  const d=new Date(y,m-1+Number(delta)||0,1);
+  return pensionMonthKey(d);
+}
+function pensionLastCompletedMonthKey(date){
+  return pensionMonthAdd(pensionMonthKey(date),-1);
+}
+function pensionMonthMax(a,b){
+  return String(a||"")>=String(b||"")?a:b;
+}
+function pensionRoundMoney(n){
+  return Math.round((Number(n)||0)*100)/100;
+}
 function pensionMonthly(p){return (Number(p.personal)||0)+(Number(p.employer)||0);}
-function overviewPensionTotal(){if(!Array.isArray(state.pensions))return 0;return state.pensions.filter(p=>p.showInOverview!==false).reduce((s,p)=>s+(Number(p.value)||0),0);}
-function includedPensionCount(){if(!Array.isArray(state.pensions))return 0;return state.pensions.filter(p=>p.showInOverview!==false).length;}
+function pensionRatesForMonth(p,monthKey){
+  let personal=Number(p&&p.personal)||0;
+  let employer=Number(p&&p.employer)||0;
+  const periods=Array.isArray(p&&p.contribPeriods)?p.contribPeriods:[];
+  periods.forEach(per=>{
+    if(!per||!per.startMonth)return;
+    if(String(per.startMonth)<=String(monthKey)){
+      personal=Number(per.personal)||0;
+      employer=Number(per.employer)||0;
+    }
+  });
+  return {personal:Math.max(0,personal),employer:Math.max(0,employer)};
+}
+function pensionEstimatedValue(p,date){
+  if(!p)return 0;
+  let total=Number(p.statementValue)||0;
+  const statementMonth=p.statementMonth||pensionMonthKey(date);
+  const lastCompleted=pensionLastCompletedMonthKey(date);
+  let month=pensionMonthAdd(statementMonth,1);
+  /* Guard runaway loops (corrupt keys). */
+  for(let i=0;i<1200&&String(month)<=String(lastCompleted);i++){
+    const rates=pensionRatesForMonth(p,month);
+    total+=rates.personal+rates.employer;
+    month=pensionMonthAdd(month,1);
+  }
+  return pensionRoundMoney(total);
+}
+function ensurePensionTracking(p,date){
+  if(!p)return false;
+  p.personal=Math.max(0,Number(p.personal)||0);
+  p.employer=Math.max(0,Number(p.employer)||0);
+  if(p.contribTrackingV1){
+    p.statementValue=Math.max(0,Number(p.statementValue)||0);
+    if(!p.statementMonth)p.statementMonth=pensionMonthKey(date);
+    if(!Array.isArray(p.contribPeriods)||!p.contribPeriods.length){
+      p.contribPeriods=[{startMonth:pensionMonthAdd(p.statementMonth,1),personal:p.personal,employer:p.employer}];
+    }
+    return false;
+  }
+  /* Migration: preserve current balance/rates; baseline = this local month (no backfill). */
+  const nowKey=pensionMonthKey(date);
+  p.statementValue=Math.max(0,Number(p.value)||0);
+  p.statementMonth=nowKey;
+  p.contribPeriods=[{startMonth:pensionMonthAdd(nowKey,1),personal:p.personal,employer:p.employer}];
+  p.contribTrackingV1=true;
+  return true;
+}
+function pensionResetStatementBaseline(p,statementValue,personal,employer,date){
+  const nowKey=pensionMonthKey(date);
+  p.statementValue=Math.max(0,Number(statementValue)||0);
+  p.statementMonth=nowKey;
+  p.personal=Math.max(0,Number(personal)||0);
+  p.employer=Math.max(0,Number(employer)||0);
+  p.contribPeriods=[{startMonth:pensionMonthAdd(nowKey,1),personal:p.personal,employer:p.employer}];
+  p.contribTrackingV1=true;
+}
+function pensionSetContributionRates(p,personal,employer,date){
+  personal=Math.max(0,Number(personal)||0);
+  employer=Math.max(0,Number(employer)||0);
+  ensurePensionTracking(p,date);
+  const prevPersonal=Number(p.personal)||0;
+  const prevEmployer=Number(p.employer)||0;
+  p.personal=personal;
+  p.employer=employer;
+  if(prevPersonal===personal&&prevEmployer===employer)return;
+  const firstEligible=pensionMonthAdd(p.statementMonth,1);
+  const applyFrom=pensionMonthMax(firstEligible,pensionMonthKey(date));
+  const kept=(Array.isArray(p.contribPeriods)?p.contribPeriods:[]).filter(per=>per&&per.startMonth&&String(per.startMonth)<String(applyFrom));
+  p.contribPeriods=kept.concat([{startMonth:applyFrom,personal,employer}]);
+}
+function syncPensionEstimate(p,date){
+  const migrated=ensurePensionTracking(p,date);
+  const next=pensionEstimatedValue(p,date);
+  const prev=Number(p.value)||0;
+  p.value=next;
+  return migrated||prev!==next;
+}
+function syncAllPensionEstimates(date){
+  if(!Array.isArray(state.pensions))return false;
+  let changed=false;
+  state.pensions.forEach(p=>{if(syncPensionEstimate(p,date))changed=true;});
+  if(Array.isArray(state.archivedPensions)){
+    state.archivedPensions.forEach(p=>{
+      if(!p||p.contribTrackingV1)return;
+      if(ensurePensionTracking(p,date))changed=true;
+      /* Archived pots keep frozen value; still migrate fields for safe restore. */
+      p.value=Number(p.value)||0;
+    });
+  }
+  return changed;
+}
+function initPensionContributionTracking(){
+  const changed=syncAllPensionEstimates(new Date());
+  if(changed)persist();
+}
+function combinedPensionTotal(){
+  if(!Array.isArray(state.pensions))return 0;
+  return state.pensions.reduce((s,p)=>s+(Number(p.value)||0),0);
+}
+function overviewPensionTotal(){
+  if(!Array.isArray(state.pensions))return 0;
+  return state.pensions.filter(p=>p.showInOverview!==false).reduce((s,p)=>s+(Number(p.value)||0),0);
+}
+function includedPensionCount(){
+  if(!Array.isArray(state.pensions))return 0;
+  return state.pensions.filter(p=>p.showInOverview!==false).length;
+}
+function updatePensionCombinedTotal(){
+  const demoCombinedValue=byId("pensionDemoCombinedValue");
+  if(demoCombinedValue)demoCombinedValue.textContent=euro0(combinedPensionTotal());
+}
 function updateOverviewPensionCard(){
   const pensionCard=byId("overviewPensionCard");
   if(!pensionCard) return;
@@ -10011,6 +10154,10 @@ function updateOverviewPensionCard(){
   }else{
     pensionCard.hidden=true;
   }
+}
+function updatePensionTotalsUi(){
+  updatePensionCombinedTotal();
+  updateOverviewPensionCard();
 }
 function pensionCardHead(i,p,collapsed){
   const name=p.name||"Pension";
@@ -10023,22 +10170,30 @@ function pensionCardHead(i,p,collapsed){
 function savePension(i){
   const p=state.pensions[i];
   if(!p) return;
+  ensurePensionTracking(p,new Date());
   const nameEl=document.querySelector(`[data-pension-name="${i}"]`);
   const valueEl=byId(`pensionValue_${i}`);
   const personalEl=byId(`pensionPersonal_${i}`);
   const employerEl=byId(`pensionEmployer_${i}`);
   const overviewEl=byId(`pensionOverview_${i}`);
-  const prevValue=Number(p.value)||0;
+  const prevStatement=Number(p.statementValue)||0;
   if(nameEl){const n=nameEl.value.trim();if(n)p.name=n;}
-  if(valueEl)p.value=Math.max(0,Number(valueEl.value)||0);
-  if(personalEl)p.personal=Math.max(0,Number(personalEl.value)||0);
-  if(employerEl)p.employer=Math.max(0,Number(employerEl.value)||0);
+  const nextStatement=valueEl?Math.max(0,Number(valueEl.value)||0):prevStatement;
+  const nextPersonal=personalEl?Math.max(0,Number(personalEl.value)||0):Math.max(0,Number(p.personal)||0);
+  const nextEmployer=employerEl?Math.max(0,Number(employerEl.value)||0):Math.max(0,Number(p.employer)||0);
   if(overviewEl)p.showInOverview=overviewEl.checked;
-  const nextValue=Number(p.value)||0;
-  const valueIncreased=nextValue>prevValue;
+  const statementChanged=Math.abs(nextStatement-prevStatement)>1e-9;
+  let statementIncreased=false;
+  if(statementChanged){
+    statementIncreased=nextStatement>prevStatement;
+    pensionResetStatementBaseline(p,nextStatement,nextPersonal,nextEmployer,new Date());
+  }else{
+    pensionSetContributionRates(p,nextPersonal,nextEmployer,new Date());
+  }
+  syncPensionEstimate(p,new Date());
   persist(); render();
-  /* Pension recognition: occasional ordinary-progress style on genuine value increase only. */
-  if(valueIncreased&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryPension==="function"){
+  /* Companion: genuine statement balance increase only — not contribution accrual. */
+  if(statementIncreased&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryPension==="function"){
     const ordinary=window.FreedomOrdinaryProgress.tryPension(p);
     if(ordinary&&ordinary.changed)persist();
   }
@@ -10046,6 +10201,7 @@ function savePension(i){
 function renderPensionCard(i){
   const p=state.pensions[i];
   if(!p) return null;
+  syncPensionEstimate(p,new Date());
   const collapsed=!!p.collapsed;
   const card=document.createElement("article");
   card.className="card pension-card"+(collapsed?" is-collapsed":"");
@@ -10053,8 +10209,9 @@ function renderPensionCard(i){
   const head=pensionCardHead(i,p,collapsed);
   const monthly=pensionMonthly(p);
   const annual=monthly*12;
+  const statementValue=Number(p.statementValue)||0;
   const overviewChecked=p.showInOverview!==false?" checked":"";
-  const bodyInner=`<div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Current pension value</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.value||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div></div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div>`;
+  const bodyInner=`<div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Statement balance</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${statementValue||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div><p class="pension-estimate-note">Estimated balance on the card includes contributions since your last statement. It excludes investment growth, fees and market changes.</p></div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div>`;
   const body=wrapCardBody(bodyInner,collapsed);
   card.innerHTML=head+body;
   return card;
@@ -10132,7 +10289,7 @@ function setupPensionReorder(list){
           persist();
         }
         renderPensions();
-        updateOverviewPensionCard();
+        updatePensionTotalsUi();
       }
     };
     card.addEventListener("pointerdown",e=>{
@@ -10160,8 +10317,8 @@ function setupPensionReorder(list){
 function renderPensions(){
   const list=byId("pensionList");
   if(!list) return;
-  const demoCombinedValue=byId("pensionDemoCombinedValue");
-  if(demoCombinedValue)demoCombinedValue.textContent=euro0(overviewPensionTotal());
+  if(syncAllPensionEstimates(new Date()))persist();
+  updatePensionCombinedTotal();
   list.innerHTML="";
   if(!Array.isArray(state.pensions)) state.pensions=[];
   if(!state.pensions.length){
@@ -10171,6 +10328,7 @@ function renderPensions(){
     const card=renderPensionCard(i);
     if(card){freedomMotion.decorateNewCard(card,"pension",i);list.appendChild(card);}
   });
+  updatePensionTotalsUi();
   const skipToggle=el=>el.closest("input,button[data-archive-pension],button[data-delete-pension],button[data-save-pension],.save-btn,.pension-toggle");
   list.querySelectorAll("[data-toggle-pension]").forEach(head=>head.addEventListener("click",e=>{
     if(pensionDragJustEnded||skipToggle(e.target)) return;
@@ -10223,7 +10381,7 @@ function renderPensions(){
       if(!p) return;
       p.showInOverview=!!e.currentTarget.checked;
       persist();
-      updateOverviewPensionCard();
+      updatePensionTotalsUi();
     });
   });
   list.querySelectorAll("[data-archive-pension]").forEach(btn=>btn.addEventListener("click",e=>{
@@ -11031,6 +11189,7 @@ if(hp>0){
   byId("pocketMonths").textContent="You did it";
 }
 if(hp>0){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="House Pocket";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(hp)} remaining • ${monthsText(hp,hpm).toLowerCase()}`}else if(next){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent=next.name;if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=`${euro0(next.current)} remaining${next.payment?" • "+monthsText(next.current,next.payment).toLowerCase():""}`}else if(cleanEmptyOverview){if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="No active journeys";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent=""}else{if(byId("nextMilestoneName"))byId("nextMilestoneName").textContent="All clear";if(byId("nextMilestoneDetail"))byId("nextMilestoneDetail").textContent="Every listed commitment is complete."}
+initPensionContributionTracking();
 renderLoans();renderGoals();renderPensions();renderNotes();renderArchive();
 if(document.getElementById("victories")?.classList.contains("active"))renderVictories();
 updateMonthlySummaryCards();
@@ -11048,7 +11207,37 @@ byId("toggleAddNote")?.addEventListener("click",()=>{const card=byId("addNoteCar
 function closeAddPensionForm(){const card=byId("addPensionCard");if(!card)return;["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>{const el=byId(id);if(el)el.value=""});card.hidden=true}
 byId("closeAddPension").addEventListener("click",closeAddPensionForm);
 ["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>{const el=byId(id);if(!el)return;el.addEventListener("focus",()=>{setTimeout(()=>el.scrollIntoView({behavior:"smooth",block:"center"}),50)})});
-byId("addPension").addEventListener("click",()=>{const name=byId("newPensionName").value.trim();const value=Math.max(0,Number(byId("newPensionValue").value)||0);const personal=Math.max(0,Number(byId("newPensionPersonal").value)||0);const employer=Math.max(0,Number(byId("newPensionEmployer").value)||0);if(!name){byId("newPensionName").focus();return}state.pensions.push({id:"pension-"+Date.now(),name,value,personal,employer,collapsed:true,showInOverview:true,ordinarySkipNext:false,ordinaryLastLine:-1});freedomMotion.markNew("pension",state.pensions.length-1);persist();["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>byId(id).value="");byId("addPensionCard").hidden=true;render()});
+byId("addPension").addEventListener("click",()=>{
+  const name=byId("newPensionName").value.trim();
+  const value=Math.max(0,Number(byId("newPensionValue").value)||0);
+  const personal=Math.max(0,Number(byId("newPensionPersonal").value)||0);
+  const employer=Math.max(0,Number(byId("newPensionEmployer").value)||0);
+  if(!name){byId("newPensionName").focus();return;}
+  const now=new Date();
+  const month=pensionMonthKey(now);
+  const pension={
+    id:"pension-"+Date.now(),
+    name,
+    value,
+    personal,
+    employer,
+    collapsed:true,
+    showInOverview:true,
+    ordinarySkipNext:false,
+    ordinaryLastLine:-1,
+    statementValue:value,
+    statementMonth:month,
+    contribPeriods:[{startMonth:pensionMonthAdd(month,1),personal,employer}],
+    contribTrackingV1:true
+  };
+  syncPensionEstimate(pension,now);
+  state.pensions.push(pension);
+  freedomMotion.markNew("pension",state.pensions.length-1);
+  persist();
+  ["newPensionName","newPensionValue","newPensionPersonal","newPensionEmployer"].forEach(id=>byId(id).value="");
+  byId("addPensionCard").hidden=true;
+  render();
+});
 byId("toggleAddGoal").addEventListener("click",()=>{const card=byId("addGoalCard");card.hidden=!card.hidden;if(!card.hidden){byId("newGoalName").focus();card.scrollIntoView({behavior:"smooth",block:"start"})}});
 /* Visible X uses the same toggle-close path as ＋ Add goal (no save / no companion). */
 byId("closeAddGoal").addEventListener("click",()=>{const card=byId("addGoalCard");if(!card||card.hidden)return;byId("toggleAddGoal").click()});
