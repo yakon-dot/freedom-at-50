@@ -11430,7 +11430,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#demoMenu")||e.target.closest("#demo183"))return;
   closeDemoMenu();
 });
-fillForm();render();const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
+fillForm();render();const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home")page("home");else if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
 /* Bridge for whole-app welcome-back (defined outside this IIFE) to inspect pending
    completion celebrations without exposing the full app state. */
 window.FreedomWelcomeBackBridge={
@@ -11991,6 +11991,10 @@ function freedomBootNavPreview(open){
     closeMore();
     document.body.classList.add("home183");
     if(home)home.setAttribute("aria-hidden","false");
+    /* Keep URL in sync with Home (replaceState — same as other tabs; no extra history). */
+    if(!window.__freedomIgnoreHistory){
+      history.replaceState({freedomPage:"home"},"","#home");
+    }
     if(window.freedomDemo&&typeof window.freedomDemo.onHomeShown==="function")window.freedomDemo.onHomeShown();
   }
   function hideHome(){
@@ -12050,6 +12054,12 @@ function freedomBootNavPreview(open){
   window.addEventListener("popstate",()=>{
     if(typeof window.page!=="function")return;
     const hash=location.hash.slice(1);
+    if(hash==="home"||hash===""){
+      window.__freedomIgnoreHistory=true;
+      try{ showHome(); }
+      finally{ window.__freedomIgnoreHistory=false; }
+      return;
+    }
     const id=["overview","journey","goals","pension","notes","more","archive","victories"].includes(hash)?hash:(hash==="archiveHub"?"archive":"");
     if(!id)return;
     window.__freedomIgnoreHistory=true;
@@ -12061,6 +12071,7 @@ function freedomBootNavPreview(open){
     if(!isMobile()){ hideHome(); return; }
     const hash=location.hash.slice(1);
     if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(hash)||hash==="archiveHub") return;
+    if(hash&&hash!=="home")return;
     if(!document.body.classList.contains("home183")) return;
     showHome();
   });
