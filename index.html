@@ -6505,8 +6505,53 @@ const freedomWallpapers={
 };
 freedomWallpapers.preloadAll();
 const HOUSE_POCKET_START=1000;
-const defaults={archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],notes:[],customGoals:[],hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},goalNames:{},goalTargets:{houseFund:50000,holidayFund:0,personalSavings:5000},goalCompletionExperienced:{},goalHasTarget:{houseFund:true,holidayFund:false,personalSavings:true},loans:[{name:"Credit Card 1",starting:5631.11,current:5631.11,payment:200},{name:"Credit Card 2",starting:2551.51,current:2551.51,payment:200},{name:"AIB Loan",starting:16420.38,current:15722.89,payment:342.47},{name:"Revolut Loan 1",starting:5000,current:4496.83,payment:0},{name:"Revolut Loan 2",starting:21000,current:13807.37,payment:0}],housePocket:150,housePocketMonthly:150,housePocketArchived:false,housePocketCompletedAt:null,housePocketArchiveRemoved:false,houseFund:9000,holidayFund:1450,holidayMonthly:200,personalSavings:565,pensions:[{id:"pension-1",name:"Pension",value:48951.79,personal:342.50,employer:242.50,collapsed:false,showInOverview:true}]};
-let state;try{const saved=JSON.parse(localStorage.getItem(KEY)||"null");state=saved&&saved.loans?Object.assign({},defaults,saved):JSON.parse(JSON.stringify(defaults));}catch(e){state=JSON.parse(JSON.stringify(defaults));}
+/* Structural merge base for returning users — empty finances only, never sample figures.
+   Clean-install markers (overviewExcludeHousePocket / hidden built-ins) live in buildFreshUserState(). */
+const personalStateDefaults={
+  archivedJourneys:[],archivedGoals:[],archivedPensions:[],victories:[],notes:[],customGoals:[],
+  hiddenBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+  deletedBuiltInGoals:{houseFund:false,holidayFund:false,personalSavings:false},
+  goalNames:{},goalTargets:{},goalCompletionExperienced:{},goalHasTarget:{},
+  goalPlanMode:{},goalPlannedMonthly:{},goalDate:{},goalLifetimeAdded:{},goalLifeHappensTotal:{},
+  goalLastLifeHappens:{},goalStartingBalance:{},goalLastBalanceCorrection:{},goalCollapsed:{},goalOrder:[],
+  loans:[],pensions:[],
+  housePocket:0,housePocketMonthly:0,housePocketArchived:false,housePocketCompletedAt:null,housePocketArchiveRemoved:false,
+  houseFund:0,holidayFund:0,holidayMonthly:0,personalSavings:0
+};
+/* Set when personal KEY is corrupt/unreadable. Blocks persist() so we never overwrite the blob. */
+let freedomPersonalLoadError=null;
+function loadPersonalStateFromStorage(){
+  let raw=null;
+  try{raw=localStorage.getItem(KEY);}catch(e){
+    freedomPersonalLoadError="unreadable";
+    return buildFreshUserState();
+  }
+  if(raw==null||raw===""){
+    freedomPersonalLoadError=null;
+    return buildFreshUserState();
+  }
+  let saved=null;
+  try{saved=JSON.parse(raw);}catch(e){
+    freedomPersonalLoadError="corrupt";
+    return buildFreshUserState();
+  }
+  if(!saved||typeof saved!=="object"||Array.isArray(saved)){
+    freedomPersonalLoadError="corrupt";
+    return buildFreshUserState();
+  }
+  freedomPersonalLoadError=null;
+  const merged=Object.assign({},personalStateDefaults,saved);
+  if(!Array.isArray(merged.loans))merged.loans=[];
+  if(!Array.isArray(merged.pensions))merged.pensions=[];
+  if(!Array.isArray(merged.notes))merged.notes=[];
+  if(!Array.isArray(merged.customGoals))merged.customGoals=[];
+  if(!Array.isArray(merged.archivedJourneys))merged.archivedJourneys=[];
+  if(!Array.isArray(merged.archivedGoals))merged.archivedGoals=[];
+  if(!Array.isArray(merged.archivedPensions))merged.archivedPensions=[];
+  if(!Array.isArray(merged.victories))merged.victories=[];
+  return merged;
+}
+let state=loadPersonalStateFromStorage();
 let demoMode=false;
 let realStateSnapshot=null;
 let journeyDragJustEnded=false;
@@ -6764,7 +6809,25 @@ if(state.housePocketArchived===undefined)state.housePocketArchived=false;
 const euro0=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Number(n)||0);const euro2=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);const byId=id=>document.getElementById(id);const number=id=>Math.max(0,Number(byId(id).value)||0);
 function showSaved(){const note=byId("saveNote");note.classList.add("show");clearTimeout(showSaved.timer);showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200)}
 function persistDemoSession(){sessionStorage.setItem(DEMO_SESSION_KEY,JSON.stringify({demoMode:true,state,demoSession}));}
-function persist(){if(demoMode){persistDemoSession();return;}localStorage.setItem(KEY,JSON.stringify(state));showSaved();}
+function persist(){
+  if(demoMode){persistDemoSession();return;}
+  /* Corrupt/unreadable personal KEY: never overwrite the stored blob. */
+  if(freedomPersonalLoadError)return;
+  try{localStorage.setItem(KEY,JSON.stringify(state));showSaved();}catch(e){console.warn("Freedom could not save personal data:",e);}
+}
+function recoverPersonalStorageFromLoadError(){
+  if(!freedomPersonalLoadError||demoMode)return;
+  const msg=freedomPersonalLoadError==="unreadable"
+    ?"Freedom could not read your saved data on this device (storage blocked or unavailable).\n\nStart with empty personal data on this device?\n\nCancel leaves the stored data unchanged and keeps Saving paused."
+    :"Freedom found saved data it could not read.\n\nYour stored file was left unchanged. Start with empty personal data on this device?\n\nCancel keeps Saving paused so nothing is overwritten.";
+  const ok=window.confirm(msg);
+  if(!ok)return;
+  freedomPersonalLoadError=null;
+  state=buildFreshUserState();
+  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){console.warn("Freedom could not write fresh personal data:",e);freedomPersonalLoadError="unreadable";return;}
+  realStateSnapshot=null;
+  if(typeof render==="function")render();
+}
 /* Password-protected backups (v2): Web Crypto PBKDF2-HMAC-SHA-256 + AES-256-GCM.
    Work factor: 210000 PBKDF2 iterations — practical on current iPhones / Safari PWAs while
    remaining costly for offline guessing. Salt 16 bytes, IV 12 bytes, random per export.
@@ -7016,6 +7079,11 @@ async function exportFreedomBackup(){
     setFreedomBackupStatus("Exit Demo Mode before exporting personal data.",true);
     return;
   }
+  /* Corrupt/unreadable storage: in-memory state is a fresh empty shell — do not export it as personal data. */
+  if(freedomPersonalLoadError){
+    setFreedomBackupStatus("Freedom could not read your saved personal data, so a backup cannot be created yet. Recover storage first, or restore from an earlier encrypted backup.",true);
+    return;
+  }
   const password=await openFreedomBackupPasswordDialog("export");
   if(password==null){
     setFreedomBackupStatus("Export cancelled.");
@@ -7050,7 +7118,9 @@ async function exportFreedomBackup(){
 }
 function writeFreedomBackupToDevice(checked){
   try{
-    /* Replace — never merge with current personal records. */
+    /* Replace — never merge with current personal records.
+       Allowed even when freedomPersonalLoadError is set: restore is the recovery path
+       that writes a validated blob without going through persist(). */
     localStorage.setItem(KEY,JSON.stringify(checked.state));
     FREEDOM_BACKUP_META_KEYS.forEach(k=>{
       try{
@@ -7058,6 +7128,7 @@ function writeFreedomBackupToDevice(checked){
         else localStorage.removeItem(k);
       }catch(e){}
     });
+    freedomPersonalLoadError=null;
     try{sessionStorage.removeItem(DEMO_SESSION_KEY);}catch(e){}
     location.reload();
     return{ok:true};
@@ -7172,7 +7243,10 @@ function initFreedomBackupUi(){
     buildInner:buildFreedomBackupInnerPayload,
     encrypt:encryptFreedomBackupEnvelope,
     decrypt:decryptFreedomBackupEnvelope,
-    validateInner:validateFreedomBackupInner
+    validateInner:validateFreedomBackupInner,
+    getPersonalLoadError:function(){return freedomPersonalLoadError;},
+    exportBackup:exportFreedomBackup,
+    writeChecked:writeFreedomBackupToDevice
   };
 }
 const PATRICIA_NOTE_COPY={
@@ -11910,7 +11984,11 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#demoMenu")||e.target.closest("#demo183"))return;
   closeDemoMenu();
 });
-fillForm();render();initFreedomBackupUi();const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home")page("home");else if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
+fillForm();render();initFreedomBackupUi();
+if(freedomPersonalLoadError){
+  setTimeout(()=>{try{recoverPersonalStorageFromLoadError();}catch(e){}},0);
+}
+const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home")page("home");else if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
 /* Bridge for whole-app welcome-back (defined outside this IIFE) to inspect pending
    completion celebrations without exposing the full app state. */
 window.FreedomWelcomeBackBridge={

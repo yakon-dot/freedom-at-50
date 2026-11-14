@@ -239,6 +239,81 @@ async function main() {
   assert.equal(download.hasLoanName, false);
   console.log("PASS: Exported envelope has no plaintext financial data or password");
 
+  /* Corrupt personal KEY: persist blocked; export refused; restore can still rewrite. */
+  page.removeAllListeners("dialog");
+  page.on("dialog", async (dialog) => {
+    /* Dismiss recover prompt so Saving stays paused. */
+    await dialog.dismiss();
+  });
+  await page.evaluate(() => {
+    localStorage.setItem("freedom50-mobile-v1", '{"definitely":"not-valid-freedom-state"');
+  });
+  await page.reload({ waitUntil: "networkidle0" });
+  await page.waitForFunction(() => window.FreedomBackup && typeof window.FreedomBackup.getPersonalLoadError === "function");
+  const corruptInteraction = await page.evaluate(async () => {
+    const api = window.FreedomBackup;
+    const KEY = "freedom50-mobile-v1";
+    const beforeBlob = localStorage.getItem(KEY);
+    const loadError = api.getPersonalLoadError();
+    await api.exportBackup();
+    const statusEl = document.getElementById("freedomBackupStatus");
+    const exportBlocked =
+      statusEl &&
+      /could not read your saved personal data|backup cannot be created/i.test(statusEl.textContent || "");
+    const blobAfterExportAttempt = localStorage.getItem(KEY);
+    const password = "FreedomRestore12";
+    const goodInner = {
+      state: {
+        loans: [{ id: "r1", name: "Restored Loan", starting: 500, current: 400, payment: 50 }],
+        pensions: [
+          {
+            id: "rp1",
+            name: "Restored Pension",
+            value: 1000,
+            personal: 10,
+            employer: 5,
+            contribPeriods: [{ startMonth: "2026-01", personal: 10, employer: 5 }],
+          },
+        ],
+        notes: [],
+      },
+      meta: {},
+    };
+    const envelope = await api.encrypt(goodInner, password);
+    const wrong = await api.decrypt(envelope, "not-the-password");
+    const decrypted = await api.decrypt(envelope, password);
+    /* Avoid navigation during the test harness when possible. */
+    try {
+      Object.defineProperty(window.location, "reload", {
+        configurable: true,
+        value: function () {},
+      });
+    } catch (e) {}
+    let wrote = null;
+    if (decrypted.ok) wrote = api.writeChecked(decrypted);
+    return {
+      loadError,
+      exportBlocked,
+      beforeBlob,
+      blobAfterExportAttempt,
+      wrongOk: wrong.ok,
+      decryptOk: decrypted.ok,
+      loadErrorCleared: api.getPersonalLoadError() === null,
+      stored: localStorage.getItem(KEY),
+      wroteOk: !!(wrote && wrote.ok),
+    };
+  });
+  assert.equal(corruptInteraction.loadError, "corrupt");
+  assert.equal(corruptInteraction.exportBlocked, true);
+  assert.equal(corruptInteraction.blobAfterExportAttempt, corruptInteraction.beforeBlob);
+  assert.equal(corruptInteraction.wrongOk, false);
+  assert.equal(corruptInteraction.decryptOk, true);
+  assert.equal(corruptInteraction.loadErrorCleared, true);
+  assert.equal(corruptInteraction.wroteOk, true);
+  assert.match(corruptInteraction.stored, /Restored Loan/);
+  console.log("PASS: Corrupt storage blocks export and leaves blob untouched until restore");
+  console.log("PASS: Incorrect password fails closed; valid restore rewrite clears load error");
+
   console.log("\nAll browser backup integration checks passed.");
   await browser.close();
 }
