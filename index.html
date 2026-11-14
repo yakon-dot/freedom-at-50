@@ -2631,7 +2631,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   max-height:0;overflow:hidden;pointer-events:none;
   transition:max-height .48s cubic-bezier(.22,.61,.36,1)
 }
-.subwrap183.open{max-height:112px;pointer-events:auto}
+.subwrap183.open{max-height:168px;pointer-events:auto}
 .sub183{
   display:block;width:100%;border:0;background:transparent;color:#dedad3;text-align:left;
   padding:7px 0;font-size:13.5px;font-weight:450;cursor:pointer;touch-action:manipulation;
@@ -2642,6 +2642,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .subwrap183.open .sub183:nth-child(1){transition-delay:.05s}
 .subwrap183.open .sub183:nth-child(2){transition-delay:.13s}
 .subwrap183.open .sub183:nth-child(3){transition-delay:.21s}
+.subwrap183.open .sub183:nth-child(4){transition-delay:.29s}
 /* Companion is not ready yet — keep markup for later, hide from More submenu */
 .sub183[data-more183="companion"],
 .sub183[hidden]{display:none!important;opacity:0!important;pointer-events:none!important;padding:0!important;margin:0!important;height:0!important;overflow:hidden!important}
@@ -4761,6 +4762,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 
       <div class="subwrap183" id="sub183">
         <button class="sub183" type="button" data-more183="archive">Archive</button>
+        <button class="sub183" type="button" data-more183="backup">Backup</button>
         <button class="sub183" type="button" data-more183="companion" hidden aria-hidden="true" tabindex="-1">Companion</button>
         <button class="sub183" type="button" data-more183="reset" id="resetFreedomMoreBtn" hidden aria-hidden="true" tabindex="-1">Reset Freedom</button>
       </div>
@@ -4907,7 +4909,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <article class="card" id="moreCompanion"><h2>Companion</h2><p class="empty-note">Patricia lives here when the companion layer needs its own space. For now, Home stays quiet unless there is a reason for her to appear.</p></article>
 <article class="card" id="moreSettings"><h2>Settings & privacy</h2><p class="empty-note">This HTML file stores edits only in this browser on this device. It does not connect to a bank or upload your figures anywhere.</p></article>
 <article class="card" id="moreReports"><h2>Reports</h2><p class="empty-note">Progress summaries and reporting views will live here.</p></article>
-<article class="card" id="moreBackup"><h2>Backup & export</h2><p class="empty-note">Export and restore your Freedom data from here.</p></article></div></section>
+<article class="card" id="moreBackup"><h2>Backup & export</h2><p class="empty-note">Download a copy of your personal Freedom data on this device, or restore from a previous backup. Backups stay on your device — Freedom does not upload them.</p><div class="backup-actions" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px"><button class="mini-btn gold" id="freedomBackupExport" type="button">Export backup</button><button class="mini-btn" id="freedomBackupRestore" type="button">Restore backup</button><input id="freedomBackupFile" type="file" accept="application/json,.json" hidden></div><p class="empty-note" id="freedomBackupStatus" style="margin-top:10px" hidden></p></article></div></section>
 </main></div>
 <nav class="bottom-nav" aria-label="Main navigation">
 <button class="nav-btn" data-page="home" type="button">
@@ -6695,6 +6697,156 @@ const euro0=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",ma
 function showSaved(){const note=byId("saveNote");note.classList.add("show");clearTimeout(showSaved.timer);showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200)}
 function persistDemoSession(){sessionStorage.setItem(DEMO_SESSION_KEY,JSON.stringify({demoMode:true,state,demoSession}));}
 function persist(){if(demoMode){persistDemoSession();return;}localStorage.setItem(KEY,JSON.stringify(state));showSaved();}
+const FREEDOM_BACKUP_VERSION=1;
+const FREEDOM_BACKUP_META_KEYS=[
+  "freedom50-companion-id-v1",
+  "freedom50-companion-pending-v1",
+  "freedom50-companion-first-setup-pending-v1",
+  "freedom50-companion-first-created-responses-v1",
+  "freedom50-welcome-complete-v1",
+  "freedom50-look-around-complete-v1",
+  "freedom50-first-time-complete-v1",
+  "freedom50-positive-pattern-v1",
+  "freedom50-last-app-open-at-v1",
+  "freedom50-welcome-back-acked-open-at-v1",
+  "freedom50-welcome-back-last-line-v1"
+];
+function collectFreedomBackupMeta(){
+  const meta={};
+  FREEDOM_BACKUP_META_KEYS.forEach(k=>{
+    try{
+      const v=localStorage.getItem(k);
+      if(v!=null)meta[k]=v;
+    }catch(e){}
+  });
+  return meta;
+}
+function buildFreedomBackupPayload(){
+  /* Personal snapshot only — never include Demo session or demoMode. */
+  const personalState=demoMode&&realStateSnapshot
+    ?JSON.parse(JSON.stringify(realStateSnapshot))
+    :JSON.parse(JSON.stringify(state));
+  return{
+    freedomBackup:true,
+    version:FREEDOM_BACKUP_VERSION,
+    exportedAt:new Date().toISOString(),
+    state:personalState,
+    meta:collectFreedomBackupMeta()
+  };
+}
+function validateFreedomBackup(payload){
+  if(!payload||typeof payload!=="object"||Array.isArray(payload))return{ok:false,error:"This file is not a Freedom backup."};
+  if(payload.freedomBackup!==true)return{ok:false,error:"This file is not a Freedom backup."};
+  if(payload.demoMode===true||payload.isDemo===true)return{ok:false,error:"Demo Mode data cannot be restored into personal finances."};
+  const ver=Number(payload.version);
+  if(!ver||ver<1||ver>FREEDOM_BACKUP_VERSION)return{ok:false,error:"This backup version is not supported."};
+  const st=payload.state;
+  if(!st||typeof st!=="object"||Array.isArray(st))return{ok:false,error:"This backup is missing personal data."};
+  if(st.demoMode===true)return{ok:false,error:"Demo Mode data cannot be restored into personal finances."};
+  if(!Array.isArray(st.loans))return{ok:false,error:"This backup is missing journey data."};
+  if(st.pensions!=null&&!Array.isArray(st.pensions))return{ok:false,error:"This backup has invalid pension data."};
+  if(st.notes!=null&&!Array.isArray(st.notes))return{ok:false,error:"This backup has invalid notes data."};
+  if(payload.meta!=null&&(typeof payload.meta!=="object"||Array.isArray(payload.meta)))return{ok:false,error:"This backup has invalid preferences data."};
+  return{ok:true,state:st,meta:payload.meta&&typeof payload.meta==="object"?payload.meta:{}};
+}
+function setFreedomBackupStatus(msg,isError){
+  const el=byId("freedomBackupStatus");
+  if(!el)return;
+  if(!msg){el.hidden=true;el.textContent="";return;}
+  el.hidden=false;
+  el.textContent=msg;
+  el.style.color=isError?"rgba(220,120,120,.9)":"";
+}
+function exportFreedomBackup(){
+  if(demoMode){
+    setFreedomBackupStatus("Exit Demo Mode before exporting personal data.",true);
+    return;
+  }
+  try{
+    const payload=buildFreedomBackupPayload();
+    const json=JSON.stringify(payload,null,2);
+    const blob=new Blob([json],{type:"application/json"});
+    const stamp=new Date().toISOString().slice(0,10);
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="freedom-backup-"+stamp+".json";
+    a.rel="noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    setFreedomBackupStatus("Backup downloaded. Keep this file somewhere safe on your device.");
+  }catch(e){
+    setFreedomBackupStatus("Could not create a backup on this device.",true);
+  }
+}
+function applyFreedomBackup(payload){
+  const checked=validateFreedomBackup(payload);
+  if(!checked.ok)return checked;
+  const ok=window.confirm("Restore this Freedom backup?\n\nThis replaces all personal Freedom data on this device (journeys, goals, pensions, notes, archive, companion preferences).\n\nDemo Mode data is not imported.\n\nCancel keeps your current data.");
+  if(!ok)return{ok:false,error:"cancelled"};
+  try{
+    /* Replace — never merge with current personal records. */
+    localStorage.setItem(KEY,JSON.stringify(checked.state));
+    FREEDOM_BACKUP_META_KEYS.forEach(k=>{
+      try{
+        if(Object.prototype.hasOwnProperty.call(checked.meta,k)&&checked.meta[k]!=null)localStorage.setItem(k,String(checked.meta[k]));
+        else localStorage.removeItem(k);
+      }catch(e){}
+    });
+    try{sessionStorage.removeItem(DEMO_SESSION_KEY);}catch(e){}
+    location.reload();
+    return{ok:true};
+  }catch(e){
+    return{ok:false,error:"Could not write the restored data on this device."};
+  }
+}
+function restoreFreedomBackupFromFile(file){
+  if(!file)return;
+  if(demoMode){
+    setFreedomBackupStatus("Exit Demo Mode before restoring personal data.",true);
+    return;
+  }
+  const reader=new FileReader();
+  reader.onerror=()=>setFreedomBackupStatus("Could not read that file.",true);
+  reader.onload=()=>{
+    let payload=null;
+    try{payload=JSON.parse(String(reader.result||""));}catch(e){
+      setFreedomBackupStatus("This file is not valid JSON.",true);
+      return;
+    }
+    const result=applyFreedomBackup(payload);
+    if(!result.ok&&result.error&&result.error!=="cancelled")setFreedomBackupStatus(result.error,true);
+  };
+  reader.readAsText(file);
+}
+function openFreedomBackupPanel(){
+  if(typeof window.hideHome==="function")window.hideHome();
+  if(typeof window.page==="function")window.page("more");
+  setTimeout(()=>{
+    const el=byId("moreBackup");
+    if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
+  },60);
+}
+function initFreedomBackupUi(){
+  const exportBtn=byId("freedomBackupExport");
+  const restoreBtn=byId("freedomBackupRestore");
+  const fileInput=byId("freedomBackupFile");
+  if(exportBtn)exportBtn.addEventListener("click",()=>exportFreedomBackup());
+  if(restoreBtn&&fileInput){
+    restoreBtn.addEventListener("click",()=>{
+      if(demoMode){setFreedomBackupStatus("Exit Demo Mode before restoring personal data.",true);return;}
+      fileInput.value="";
+      fileInput.click();
+    });
+    fileInput.addEventListener("change",()=>{
+      const file=fileInput.files&&fileInput.files[0];
+      restoreFreedomBackupFromFile(file||null);
+      fileInput.value="";
+    });
+  }
+}
 const PATRICIA_NOTE_COPY={
   home:{id:"home",text:"That credit card has €200 left.\njust saying...",doodle:"patricia-eyes.png",sticky:true},
   journeyFirst:{id:"journeyFirst",text:"This is where we keep the\nthings we're getting rid of.\nFinancially speaking.\nI'm not running a skip.",sticky:true},
@@ -11430,7 +11582,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#demoMenu")||e.target.closest("#demo183"))return;
   closeDemoMenu();
 });
-fillForm();render();const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home")page("home");else if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
+fillForm();render();initFreedomBackupUi();const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home")page("home");else if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
 /* Bridge for whole-app welcome-back (defined outside this IIFE) to inspect pending
    completion celebrations without exposing the full app state. */
 window.FreedomWelcomeBackBridge={
@@ -12035,6 +12187,10 @@ function freedomBootNavPreview(open){
       closeMore();
       if(key==="archive"){
         if(typeof window.page==="function")window.page("archive");
+        return;
+      }
+      if(key==="backup"){
+        openFreedomBackupPanel();
         return;
       }
       /* Companion destination is reserved; keep Home rather than the desktop More page. */
