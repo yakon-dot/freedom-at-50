@@ -3515,9 +3515,11 @@ body.journey-active-v313 #journey .goal-section + .journey-card-footer{margin-to
 
 /* ===== Freedom motion pass (v316) — interaction only ===== */
 :root{
-  --motion-enter:580ms;--motion-stagger:120ms;--motion-stagger-cap:7;--motion-expand:380ms;--motion-chevron:200ms;
+  --motion-enter:580ms;--motion-stagger:120ms;--motion-stagger-cap:7;--motion-expand:520ms;--motion-chevron:240ms;
   --motion-progress:500ms;--motion-progress-enter:800ms;--motion-press:130ms;--motion-toggle:210ms;--motion-new:580ms;
   --motion-exit:300ms;--motion-page:190ms;--motion-ease:cubic-bezier(0.25,0.1,0.25,1);
+  /* Softer card collapse (Save confirm + chevron toggle). */
+  --motion-ease-collapse:cubic-bezier(0.22,0.61,0.36,1);
 }
 @media (prefers-reduced-motion:reduce){
   :root{
@@ -3542,14 +3544,20 @@ body.journey-active-v313 #journey .goal-section + .journey-card-footer{margin-to
 .freedom-card-enter{animation:freedomCardEnter var(--motion-enter) var(--motion-ease) both;animation-delay:var(--motion-delay,0ms)}
 .freedom-card-new{animation:freedomCardNew var(--motion-new) var(--motion-ease) both}
 .freedom-card-exit{overflow:hidden;pointer-events:none;animation:freedomCardExit var(--motion-exit) var(--motion-ease) forwards}
-.card-body-wrap{display:grid;grid-template-rows:1fr;transition:grid-template-rows var(--motion-expand) var(--motion-ease)}
+.card-body-wrap{display:grid;grid-template-rows:1fr;transition:grid-template-rows var(--motion-expand) var(--motion-ease-collapse)}
 .card-body-wrap.is-collapsed{grid-template-rows:0fr}
-.card-body-wrap>.journey-card-body{overflow:hidden;min-height:0;transition:opacity var(--motion-expand) var(--motion-ease),transform var(--motion-expand) var(--motion-ease)}
+.card-body-wrap>.journey-card-body{overflow:hidden;min-height:0;transition:opacity var(--motion-expand) var(--motion-ease-collapse),transform var(--motion-expand) var(--motion-ease-collapse)}
 .card-body-wrap.is-collapsed>.journey-card-body{opacity:0;transform:translateY(4px);pointer-events:none}
-/* Journey collapse: height-only clip so content + shell resize as one motion (no fade-then-shrink) */
-#journey .card-body-wrap.is-collapsed>.journey-card-body{opacity:1;transform:none;pointer-events:none}
+/* Height-only clip on Journey/Goals/Pension cards so shell + body resize as one calm motion. */
+#journey .card-body-wrap.is-collapsed>.journey-card-body,
+#goals .card-body-wrap.is-collapsed>.journey-card-body,
+#pension .card-body-wrap.is-collapsed>.journey-card-body{opacity:1;transform:none;pointer-events:none}
+/* Keep card padding stable while height animates; final collapsed chrome applied on re-render. */
+.loan-card.is-collapsing .journey-chevron,
+.goal-card.is-collapsing .journey-chevron,
+.pension-card.is-collapsing .journey-chevron{transform:none}
 .card-body-wrap:not(.is-collapsed)>.journey-card-body.freedom-body-reveal{animation:freedomBodyIn var(--motion-expand) var(--motion-ease) both}
-.journey-chevron{transition:transform var(--motion-chevron) var(--motion-ease)!important}
+.journey-chevron{transition:transform var(--motion-chevron) var(--motion-ease-collapse)!important}
 .progress span{transition:width var(--motion-progress) var(--motion-ease)}
 .progress span.freedom-progress-enter{transition:width var(--motion-progress-enter) var(--motion-ease)}
 .progress span.freedom-progress-snap{transition:none!important}
@@ -8295,6 +8303,19 @@ const freedomMotion={
   flashValue(el){
     if(this.reduced||!el)return;el.classList.remove("freedom-value-flash");void el.offsetWidth;el.classList.add("freedom-value-flash");
     setTimeout(()=>el.classList.remove("freedom-value-flash"),240);
+  },
+  /* Wait for --motion-expand to finish before re-render replaces the animating card. */
+  collapseSettleMs(){
+    if(this.reduced)return 0;
+    try{
+      const raw=String(getComputedStyle(document.documentElement).getPropertyValue("--motion-expand")||"").trim();
+      const n=parseFloat(raw);
+      if(!isNaN(n)&&n>0){
+        const ms=/ms$/i.test(raw)?n:(/s$/i.test(raw)?n*1000:n);
+        return Math.round(ms+60);
+      }
+    }catch(e){}
+    return 580;
   }
 };
 window.freedomMotion=freedomMotion;
@@ -8637,8 +8658,9 @@ function toggleGoalCollapsed(key){
     const card=document.querySelector(`#goalsList > .goal-card[data-goal-key="${CSS.escape(key)}"]`);
     const wrap=card?.querySelector(".card-body-wrap");
     if(wrap&&!freedomMotion.reduced){
-      wrap.classList.add("is-collapsed");card.classList.add("is-collapsed");
-      setTimeout(()=>{state.goalCollapsed[key]=true;persist();renderGoals();},380);
+      wrap.classList.add("is-collapsed");
+      card.classList.add("is-collapsing");
+      setTimeout(()=>{state.goalCollapsed[key]=true;persist();renderGoals();},freedomMotion.collapseSettleMs());
       return;
     }
   }
@@ -9587,7 +9609,7 @@ function renderLoans(){
         // padding/margins do not snap ahead of the height collapse.
         wrap.classList.add("is-collapsed");
         card.classList.add("is-collapsing");
-        setTimeout(()=>{state.loans[i].collapsed=true;persist();renderLoans();},380);
+        setTimeout(()=>{state.loans[i].collapsed=true;persist();renderLoans();},freedomMotion.collapseSettleMs());
         return;
       }
     }
@@ -10160,8 +10182,9 @@ function renderPensions(){
       const card=head.closest(".pension-card");
       const wrap=card?.querySelector(".card-body-wrap");
       if(wrap&&!freedomMotion.reduced){
-        wrap.classList.add("is-collapsed");card.classList.add("is-collapsed");
-        setTimeout(()=>{p.collapsed=true;persist();renderPensions();},380);
+        wrap.classList.add("is-collapsed");
+        card.classList.add("is-collapsing");
+        setTimeout(()=>{p.collapsed=true;persist();renderPensions();},freedomMotion.collapseSettleMs());
         return;
       }
     }
@@ -10184,8 +10207,8 @@ function renderPensions(){
       const wrap=card&&card.querySelector(".card-body-wrap");
       if(wrap&&!freedomMotion.reduced){
         wrap.classList.add("is-collapsed");
-        card.classList.add("is-collapsed");
-        setTimeout(()=>{p.collapsed=true;persist();renderPensions();},380);
+        card.classList.add("is-collapsing");
+        setTimeout(()=>{p.collapsed=true;persist();renderPensions();},freedomMotion.collapseSettleMs());
         return;
       }
       p.collapsed=true;
