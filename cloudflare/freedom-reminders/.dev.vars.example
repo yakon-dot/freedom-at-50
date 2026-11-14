@@ -1,0 +1,6 @@
+# Copy to .dev.vars for local wrangler dev (never commit .dev.vars)
+VAPID_PUBLIC_KEY=replace-with-public-key
+VAPID_PRIVATE_KEY=replace-with-private-key
+VAPID_SUBJECT=mailto:freedom-at-50-notifications@example.com
+ADMIN_TOKEN=replace-with-long-random-token
+# ALLOWED_ORIGIN=https://your-github-pages-host.example

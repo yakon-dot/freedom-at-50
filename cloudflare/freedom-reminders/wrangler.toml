@@ -1,0 +1,21 @@
+name = "freedom-reminders"
+main = "src/index.js"
+compatibility_date = "2025-03-01"
+workers_dev = true
+
+[[kv_namespaces]]
+binding = "REMINDERS"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"
+preview_id = "REPLACE_WITH_KV_PREVIEW_ID"
+
+# Runs near end of month; handler only sends on the actual last calendar day.
+[triggers]
+crons = ["0 17 28-31 * *"]
+
+# Secrets (wrangler secret put …) — never commit values:
+#   VAPID_PUBLIC_KEY
+#   VAPID_PRIVATE_KEY
+#   VAPID_SUBJECT          (optional; defaults to mailto:freedom-at-50-notifications@example.com)
+#   ADMIN_TOKEN            (for POST /admin/test)
+# Optional vars:
+#   ALLOWED_ORIGIN         (CORS; default *)

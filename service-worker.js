@@ -1,7 +1,10 @@
-/* Freedom at 50 — wallpaper cache + safe offline shell responses */
-const CACHE_NAME = "freedom-at-50-v1.8.6.154";
+/* Freedom at 50 — wallpaper cache + safe offline shell responses + Web Push */
+const CACHE_NAME = "freedom-at-50-v1.8.6.155";
 const WALLPAPER_CACHE = "freedom-wallpapers-v3";
-const APP_SHELL = ["./index.html", "./manifest.webmanifest"];
+const APP_SHELL = ["./index.html", "./manifest.webmanifest", "./freedom-push-config.js"];
+const REMINDER_TITLE = "A little Freedom check-in";
+const REMINDER_BODY = "Your journeys and goals are waiting whenever you’re ready.";
+const REMINDER_URL = "./#home";
 const WALLPAPERS = [
   "./companion-select-wallpaper.jpg",
   "./overview-wallpaper.png",
@@ -134,4 +137,52 @@ self.addEventListener("fetch", event => {
         return cached || offlineAssetResponse();
       })
   );
+});
+
+self.addEventListener("push", event => {
+  let title = REMINDER_TITLE;
+  let body = REMINDER_BODY;
+  let url = REMINDER_URL;
+  try {
+    if (event.data) {
+      const parsed = event.data.json();
+      if (parsed && typeof parsed === "object") {
+        if (typeof parsed.title === "string" && parsed.title) title = parsed.title;
+        if (typeof parsed.body === "string" && parsed.body) body = parsed.body;
+        if (typeof parsed.url === "string" && parsed.url) url = parsed.url;
+      }
+    }
+  } catch (e) {
+    try {
+      const text = event.data && event.data.text && event.data.text();
+      if (text) body = String(text);
+    } catch (e2) {}
+  }
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body,
+      icon: "./icon-192.png",
+      badge: "./icon-192.png",
+      data: { url }
+    })
+  );
+});
+
+self.addEventListener("notificationclick", event => {
+  event.notification.close();
+  const target = (event.notification && event.notification.data && event.notification.data.url) || REMINDER_URL;
+  event.waitUntil((async () => {
+    const absolute = new URL(target, self.location.href).href;
+    const all = await clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const client of all) {
+      try {
+        if ("focus" in client) await client.focus();
+        client.postMessage({ type: "FREEDOM_OPEN_HOME", url: absolute });
+        return;
+      } catch (e) {}
+    }
+    if (clients.openWindow) {
+      await clients.openWindow(absolute);
+    }
+  })());
 });

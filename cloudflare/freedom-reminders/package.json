@@ -1,0 +1,15 @@
+{
+  "name": "freedom-reminders",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Minimal Cloudflare Worker for Freedom at 50 monthly Web Push reminders",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node ../../scripts/test-reminders-worker.mjs",
+    "deploy": "echo \"Do not deploy without approval. See README.md.\" && exit 1"
+  },
+  "dependencies": {
+    "@block65/webcrypto-web-push": "^1.0.2"
+  }
+}
