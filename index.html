@@ -3175,6 +3175,54 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
   .freedom-confirm-removal-card{animation:none}
   .freedom-confirm-removal-btn:active{transform:none}
 }
+.freedom-backup-pass-overlay{
+  position:fixed;inset:0;z-index:9860;display:flex;align-items:center;justify-content:center;
+  padding:24px;background:rgba(7,8,9,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.freedom-backup-pass-overlay[hidden]{display:none!important}
+.freedom-backup-pass-card{
+  position:relative;width:min(100%,340px);padding:30px 24px 24px;border:0;
+  border-radius:26px;background:rgba(13,16,19,.92);text-align:left;
+  box-shadow:0 22px 48px rgba(0,0,0,.42),0 6px 16px rgba(0,0,0,.28);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  display:flex;flex-direction:column;gap:0;
+  animation:freedomConfirmRemovalEnter 320ms cubic-bezier(0.33, 0.1, 0.25, 1) both;
+}
+.freedom-backup-pass-close{
+  position:absolute;top:8px;right:8px;z-index:2;border:0;background:transparent;
+  color:rgba(236,232,224,.78);font-size:24px;line-height:1;
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;
+}
+.freedom-backup-pass-title{
+  margin:0 0 10px;padding-right:36px;font-size:20px;line-height:1.25;font-weight:760;
+  color:var(--text);letter-spacing:-.01em;font-family:inherit;
+}
+.freedom-backup-pass-body{
+  margin:0 0 16px;font-size:14px;line-height:1.5;font-weight:450;
+  color:rgba(190,188,182,.82);font-family:inherit;
+}
+.freedom-backup-pass-field{margin:0 0 12px;display:flex;flex-direction:column;gap:6px}
+.freedom-backup-pass-field label{
+  font-size:13px;font-weight:620;color:rgba(236,232,224,.78);font-family:inherit;
+}
+.freedom-backup-pass-field input{
+  width:100%;box-sizing:border-box;border-radius:14px;border:1px solid rgba(255,255,255,.1);
+  background:#12151a;color:var(--text);padding:12px 14px;font-size:16px;font-family:inherit;
+  -webkit-appearance:none;appearance:none;
+}
+.freedom-backup-pass-field input:focus{
+  outline:none;border-color:rgba(231,207,99,.45);
+}
+.freedom-backup-pass-error{
+  margin:0 0 12px;font-size:13px;line-height:1.4;color:rgba(220,120,120,.95);min-height:0;
+}
+.freedom-backup-pass-error:empty{display:none}
+.freedom-backup-pass-actions{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.freedom-backup-pass-actions .freedom-confirm-removal-btn{width:100%}
+@media (prefers-reduced-motion:reduce){
+  .freedom-backup-pass-card{animation:none}
+}
 .demo-welcome-lines{
   margin:0 0 38px;display:flex;flex-direction:column;align-items:center;gap:0.08em;
   max-width:100%;
@@ -4808,6 +4856,26 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     </div>
   </div>
 </div>
+<div class="freedom-backup-pass-overlay" id="freedomBackupPassOverlay" hidden>
+  <div class="freedom-backup-pass-card" role="dialog" aria-modal="true" aria-labelledby="freedomBackupPassTitle" aria-describedby="freedomBackupPassBody">
+    <button class="freedom-backup-pass-close" id="freedomBackupPassClose" type="button" aria-label="Close">&times;</button>
+    <h2 class="freedom-backup-pass-title" id="freedomBackupPassTitle">Protect this backup</h2>
+    <p class="freedom-backup-pass-body" id="freedomBackupPassBody"></p>
+    <div class="freedom-backup-pass-field" id="freedomBackupPassFieldWrap">
+      <label for="freedomBackupPassInput">Password</label>
+      <input id="freedomBackupPassInput" type="password" autocomplete="new-password" enterkeyhint="next">
+    </div>
+    <div class="freedom-backup-pass-field" id="freedomBackupPassConfirmWrap">
+      <label for="freedomBackupPassConfirm">Confirm password</label>
+      <input id="freedomBackupPassConfirm" type="password" autocomplete="new-password" enterkeyhint="done">
+    </div>
+    <p class="freedom-backup-pass-error" id="freedomBackupPassError" role="alert"></p>
+    <div class="freedom-backup-pass-actions">
+      <button class="freedom-confirm-removal-btn is-primary" id="freedomBackupPassSubmit" type="button">Export encrypted backup</button>
+      <button class="freedom-confirm-removal-btn is-secondary" id="freedomBackupPassCancel" type="button">Cancel</button>
+    </div>
+  </div>
+</div>
 <div class="patricia-note-layer" id="patriciaNoteLayer" hidden></div>
 <div class="app">
 <header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.6.2.2.2</div></div><div class="tagline">Small wins become big freedom.</div></header>
@@ -4909,7 +4977,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <article class="card" id="moreCompanion"><h2>Companion</h2><p class="empty-note">Patricia lives here when the companion layer needs its own space. For now, Home stays quiet unless there is a reason for her to appear.</p></article>
 <article class="card" id="moreSettings"><h2>Settings & privacy</h2><p class="empty-note">This HTML file stores edits only in this browser on this device. It does not connect to a bank or upload your figures anywhere.</p></article>
 <article class="card" id="moreReports"><h2>Reports</h2><p class="empty-note">Progress summaries and reporting views will live here.</p></article>
-<article class="card" id="moreBackup"><h2>Backup & export</h2><p class="empty-note">Download a copy of your personal Freedom data on this device, or restore from a previous backup. Backups stay on your device — Freedom does not upload them.</p><div class="backup-actions" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px"><button class="mini-btn gold" id="freedomBackupExport" type="button">Export backup</button><button class="mini-btn" id="freedomBackupRestore" type="button">Restore backup</button><input id="freedomBackupFile" type="file" accept="application/json,.json" hidden></div><p class="empty-note" id="freedomBackupStatus" style="margin-top:10px" hidden></p></article></div></section>
+<article class="card" id="moreBackup"><h2>Backup & export</h2><p class="empty-note">Download a password-protected backup of your personal Freedom data, or restore from one you saved earlier. Encryption happens on this device — Freedom does not upload backups or keep your password.</p><p class="empty-note" style="margin-top:10px">Save the file somewhere you can recover if this phone is lost — for example iCloud Drive, another cloud drive, or a computer. Do not rely only on On My iPhone storage.</p><p class="empty-note" style="margin-top:10px">If you forget the password, that backup cannot be opened. Freedom cannot recover it.</p><div class="backup-actions" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px"><button class="mini-btn gold" id="freedomBackupExport" type="button">Export backup</button><button class="mini-btn" id="freedomBackupRestore" type="button">Restore backup</button><input id="freedomBackupFile" type="file" accept="application/json,.json" hidden></div><p class="empty-note" id="freedomBackupStatus" style="margin-top:10px" hidden></p></article></div></section>
 </main></div>
 <nav class="bottom-nav" aria-label="Main navigation">
 <button class="nav-btn" data-page="home" type="button">
@@ -6697,7 +6765,14 @@ const euro0=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",ma
 function showSaved(){const note=byId("saveNote");note.classList.add("show");clearTimeout(showSaved.timer);showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200)}
 function persistDemoSession(){sessionStorage.setItem(DEMO_SESSION_KEY,JSON.stringify({demoMode:true,state,demoSession}));}
 function persist(){if(demoMode){persistDemoSession();return;}localStorage.setItem(KEY,JSON.stringify(state));showSaved();}
-const FREEDOM_BACKUP_VERSION=1;
+/* Password-protected backups (v2): Web Crypto PBKDF2-HMAC-SHA-256 + AES-256-GCM.
+   Work factor: 210000 PBKDF2 iterations — practical on current iPhones / Safari PWAs while
+   remaining costly for offline guessing. Salt 16 bytes, IV 12 bytes, random per export.
+   Password is never written to localStorage, sessionStorage, or the backup file. */
+const FREEDOM_BACKUP_VERSION=2;
+const FREEDOM_BACKUP_PBKDF2_ITERATIONS=210000;
+const FREEDOM_BACKUP_SALT_BYTES=16;
+const FREEDOM_BACKUP_IV_BYTES=12;
 const FREEDOM_BACKUP_META_KEYS=[
   "freedom50-companion-id-v1",
   "freedom50-companion-pending-v1",
@@ -6721,32 +6796,140 @@ function collectFreedomBackupMeta(){
   });
   return meta;
 }
-function buildFreedomBackupPayload(){
+function buildFreedomBackupInnerPayload(){
   /* Personal snapshot only — never include Demo session or demoMode. */
   const personalState=demoMode&&realStateSnapshot
     ?JSON.parse(JSON.stringify(realStateSnapshot))
     :JSON.parse(JSON.stringify(state));
   return{
-    freedomBackup:true,
-    version:FREEDOM_BACKUP_VERSION,
-    exportedAt:new Date().toISOString(),
     state:personalState,
     meta:collectFreedomBackupMeta()
   };
 }
-function validateFreedomBackup(payload){
-  if(!payload||typeof payload!=="object"||Array.isArray(payload))return{ok:false,error:"This file is not a Freedom backup."};
-  if(payload.freedomBackup!==true)return{ok:false,error:"This file is not a Freedom backup."};
-  if(payload.demoMode===true||payload.isDemo===true)return{ok:false,error:"Demo Mode data cannot be restored into personal finances."};
-  const ver=Number(payload.version);
-  if(!ver||ver<1||ver>FREEDOM_BACKUP_VERSION)return{ok:false,error:"This backup version is not supported."};
+function freedomBackupBytesToBase64(bytes){
+  const arr=bytes instanceof Uint8Array?bytes:new Uint8Array(bytes);
+  let s="";
+  const chunk=0x8000;
+  for(let i=0;i<arr.length;i+=chunk){
+    s+=String.fromCharCode.apply(null,arr.subarray(i,Math.min(i+chunk,arr.length)));
+  }
+  return btoa(s);
+}
+function freedomBackupBase64ToBytes(b64){
+  const bin=atob(String(b64||""));
+  const out=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)out[i]=bin.charCodeAt(i);
+  return out;
+}
+function freedomBackupSubtle(){
+  const subtle=(window.crypto&&window.crypto.subtle)||null;
+  if(!subtle)throw new Error("This device cannot encrypt backups (Web Crypto unavailable).");
+  return subtle;
+}
+async function freedomBackupDeriveAesKey(password,saltBytes,iterations,usages){
+  const subtle=freedomBackupSubtle();
+  const enc=new TextEncoder();
+  const baseKey=await subtle.importKey("raw",enc.encode(password),{name:"PBKDF2"},false,["deriveKey"]);
+  return subtle.deriveKey(
+    {name:"PBKDF2",salt:saltBytes,iterations:iterations,hash:"SHA-256"},
+    baseKey,
+    {name:"AES-GCM",length:256},
+    false,
+    usages
+  );
+}
+async function encryptFreedomBackupEnvelope(innerPayload,password){
+  const subtle=freedomBackupSubtle();
+  const salt=new Uint8Array(FREEDOM_BACKUP_SALT_BYTES);
+  const iv=new Uint8Array(FREEDOM_BACKUP_IV_BYTES);
+  window.crypto.getRandomValues(salt);
+  window.crypto.getRandomValues(iv);
+  const key=await freedomBackupDeriveAesKey(password,salt,FREEDOM_BACKUP_PBKDF2_ITERATIONS,["encrypt"]);
+  const plain=new TextEncoder().encode(JSON.stringify(innerPayload));
+  const cipherBuf=await subtle.encrypt({name:"AES-GCM",iv},key,plain);
+  return{
+    freedomBackup:true,
+    version:FREEDOM_BACKUP_VERSION,
+    encrypted:true,
+    alg:"AES-GCM",
+    kdf:"PBKDF2",
+    hash:"SHA-256",
+    iter:FREEDOM_BACKUP_PBKDF2_ITERATIONS,
+    salt:freedomBackupBytesToBase64(salt),
+    iv:freedomBackupBytesToBase64(iv),
+    ciphertext:freedomBackupBytesToBase64(new Uint8Array(cipherBuf)),
+    exportedAt:new Date().toISOString()
+  };
+}
+async function decryptFreedomBackupEnvelope(envelope,password){
+  if(!envelope||typeof envelope!=="object"||Array.isArray(envelope)){
+    return{ok:false,error:"This file is not a Freedom backup."};
+  }
+  if(envelope.freedomBackup!==true)return{ok:false,error:"This file is not a Freedom backup."};
+  if(envelope.demoMode===true||envelope.isDemo===true){
+    return{ok:false,error:"Demo Mode data cannot be restored into personal finances."};
+  }
+  const ver=Number(envelope.version);
+  if(!ver||ver<2||ver>FREEDOM_BACKUP_VERSION){
+    if(ver===1&&envelope.encrypted!==true){
+      return{ok:false,error:"This backup is not password-protected. Freedom only restores encrypted backups."};
+    }
+    return{ok:false,error:"This backup version is not supported."};
+  }
+  if(envelope.encrypted!==true){
+    return{ok:false,error:"This backup is not password-protected. Freedom only restores encrypted backups."};
+  }
+  if(envelope.alg&&envelope.alg!=="AES-GCM")return{ok:false,error:"This backup uses an unsupported encryption method."};
+  if(envelope.kdf&&envelope.kdf!=="PBKDF2")return{ok:false,error:"This backup uses an unsupported key method."};
+  const iterations=Number(envelope.iter)||0;
+  if(!iterations||iterations<100000||iterations>5000000){
+    return{ok:false,error:"This backup has an invalid encryption setting."};
+  }
+  let salt,iv,cipher;
+  try{
+    salt=freedomBackupBase64ToBytes(envelope.salt);
+    iv=freedomBackupBase64ToBytes(envelope.iv);
+    cipher=freedomBackupBase64ToBytes(envelope.ciphertext);
+  }catch(e){
+    return{ok:false,error:"This backup file is damaged."};
+  }
+  if(salt.length<8||iv.length<12||!cipher.length){
+    return{ok:false,error:"This backup file is damaged."};
+  }
+  try{
+    const subtle=freedomBackupSubtle();
+    const key=await freedomBackupDeriveAesKey(password,salt,iterations,["decrypt"]);
+    const plainBuf=await subtle.decrypt({name:"AES-GCM",iv},key,cipher);
+    const text=new TextDecoder().decode(plainBuf);
+    const inner=JSON.parse(text);
+    return validateFreedomBackupInner(inner);
+  }catch(e){
+    if(e&&(e.name==="OperationError"||e.name==="InvalidAccessError")){
+      return{ok:false,error:"Incorrect password, or this backup file is damaged."};
+    }
+    if(e instanceof SyntaxError)return{ok:false,error:"This backup file is damaged."};
+    if(e&&String(e.message||"").indexOf("Web Crypto")>=0){
+      return{ok:false,error:String(e.message)};
+    }
+    return{ok:false,error:"Incorrect password, or this backup file is damaged."};
+  }
+}
+function validateFreedomBackupInner(payload){
+  if(!payload||typeof payload!=="object"||Array.isArray(payload)){
+    return{ok:false,error:"This backup is missing personal data."};
+  }
+  if(payload.demoMode===true||payload.isDemo===true){
+    return{ok:false,error:"Demo Mode data cannot be restored into personal finances."};
+  }
   const st=payload.state;
   if(!st||typeof st!=="object"||Array.isArray(st))return{ok:false,error:"This backup is missing personal data."};
   if(st.demoMode===true)return{ok:false,error:"Demo Mode data cannot be restored into personal finances."};
   if(!Array.isArray(st.loans))return{ok:false,error:"This backup is missing journey data."};
   if(st.pensions!=null&&!Array.isArray(st.pensions))return{ok:false,error:"This backup has invalid pension data."};
   if(st.notes!=null&&!Array.isArray(st.notes))return{ok:false,error:"This backup has invalid notes data."};
-  if(payload.meta!=null&&(typeof payload.meta!=="object"||Array.isArray(payload.meta)))return{ok:false,error:"This backup has invalid preferences data."};
+  if(payload.meta!=null&&(typeof payload.meta!=="object"||Array.isArray(payload.meta))){
+    return{ok:false,error:"This backup has invalid preferences data."};
+  }
   return{ok:true,state:st,meta:payload.meta&&typeof payload.meta==="object"?payload.meta:{}};
 }
 function setFreedomBackupStatus(msg,isError){
@@ -6757,14 +6940,95 @@ function setFreedomBackupStatus(msg,isError){
   el.textContent=msg;
   el.style.color=isError?"rgba(220,120,120,.9)":"";
 }
-function exportFreedomBackup(){
+function clearFreedomBackupPasswordFields(){
+  const a=byId("freedomBackupPassInput");
+  const b=byId("freedomBackupPassConfirm");
+  if(a)a.value="";
+  if(b)b.value="";
+}
+function closeFreedomBackupPasswordDialog(result){
+  const overlay=byId("freedomBackupPassOverlay");
+  if(overlay)overlay.hidden=true;
+  clearFreedomBackupPasswordFields();
+  const err=byId("freedomBackupPassError");
+  if(err)err.textContent="";
+  const pending=closeFreedomBackupPasswordDialog._pending;
+  closeFreedomBackupPasswordDialog._pending=null;
+  if(pending)pending(result);
+}
+function openFreedomBackupPasswordDialog(mode){
+  return new Promise(resolve=>{
+    const overlay=byId("freedomBackupPassOverlay");
+    const title=byId("freedomBackupPassTitle");
+    const body=byId("freedomBackupPassBody");
+    const confirmWrap=byId("freedomBackupPassConfirmWrap");
+    const submit=byId("freedomBackupPassSubmit");
+    const passInput=byId("freedomBackupPassInput");
+    const confirmInput=byId("freedomBackupPassConfirm");
+    const err=byId("freedomBackupPassError");
+    if(!overlay||!passInput){resolve(null);return;}
+    const passMode=mode==="restore"?"restore":"export";
+    openFreedomBackupPasswordDialog._mode=passMode;
+    closeFreedomBackupPasswordDialog._pending=resolve;
+    if(err)err.textContent="";
+    clearFreedomBackupPasswordFields();
+    const isExport=passMode==="export";
+    if(title)title.textContent=isExport?"Protect this backup":"Enter backup password";
+    if(body){
+      body.textContent=isExport
+        ?"Choose a password to encrypt this backup. Freedom never saves it. If you forget it, this backup cannot be opened."
+        :"Enter the password used when this backup was created. An incorrect password will not change your current data.";
+    }
+    if(confirmWrap)confirmWrap.hidden=!isExport;
+    if(submit)submit.textContent=isExport?"Export encrypted backup":"Unlock backup";
+    if(passInput)passInput.autocomplete=isExport?"new-password":"current-password";
+    if(confirmInput)confirmInput.autocomplete="new-password";
+    overlay.hidden=false;
+    setTimeout(()=>{try{passInput.focus();}catch(e){}},40);
+  });
+}
+function readFreedomBackupPasswordDialog(){
+  const mode=openFreedomBackupPasswordDialog._mode||"export";
+  const err=byId("freedomBackupPassError");
+  const passInput=byId("freedomBackupPassInput");
+  const confirmInput=byId("freedomBackupPassConfirm");
+  const password=passInput?String(passInput.value||""):"";
+  if(!password){
+    if(err)err.textContent="Enter a password.";
+    return null;
+  }
+  if(mode==="export"){
+    if(password.length<6){
+      if(err)err.textContent="Use at least 6 characters.";
+      return null;
+    }
+    const confirm=confirmInput?String(confirmInput.value||""):"";
+    if(password!==confirm){
+      if(err)err.textContent="Passwords do not match.";
+      return null;
+    }
+  }
+  if(err)err.textContent="";
+  return password;
+}
+async function exportFreedomBackup(){
   if(demoMode){
     setFreedomBackupStatus("Exit Demo Mode before exporting personal data.",true);
     return;
   }
+  const password=await openFreedomBackupPasswordDialog("export");
+  if(password==null){
+    setFreedomBackupStatus("Export cancelled.");
+    return;
+  }
   try{
-    const payload=buildFreedomBackupPayload();
-    const json=JSON.stringify(payload,null,2);
+    const inner=buildFreedomBackupInnerPayload();
+    const envelope=await encryptFreedomBackupEnvelope(inner,password);
+    const json=JSON.stringify(envelope,null,2);
+    /* Guard: envelope must never include a password field. */
+    if(Object.prototype.hasOwnProperty.call(envelope,"password")||/\"password\"\s*:/i.test(json)){
+      throw new Error("Refusing to write a backup that contains the password.");
+    }
     const blob=new Blob([json],{type:"application/json"});
     const stamp=new Date().toISOString().slice(0,10);
     const url=URL.createObjectURL(blob);
@@ -6776,16 +7040,15 @@ function exportFreedomBackup(){
     a.click();
     a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),2000);
-    setFreedomBackupStatus("Backup downloaded. Keep this file somewhere safe on your device.");
+    setFreedomBackupStatus("Encrypted backup downloaded. Save it somewhere recoverable (for example iCloud Drive). Freedom cannot recover a forgotten password.");
   }catch(e){
-    setFreedomBackupStatus("Could not create a backup on this device.",true);
+    setFreedomBackupStatus((e&&e.message)||"Could not create a backup on this device.",true);
+  }finally{
+    /* Best-effort scrub — never persist the password. */
+    clearFreedomBackupPasswordFields();
   }
 }
-function applyFreedomBackup(payload){
-  const checked=validateFreedomBackup(payload);
-  if(!checked.ok)return checked;
-  const ok=window.confirm("Restore this Freedom backup?\n\nThis replaces all personal Freedom data on this device (journeys, goals, pensions, notes, archive, companion preferences).\n\nDemo Mode data is not imported.\n\nCancel keeps your current data.");
-  if(!ok)return{ok:false,error:"cancelled"};
+function writeFreedomBackupToDevice(checked){
   try{
     /* Replace — never merge with current personal records. */
     localStorage.setItem(KEY,JSON.stringify(checked.state));
@@ -6802,7 +7065,13 @@ function applyFreedomBackup(payload){
     return{ok:false,error:"Could not write the restored data on this device."};
   }
 }
-function restoreFreedomBackupFromFile(file){
+async function applyDecryptedFreedomBackup(checked){
+  if(!checked||!checked.ok)return checked||{ok:false,error:"This backup could not be validated."};
+  const ok=window.confirm("Restore this Freedom backup?\n\nThis replaces all personal Freedom data on this device (journeys, goals, pensions, notes, archive, companion preferences).\n\nDemo Mode data is not imported.\n\nCancel keeps your current data.");
+  if(!ok)return{ok:false,error:"cancelled"};
+  return writeFreedomBackupToDevice(checked);
+}
+async function restoreFreedomBackupFromFile(file){
   if(!file)return;
   if(demoMode){
     setFreedomBackupStatus("Exit Demo Mode before restoring personal data.",true);
@@ -6810,14 +7079,39 @@ function restoreFreedomBackupFromFile(file){
   }
   const reader=new FileReader();
   reader.onerror=()=>setFreedomBackupStatus("Could not read that file.",true);
-  reader.onload=()=>{
-    let payload=null;
-    try{payload=JSON.parse(String(reader.result||""));}catch(e){
-      setFreedomBackupStatus("This file is not valid JSON.",true);
+  reader.onload=async()=>{
+    let envelope=null;
+    try{envelope=JSON.parse(String(reader.result||""));}catch(e){
+      setFreedomBackupStatus("This file is not a valid Freedom backup.",true);
       return;
     }
-    const result=applyFreedomBackup(payload);
+    /* Reject plaintext / wrong shape before any password prompt — never touch personal data. */
+    if(!envelope||typeof envelope!=="object"||envelope.freedomBackup!==true){
+      setFreedomBackupStatus("This file is not a Freedom backup.",true);
+      return;
+    }
+    if(envelope.encrypted!==true||Number(envelope.version)<2){
+      setFreedomBackupStatus("This backup is not password-protected. Freedom only restores encrypted backups.",true);
+      return;
+    }
+    const password=await openFreedomBackupPasswordDialog("restore");
+    if(password==null){
+      setFreedomBackupStatus("Restore cancelled. Your current data was not changed.");
+      return;
+    }
+    let decrypted=null;
+    try{
+      decrypted=await decryptFreedomBackupEnvelope(envelope,password);
+    }finally{
+      clearFreedomBackupPasswordFields();
+    }
+    if(!decrypted||!decrypted.ok){
+      setFreedomBackupStatus((decrypted&&decrypted.error)||"Incorrect password, or this backup file is damaged.",true);
+      return;
+    }
+    const result=await applyDecryptedFreedomBackup(decrypted);
     if(!result.ok&&result.error&&result.error!=="cancelled")setFreedomBackupStatus(result.error,true);
+    else if(result.error==="cancelled")setFreedomBackupStatus("Restore cancelled. Your current data was not changed.");
   };
   reader.readAsText(file);
 }
@@ -6833,6 +7127,12 @@ function initFreedomBackupUi(){
   const exportBtn=byId("freedomBackupExport");
   const restoreBtn=byId("freedomBackupRestore");
   const fileInput=byId("freedomBackupFile");
+  const overlay=byId("freedomBackupPassOverlay");
+  const submit=byId("freedomBackupPassSubmit");
+  const cancel=byId("freedomBackupPassCancel");
+  const closeBtn=byId("freedomBackupPassClose");
+  const passInput=byId("freedomBackupPassInput");
+  const confirmInput=byId("freedomBackupPassConfirm");
   if(exportBtn)exportBtn.addEventListener("click",()=>exportFreedomBackup());
   if(restoreBtn&&fileInput){
     restoreBtn.addEventListener("click",()=>{
@@ -6846,6 +7146,34 @@ function initFreedomBackupUi(){
       fileInput.value="";
     });
   }
+  function submitPassDialog(){
+    const password=readFreedomBackupPasswordDialog();
+    if(password==null)return;
+    closeFreedomBackupPasswordDialog(password);
+  }
+  if(submit)submit.addEventListener("click",submitPassDialog);
+  if(cancel)cancel.addEventListener("click",()=>closeFreedomBackupPasswordDialog(null));
+  if(closeBtn)closeBtn.addEventListener("click",()=>closeFreedomBackupPasswordDialog(null));
+  if(overlay){
+    overlay.addEventListener("click",e=>{
+      if(e.target===overlay)closeFreedomBackupPasswordDialog(null);
+    });
+  }
+  function onPassKey(e){
+    if(e.key==="Enter"){e.preventDefault();submitPassDialog();}
+    if(e.key==="Escape"){e.preventDefault();closeFreedomBackupPasswordDialog(null);}
+  }
+  if(passInput)passInput.addEventListener("keydown",onPassKey);
+  if(confirmInput)confirmInput.addEventListener("keydown",onPassKey);
+  /* Public crypto helpers for automated tests — never hold or return passwords. */
+  window.FreedomBackup={
+    version:FREEDOM_BACKUP_VERSION,
+    iterations:FREEDOM_BACKUP_PBKDF2_ITERATIONS,
+    buildInner:buildFreedomBackupInnerPayload,
+    encrypt:encryptFreedomBackupEnvelope,
+    decrypt:decryptFreedomBackupEnvelope,
+    validateInner:validateFreedomBackupInner
+  };
 }
 const PATRICIA_NOTE_COPY={
   home:{id:"home",text:"That credit card has €200 left.\njust saying...",doodle:"patricia-eyes.png",sticky:true},
