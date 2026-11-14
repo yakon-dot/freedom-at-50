@@ -205,11 +205,11 @@ async function main() {
   assert.match(exportTitle, /Protect this backup/i);
   const confirmVisible = await page.$eval("#freedomBackupPassConfirmWrap", (el) => !el.hidden);
   assert.equal(confirmVisible, true);
-  await page.type("#freedomBackupPassInput", "short");
-  await page.type("#freedomBackupPassConfirm", "short");
+  await page.type("#freedomBackupPassInput", "shortpass11");
+  await page.type("#freedomBackupPassConfirm", "shortpass11");
   await page.evaluate(() => document.getElementById("freedomBackupPassSubmit").click());
   const errShort = await page.$eval("#freedomBackupPassError", (el) => el.textContent);
-  assert.match(errShort, /at least 6/i);
+  assert.match(errShort, /at least 12/i);
   await page.evaluate(() => document.getElementById("freedomBackupPassCancel").click());
   await page.waitForFunction(() => document.getElementById("freedomBackupPassOverlay").hidden);
   console.log("PASS: Export dialog validates password length and cancel closes without export");

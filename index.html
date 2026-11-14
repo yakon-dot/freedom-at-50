@@ -6998,8 +6998,8 @@ function readFreedomBackupPasswordDialog(){
     return null;
   }
   if(mode==="export"){
-    if(password.length<6){
-      if(err)err.textContent="Use at least 6 characters.";
+    if(password.length<12){
+      if(err)err.textContent="Use at least 12 characters.";
       return null;
     }
     const confirm=confirmInput?String(confirmInput.value||""):"";
