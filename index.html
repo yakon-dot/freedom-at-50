@@ -3223,6 +3223,40 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
 @media (prefers-reduced-motion:reduce){
   .freedom-backup-pass-card{animation:none}
 }
+/* Modern Backup panel — opened from Home → More → Backup.
+   Must NOT route through the legacy #more page (classic header + starry shell). */
+.freedom-backup-panel-overlay{
+  position:fixed;inset:0;z-index:9840;display:flex;flex-direction:column;
+  padding:calc(env(safe-area-inset-top,0px) + 18px) 18px calc(24px + env(safe-area-inset-bottom,0px));
+  background:
+    linear-gradient(180deg,rgba(7,8,9,.92) 0%,rgba(7,8,9,.96) 100%),
+    #070809;
+  box-sizing:border-box;
+  overflow:auto;-webkit-overflow-scrolling:touch;
+}
+.freedom-backup-panel-overlay[hidden]{display:none!important}
+.freedom-backup-panel{
+  width:min(100%,420px);margin:0 auto;display:flex;flex-direction:column;gap:0;
+  animation:freedomConfirmRemovalEnter 320ms cubic-bezier(0.33, 0.1, 0.25, 1) both;
+}
+.freedom-backup-panel-top{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px;
+}
+.freedom-backup-panel-top h1{
+  margin:0;font-size:22px;line-height:1.25;font-weight:760;color:var(--text);
+  letter-spacing:-.01em;font-family:inherit;
+}
+.freedom-backup-panel-close{
+  border:0;background:transparent;color:rgba(236,232,224,.78);font-size:24px;line-height:1;
+  width:44px;height:44px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;flex:0 0 auto;
+}
+.freedom-backup-panel-close:active{color:rgba(239,203,170,.95)}
+.freedom-backup-panel .empty-note{color:rgba(190,188,182,.82)}
+.freedom-backup-panel .backup-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+@media (prefers-reduced-motion:reduce){
+  .freedom-backup-panel{animation:none}
+}
 .demo-welcome-lines{
   margin:0 0 38px;display:flex;flex-direction:column;align-items:center;gap:0.08em;
   max-width:100%;
@@ -4876,6 +4910,23 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     </div>
   </div>
 </div>
+<div class="freedom-backup-panel-overlay" id="freedomBackupPanelOverlay" hidden>
+  <div class="freedom-backup-panel" role="dialog" aria-modal="true" aria-labelledby="freedomBackupPanelTitle">
+    <div class="freedom-backup-panel-top">
+      <h1 id="freedomBackupPanelTitle">Backup &amp; export</h1>
+      <button class="freedom-backup-panel-close" id="freedomBackupPanelClose" type="button" aria-label="Close">&times;</button>
+    </div>
+    <p class="empty-note">Download a password-protected backup of your personal Freedom data, or restore from one you saved earlier. Encryption happens on this device — Freedom does not upload backups or keep your password.</p>
+    <p class="empty-note" style="margin-top:10px">Save the file somewhere you can recover if this phone is lost — for example iCloud Drive, another cloud drive, or a computer. Do not rely only on On My iPhone storage.</p>
+    <p class="empty-note" style="margin-top:10px">If you forget the password, that backup cannot be opened. Freedom cannot recover it.</p>
+    <div class="backup-actions">
+      <button class="mini-btn gold" id="freedomBackupExport" type="button">Export backup</button>
+      <button class="mini-btn" id="freedomBackupRestore" type="button">Restore backup</button>
+      <input id="freedomBackupFile" type="file" accept="application/json,.json" hidden>
+    </div>
+    <p class="empty-note" id="freedomBackupStatus" style="margin-top:10px" hidden></p>
+  </div>
+</div>
 <div class="patricia-note-layer" id="patriciaNoteLayer" hidden></div>
 <div class="app">
 <header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.6.2.2.2</div></div><div class="tagline">Small wins become big freedom.</div></header>
@@ -4977,7 +5028,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <article class="card" id="moreCompanion"><h2>Companion</h2><p class="empty-note">Patricia lives here when the companion layer needs its own space. For now, Home stays quiet unless there is a reason for her to appear.</p></article>
 <article class="card" id="moreSettings"><h2>Settings & privacy</h2><p class="empty-note">This HTML file stores edits only in this browser on this device. It does not connect to a bank or upload your figures anywhere.</p></article>
 <article class="card" id="moreReports"><h2>Reports</h2><p class="empty-note">Progress summaries and reporting views will live here.</p></article>
-<article class="card" id="moreBackup"><h2>Backup & export</h2><p class="empty-note">Download a password-protected backup of your personal Freedom data, or restore from one you saved earlier. Encryption happens on this device — Freedom does not upload backups or keep your password.</p><p class="empty-note" style="margin-top:10px">Save the file somewhere you can recover if this phone is lost — for example iCloud Drive, another cloud drive, or a computer. Do not rely only on On My iPhone storage.</p><p class="empty-note" style="margin-top:10px">If you forget the password, that backup cannot be opened. Freedom cannot recover it.</p><div class="backup-actions" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px"><button class="mini-btn gold" id="freedomBackupExport" type="button">Export backup</button><button class="mini-btn" id="freedomBackupRestore" type="button">Restore backup</button><input id="freedomBackupFile" type="file" accept="application/json,.json" hidden></div><p class="empty-note" id="freedomBackupStatus" style="margin-top:10px" hidden></p></article></div></section>
+<article class="card" id="moreBackup"><h2>Backup & export</h2><p class="empty-note">Open Backup from Home → More to export or restore a password-protected backup in the current Freedom interface. Freedom does not upload backups or keep your password.</p></article></div></section>
 </main></div>
 <nav class="bottom-nav" aria-label="Main navigation">
 <button class="nav-btn" data-page="home" type="button">
@@ -7076,7 +7127,7 @@ function readFreedomBackupPasswordDialog(){
 }
 async function exportFreedomBackup(){
   if(demoMode){
-    setFreedomBackupStatus("Exit Demo Mode before exporting personal data.",true);
+    setFreedomBackupStatus("You’re in Demo Mode. Exit Demo Mode first to create a personal backup — Demo data stays separate and is not saved as your personal backup.",true);
     return;
   }
   /* Corrupt/unreadable storage: in-memory state is a fresh empty shell — do not export it as personal data. */
@@ -7145,7 +7196,7 @@ async function applyDecryptedFreedomBackup(checked){
 async function restoreFreedomBackupFromFile(file){
   if(!file)return;
   if(demoMode){
-    setFreedomBackupStatus("Exit Demo Mode before restoring personal data.",true);
+    setFreedomBackupStatus("You’re in Demo Mode. Exit Demo Mode first to restore a personal backup — Demo data stays separate and will not be mixed with your personal finances.",true);
     return;
   }
   const reader=new FileReader();
@@ -7186,28 +7237,54 @@ async function restoreFreedomBackupFromFile(file){
   };
   reader.readAsText(file);
 }
-function openFreedomBackupPanel(){
-  if(typeof window.hideHome==="function")window.hideHome();
-  if(typeof window.page==="function")window.page("more");
-  setTimeout(()=>{
-    const el=byId("moreBackup");
-    if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
-  },60);
+function closeFreedomBackupPanel(){
+  const panel=byId("freedomBackupPanelOverlay");
+  if(panel)panel.hidden=true;
+  /* Password dialog may still be open independently — leave it alone. */
 }
+function openFreedomBackupPanel(){
+  /* Home → More → Backup must stay in the current Freedom interface.
+     Do NOT route through legacy page("more") (classic header + starry shell).
+     Exposed on window so the Home More submenu IIFE can call it safely. */
+  if(typeof window.hideHome==="function")window.hideHome();
+  const panel=byId("freedomBackupPanelOverlay");
+  if(!panel)return;
+  panel.hidden=false;
+  setFreedomBackupStatus("");
+  try{
+    const exportBtn=byId("freedomBackupExport");
+    if(exportBtn)exportBtn.focus();
+  }catch(e){}
+}
+window.openFreedomBackupPanel=openFreedomBackupPanel;
+window.closeFreedomBackupPanel=closeFreedomBackupPanel;
 function initFreedomBackupUi(){
   const exportBtn=byId("freedomBackupExport");
   const restoreBtn=byId("freedomBackupRestore");
   const fileInput=byId("freedomBackupFile");
   const overlay=byId("freedomBackupPassOverlay");
+  const panel=byId("freedomBackupPanelOverlay");
+  const panelClose=byId("freedomBackupPanelClose");
   const submit=byId("freedomBackupPassSubmit");
   const cancel=byId("freedomBackupPassCancel");
   const closeBtn=byId("freedomBackupPassClose");
   const passInput=byId("freedomBackupPassInput");
   const confirmInput=byId("freedomBackupPassConfirm");
-  if(exportBtn)exportBtn.addEventListener("click",()=>exportFreedomBackup());
+  if(exportBtn){
+    exportBtn.addEventListener("click",e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      exportFreedomBackup();
+    });
+  }
   if(restoreBtn&&fileInput){
-    restoreBtn.addEventListener("click",()=>{
-      if(demoMode){setFreedomBackupStatus("Exit Demo Mode before restoring personal data.",true);return;}
+    restoreBtn.addEventListener("click",e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      if(demoMode){
+        setFreedomBackupStatus("You’re in Demo Mode. Exit Demo Mode first to restore a personal backup — Demo data stays separate and will not be mixed with your personal finances.",true);
+        return;
+      }
       fileInput.value="";
       fileInput.click();
     });
@@ -7217,6 +7294,16 @@ function initFreedomBackupUi(){
       fileInput.value="";
     });
   }
+  if(panelClose)panelClose.addEventListener("click",()=>{
+    closeFreedomBackupPanel();
+    if(typeof window.showHome==="function")window.showHome();
+  });
+  /* Bottom nav while Backup panel is open: close panel, then let normal nav run. */
+  document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      if(panel&&!panel.hidden)closeFreedomBackupPanel();
+    },true);
+  });
   function submitPassDialog(){
     const password=readFreedomBackupPasswordDialog();
     if(password==null)return;
@@ -7246,7 +7333,10 @@ function initFreedomBackupUi(){
     validateInner:validateFreedomBackupInner,
     getPersonalLoadError:function(){return freedomPersonalLoadError;},
     exportBackup:exportFreedomBackup,
-    writeChecked:writeFreedomBackupToDevice
+    writeChecked:writeFreedomBackupToDevice,
+    openPanel:openFreedomBackupPanel,
+    closePanel:closeFreedomBackupPanel,
+    _setDemoModeForTests:function(on){demoMode=!!on;}
   };
 }
 const PATRICIA_NOTE_COPY={
@@ -12596,7 +12686,7 @@ function freedomBootNavPreview(open){
         return;
       }
       if(key==="backup"){
-        openFreedomBackupPanel();
+        if(typeof window.openFreedomBackupPanel==="function")window.openFreedomBackupPanel();
         return;
       }
       /* Companion destination is reserved; keep Home rather than the desktop More page. */

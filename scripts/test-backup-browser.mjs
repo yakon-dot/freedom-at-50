@@ -96,13 +96,25 @@ async function main() {
   await page.reload({ waitUntil: "domcontentloaded" });
 
   const uiCopy = await page.evaluate(() => {
-    const card = document.getElementById("moreBackup");
-    return card ? card.innerText : "";
+    if (window.FreedomBackup && typeof window.FreedomBackup.openPanel === "function") {
+      window.FreedomBackup.openPanel();
+    }
+    const panel = document.getElementById("freedomBackupPanelOverlay");
+    const more = document.getElementById("more");
+    return {
+      hidden: !panel || panel.hidden,
+      text: panel ? panel.innerText : "",
+      moreActive: !!(more && more.classList.contains("active")),
+      hash: location.hash,
+    };
   });
-  assert.match(uiCopy, /iCloud Drive/i);
-  assert.match(uiCopy, /cannot be opened|cannot recover/i);
-  assert.match(uiCopy, /password-protected|encrypt/i);
-  console.log("PASS: Backup card copy mentions encryption, iCloud, unreoverable password");
+  assert.equal(uiCopy.hidden, false);
+  assert.match(uiCopy.text, /iCloud Drive/i);
+  assert.match(uiCopy.text, /cannot be opened|cannot recover/i);
+  assert.match(uiCopy.text, /password-protected|encrypt/i);
+  assert.equal(uiCopy.moreActive, false);
+  assert.notEqual(uiCopy.hash, "#more");
+  console.log("PASS: Backup panel opens with encryption/iCloud copy without activating legacy #more");
 
   const dialogOk = await page.evaluate(() => !!document.getElementById("freedomBackupPassOverlay"));
   assert.equal(dialogOk, true);
@@ -190,19 +202,45 @@ async function main() {
   assert.equal(rejectPlain.rejected, true);
   console.log("PASS: Unencrypted files rejected before password prompt");
 
-  /* UI: open export password dialog */
-  await page.evaluate(() => {
-    if (typeof window.page === "function") window.page("more");
-    document.body.classList.remove("home183");
-    const btn = document.getElementById("freedomBackupExport");
-    btn.scrollIntoView({ block: "center" });
-    btn.click();
+  /* UI: Backup panel → Export opens password dialog (not legacy #more) */
+  const navCheck = await page.evaluate(() => {
+    document.body.classList.add("home183");
+    document.body.classList.remove(
+      "overview-active-v300",
+      "journey-active-v313",
+      "goals-active-v314",
+      "pension-active-v315",
+      "notes-active-v318",
+      "archive-active-v316",
+      "victories-active-v317"
+    );
+    document.querySelectorAll(".page").forEach((el) => el.classList.remove("active"));
+    const overview = document.getElementById("overview");
+    if (overview) overview.classList.add("active");
+    /* Simulate Home → More → Backup */
+    if (typeof window.openFreedomBackupPanel === "function") window.openFreedomBackupPanel();
+    else if (window.FreedomBackup) window.FreedomBackup.openPanel();
+    const panel = document.getElementById("freedomBackupPanelOverlay");
+    const more = document.getElementById("more");
+    const header = document.querySelector(".app > header");
+    const exportBtn = document.getElementById("freedomBackupExport");
+    exportBtn.click();
+    return {
+      panelOpen: panel && !panel.hidden,
+      moreActive: !!(more && more.classList.contains("active")),
+      hash: location.hash,
+      headerDisplay: header ? getComputedStyle(header).display : "none",
+      passOpen: !document.getElementById("freedomBackupPassOverlay").hidden,
+      passTitle: document.getElementById("freedomBackupPassTitle")?.textContent || "",
+    };
   });
-  await page.waitForFunction(() => !document.getElementById("freedomBackupPassOverlay").hidden, {
-    timeout: 5000,
-  });
-  const exportTitle = await page.$eval("#freedomBackupPassTitle", (el) => el.textContent);
-  assert.match(exportTitle, /Protect this backup/i);
+  assert.equal(navCheck.panelOpen, true);
+  assert.equal(navCheck.moreActive, false);
+  assert.notEqual(navCheck.hash, "#more");
+  assert.equal(navCheck.passOpen, true);
+  assert.match(navCheck.passTitle, /Protect this backup/i);
+  console.log("PASS: Home→Backup opens modern panel; Export opens password dialog (not legacy #more)");
+
   const confirmVisible = await page.$eval("#freedomBackupPassConfirmWrap", (el) => !el.hidden);
   assert.equal(confirmVisible, true);
   await page.type("#freedomBackupPassInput", "shortpass11");
@@ -213,6 +251,18 @@ async function main() {
   await page.evaluate(() => document.getElementById("freedomBackupPassCancel").click());
   await page.waitForFunction(() => document.getElementById("freedomBackupPassOverlay").hidden);
   console.log("PASS: Export dialog validates password length and cancel closes without export");
+
+  /* Demo Mode: clear personal-export guidance */
+  const demoMsg = await page.evaluate(async () => {
+    window.FreedomBackup._setDemoModeForTests(true);
+    await window.FreedomBackup.exportBackup();
+    const status = document.getElementById("freedomBackupStatus")?.textContent || "";
+    window.FreedomBackup._setDemoModeForTests(false);
+    return status;
+  });
+  assert.match(demoMsg, /Demo Mode/i);
+  assert.match(demoMsg, /Exit Demo Mode/i);
+  console.log("PASS: Demo Mode export explains user must exit before personal backup");
 
   /* Full export download is encrypted JSON with no plaintext finances */
   const download = await page.evaluate(async () => {
