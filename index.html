@@ -1762,6 +1762,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     margin-left:auto;margin-top:0;padding:9px 22px;border-radius:999px;
     font-size:13px;font-weight:760;width:auto;
     background:rgba(201,160,122,.72);color:#17150b;border:0;
+    transition:background-color .25s ease,color .25s ease,transform var(--motion-press) ease-out;
   }
   body.journey-active-v313 #journey .journey-plan-label{
     font-size:12px;color:rgba(190,188,182,.58);margin-top:14px;
@@ -2195,6 +2196,9 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     font-size:13px;font-weight:760;width:auto;
     background:rgba(201,160,122,.72);color:#17150b;border:0;
   }
+  body.goals-active-v314 #goals .goal-action-row .save-btn[data-save-goal]{
+    transition:background-color .25s ease,color .25s ease,transform var(--motion-press) ease-out;
+  }
   body.goals-active-v314 #goals .goal-card-head .journey-chevron{
     align-self:flex-start;margin-top:2px;flex-shrink:0;
   }
@@ -2484,6 +2488,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     margin-left:auto;margin-top:0;padding:9px 22px;border-radius:999px;
     font-size:13px;font-weight:760;width:auto;
     background:rgba(201,160,122,.72);color:#17150b;border:0;
+    transition:background-color .25s ease,color .25s ease,transform var(--motion-press) ease-out;
   }
   body.pension-active-v315 #pension .add-pension-card{
     background:rgba(18,20,24,.14);
@@ -3555,6 +3560,12 @@ body.journey-active-v313 #journey .goal-section + .journey-card-footer{margin-to
 .loan-card.is-dragging,.goal-card.is-dragging,.pension-card.is-dragging{z-index:5;box-shadow:0 10px 28px rgba(0,0,0,.22);transition:box-shadow var(--motion-expand) var(--motion-ease),transform var(--motion-expand) var(--motion-ease)!important}
 body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-card:not(.is-dragging),body.pension-dragging .pension-card:not(.is-dragging){transition:transform var(--motion-expand) var(--motion-ease)!important}
 .freedom-value-flash{animation:freedomValueFade 220ms ease-out}
+/* Journey / Goals / Pension: peach Save → sage confirmation (existing card Save only). */
+body.journey-active-v313 #journey .journey-card-footer .save-btn[data-save-loan].is-save-success,
+body.goals-active-v314 #goals .goal-action-row .save-btn[data-save-goal].is-save-success,
+body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pension].is-save-success{
+  background:var(--green);color:#0c130e;
+}
 @media (prefers-reduced-motion:reduce){
   .page.freedom-page-enter,.freedom-card-enter,.freedom-card-new,.freedom-card-exit,.card-body-wrap:not(.is-collapsed)>.journey-card-body.freedom-body-reveal,.freedom-value-flash{animation:none!important}
   body.home183 .patricia-note[data-note-id="home"],
@@ -3563,6 +3574,9 @@ body.journey-dragging .loan-card:not(.is-dragging),body.goals-dragging .goal-car
   #demoWelcomeOverlay .demo-welcome-line-row.is-writing{animation:none!important}
   #demoWelcomeOverlay .demo-welcome-btn,#demoWelcomeOverlay .demo-welcome-btn.is-visible{opacity:1!important;visibility:visible!important;pointer-events:auto!important;transition:none!important}
   .card-body-wrap,.card-body-wrap>.journey-card-body,.progress span,.loan-card.is-dragging,.goal-card.is-dragging,.pension-card.is-dragging{transition:none!important}
+  body.journey-active-v313 #journey .journey-card-footer .save-btn[data-save-loan],
+  body.goals-active-v314 #goals .goal-action-row .save-btn[data-save-goal],
+  body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pension]{transition:none!important}
   .save-btn:active,.mini-btn:active,.nav-btn:active,.update-btn:active,.archive-toggle:active,.tap-card:active{transform:none}
 }
 
@@ -8286,6 +8300,38 @@ const freedomMotion={
 window.freedomMotion=freedomMotion;
 window.matchMedia("(prefers-reduced-motion: reduce)").addEventListener("change",e=>{freedomMotion.reduced=e.matches});
 
+/* Peach Save → sage confirmation → brief hold → existing card collapse.
+   Journey / Goals / Pension existing-card Save only. One in-flight save per card. */
+const freedomSaveFeedback=(function(){
+  const inFlight=new Set();
+  const COLOR_MS=250;
+  const HOLD_MS=500;
+  function key(){return Array.prototype.join.call(arguments,":");}
+  function busy(k){return inFlight.has(k);}
+  function begin(k){
+    if(inFlight.has(k))return false;
+    inFlight.add(k);
+    return true;
+  }
+  function cancel(k){inFlight.delete(k);}
+  function paintSuccess(btn){
+    if(!btn)return;
+    btn.classList.add("is-save-success");
+    btn.disabled=true;
+    btn.setAttribute("aria-busy","true");
+  }
+  function afterSuccess(k,btn,collapseFn){
+    paintSuccess(btn);
+    const delay=freedomMotion.reduced?0:(COLOR_MS+HOLD_MS);
+    setTimeout(()=>{
+      inFlight.delete(k);
+      if(typeof collapseFn==="function")collapseFn();
+    },delay);
+  }
+  return {key,busy,begin,cancel,paintSuccess,afterSuccess,COLOR_MS,HOLD_MS};
+})();
+window.freedomSaveFeedback=freedomSaveFeedback;
+
 /* Per-record dormancy: 3+ calendar months since last genuine financial progress. */
 function isMeaningfulProgressDormant(iso){
   if(!iso)return false;
@@ -9217,7 +9263,11 @@ function renderGoals(){
   list.querySelectorAll("[data-save-goal]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const key=btn.dataset.saveGoal;
-    if(saveGoal(key))toggleGoalCollapsed(key);
+    const saveKey=freedomSaveFeedback.key("goal",key);
+    if(freedomSaveFeedback.busy(saveKey)||!freedomSaveFeedback.begin(saveKey))return;
+    if(!saveGoal(key)){freedomSaveFeedback.cancel(saveKey);return;}
+    const freshBtn=document.querySelector(`#goalsList [data-save-goal="${CSS.escape(key)}"]`);
+    freedomSaveFeedback.afterSuccess(saveKey,freshBtn,()=>toggleGoalCollapsed(key));
   }));
   function toggleGoalSection(key,kind){
     const isPlan=kind==="plan";
@@ -9717,8 +9767,10 @@ function renderLoans(){
   list.querySelectorAll("[data-save-loan]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const i=Number(btn.dataset.saveLoan);
+    const saveKey=freedomSaveFeedback.key("journey",i);
+    if(freedomSaveFeedback.busy(saveKey)||!freedomSaveFeedback.begin(saveKey))return;
     const loan=state.loans[i];
-    if(!loan)return;
+    if(!loan){freedomSaveFeedback.cancel(saveKey);return;}
     const card=btn.closest(".loan-card");
     const nameEl=card?.querySelector(`input[data-loan="${i}"][data-field="name"]`);
     const paymentEl=card?.querySelector(`input[data-loan="${i}"][data-field="payment"]`);
@@ -9727,6 +9779,7 @@ function renderLoans(){
     if(nameEl&&!applyLoanField(i,"name",nameEl.value)){
       nameEl.value=loan.name;
       nameEl.focus();
+      freedomSaveFeedback.cancel(saveKey);
       return;
     }
     if(paymentEl)applyLoanField(i,"payment",paymentEl.value);
@@ -9790,7 +9843,8 @@ function renderLoans(){
     }else if(genuineRename&&window.FreedomRenameAck&&typeof window.FreedomRenameAck.tryPresent==="function"){
       window.FreedomRenameAck.tryPresent({kind:"journey",newName:renameNewName});
     }
-    toggleLoanCollapsed(i);
+    const freshBtn=document.querySelector(`#loanList [data-save-loan="${i}"]`);
+    freedomSaveFeedback.afterSuccess(saveKey,freshBtn,()=>toggleLoanCollapsed(i));
   }));
   list.querySelectorAll("[data-archive-loan]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
@@ -10116,7 +10170,28 @@ function renderPensions(){
     persist(); renderPensions();freedomMotion.runPendingReveal();
   }));
   list.querySelectorAll("[data-save-pension]").forEach(btn=>btn.addEventListener("click",e=>{
-    savePension(Number(e.currentTarget.dataset.savePension));
+    e.stopPropagation();
+    const i=Number(e.currentTarget.dataset.savePension);
+    const saveKey=freedomSaveFeedback.key("pension",i);
+    if(freedomSaveFeedback.busy(saveKey)||!freedomSaveFeedback.begin(saveKey))return;
+    if(!state.pensions[i]){freedomSaveFeedback.cancel(saveKey);return;}
+    savePension(i);
+    const freshBtn=document.querySelector(`#pensionList [data-save-pension="${i}"]`);
+    freedomSaveFeedback.afterSuccess(saveKey,freshBtn,()=>{
+      const p=state.pensions[i];
+      if(!p||p.collapsed)return;
+      const card=document.querySelector(`#pensionList > .pension-card[data-pension-index="${i}"]`);
+      const wrap=card&&card.querySelector(".card-body-wrap");
+      if(wrap&&!freedomMotion.reduced){
+        wrap.classList.add("is-collapsed");
+        card.classList.add("is-collapsed");
+        setTimeout(()=>{p.collapsed=true;persist();renderPensions();},380);
+        return;
+      }
+      p.collapsed=true;
+      persist();
+      renderPensions();
+    });
   }));
   list.querySelectorAll("[data-pension-overview]").forEach(input=>{
     input.addEventListener("change",e=>{
