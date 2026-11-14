@@ -2441,6 +2441,27 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.pension-active-v315 #pension .pension-stat strong{
     font-size:15px;font-weight:500;letter-spacing:-.01em;color:rgba(236,232,224,.72);
   }
+  body.pension-active-v315 #pension .pension-auto-setting{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+    margin-top:14px;padding:12px 0 2px;border-top:1px solid rgba(220,190,150,.08);
+  }
+  body.pension-active-v315 #pension .pension-auto-copy{
+    min-width:0;flex:1;
+  }
+  body.pension-active-v315 #pension .pension-auto-copy strong{
+    display:block;font-size:13px;font-weight:600;letter-spacing:-.01em;
+    color:rgba(236,232,224,.82);margin-bottom:4px;
+  }
+  body.pension-active-v315 #pension .pension-auto-copy p{
+    margin:0;font-size:12px;line-height:1.45;font-weight:500;
+    color:rgba(190,188,182,.58);
+  }
+  body.pension-active-v315 #pension .pension-auto-setting .pension-toggle input:checked + .pension-toggle-track{
+    background:rgba(132,189,145,.42);border-color:rgba(132,189,145,.55);
+  }
+  body.pension-active-v315 #pension .pension-auto-setting .pension-toggle input:checked + .pension-toggle-track + .pension-toggle-thumb{
+    background:rgba(172,186,161,.95);
+  }
   body.pension-active-v315 #pension .pension-overview-setting{
     display:flex;align-items:center;justify-content:space-between;gap:12px;
     margin-top:14px;padding-top:12px;border-top:1px solid rgba(220,190,150,.08);
@@ -10009,8 +10030,10 @@ function setupLoanReorder(list){
 }
 /* ===== Pension contribution estimates (local calendar months) =====
    statementValue / statementMonth = last actual statement baseline.
-   contribPeriods = rate schedule; months after statementMonth accrue personal+employer.
-   value = derived estimate (statement + completed months). Never backfills pre-migration. */
+   autoContrib = opt-in automatic estimates (default OFF).
+   autoEnabledMonth = first month eligible after the latest OFF→ON (no backfill / no jump).
+   contribPeriods = rate schedule (kept when OFF; used only while ON).
+   value = statement (OFF) or statement + completed eligible months (ON). */
 function pensionMonthKey(date){
   const d=date instanceof Date?date:new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}`;
@@ -10051,7 +10074,9 @@ function pensionEstimatedValue(p,date){
   let total=Number(p.statementValue)||0;
   const statementMonth=p.statementMonth||pensionMonthKey(date);
   const lastCompleted=pensionLastCompletedMonthKey(date);
+  const enableFrom=p.autoEnabledMonth||pensionMonthAdd(statementMonth,1);
   let month=pensionMonthAdd(statementMonth,1);
+  if(String(month)<String(enableFrom))month=enableFrom;
   /* Guard runaway loops (corrupt keys). */
   for(let i=0;i<1200&&String(month)<=String(lastCompleted);i++){
     const rates=pensionRatesForMonth(p,month);
@@ -10060,34 +10085,70 @@ function pensionEstimatedValue(p,date){
   }
   return pensionRoundMoney(total);
 }
+function pensionDisplayValue(p,date){
+  if(p&&p.autoContrib)return pensionEstimatedValue(p,date);
+  return Math.max(0,Number(p&&p.statementValue)||0);
+}
 function ensurePensionTracking(p,date){
   if(!p)return false;
+  let changed=false;
   p.personal=Math.max(0,Number(p.personal)||0);
   p.employer=Math.max(0,Number(p.employer)||0);
-  if(p.contribTrackingV1){
+  if(!p.contribTrackingV1){
+    /* First-time migration: preserve balance/rates; baseline = this local month (no backfill). */
+    const nowKey=pensionMonthKey(date);
+    p.statementValue=Math.max(0,Number(p.value)||0);
+    p.statementMonth=nowKey;
+    p.contribPeriods=[{startMonth:pensionMonthAdd(nowKey,1),personal:p.personal,employer:p.employer}];
+    p.contribTrackingV1=true;
+    changed=true;
+  }else{
     p.statementValue=Math.max(0,Number(p.statementValue)||0);
-    if(!p.statementMonth)p.statementMonth=pensionMonthKey(date);
+    if(!p.statementMonth){p.statementMonth=pensionMonthKey(date);changed=true;}
     if(!Array.isArray(p.contribPeriods)||!p.contribPeriods.length){
       p.contribPeriods=[{startMonth:pensionMonthAdd(p.statementMonth,1),personal:p.personal,employer:p.employer}];
+      changed=true;
     }
-    return false;
   }
-  /* Migration: preserve current balance/rates; baseline = this local month (no backfill). */
-  const nowKey=pensionMonthKey(date);
-  p.statementValue=Math.max(0,Number(p.value)||0);
-  p.statementMonth=nowKey;
-  p.contribPeriods=[{startMonth:pensionMonthAdd(nowKey,1),personal:p.personal,employer:p.employer}];
-  p.contribTrackingV1=true;
-  return true;
+  /* Auto estimates are opt-in. Existing / newly migrated pensions default OFF so any
+     previously accrued estimate is not shown until the user enables the toggle. */
+  if(p.autoContrib===undefined){
+    p.autoContrib=false;
+    changed=true;
+  }else{
+    p.autoContrib=!!p.autoContrib;
+  }
+  if(p.autoContrib&&!p.autoEnabledMonth){
+    p.autoEnabledMonth=pensionMonthAdd(p.statementMonth,1);
+    changed=true;
+  }
+  return changed;
+}
+function pensionEnableAutoContrib(p,date){
+  ensurePensionTracking(p,date);
+  const nextMonth=pensionMonthAdd(pensionMonthKey(date),1);
+  p.autoContrib=true;
+  /* Start from next calendar month — no immediate jump, no backfill of prior months. */
+  p.autoEnabledMonth=nextMonth;
+  const personal=Math.max(0,Number(p.personal)||0);
+  const employer=Math.max(0,Number(p.employer)||0);
+  const kept=(Array.isArray(p.contribPeriods)?p.contribPeriods:[]).filter(per=>per&&per.startMonth&&String(per.startMonth)<String(nextMonth));
+  p.contribPeriods=kept.concat([{startMonth:nextMonth,personal,employer}]);
+}
+function pensionDisableAutoContrib(p){
+  p.autoContrib=false;
+  /* Keep statementValue, periods, and autoEnabledMonth history for safe re-enable. */
 }
 function pensionResetStatementBaseline(p,statementValue,personal,employer,date){
   const nowKey=pensionMonthKey(date);
+  const nextMonth=pensionMonthAdd(nowKey,1);
   p.statementValue=Math.max(0,Number(statementValue)||0);
   p.statementMonth=nowKey;
   p.personal=Math.max(0,Number(personal)||0);
   p.employer=Math.max(0,Number(employer)||0);
-  p.contribPeriods=[{startMonth:pensionMonthAdd(nowKey,1),personal:p.personal,employer:p.employer}];
+  p.contribPeriods=[{startMonth:nextMonth,personal:p.personal,employer:p.employer}];
   p.contribTrackingV1=true;
+  if(p.autoContrib)p.autoEnabledMonth=nextMonth;
 }
 function pensionSetContributionRates(p,personal,employer,date){
   personal=Math.max(0,Number(personal)||0);
@@ -10098,14 +10159,16 @@ function pensionSetContributionRates(p,personal,employer,date){
   p.personal=personal;
   p.employer=employer;
   if(prevPersonal===personal&&prevEmployer===employer)return;
-  const firstEligible=pensionMonthAdd(p.statementMonth,1);
+  const firstEligible=p.autoContrib&&p.autoEnabledMonth
+    ?pensionMonthMax(pensionMonthAdd(p.statementMonth,1),p.autoEnabledMonth)
+    :pensionMonthAdd(p.statementMonth,1);
   const applyFrom=pensionMonthMax(firstEligible,pensionMonthKey(date));
   const kept=(Array.isArray(p.contribPeriods)?p.contribPeriods:[]).filter(per=>per&&per.startMonth&&String(per.startMonth)<String(applyFrom));
   p.contribPeriods=kept.concat([{startMonth:applyFrom,personal,employer}]);
 }
 function syncPensionEstimate(p,date){
   const migrated=ensurePensionTracking(p,date);
-  const next=pensionEstimatedValue(p,date);
+  const next=pensionDisplayValue(p,date);
   const prev=Number(p.value)||0;
   p.value=next;
   return migrated||prev!==next;
@@ -10116,10 +10179,10 @@ function syncAllPensionEstimates(date){
   state.pensions.forEach(p=>{if(syncPensionEstimate(p,date))changed=true;});
   if(Array.isArray(state.archivedPensions)){
     state.archivedPensions.forEach(p=>{
-      if(!p||p.contribTrackingV1)return;
+      if(!p)return;
       if(ensurePensionTracking(p,date))changed=true;
-      /* Archived pots keep frozen value; still migrate fields for safe restore. */
-      p.value=Number(p.value)||0;
+      /* Archived pots keep frozen displayed value; migrate fields for safe restore. */
+      if(p.autoContrib===undefined){p.autoContrib=false;changed=true;}
     });
   }
   return changed;
@@ -10176,19 +10239,26 @@ function savePension(i){
   const personalEl=byId(`pensionPersonal_${i}`);
   const employerEl=byId(`pensionEmployer_${i}`);
   const overviewEl=byId(`pensionOverview_${i}`);
+  const autoEl=byId(`pensionAuto_${i}`);
   const prevStatement=Number(p.statementValue)||0;
+  const prevAuto=!!p.autoContrib;
   if(nameEl){const n=nameEl.value.trim();if(n)p.name=n;}
   const nextStatement=valueEl?Math.max(0,Number(valueEl.value)||0):prevStatement;
   const nextPersonal=personalEl?Math.max(0,Number(personalEl.value)||0):Math.max(0,Number(p.personal)||0);
   const nextEmployer=employerEl?Math.max(0,Number(employerEl.value)||0):Math.max(0,Number(p.employer)||0);
+  const nextAuto=autoEl?!!autoEl.checked:prevAuto;
   if(overviewEl)p.showInOverview=overviewEl.checked;
   const statementChanged=Math.abs(nextStatement-prevStatement)>1e-9;
   let statementIncreased=false;
   if(statementChanged){
     statementIncreased=nextStatement>prevStatement;
+    p.autoContrib=nextAuto;
     pensionResetStatementBaseline(p,nextStatement,nextPersonal,nextEmployer,new Date());
   }else{
     pensionSetContributionRates(p,nextPersonal,nextEmployer,new Date());
+    if(nextAuto&&!prevAuto)pensionEnableAutoContrib(p,new Date());
+    else if(!nextAuto&&prevAuto)pensionDisableAutoContrib(p);
+    else p.autoContrib=nextAuto;
   }
   syncPensionEstimate(p,new Date());
   persist(); render();
@@ -10211,7 +10281,11 @@ function renderPensionCard(i){
   const annual=monthly*12;
   const statementValue=Number(p.statementValue)||0;
   const overviewChecked=p.showInOverview!==false?" checked":"";
-  const bodyInner=`<div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Statement balance</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${statementValue||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div><p class="pension-estimate-note">Estimated balance on the card includes contributions since your last statement. It excludes investment growth, fees and market changes.</p></div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div>`;
+  const autoChecked=p.autoContrib?" checked":"";
+  const estimateNote=p.autoContrib
+    ?`<p class="pension-estimate-note">Estimated balance on the card includes contributions since automatic tracking began. It excludes investment growth, fees and market changes.</p>`
+    :`<p class="pension-estimate-note">Balance on the card is your last statement amount. Turn on automatic contributions if you want Freedom to add monthly amounts between statements.</p>`;
+  const bodyInner=`<div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Statement balance</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${statementValue||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-auto-setting"><div class="pension-auto-copy"><strong>Calculate contributions automatically</strong><p>When enabled, Freedom adds your monthly contributions to your estimated pension balance.</p></div><label class="pension-toggle"><input type="checkbox" id="pensionAuto_${i}" data-pension-auto="${i}"${autoChecked} aria-label="Calculate contributions automatically"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div>${estimateNote}</div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div>`;
   const body=wrapCardBody(bodyInner,collapsed);
   card.innerHTML=head+body;
   return card;
@@ -11228,7 +11302,8 @@ byId("addPension").addEventListener("click",()=>{
     statementValue:value,
     statementMonth:month,
     contribPeriods:[{startMonth:pensionMonthAdd(month,1),personal,employer}],
-    contribTrackingV1:true
+    contribTrackingV1:true,
+    autoContrib:false
   };
   syncPensionEstimate(pension,now);
   state.pensions.push(pension);
