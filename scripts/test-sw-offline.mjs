@@ -16,7 +16,10 @@ async function main() {
   assert.match(swSource, /APP_SHELL/);
   assert.match(swSource, /offlineDocumentResponse/);
   assert.match(swSource, /offlineAssetResponse/);
-  assert.match(swSource, /freedom-at-50-v1\.8\.6\.154/);
+  assert.match(swSource, /freedom-at-50-v1\.8\.6\.155/);
+  assert.match(swSource, /addEventListener\("push"/);
+  assert.match(swSource, /notificationclick/);
+  assert.match(swSource, /freedom-push-config\.js/);
   assert.equal(/catch\s*\([^)]*\)\s*\{[\s\S]*?throw\s+err/.test(swSource), false);
   /* Documents prefer live network (cache: no-store) so updates are not stuck on old HTML. */
   assert.match(swSource, /cache:\s*["']no-store["']/);

@@ -1,0 +1,6 @@
+node_modules/
+cloudflare/freedom-reminders/node_modules/
+cloudflare/freedom-reminders/.dev.vars
+cloudflare/freedom-reminders/.wrangler/
+*.pem
+.dev.vars
