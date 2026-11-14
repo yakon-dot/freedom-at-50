@@ -2422,12 +2422,14 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;
   }
   body.pension-active-v315 #pension .pension-estimate-note{
-    grid-column:1 / -1;
     margin:0;
     font-size:12px;
     line-height:1.45;
     font-weight:500;
     color:rgba(190,188,182,.58);
+  }
+  body.pension-active-v315 #pension .pension-auto-copy .pension-estimate-note{
+    margin-top:0;
   }
   body.pension-active-v315 #pension .pension-stat{
     background:rgba(18,20,24,.14);
@@ -10283,6 +10285,11 @@ function pensionCardHead(i,p,collapsed){
   const amountHtml=`<div class="pension-amount">${euro2(p.value)}</div>`;
   return `<div class="pension-card-head" data-toggle-pension="${i}"><div class="pension-head-main">${titleHtml}${amountHtml}</div>${goalChevron(name)}</div>`;
 }
+function pensionAutoStatusText(autoOn){
+  return autoOn
+    ?"Estimated balance includes your automatic monthly contributions. Investment growth, losses and fees are not included."
+    :"Balance reflects your last entered statement value. Automatic contributions are off.";
+}
 function savePension(i){
   const p=state.pensions[i];
   if(!p) return;
@@ -10334,11 +10341,10 @@ function renderPensionCard(i){
   const annual=monthly*12;
   const statementValue=Number(p.statementValue)||0;
   const overviewChecked=p.showInOverview!==false?" checked":"";
-  const autoChecked=p.autoContrib?" checked":"";
-  const estimateNote=p.autoContrib
-    ?`<p class="pension-estimate-note">Estimated balance on the card includes contributions since automatic tracking began. It excludes investment growth, fees and market changes.</p>`
-    :`<p class="pension-estimate-note">Balance on the card is your last statement amount. Turn on automatic contributions if you want Freedom to add monthly amounts between statements.</p>`;
-  const bodyInner=`<div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Statement balance</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${statementValue||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-auto-setting"><div class="pension-auto-copy"><strong>Calculate contributions automatically</strong><p>When enabled, Freedom adds your monthly contributions to your estimated pension balance.</p></div><label class="pension-toggle"><input type="checkbox" id="pensionAuto_${i}" data-pension-auto="${i}"${autoChecked} aria-label="Calculate contributions automatically"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div>${estimateNote}</div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div>`;
+  const autoOn=!!p.autoContrib;
+  const autoChecked=autoOn?" checked":"";
+  const estimateNote=`<p class="pension-estimate-note" data-pension-auto-note="${i}">${esc(pensionAutoStatusText(autoOn))}</p>`;
+  const bodyInner=`<div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Statement balance</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${statementValue||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-auto-setting"><div class="pension-auto-copy"><strong>Calculate contributions automatically</strong>${estimateNote}</div><label class="pension-toggle"><input type="checkbox" id="pensionAuto_${i}" data-pension-auto="${i}"${autoChecked} aria-label="Calculate contributions automatically"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div></div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div>`;
   const body=wrapCardBody(bodyInner,collapsed);
   card.innerHTML=head+body;
   return card;
@@ -10509,6 +10515,14 @@ function renderPensions(){
       p.showInOverview=!!e.currentTarget.checked;
       persist();
       updatePensionTotalsUi();
+    });
+  });
+  /* Auto toggle is Save-gated: only refresh status copy here — never persist or recalculate. */
+  list.querySelectorAll("[data-pension-auto]").forEach(input=>{
+    input.addEventListener("change",e=>{
+      const i=Number(e.currentTarget.dataset.pensionAuto);
+      const note=document.querySelector(`[data-pension-auto-note="${i}"]`);
+      if(note)note.textContent=pensionAutoStatusText(!!e.currentTarget.checked);
     });
   });
   list.querySelectorAll("[data-archive-pension]").forEach(btn=>btn.addEventListener("click",e=>{
