@@ -7,7 +7,7 @@ import { buildPushPayload } from "@block65/webcrypto-web-push";
 /* Absolute navigate URL is required for iOS Declarative Web Push + reliable taps. */
 export const NOTIFICATION = {
   title: "A little Freedom check-in",
-  body: "Your journeys and goals are waiting whenever you’re ready.",
+  body: "A little nudge from Freedom. Tap to see what’s waiting.",
   /* Query URL (not hash): iOS declarative navigate + openWindow open the PWA reliably. */
   url: "https://yakon-dot.github.io/freedom-at-50/?opened=reminder"
 };
