@@ -18,7 +18,9 @@ const {
 
 assert.equal(NOTIFICATION.title, "A little Freedom check-in");
 assert.match(NOTIFICATION.body, /journeys and goals are waiting/);
-assert.equal(NOTIFICATION.url, "https://yakon-dot.github.io/freedom-at-50/#overview");
+assert.equal(NOTIFICATION.url, "https://yakon-dot.github.io/freedom-at-50/?opened=reminder");
+assert.equal(NOTIFICATION.url.includes("#"), false);
+assert.match(NOTIFICATION.url, /[?&]opened=reminder/);
 const pushData = __test.buildPushData();
 assert.equal(pushData.web_push, 8030);
 assert.equal(pushData.notification.title, NOTIFICATION.title);
@@ -248,6 +250,8 @@ assert.match(index, /"declarative"/);
 assert.match(index, /freedom-push-config\.js/);
 assert.match(index, /initFreedomRemindersUi/);
 assert.match(index, /FREEDOM_OPEN_OVERVIEW/);
+assert.match(index, /freedomOpenOverviewFromReminder/);
+assert.match(index, /opened=reminder/);
 assert.match(index, /page\("overview"\)/);
 assert.equal(index.includes("demoMode") && index.includes("Reminders stay off in Demo Mode"), true);
 /* Private key material must not appear in Pages assets; public config points at live Worker */
@@ -268,9 +272,13 @@ assert.match(pkg, /"@block65\/webcrypto-web-push"\s*:\s*"\^2\./);
 const sw = fs.readFileSync("service-worker.js", "utf8");
 assert.match(sw, /addEventListener\("push"/);
 assert.match(sw, /notificationclick/);
-assert.match(sw, /freedom-at-50-v1\.8\.6\.156/);
+assert.match(sw, /freedom-at-50-v1\.8\.6\.157/);
 assert.match(sw, /freedom-push-config\.js/);
 assert.match(sw, /A little Freedom check-in/);
-assert.match(sw, /#overview/);
+assert.match(sw, /\?opened=reminder/);
+assert.equal(sw.includes("#overview"), false);
+assert.match(sw, /registration\.scope/);
+assert.match(sw, /client\.navigate/);
+assert.match(sw, /clients\.openWindow/);
 assert.match(sw, /web_push|notification\.navigate|FREEDOM_OPEN_OVERVIEW/);
 console.log("PASS: client reminder contracts (UI, SW push, Worker URL, no private key in Pages)");

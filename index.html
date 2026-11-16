@@ -7747,6 +7747,10 @@ function initFreedomRemindersUi(){
       if(data.type!=="FREEDOM_OPEN_OVERVIEW"&&data.type!=="FREEDOM_OPEN_HOME")return;
       try{
         closeFreedomRemindersPanel();
+        if(typeof window.freedomOpenOverviewFromReminder==="function"){
+          window.freedomOpenOverviewFromReminder({cleanUrl:true});
+          return;
+        }
         if(typeof window.hideHome==="function")window.hideHome();
         if(typeof page==="function")page("overview");
         else if(typeof window.showHome==="function")window.showHome();
@@ -9627,6 +9631,35 @@ function page(id){
   handleDemoPageVisit(id);
 }
 window.page=page;
+/* Reminder notification open: query URL opens Overview (no modal). Defined early for boot. */
+window.freedomOpenOverviewFromReminder=function(opts){
+  const options=opts&&typeof opts==="object"?opts:{};
+  let fromQuery=false;
+  try{
+    fromQuery=new URLSearchParams(location.search).get("opened")==="reminder";
+  }catch(e){}
+  if(!fromQuery&&!window.__FREEDOM_FROM_REMINDER__&&!options.force)return false;
+  window.__FREEDOM_FROM_REMINDER__=true;
+  try{
+    if(options.cleanUrl!==false&&fromQuery){
+      const clean=new URL(location.href);
+      clean.searchParams.delete("opened");
+      const qs=clean.searchParams.toString();
+      history.replaceState({freedomPage:"overview"},"",clean.pathname+(qs?"?"+qs:"")+(clean.hash||""));
+    }
+  }catch(e){}
+  try{
+    if(typeof window.hideHome==="function")window.hideHome();
+    else document.body.classList.remove("home183");
+    if(typeof window.page==="function")window.page("overview");
+  }catch(e){}
+  return true;
+};
+try{
+  if(new URLSearchParams(location.search).get("opened")==="reminder"){
+    window.__FREEDOM_FROM_REMINDER__=true;
+  }
+}catch(e){}
 document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>page(btn.dataset.page)));document.querySelectorAll("[data-page-link]").forEach(card=>card.addEventListener("click",()=>page(card.dataset.pageLink)));
 function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]))}
 
@@ -12512,7 +12545,12 @@ fillForm();render();initFreedomBackupUi();initFreedomRemindersUi();
 if(freedomPersonalLoadError){
   setTimeout(()=>{try{recoverPersonalStorageFromLoadError();}catch(e){}},0);
 }
+/* Reminder notification deep-link (?opened=reminder) — same Overview open as SW postMessage. */
+if(typeof window.freedomOpenOverviewFromReminder==="function"&&window.freedomOpenOverviewFromReminder({cleanUrl:true})){
+  /* Handled: skip hash boot so Home does not cover Overview. */
+}else{
 const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home")page("home");else if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
+}
 /* Bridge for whole-app welcome-back (defined outside this IIFE) to inspect pending
    completion celebrations without exposing the full app state. */
 window.FreedomWelcomeBackBridge={
@@ -13067,6 +13105,8 @@ function freedomBootNavPreview(open){
   }
   function showHome(){
     if(!isMobile())return;
+    /* Reminder taps must open Overview, not replace the launch URL with Home. */
+    if(window.__FREEDOM_FROM_REMINDER__)return;
     /* Unresolved / unfinished companion selection must never land on Home. */
     if(window.freedomCompanionSelect&&typeof window.freedomCompanionSelect.isPending==="function"&&window.freedomCompanionSelect.isPending())return;
     document.body.classList.remove("overview-active","overview-active-v300","journey-active-v313","goals-active-v314","pension-active-v315","notes-active-v318","archive-active-v316","victories-active-v317");
@@ -13086,6 +13126,11 @@ function freedomBootNavPreview(open){
 
   window.showHome=showHome;
   window.hideHome=hideHome;
+
+  /* Apply reminder deep-link once hideHome exists (flag may already be set earlier). */
+  if(window.__FREEDOM_FROM_REMINDER__&&typeof window.freedomOpenOverviewFromReminder==="function"){
+    window.freedomOpenOverviewFromReminder({force:true,cleanUrl:true});
+  }
 
   if(more)more.addEventListener("click",()=>{
     if(typeof window.syncInternalTestUi==="function")window.syncInternalTestUi();
@@ -13159,6 +13204,15 @@ function freedomBootNavPreview(open){
 
   window.addEventListener("load",()=>{
     if(!isMobile()){ hideHome(); return; }
+    if(window.__FREEDOM_FROM_REMINDER__){
+      if(typeof window.freedomOpenOverviewFromReminder==="function"){
+        window.freedomOpenOverviewFromReminder({force:true,cleanUrl:true});
+      }else{
+        hideHome();
+        if(typeof window.page==="function")window.page("overview");
+      }
+      return;
+    }
     const hash=location.hash.slice(1);
     if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(hash)||hash==="archiveHub") return;
     if(hash&&hash!=="home")return;

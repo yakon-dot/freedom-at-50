@@ -1,11 +1,11 @@
 /* Freedom at 50 — wallpaper cache + safe offline shell responses + Web Push */
-const CACHE_NAME = "freedom-at-50-v1.8.6.156";
+const CACHE_NAME = "freedom-at-50-v1.8.6.157";
 const WALLPAPER_CACHE = "freedom-wallpapers-v3";
 const APP_SHELL = ["./index.html", "./manifest.webmanifest", "./freedom-push-config.js"];
 const REMINDER_TITLE = "A little Freedom check-in";
 const REMINDER_BODY = "Your journeys and goals are waiting whenever you’re ready.";
-/* Absolute URL: iOS openWindow / declarative navigate are unreliable with relative paths. */
-const REMINDER_URL = "https://yakon-dot.github.io/freedom-at-50/#overview";
+/* Absolute query URL: iOS openWindow / declarative navigate are unreliable with hash-only targets. */
+const REMINDER_URL = "https://yakon-dot.github.io/freedom-at-50/?opened=reminder";
 const WALLPAPERS = [
   "./companion-select-wallpaper.jpg",
   "./overview-wallpaper.png",
@@ -189,22 +189,26 @@ self.addEventListener("push", event => {
 
 self.addEventListener("notificationclick", event => {
   event.notification.close();
-  const target =
+  const rawTarget =
     (event.notification && event.notification.data && event.notification.data.url) || REMINDER_URL;
   event.waitUntil((async () => {
-    const absolute = new URL(target, self.location.href).href;
+    /* Resolve against SW scope so subdirectory GitHub Pages stays in-app. */
+    const absolute = new URL(rawTarget, self.registration.scope).href;
+    const scope = self.registration.scope;
     const all = await clients.matchAll({ type: "window", includeUncontrolled: true });
     for (const client of all) {
       try {
-        const sameOrigin = !client.url || new URL(client.url).origin === self.location.origin;
-        if (!sameOrigin) continue;
-        if ("focus" in client) await client.focus();
-        client.postMessage({ type: "FREEDOM_OPEN_OVERVIEW", url: absolute });
+        if (!client.url || !String(client.url).startsWith(scope)) continue;
+        /* Match working Push Lab order: navigate, then focus (hash-only targets failed on iOS). */
         if (typeof client.navigate === "function") {
           try {
             await client.navigate(absolute);
           } catch (e) {}
         }
+        if ("focus" in client) await client.focus();
+        try {
+          client.postMessage({ type: "FREEDOM_OPEN_OVERVIEW", url: absolute });
+        } catch (e) {}
         return;
       } catch (e) {}
     }

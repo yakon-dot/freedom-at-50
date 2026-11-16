@@ -8,7 +8,8 @@ import { buildPushPayload } from "@block65/webcrypto-web-push";
 export const NOTIFICATION = {
   title: "A little Freedom check-in",
   body: "Your journeys and goals are waiting whenever you’re ready.",
-  url: "https://yakon-dot.github.io/freedom-at-50/#overview"
+  /* Query URL (not hash): iOS declarative navigate + openWindow open the PWA reliably. */
+  url: "https://yakon-dot.github.io/freedom-at-50/?opened=reminder"
 };
 
 /** Declarative Web Push payload (monthly cron + default self-test). */
