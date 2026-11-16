@@ -3271,10 +3271,10 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
   animation:freedomConfirmRemovalEnter 320ms cubic-bezier(0.33, 0.1, 0.25, 1) both;
 }
 .freedom-reminders-panel-top{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 28px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 22px;
 }
 .freedom-reminders-back{
-  border:0;background:transparent;color:#EFCBAA;font-size:13px;font-weight:700;
+  border:0;background:transparent;color:rgba(239,203,170,.82);font-size:13px;font-weight:700;
   letter-spacing:.08em;text-transform:uppercase;line-height:1;
   display:inline-flex;align-items:center;gap:6px;padding:10px 4px;
   cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;
@@ -3285,141 +3285,137 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
 }
 .freedom-reminders-back:active{opacity:.78}
 .freedom-reminders-panel-close{
-  border:0;background:transparent;color:#EFCBAA;font-size:26px;line-height:1;font-weight:400;
+  border:0;background:transparent;color:rgba(236,232,224,.72);font-size:26px;line-height:1;font-weight:400;
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
   cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;flex:0 0 auto;
 }
-.freedom-reminders-panel-close:active{opacity:.78}
+.freedom-reminders-panel-close:active{color:rgba(239,203,170,.88)}
 .freedom-reminders-hero{
   display:flex;flex-direction:column;align-items:center;text-align:center;
-  margin:0 0 28px;padding:0 8px;
+  margin:0 0 22px;padding:0 8px;
 }
 .freedom-reminders-bell{
-  width:56px;height:56px;border-radius:50%;
-  display:grid;place-items:center;margin:0 0 18px;
+  width:52px;height:52px;border-radius:50%;
+  display:grid;place-items:center;margin:0 0 14px;
   color:#EFCBAA;
-  background:rgba(18,20,24,.72);
-  border:1px solid rgba(239,203,170,.22);
-  box-shadow:
-    0 10px 28px rgba(0,0,0,.35),
-    inset 0 1px 0 rgba(255,255,255,.06),
-    0 0 24px rgba(239,203,170,.08);
+  background:rgba(18,20,24,.42);
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.05);
 }
 .freedom-reminders-bell svg{
-  width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;
+  width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;
   stroke-linecap:round;stroke-linejoin:round;
 }
 .freedom-reminders-hero h1{
-  margin:0;font-size:28px;line-height:1.15;font-weight:760;color:#EFCBAA;
+  margin:0;font-size:24px;line-height:1.18;font-weight:740;color:rgba(245,244,240,.92);
   letter-spacing:-.02em;font-family:inherit;
 }
 .freedom-reminders-hero-copy{
-  margin:12px 0 0;max-width:19.5rem;
-  font-size:15px;line-height:1.45;font-weight:450;
-  color:rgba(220,216,208,.78);
+  margin:10px 0 0;max-width:19.5rem;
+  font-size:13.5px;line-height:1.45;font-weight:450;
+  color:rgba(190,188,182,.78);
 }
 .freedom-reminders-card{
   position:relative;isolation:isolate;overflow:hidden;
-  border-radius:24px;padding:18px 18px 16px;
-  border:1px solid rgba(220,190,150,.18);
-  background:rgba(18,20,24,.55);
-  backdrop-filter:blur(18px) saturate(112%);
-  -webkit-backdrop-filter:blur(18px) saturate(112%);
-  box-shadow:
-    0 16px 40px rgba(0,0,0,.28),
-    inset 0 1px 0 rgba(255,255,255,.05);
+  border-radius:22px;padding:16px 16px 14px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(18,20,24,.34);
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  box-shadow:none;
 }
-.freedom-reminders-card + .freedom-reminders-card{margin-top:14px}
+.freedom-reminders-card + .freedom-reminders-card{margin-top:12px}
 .freedom-reminders-card-row{
   display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
 }
 .freedom-reminders-card-copy{min-width:0;flex:1;text-align:left}
 .freedom-reminders-card-label{
-  margin:0;font-size:17px;line-height:1.25;font-weight:720;color:rgba(245,244,240,.94);
+  margin:0;font-size:15px;line-height:1.25;font-weight:700;color:rgba(245,244,240,.92);
   letter-spacing:-.015em;
 }
 .freedom-reminders-card-support{
-  margin:6px 0 0;font-size:13px;line-height:1.4;font-weight:450;
-  color:rgba(190,178,164,.78);
+  margin:5px 0 0;font-size:12.5px;line-height:1.4;font-weight:450;
+  color:rgba(190,188,182,.68);
 }
+/* Match Pension/Goals toggle geometry (42×24) with muted sage enabled state. */
 .freedom-reminders-toggle{
-  position:relative;flex:0 0 auto;width:52px;height:32px;margin-top:2px;
-  border:0;border-radius:999px;padding:0;cursor:pointer;
-  background:rgba(70,74,82,.72);
-  box-shadow:inset 0 1px 2px rgba(0,0,0,.35);
+  position:relative;flex:0 0 auto;width:42px;height:24px;margin-top:1px;
+  border:1px solid rgba(220,190,150,.12);border-radius:999px;padding:0;cursor:pointer;
+  background:rgba(18,20,24,.32);
+  box-shadow:none;
   -webkit-tap-highlight-color:transparent;outline:none;
-  transition:background 180ms ease;
+  transition:background .18s ease,border-color .18s ease;
 }
 .freedom-reminders-toggle::after{
-  content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;
-  background:#14161a;
-  box-shadow:0 2px 6px rgba(0,0,0,.35);
-  transition:transform 180ms ease;
+  content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;
+  background:rgba(190,188,182,.55);
+  box-shadow:none;
+  transition:transform .18s ease,background .18s ease;
 }
 .freedom-reminders-toggle[aria-checked="true"]{
-  background:var(--green,#84bd91);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.18),
-    0 0 18px rgba(132,189,145,.22);
+  background:rgba(132,189,145,.42);
+  border-color:rgba(132,189,145,.55);
+  box-shadow:none;
 }
 .freedom-reminders-toggle[aria-checked="true"]::after{
-  transform:translateX(20px);
-  background:#0f1411;
+  transform:translateX(18px);
+  background:rgba(236,232,224,.90);
 }
 .freedom-reminders-toggle:disabled{
   opacity:.45;cursor:not-allowed;
 }
 .freedom-reminders-toggle:focus-visible{
-  box-shadow:0 0 0 3px rgba(239,203,170,.35);
+  box-shadow:0 0 0 3px rgba(132,189,145,.28);
 }
 .freedom-reminders-card-divider{
-  height:1px;margin:16px 0 14px;
-  background:rgba(255,255,255,.08);
+  height:1px;margin:14px 0 12px;
+  background:rgba(255,255,255,.07);
 }
 .freedom-reminders-confirm{
-  display:flex;align-items:center;gap:8px;
-  font-size:14px;line-height:1.3;font-weight:600;
-  color:rgba(160,158,152,.72);
+  display:flex;align-items:center;gap:7px;
+  font-size:12px;line-height:1.3;font-weight:500;
+  color:rgba(160,158,152,.62);
 }
 .freedom-reminders-confirm svg{
-  width:18px;height:18px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.9;
+  width:15px;height:15px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;
   stroke-linecap:round;stroke-linejoin:round;
 }
 .freedom-reminders-confirm.is-on{
-  color:var(--green,#84bd91);
+  color:rgba(132,189,145,.88);
 }
 .freedom-reminders-info-head{
-  display:flex;align-items:center;gap:8px;margin:0 0 8px;
-  color:#EFCBAA;font-size:15px;font-weight:700;letter-spacing:-.01em;
+  display:flex;align-items:center;gap:8px;margin:0 0 7px;
+  color:rgba(245,244,240,.88);font-size:14px;font-weight:680;letter-spacing:-.01em;
 }
 .freedom-reminders-info-head svg{
-  width:16px;height:16px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;
+  width:15px;height:15px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;
   stroke-linecap:round;stroke-linejoin:round;
+  color:rgba(236,232,224,.72);
 }
 .freedom-reminders-info-copy{
-  margin:0;font-size:14px;line-height:1.45;font-weight:450;
-  color:rgba(210,206,198,.78);
+  margin:0;font-size:13px;line-height:1.45;font-weight:450;
+  color:rgba(190,188,182,.72);
 }
 .freedom-reminders-test-wrap{
-  margin-top:18px;display:flex;justify-content:center;
+  margin-top:16px;display:flex;justify-content:center;
 }
 .freedom-reminders-test-wrap[hidden]{display:none!important}
 .freedom-reminders-test-btn{
-  border:1px solid rgba(239,203,170,.28);
-  background:transparent;color:rgba(239,203,170,.78);
-  border-radius:14px;padding:10px 16px;font-size:13px;font-weight:650;
+  border:1px solid rgba(255,255,255,.12);
+  background:transparent;color:rgba(190,188,182,.78);
+  border-radius:14px;padding:9px 14px;font-size:12.5px;font-weight:620;
   cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;
 }
-.freedom-reminders-test-btn:active{background:rgba(239,203,170,.08)}
+.freedom-reminders-test-btn:active{background:rgba(255,255,255,.04)}
 .freedom-reminders-status{
-  margin:14px 0 0;min-height:0;text-align:center;
-  font-size:13px;line-height:1.4;color:rgba(190,188,182,.78);
+  margin:12px 0 0;min-height:0;text-align:center;
+  font-size:12.5px;line-height:1.4;color:rgba(190,188,182,.72);
 }
 .freedom-reminders-status.is-error{color:rgba(232,170,150,.95)}
 .freedom-reminders-status:empty{display:none}
 .freedom-reminders-footer{
-  margin-top:auto;padding-top:28px;text-align:center;
-  font-size:13px;line-height:1.4;color:rgba(120,118,112,.72);
+  margin:18px 0 0;padding:0;text-align:center;
+  font-size:12.5px;line-height:1.4;color:rgba(140,138,132,.68);
 }
 body.demo-mode-active .sub183[data-more183="reminders"]{display:none!important}
 @media (prefers-reduced-motion:reduce){
