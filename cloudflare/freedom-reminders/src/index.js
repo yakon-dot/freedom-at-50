@@ -11,7 +11,7 @@ export const NOTIFICATION = {
   url: "https://yakon-dot.github.io/freedom-at-50/#overview"
 };
 
-/** Same payload for monthly cron and self/admin test sends. */
+/** Declarative Web Push payload (monthly cron + default self-test). */
 export function buildPushData(env = {}) {
   const navigate = String(env.NOTIFICATION_URL || NOTIFICATION.url).trim();
   return {
@@ -23,6 +23,25 @@ export function buildPushData(env = {}) {
       navigate
     }
   };
+}
+
+/**
+ * Classic Web Push JSON for A/B self-test only.
+ * No web_push key — forces the service-worker showNotification path on WebKit.
+ * Same title/body/url text as the declarative test.
+ */
+export function buildClassicPushData(env = {}) {
+  const url = String(env.NOTIFICATION_URL || NOTIFICATION.url).trim();
+  return {
+    title: NOTIFICATION.title,
+    body: NOTIFICATION.body,
+    url
+  };
+}
+
+export function normalizeTestMode(mode) {
+  const m = String(mode || "declarative").trim().toLowerCase();
+  return m === "classic" ? "classic" : "declarative";
 }
 
 const SUB_PREFIX = "sub:";
@@ -177,11 +196,14 @@ async function listSubscriptions(env) {
   return out;
 }
 
-async function sendOne(env, subscription) {
+async function sendOne(env, subscription, { mode = "declarative" } = {}) {
   const vapid = readVapid(env);
+  const testMode = normalizeTestMode(mode);
+  const data =
+    testMode === "classic" ? buildClassicPushData(env) : buildPushData(env);
   const message = {
     /* aes128gcm via @block65/webcrypto-web-push@2 — required for Apple Push. */
-    data: JSON.stringify(buildPushData(env)),
+    data: JSON.stringify(data),
     options: {
       ttl: 60 * 60 * 24 * 7,
       urgency: "normal"
@@ -296,24 +318,25 @@ async function handleTestSelf(request, env, origin) {
   }
   const endpoint = body.endpoint || (body.subscription && body.subscription.endpoint);
   if (!endpoint) return json({ ok: false, error: "Missing endpoint" }, 400, origin);
+  /* Self-test only: never broadcasts. Optional mode=classic|declarative (default). */
+  const mode = normalizeTestMode(body.mode);
   const stored = await getSubscriptionByEndpoint(env, endpoint);
   if (!stored) {
     return json({ ok: false, error: "Subscription not found" }, 404, origin);
   }
   try {
-    const res = await sendOne(env, stored);
+    const res = await sendOne(env, stored, { mode });
     const diag = await pushServiceDiagnostics(res);
     if (res.status === 404 || res.status === 410) {
       await deleteSubscription(env, endpoint);
-      return json({ ok: false, error: "Subscription expired", ...diag }, 410, origin);
+      return json({ ok: false, error: "Subscription expired", mode, ...diag }, 410, origin);
     }
     if (!res.ok && res.status !== 201) {
-      return json({ ok: false, error: "Push service error", ...diag }, 502, origin);
+      return json({ ok: false, error: "Push service error", mode, ...diag }, 502, origin);
     }
-    /* Notification payload/behaviour unchanged — diagnostics only. */
-    return json({ ok: true, ...diag }, 200, origin);
+    return json({ ok: true, mode, ...diag }, 200, origin);
   } catch (e) {
-    return json({ ok: false, error: "Send failed" }, 500, origin);
+    return json({ ok: false, error: "Send failed", mode }, 500, origin);
   }
 }
 
@@ -384,5 +407,7 @@ export const __test = {
   broadcastMonthKey,
   NOTIFICATION,
   buildPushData,
+  buildClassicPushData,
+  normalizeTestMode,
   pushServiceDiagnostics
 };
