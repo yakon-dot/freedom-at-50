@@ -1,10 +1,11 @@
 /* Freedom at 50 — wallpaper cache + safe offline shell responses + Web Push */
-const CACHE_NAME = "freedom-at-50-v1.8.6.155";
+const CACHE_NAME = "freedom-at-50-v1.8.6.156";
 const WALLPAPER_CACHE = "freedom-wallpapers-v3";
 const APP_SHELL = ["./index.html", "./manifest.webmanifest", "./freedom-push-config.js"];
 const REMINDER_TITLE = "A little Freedom check-in";
 const REMINDER_BODY = "Your journeys and goals are waiting whenever you’re ready.";
-const REMINDER_URL = "./#home";
+/* Absolute URL: iOS openWindow / declarative navigate are unreliable with relative paths. */
+const REMINDER_URL = "https://yakon-dot.github.io/freedom-at-50/#overview";
 const WALLPAPERS = [
   "./companion-select-wallpaper.jpg",
   "./overview-wallpaper.png",
@@ -139,45 +140,71 @@ self.addEventListener("fetch", event => {
   );
 });
 
-self.addEventListener("push", event => {
+function freedomParsePushData(pushData) {
   let title = REMINDER_TITLE;
   let body = REMINDER_BODY;
   let url = REMINDER_URL;
+  if (!pushData) return { title, body, url };
   try {
-    if (event.data) {
-      const parsed = event.data.json();
-      if (parsed && typeof parsed === "object") {
-        if (typeof parsed.title === "string" && parsed.title) title = parsed.title;
-        if (typeof parsed.body === "string" && parsed.body) body = parsed.body;
-        if (typeof parsed.url === "string" && parsed.url) url = parsed.url;
+    const parsed = typeof pushData.json === "function" ? pushData.json() : null;
+    if (parsed && typeof parsed === "object") {
+      const note = parsed.notification && typeof parsed.notification === "object" ? parsed.notification : null;
+      if (note) {
+        if (typeof note.title === "string" && note.title) title = note.title;
+        if (typeof note.body === "string" && note.body) body = note.body;
+        if (typeof note.navigate === "string" && note.navigate) url = note.navigate;
       }
+      if (typeof parsed.title === "string" && parsed.title) title = parsed.title;
+      if (typeof parsed.body === "string" && parsed.body) body = parsed.body;
+      if (typeof parsed.url === "string" && parsed.url) url = parsed.url;
     }
   } catch (e) {
     try {
-      const text = event.data && event.data.text && event.data.text();
-      if (text) body = String(text);
+      const text = typeof pushData.text === "function" ? pushData.text() : "";
+      if (text && typeof text === "string") body = text;
     } catch (e2) {}
   }
-  event.waitUntil(
-    self.registration.showNotification(title, {
-      body,
-      icon: "./icon-192.png",
-      badge: "./icon-192.png",
-      data: { url }
-    })
-  );
+  return { title, body, url };
+}
+
+self.addEventListener("push", event => {
+  /* Always show a visible notification (iOS drops subscriptions after silent pushes). */
+  event.waitUntil((async () => {
+    const { title, body, url } = freedomParsePushData(event.data);
+    try {
+      await self.registration.showNotification(title, {
+        body,
+        icon: "./icon-192.png",
+        badge: "./icon-192.png",
+        data: { url }
+      });
+    } catch (err) {
+      await self.registration.showNotification(REMINDER_TITLE, {
+        body: REMINDER_BODY,
+        data: { url: REMINDER_URL }
+      });
+    }
+  })());
 });
 
 self.addEventListener("notificationclick", event => {
   event.notification.close();
-  const target = (event.notification && event.notification.data && event.notification.data.url) || REMINDER_URL;
+  const target =
+    (event.notification && event.notification.data && event.notification.data.url) || REMINDER_URL;
   event.waitUntil((async () => {
     const absolute = new URL(target, self.location.href).href;
     const all = await clients.matchAll({ type: "window", includeUncontrolled: true });
     for (const client of all) {
       try {
+        const sameOrigin = !client.url || new URL(client.url).origin === self.location.origin;
+        if (!sameOrigin) continue;
         if ("focus" in client) await client.focus();
-        client.postMessage({ type: "FREEDOM_OPEN_HOME", url: absolute });
+        client.postMessage({ type: "FREEDOM_OPEN_OVERVIEW", url: absolute });
+        if (typeof client.navigate === "function") {
+          try {
+            await client.navigate(absolute);
+          } catch (e) {}
+        }
         return;
       } catch (e) {}
     }
