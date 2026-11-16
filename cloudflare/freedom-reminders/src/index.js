@@ -4,11 +4,26 @@
  */
 import { buildPushPayload } from "@block65/webcrypto-web-push";
 
+/* Absolute navigate URL is required for iOS Declarative Web Push + reliable taps. */
 export const NOTIFICATION = {
   title: "A little Freedom check-in",
   body: "Your journeys and goals are waiting whenever you’re ready.",
-  url: "./#home"
+  url: "https://yakon-dot.github.io/freedom-at-50/#overview"
 };
+
+/** Same payload for monthly cron and self/admin test sends. */
+export function buildPushData(env = {}) {
+  const navigate = String(env.NOTIFICATION_URL || NOTIFICATION.url).trim();
+  return {
+    /* Declarative Web Push (Safari 18.4+ / iOS): system can show + navigate without SW. */
+    web_push: 8030,
+    notification: {
+      title: NOTIFICATION.title,
+      body: NOTIFICATION.body,
+      navigate
+    }
+  };
+}
 
 const SUB_PREFIX = "sub:";
 const META_LAST = "meta:lastBroadcast";
@@ -165,11 +180,8 @@ async function listSubscriptions(env) {
 async function sendOne(env, subscription) {
   const vapid = readVapid(env);
   const message = {
-    data: JSON.stringify({
-      title: NOTIFICATION.title,
-      body: NOTIFICATION.body,
-      url: NOTIFICATION.url
-    }),
+    /* aes128gcm via @block65/webcrypto-web-push@2 — required for Apple Push. */
+    data: JSON.stringify(buildPushData(env)),
     options: {
       ttl: 60 * 60 * 24 * 7,
       urgency: "normal"
@@ -336,5 +348,6 @@ export const __test = {
   subscriptionKey,
   isLastCalendarDayUtc,
   broadcastMonthKey,
-  NOTIFICATION
+  NOTIFICATION,
+  buildPushData
 };

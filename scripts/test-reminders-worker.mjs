@@ -18,7 +18,12 @@ const {
 
 assert.equal(NOTIFICATION.title, "A little Freedom check-in");
 assert.match(NOTIFICATION.body, /journeys and goals are waiting/);
-assert.equal(NOTIFICATION.url, "./#home");
+assert.equal(NOTIFICATION.url, "https://yakon-dot.github.io/freedom-at-50/#overview");
+const pushData = __test.buildPushData();
+assert.equal(pushData.web_push, 8030);
+assert.equal(pushData.notification.title, NOTIFICATION.title);
+assert.equal(pushData.notification.body, NOTIFICATION.body);
+assert.equal(pushData.notification.navigate, NOTIFICATION.url);
 
 assert.equal(isLastCalendarDayUtc(new Date(Date.UTC(2026, 0, 31))), true);
 assert.equal(isLastCalendarDayUtc(new Date(Date.UTC(2026, 0, 30))), false);
@@ -202,7 +207,8 @@ assert.match(index, /freedom50-reminders-choice-v1/);
 assert.match(index, /Send test reminder/);
 assert.match(index, /freedom-push-config\.js/);
 assert.match(index, /initFreedomRemindersUi/);
-assert.match(index, /FREEDOM_OPEN_HOME/);
+assert.match(index, /FREEDOM_OPEN_OVERVIEW/);
+assert.match(index, /page\("overview"\)/);
 assert.equal(index.includes("demoMode") && index.includes("Reminders stay off in Demo Mode"), true);
 /* Private key material must not appear in Pages assets; public config points at live Worker */
 const cfg = fs.readFileSync("freedom-push-config.js", "utf8");
@@ -217,10 +223,14 @@ const wrangler = fs.readFileSync("cloudflare/freedom-reminders/wrangler.toml", "
 assert.match(wrangler, /compatibility_flags\s*=\s*\[[^\]]*nodejs_compat/);
 assert.match(wrangler, /binding\s*=\s*"REMINDERS"/);
 assert.match(wrangler, /id\s*=\s*"6cd70d4f86d34240b2b2d0755ec058d7"/);
+const pkg = fs.readFileSync("cloudflare/freedom-reminders/package.json", "utf8");
+assert.match(pkg, /"@block65\/webcrypto-web-push"\s*:\s*"\^2\./);
 const sw = fs.readFileSync("service-worker.js", "utf8");
 assert.match(sw, /addEventListener\("push"/);
 assert.match(sw, /notificationclick/);
-assert.match(sw, /freedom-at-50-v1\.8\.6\.155/);
+assert.match(sw, /freedom-at-50-v1\.8\.6\.156/);
 assert.match(sw, /freedom-push-config\.js/);
 assert.match(sw, /A little Freedom check-in/);
+assert.match(sw, /#overview/);
+assert.match(sw, /web_push|notification\.navigate|FREEDOM_OPEN_OVERVIEW/);
 console.log("PASS: client reminder contracts (UI, SW push, Worker URL, no private key in Pages)");

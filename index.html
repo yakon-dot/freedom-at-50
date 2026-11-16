@@ -7716,10 +7716,13 @@ function initFreedomRemindersUi(){
   if("serviceWorker" in navigator){
     navigator.serviceWorker.addEventListener("message",event=>{
       const data=event&&event.data;
-      if(!data||data.type!=="FREEDOM_OPEN_HOME")return;
+      if(!data)return;
+      if(data.type!=="FREEDOM_OPEN_OVERVIEW"&&data.type!=="FREEDOM_OPEN_HOME")return;
       try{
-        if(typeof window.showHome==="function")window.showHome();
-        else if(typeof page==="function")page("home");
+        closeFreedomRemindersPanel();
+        if(typeof window.hideHome==="function")window.hideHome();
+        if(typeof page==="function")page("overview");
+        else if(typeof window.showHome==="function")window.showHome();
       }catch(e){}
     });
   }

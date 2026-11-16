@@ -2,6 +2,10 @@
 
 Minimal Web Push backend for optional monthly Freedom check-ins.
 
+Push encryption uses `@block65/webcrypto-web-push` **v2** (`aes128gcm` + `vapid`
+auth). v1’s legacy `aesgcm` / draft auth is not accepted by Apple, which made
+iPhone show a generic “Freedom / Notification” banner instead of the real copy.
+
 Freedom itself stays on GitHub Pages. This Worker only:
 
 - accepts push subscriptions
