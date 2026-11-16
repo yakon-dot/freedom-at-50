@@ -10,14 +10,43 @@ import { pathToFileURL } from "node:url";
 const setupPath = path.resolve("cloudflare/freedom-reminders/scripts/setup-vapid-secrets.mjs");
 const setupSource = fs.readFileSync(setupPath, "utf8");
 
-/* No private key material committed — not even for blocklists/comparisons. */
-assert.equal(/e0Ci5B63Nz8WjPpx180BFVlULOYlmK9rAzdcbOaaoaw/.test(setupSource), false);
-assert.equal(/privateKey\s*===\s*["'][A-Za-z0-9_-]{20,}["']/.test(setupSource), false);
+/* No hardcoded private-key secrets in the setup script (generic checks only). */
+assert.equal(/privateKey\s*===\s*["'][A-Za-z0-9_-]{16,}["']/.test(setupSource), false);
+assert.equal(/privateKey\s*[:=]\s*["'][A-Za-z0-9_-]{16,}["']/.test(setupSource), false);
+assert.equal(/VAPID_PRIVATE_KEY\s*[:=]\s*["'][A-Za-z0-9_-]{16,}["']/.test(setupSource), false);
+/* Reject embedded secret-looking string literals (typical VAPID private key length). */
+assert.equal(/["'][A-Za-z0-9_-]{43}["']/.test(setupSource), false);
 assert.match(setupSource, /Upload the existing keys to Cloudflare now/);
 assert.match(setupSource, /wrangler", "login"/);
 assert.match(setupSource, /Does NOT deploy|will NOT deploy/i);
 assert.match(setupSource, /Run this setup again to retry/);
-console.log("PASS: setup script has resume + login flow and no private key literals");
+console.log("PASS: setup script has resume + login flow and no hardcoded private keys");
+
+/* Repo scan: committed sources must not hardcode VAPID privateKey string literals. */
+function listSourceFiles(dir, out = []) {
+  for (const name of fs.readdirSync(dir)) {
+    if (name === "node_modules" || name === ".git" || name === ".wrangler") continue;
+    const full = path.join(dir, name);
+    const st = fs.statSync(full);
+    if (st.isDirectory()) listSourceFiles(full, out);
+    else if (/\.(mjs|js|ts|tsx|json|md|toml|command|html|txt|yml|yaml)$/i.test(name)) out.push(full);
+  }
+  return out;
+}
+for (const file of listSourceFiles(path.resolve("."))) {
+  const text = fs.readFileSync(file, "utf8");
+  assert.equal(
+    /privateKey\s*===\s*["'][A-Za-z0-9_-]{16,}["']/.test(text),
+    false,
+    `hardcoded privateKey comparison in ${file}`
+  );
+  assert.equal(
+    /VAPID_PRIVATE_KEY\s*[:=]\s*["'][A-Za-z0-9_-]{16,}["']/.test(text),
+    false,
+    `hardcoded VAPID_PRIVATE_KEY in ${file}`
+  );
+}
+console.log("PASS: no hardcoded VAPID private key assignments/comparisons in committed sources");
 
 const mod = await import(pathToFileURL(setupPath).href);
 
