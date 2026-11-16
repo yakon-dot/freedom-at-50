@@ -3755,6 +3755,35 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
   var logo=splash&&splash.querySelector(".freedom-splash-logo");
   if(!splash||!canvas||!logo)return;
 
+  /* Reminder notification cold-start (?opened=reminder): skip the decorative
+     particle splash for established users and go straight to app ready / Home.
+     First-time onboarding still uses the normal splash → welcome path. */
+  function isReminderNotificationLaunch(){
+    try{
+      if(new URLSearchParams(location.search).get("opened")==="reminder")return true;
+    }catch(e){}
+    return false;
+  }
+  function canSkipDecorativeSplashForReminder(){
+    if(!isReminderNotificationLaunch())return false;
+    try{
+      if(localStorage.getItem("freedom50-welcome-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-look-around-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-first-time-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-companion-pending-v1")==="1")return false;
+      if(localStorage.getItem("freedom50-companion-first-setup-pending-v1")==="1")return false;
+      return true;
+    }catch(e){return false;}
+  }
+  if(canSkipDecorativeSplashForReminder()){
+    window.__FREEDOM_SKIP_DECORATIVE_SPLASH__=true;
+    window.__FREEDOM_FROM_REMINDER__=true;
+    try{sessionStorage.setItem("freedom50-reminder-checkin-pending-v1","1");}catch(e){}
+    splash.hidden=true;
+    splash.remove();
+    return;
+  }
+
   var ctx=canvas.getContext&&canvas.getContext("2d",{alpha:true});
   var reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var frame=0;
@@ -3883,9 +3912,14 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
           ctx.fillRect(x-size*.5,y-size*.5,size,size);
         });
 
+        /* Fully crossfade particles → logo. Leaving residual canvas opacity
+           stacked a second “ghost” wordmark under the peach asset. */
         var resolve=smoothstep((elapsed-RESOLVE_START_MS)/(RESOLVE_END_MS-RESOLVE_START_MS));
         logo.style.opacity=String(resolve);
-        canvas.style.opacity=String(1-resolve*.72);
+        canvas.style.opacity=String(1-resolve);
+        if(resolve>=1){
+          try{ctx.clearRect(0,0,viewport.width,viewport.height);}catch(e){}
+        }
         if(elapsed<ASSEMBLY_MS+140){frame=requestAnimationFrame(draw);return;}
         showStatic();
       }
@@ -7630,14 +7664,8 @@ function renderFreedomRemindersPanel(){
       testBtn.className="mini-btn gold";
       testBtn.type="button";
       testBtn.textContent="Send test reminder";
-      testBtn.addEventListener("click",()=>freedomRemindersSendTest("declarative"));
+      testBtn.addEventListener("click",()=>freedomRemindersSendTest());
       actions.appendChild(testBtn);
-      const classicBtn=document.createElement("button");
-      classicBtn.className="mini-btn";
-      classicBtn.type="button";
-      classicBtn.textContent="Test classic notification";
-      classicBtn.addEventListener("click",()=>freedomRemindersSendTest("classic"));
-      actions.appendChild(classicBtn);
     }
     return;
   }
@@ -7700,13 +7728,11 @@ async function freedomRemindersChooseNever(){
 }
 async function freedomRemindersSendTest(mode){
   const testMode=mode==="classic"?"classic":"declarative";
-  const label=testMode==="classic"?"classic":"declarative";
-  setFreedomRemindersStatus(`Sending ${label} test reminder…`,false);
+  setFreedomRemindersStatus("Sending a test reminder…",false);
   try{
     const data=await freedomSendTestReminder(testMode);
     const diag=freedomFormatPushDiagnostics(data);
-    const modeNote=testMode==="classic"?"Classic test sent.":"Declarative test sent.";
-    const base=diag?`${modeNote} ${diag}`:modeNote;
+    const base=diag?`Test reminder sent. ${diag}`:"Test reminder sent.";
     setFreedomRemindersStatus(
       `${base} If the banner still only says “Freedom / Notification”, the phone received a push but did not show Freedom’s message text.`,
       false
@@ -16526,7 +16552,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1939",
+        "./service-worker.js?v=1940",
         { updateViaCache: "none" }
       );
 
