@@ -24,6 +24,15 @@ assert.equal(pushData.web_push, 8030);
 assert.equal(pushData.notification.title, NOTIFICATION.title);
 assert.equal(pushData.notification.body, NOTIFICATION.body);
 assert.equal(pushData.notification.navigate, NOTIFICATION.url);
+const classicData = __test.buildClassicPushData();
+assert.equal(classicData.title, NOTIFICATION.title);
+assert.equal(classicData.body, NOTIFICATION.body);
+assert.equal(classicData.url, NOTIFICATION.url);
+assert.equal(Object.prototype.hasOwnProperty.call(classicData, "web_push"), false);
+assert.equal(__test.normalizeTestMode("classic"), "classic");
+assert.equal(__test.normalizeTestMode("declarative"), "declarative");
+assert.equal(__test.normalizeTestMode(""), "declarative");
+assert.equal(__test.normalizeTestMode("other"), "declarative");
 
 assert.equal(isLastCalendarDayUtc(new Date(Date.UTC(2026, 0, 31))), true);
 assert.equal(isLastCalendarDayUtc(new Date(Date.UTC(2026, 0, 30))), false);
@@ -195,7 +204,33 @@ function createMemoryKv(seed = {}) {
   assert.ok(res.headers.get("access-control-allow-origin"));
 }
 
-console.log("PASS: reminders worker helpers, subscribe/unsubscribe, cron day gate, admin auth");
+{
+  const accepted = await __test.pushServiceDiagnostics(
+    new Response(null, { status: 201, headers: { reason: "" } })
+  );
+  assert.equal(accepted.pushStatus, 201);
+  assert.equal(accepted.pushAccepted, true);
+  assert.equal(accepted.pushReason, "");
+
+  const rejected = await __test.pushServiceDiagnostics(
+    new Response(JSON.stringify({ reason: "BadJwtToken" }), {
+      status: 403,
+      headers: { "content-type": "application/json", reason: "BadJwtToken" }
+    })
+  );
+  assert.equal(rejected.pushStatus, 403);
+  assert.equal(rejected.pushAccepted, false);
+  assert.equal(rejected.pushReason, "BadJwtToken");
+
+  const scrubbed = await __test.pushServiceDiagnostics(
+    new Response(null, {
+      status: 403,
+      headers: { reason: "endpoint=https://secret.example auth=abc" }
+    })
+  );
+  assert.equal(scrubbed.pushReason, "");
+}
+console.log("PASS: reminders worker helpers, subscribe/unsubscribe, cron day gate, admin auth, push diagnostics");
 
 /* Client source contracts in index.html / SW / config */
 import fs from "node:fs";
@@ -205,6 +240,11 @@ assert.match(index, /Keep reminders/);
 assert.match(index, /Never remind me/);
 assert.match(index, /freedom50-reminders-choice-v1/);
 assert.match(index, /Send test reminder/);
+assert.match(index, /Test classic notification/);
+assert.match(index, /freedomFormatPushDiagnostics/);
+assert.match(index, /pushStatus/);
+assert.match(index, /mode==="classic"/);
+assert.match(index, /"declarative"/);
 assert.match(index, /freedom-push-config\.js/);
 assert.match(index, /initFreedomRemindersUi/);
 assert.match(index, /FREEDOM_OPEN_OVERVIEW/);

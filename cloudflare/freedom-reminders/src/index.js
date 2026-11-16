@@ -11,7 +11,7 @@ export const NOTIFICATION = {
   url: "https://yakon-dot.github.io/freedom-at-50/#overview"
 };
 
-/** Same payload for monthly cron and self/admin test sends. */
+/** Declarative Web Push payload (monthly cron + default self-test). */
 export function buildPushData(env = {}) {
   const navigate = String(env.NOTIFICATION_URL || NOTIFICATION.url).trim();
   return {
@@ -23,6 +23,25 @@ export function buildPushData(env = {}) {
       navigate
     }
   };
+}
+
+/**
+ * Classic Web Push JSON for A/B self-test only.
+ * No web_push key — forces the service-worker showNotification path on WebKit.
+ * Same title/body/url text as the declarative test.
+ */
+export function buildClassicPushData(env = {}) {
+  const url = String(env.NOTIFICATION_URL || NOTIFICATION.url).trim();
+  return {
+    title: NOTIFICATION.title,
+    body: NOTIFICATION.body,
+    url
+  };
+}
+
+export function normalizeTestMode(mode) {
+  const m = String(mode || "declarative").trim().toLowerCase();
+  return m === "classic" ? "classic" : "declarative";
 }
 
 const SUB_PREFIX = "sub:";
@@ -177,11 +196,14 @@ async function listSubscriptions(env) {
   return out;
 }
 
-async function sendOne(env, subscription) {
+async function sendOne(env, subscription, { mode = "declarative" } = {}) {
   const vapid = readVapid(env);
+  const testMode = normalizeTestMode(mode);
+  const data =
+    testMode === "classic" ? buildClassicPushData(env) : buildPushData(env);
   const message = {
     /* aes128gcm via @block65/webcrypto-web-push@2 — required for Apple Push. */
-    data: JSON.stringify(buildPushData(env)),
+    data: JSON.stringify(data),
     options: {
       ttl: 60 * 60 * 24 * 7,
       urgency: "normal"
@@ -190,6 +212,38 @@ async function sendOne(env, subscription) {
   const payload = await buildPushPayload(message, subscription, vapid);
   const res = await fetch(subscription.endpoint, payload);
   return res;
+}
+
+/**
+ * Safe push-service diagnostics for /test-self.
+ * Never includes endpoints, keys, tokens, or raw bodies with secrets.
+ */
+export async function pushServiceDiagnostics(res) {
+  const pushStatus = res && typeof res.status === "number" ? res.status : 0;
+  let pushReason = "";
+  try {
+    pushReason = String((res.headers && res.headers.get("reason")) || "").trim();
+  } catch (e) {}
+  if (!pushReason && res && typeof res.clone === "function") {
+    try {
+      const ct = String((res.headers && res.headers.get("content-type")) || "").toLowerCase();
+      const clone = res.clone();
+      if (ct.includes("application/json")) {
+        const data = await clone.json();
+        if (data && typeof data.reason === "string") pushReason = data.reason.trim();
+      }
+    } catch (e) {}
+  }
+  pushReason = pushReason.replace(/[\r\n\t]+/g, " ").slice(0, 120);
+  /* Scrub only if the reason looks like it embeds secrets, not Apple codes like BadJwtToken. */
+  if (/(https?:\/\/|endpoint=|p256dh|private key|vapid [tk]=|authorization:|\bauth=)/i.test(pushReason)) {
+    pushReason = "";
+  }
+  return {
+    pushStatus,
+    pushAccepted: pushStatus === 201 || pushStatus === 200,
+    pushReason
+  };
 }
 
 async function sendToAll(env, { force = false, now = new Date() } = {}) {
@@ -264,22 +318,25 @@ async function handleTestSelf(request, env, origin) {
   }
   const endpoint = body.endpoint || (body.subscription && body.subscription.endpoint);
   if (!endpoint) return json({ ok: false, error: "Missing endpoint" }, 400, origin);
+  /* Self-test only: never broadcasts. Optional mode=classic|declarative (default). */
+  const mode = normalizeTestMode(body.mode);
   const stored = await getSubscriptionByEndpoint(env, endpoint);
   if (!stored) {
     return json({ ok: false, error: "Subscription not found" }, 404, origin);
   }
   try {
-    const res = await sendOne(env, stored);
+    const res = await sendOne(env, stored, { mode });
+    const diag = await pushServiceDiagnostics(res);
     if (res.status === 404 || res.status === 410) {
       await deleteSubscription(env, endpoint);
-      return json({ ok: false, error: "Subscription expired", status: res.status }, 410, origin);
+      return json({ ok: false, error: "Subscription expired", mode, ...diag }, 410, origin);
     }
     if (!res.ok && res.status !== 201) {
-      return json({ ok: false, error: "Push service error", status: res.status }, 502, origin);
+      return json({ ok: false, error: "Push service error", mode, ...diag }, 502, origin);
     }
-    return json({ ok: true }, 200, origin);
+    return json({ ok: true, mode, ...diag }, 200, origin);
   } catch (e) {
-    return json({ ok: false, error: "Send failed" }, 500, origin);
+    return json({ ok: false, error: "Send failed", mode }, 500, origin);
   }
 }
 
@@ -349,5 +406,8 @@ export const __test = {
   isLastCalendarDayUtc,
   broadcastMonthKey,
   NOTIFICATION,
-  buildPushData
+  buildPushData,
+  buildClassicPushData,
+  normalizeTestMode,
+  pushServiceDiagnostics
 };

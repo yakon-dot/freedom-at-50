@@ -7542,25 +7542,38 @@ async function freedomUnsubscribePush(){
     }catch(e){}
   }
 }
-async function freedomSendTestReminder(){
+function freedomFormatPushDiagnostics(data){
+  if(!data||typeof data!=="object")return"";
+  const status=data.pushStatus!=null?String(data.pushStatus):"";
+  const reason=data.pushReason?String(data.pushReason).trim():"";
+  if(!status&&!reason)return"";
+  if(status&&reason)return`Push service ${status} (${reason}).`;
+  if(status)return`Push service ${status}${data.pushAccepted?" accepted":""}.`;
+  return`Push service note: ${reason}.`;
+}
+async function freedomSendTestReminder(mode){
   const apiBase=freedomRemindersApiBase();
   if(!apiBase)throw new Error("Reminders are not configured.");
   const reg=await freedomGetPushRegistration();
   const subscription=reg&&await reg.pushManager.getSubscription();
   if(!subscription)throw new Error("No active reminder subscription.");
+  const testMode=mode==="classic"?"classic":"declarative";
+  /* Self-test only: this device's endpoint — never a broadcast. */
   const res=await fetch(apiBase+"/test-self",{
     method:"POST",
     headers:{"content-type":"application/json"},
-    body:JSON.stringify({endpoint:subscription.endpoint})
+    body:JSON.stringify({endpoint:subscription.endpoint,mode:testMode})
   });
+  let data=null;
+  try{data=await res.json();}catch(e){data=null;}
   if(!res.ok){
-    let msg="Could not send a test reminder.";
-    try{
-      const data=await res.json();
-      if(data&&data.error)msg=String(data.error);
-    }catch(e){}
+    let msg=(data&&data.error)||"Could not send a test reminder.";
+    const diag=freedomFormatPushDiagnostics(data);
+    if(diag)msg=`${msg} ${diag}`;
     throw new Error(msg);
   }
+  if(data&&typeof data==="object")data.mode=data.mode||testMode;
+  return data||{ok:true,mode:testMode};
 }
 function setFreedomRemindersStatus(text,isError){
   const el=byId("freedomRemindersStatus");
@@ -7616,8 +7629,14 @@ function renderFreedomRemindersPanel(){
       testBtn.className="mini-btn gold";
       testBtn.type="button";
       testBtn.textContent="Send test reminder";
-      testBtn.addEventListener("click",()=>freedomRemindersSendTest());
+      testBtn.addEventListener("click",()=>freedomRemindersSendTest("declarative"));
       actions.appendChild(testBtn);
+      const classicBtn=document.createElement("button");
+      classicBtn.className="mini-btn";
+      classicBtn.type="button";
+      classicBtn.textContent="Test classic notification";
+      classicBtn.addEventListener("click",()=>freedomRemindersSendTest("classic"));
+      actions.appendChild(classicBtn);
     }
     return;
   }
@@ -7678,11 +7697,19 @@ async function freedomRemindersChooseNever(){
   setFreedomRemindersStatus("Reminders are off. Freedom will not ask again unless you turn them back on here.",false);
   renderFreedomRemindersPanel();
 }
-async function freedomRemindersSendTest(){
-  setFreedomRemindersStatus("Sending a test reminder…",false);
+async function freedomRemindersSendTest(mode){
+  const testMode=mode==="classic"?"classic":"declarative";
+  const label=testMode==="classic"?"classic":"declarative";
+  setFreedomRemindersStatus(`Sending ${label} test reminder…`,false);
   try{
-    await freedomSendTestReminder();
-    setFreedomRemindersStatus("Test reminder sent. If nothing appears, check notification settings for Freedom.",false);
+    const data=await freedomSendTestReminder(testMode);
+    const diag=freedomFormatPushDiagnostics(data);
+    const modeNote=testMode==="classic"?"Classic test sent.":"Declarative test sent.";
+    const base=diag?`${modeNote} ${diag}`:modeNote;
+    setFreedomRemindersStatus(
+      `${base} If the banner still only says “Freedom / Notification”, the phone received a push but did not show Freedom’s message text.`,
+      false
+    );
   }catch(err){
     setFreedomRemindersStatus((err&&err.message)||"Could not send a test reminder.",true);
   }
