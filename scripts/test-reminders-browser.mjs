@@ -151,6 +151,122 @@ async function main() {
   const html = await page.content();
   assert.equal(/VAPID_PRIVATE_KEY|privateKey\s*:/.test(html), false);
 
+  /* Cold-start: ?opened=reminder opens Home and shows one companion check-in. */
+  await page.evaluate(() => {
+    localStorage.setItem("freedom50-welcome-complete-v1", "1");
+    localStorage.setItem("freedom50-look-around-complete-v1", "1");
+    localStorage.setItem("freedom50-first-time-complete-v1", "1");
+    localStorage.setItem("freedom50-companion-id-v1", "patricia");
+    localStorage.removeItem("freedom50-companion-pending-v1");
+    localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
+    sessionStorage.removeItem("freedom50-reminder-checkin-pending-v1");
+    sessionStorage.removeItem("freedom50-reminder-checkin-session-v1");
+  });
+  await page.goto(`${BASE}/index.html?opened=reminder`, { waitUntil: "domcontentloaded", timeout: 60000 });
+  await page.waitForFunction(() => typeof window.FreedomMonthlyReminderCheckIn === "object", { timeout: 20000 });
+  await page.waitForFunction(() => {
+    const host = document.getElementById("freedomCompanionMsgHost");
+    const msg = host && host.querySelector(".freedom-companion-msg-text");
+    return document.body.classList.contains("home183")
+      && !!msg
+      && /Journey|Goal/i.test(msg.textContent || "");
+  }, { timeout: 20000 });
+  const cold = await page.evaluate(() => {
+    const host = document.getElementById("freedomCompanionMsgHost");
+    return {
+      home: document.body.classList.contains("home183"),
+      owner: host && host.dataset.companionMessageOwner,
+      name: host && host.querySelector(".freedom-companion-msg-name")?.textContent,
+      text: host && host.querySelector(".freedom-companion-msg-text")?.textContent,
+      pending: sessionStorage.getItem("freedom50-reminder-checkin-pending-v1"),
+      session: sessionStorage.getItem("freedom50-reminder-checkin-session-v1"),
+      query: location.search
+    };
+  });
+  assert.equal(cold.home, true);
+  assert.equal(cold.owner, "monthly-reminder-checkin");
+  assert.equal(cold.name, "Patricia");
+  assert.match(cold.text || "", /Journey|Goal/i);
+  assert.equal(cold.pending, null);
+  assert.equal(cold.session, "1");
+  assert.equal(/opened=reminder/.test(cold.query), false);
+  console.log("PASS: cold-start reminder opens Home with companion check-in");
+
+  /* After the tap is consumed, a normal Home visit must not show it again. */
+  await page.evaluate(() => {
+    if (window.FreedomMonthlyReminderCheckIn && window.FreedomMonthlyReminderCheckIn.clearHost) {
+      window.FreedomMonthlyReminderCheckIn.clearHost();
+    }
+    const host = document.getElementById("freedomCompanionMsgHost");
+    if (host) {
+      host.innerHTML = "";
+      host.hidden = true;
+      delete host.dataset.companionMessageOwner;
+    }
+    window.__FREEDOM_FROM_REMINDER__ = false;
+    sessionStorage.removeItem("freedom50-reminder-checkin-pending-v1");
+  });
+  await page.evaluate(() => {
+    if (typeof window.showHome === "function") window.showHome();
+    window.FreedomMonthlyReminderCheckIn.tryFromNotificationTap();
+  });
+  await new Promise(r => setTimeout(r, 700));
+  const noRepeat = await page.evaluate(() => {
+    const host = document.getElementById("freedomCompanionMsgHost");
+    const open = host && !host.hidden && !!host.querySelector(".freedom-companion-msg");
+    return {
+      open: !!open,
+      owner: host && host.dataset.companionMessageOwner,
+      pending: sessionStorage.getItem("freedom50-reminder-checkin-pending-v1"),
+      session: sessionStorage.getItem("freedom50-reminder-checkin-session-v1")
+    };
+  });
+  assert.equal(noRepeat.pending, null);
+  assert.equal(noRepeat.session, "1");
+  assert.equal(noRepeat.open, false);
+  console.log("PASS: normal open does not repeat reminder companion message");
+
+  /* Already-open app: a fresh notification arm shows one check-in. */
+  await page.evaluate(() => {
+    sessionStorage.removeItem("freedom50-reminder-checkin-session-v1");
+    window.freedomOpenHomeFromReminder({ force: true, cleanUrl: true });
+  });
+  await page.waitForFunction(() => {
+    const host = document.getElementById("freedomCompanionMsgHost");
+    return host && !host.hidden && host.dataset.companionMessageOwner === "monthly-reminder-checkin";
+  }, { timeout: 10000 });
+  const openApp = await page.evaluate(() => {
+    const host = document.getElementById("freedomCompanionMsgHost");
+    return {
+      home: document.body.classList.contains("home183"),
+      text: host && host.querySelector(".freedom-companion-msg-text")?.textContent,
+      pending: sessionStorage.getItem("freedom50-reminder-checkin-pending-v1"),
+      session: sessionStorage.getItem("freedom50-reminder-checkin-session-v1")
+    };
+  });
+  assert.equal(openApp.home, true);
+  assert.match(openApp.text || "", /Journey|Goal/i);
+  assert.equal(openApp.pending, null);
+  assert.equal(openApp.session, "1");
+  /* Without a new arm/pending flag, tryFromNotificationTap must not show again. */
+  await page.evaluate(() => {
+    if (window.FreedomMonthlyReminderCheckIn.clearHost) window.FreedomMonthlyReminderCheckIn.clearHost();
+    const host = document.getElementById("freedomCompanionMsgHost");
+    if (host) {
+      host.innerHTML = "";
+      host.hidden = true;
+      delete host.dataset.companionMessageOwner;
+    }
+    window.FreedomMonthlyReminderCheckIn.tryFromNotificationTap();
+  });
+  await new Promise(r => setTimeout(r, 700));
+  const second = await page.evaluate(() => {
+    const host = document.getElementById("freedomCompanionMsgHost");
+    return host && !host.hidden && host.dataset.companionMessageOwner === "monthly-reminder-checkin";
+  });
+  assert.equal(second, false);
+  console.log("PASS: already-open reminder path shows once, not twice");
+
   await browser.close();
   console.log("PASS: reminder preference browser flows");
 }

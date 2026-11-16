@@ -16,7 +16,7 @@ async function main() {
   assert.match(swSource, /APP_SHELL/);
   assert.match(swSource, /offlineDocumentResponse/);
   assert.match(swSource, /offlineAssetResponse/);
-  assert.match(swSource, /freedom-at-50-v1\.8\.6\.157/);
+  assert.match(swSource, /freedom-at-50-v1\.8\.6\.158/);
   assert.match(swSource, /addEventListener\("push"/);
   assert.match(swSource, /notificationclick/);
   assert.match(swSource, /freedom-push-config\.js/);

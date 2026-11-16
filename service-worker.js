@@ -1,10 +1,11 @@
 /* Freedom at 50 — wallpaper cache + safe offline shell responses + Web Push */
-const CACHE_NAME = "freedom-at-50-v1.8.6.157";
+const CACHE_NAME = "freedom-at-50-v1.8.6.158";
 const WALLPAPER_CACHE = "freedom-wallpapers-v3";
 const APP_SHELL = ["./index.html", "./manifest.webmanifest", "./freedom-push-config.js"];
 const REMINDER_TITLE = "A little Freedom check-in";
 const REMINDER_BODY = "Your journeys and goals are waiting whenever you’re ready.";
-/* Absolute query URL: iOS openWindow / declarative navigate are unreliable with hash-only targets. */
+/* Absolute query URL: iOS openWindow / declarative navigate are unreliable with hash-only targets.
+   App opens Home and shows a one-shot companion check-in from this deep link. */
 const REMINDER_URL = "https://yakon-dot.github.io/freedom-at-50/?opened=reminder";
 const WALLPAPERS = [
   "./companion-select-wallpaper.jpg",
@@ -207,7 +208,7 @@ self.addEventListener("notificationclick", event => {
         }
         if ("focus" in client) await client.focus();
         try {
-          client.postMessage({ type: "FREEDOM_OPEN_OVERVIEW", url: absolute });
+          client.postMessage({ type: "FREEDOM_OPEN_REMINDER_HOME", url: absolute });
         } catch (e) {}
         return;
       } catch (e) {}
