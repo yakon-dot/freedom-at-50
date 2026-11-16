@@ -4,3 +4,6 @@ cloudflare/freedom-reminders/.dev.vars
 cloudflare/freedom-reminders/.wrangler/
 *.pem
 .dev.vars
+vapid-secrets.json
+**/vapid-secrets.json
+vapid-public-key.txt

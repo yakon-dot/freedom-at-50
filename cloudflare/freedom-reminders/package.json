@@ -10,6 +10,7 @@
     "deploy": "echo \"Do not deploy without approval. See README.md.\" && exit 1"
   },
   "dependencies": {
-    "@block65/webcrypto-web-push": "^1.0.2"
+    "@block65/webcrypto-web-push": "^1.0.2",
+    "web-push": "^4.0.0"
   }
 }
