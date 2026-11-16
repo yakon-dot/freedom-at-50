@@ -3260,37 +3260,171 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
 /* Reminders panel — Home → More → Reminders (personal mode only). */
 .freedom-reminders-panel-overlay{
   position:fixed;inset:0;z-index:9840;display:flex;flex-direction:column;
-  padding:calc(env(safe-area-inset-top,0px) + 18px) 18px calc(24px + env(safe-area-inset-bottom,0px));
-  background:
-    linear-gradient(180deg,rgba(7,8,9,.92) 0%,rgba(7,8,9,.96) 100%),
-    #070809;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 20px calc(28px + env(safe-area-inset-bottom,0px));
+  background:#070809;
   box-sizing:border-box;
   overflow:auto;-webkit-overflow-scrolling:touch;
 }
 .freedom-reminders-panel-overlay[hidden]{display:none!important}
 .freedom-reminders-panel{
-  width:min(100%,420px);margin:0 auto;display:flex;flex-direction:column;gap:0;
+  width:min(100%,420px);margin:0 auto;flex:1;display:flex;flex-direction:column;gap:0;
   animation:freedomConfirmRemovalEnter 320ms cubic-bezier(0.33, 0.1, 0.25, 1) both;
 }
 .freedom-reminders-panel-top{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 28px;
 }
-.freedom-reminders-panel-top h1{
-  margin:0;font-size:22px;line-height:1.25;font-weight:760;color:var(--text);
-  letter-spacing:-.01em;font-family:inherit;
+.freedom-reminders-back{
+  border:0;background:transparent;color:#EFCBAA;font-size:13px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;line-height:1;
+  display:inline-flex;align-items:center;gap:6px;padding:10px 4px;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;
 }
+.freedom-reminders-back svg{
+  width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2.2;
+  stroke-linecap:round;stroke-linejoin:round;flex:0 0 auto;
+}
+.freedom-reminders-back:active{opacity:.78}
 .freedom-reminders-panel-close{
-  border:0;background:transparent;color:rgba(236,232,224,.78);font-size:24px;line-height:1;
+  border:0;background:transparent;color:#EFCBAA;font-size:26px;line-height:1;font-weight:400;
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
   cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;flex:0 0 auto;
 }
-.freedom-reminders-panel-close:active{color:rgba(239,203,170,.95)}
-.freedom-reminders-panel .empty-note{color:rgba(190,188,182,.82)}
-.freedom-reminders-panel .reminders-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
-.freedom-reminders-panel .reminders-actions .mini-btn{flex:1 1 auto;min-width:140px}
+.freedom-reminders-panel-close:active{opacity:.78}
+.freedom-reminders-hero{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  margin:0 0 28px;padding:0 8px;
+}
+.freedom-reminders-bell{
+  width:56px;height:56px;border-radius:50%;
+  display:grid;place-items:center;margin:0 0 18px;
+  color:#EFCBAA;
+  background:rgba(18,20,24,.72);
+  border:1px solid rgba(239,203,170,.22);
+  box-shadow:
+    0 10px 28px rgba(0,0,0,.35),
+    inset 0 1px 0 rgba(255,255,255,.06),
+    0 0 24px rgba(239,203,170,.08);
+}
+.freedom-reminders-bell svg{
+  width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.freedom-reminders-hero h1{
+  margin:0;font-size:28px;line-height:1.15;font-weight:760;color:#EFCBAA;
+  letter-spacing:-.02em;font-family:inherit;
+}
+.freedom-reminders-hero-copy{
+  margin:12px 0 0;max-width:19.5rem;
+  font-size:15px;line-height:1.45;font-weight:450;
+  color:rgba(220,216,208,.78);
+}
+.freedom-reminders-card{
+  position:relative;isolation:isolate;overflow:hidden;
+  border-radius:24px;padding:18px 18px 16px;
+  border:1px solid rgba(220,190,150,.18);
+  background:rgba(18,20,24,.55);
+  backdrop-filter:blur(18px) saturate(112%);
+  -webkit-backdrop-filter:blur(18px) saturate(112%);
+  box-shadow:
+    0 16px 40px rgba(0,0,0,.28),
+    inset 0 1px 0 rgba(255,255,255,.05);
+}
+.freedom-reminders-card + .freedom-reminders-card{margin-top:14px}
+.freedom-reminders-card-row{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+}
+.freedom-reminders-card-copy{min-width:0;flex:1;text-align:left}
+.freedom-reminders-card-label{
+  margin:0;font-size:17px;line-height:1.25;font-weight:720;color:rgba(245,244,240,.94);
+  letter-spacing:-.015em;
+}
+.freedom-reminders-card-support{
+  margin:6px 0 0;font-size:13px;line-height:1.4;font-weight:450;
+  color:rgba(190,178,164,.78);
+}
+.freedom-reminders-toggle{
+  position:relative;flex:0 0 auto;width:52px;height:32px;margin-top:2px;
+  border:0;border-radius:999px;padding:0;cursor:pointer;
+  background:rgba(70,74,82,.72);
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.35);
+  -webkit-tap-highlight-color:transparent;outline:none;
+  transition:background 180ms ease;
+}
+.freedom-reminders-toggle::after{
+  content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;
+  background:#14161a;
+  box-shadow:0 2px 6px rgba(0,0,0,.35);
+  transition:transform 180ms ease;
+}
+.freedom-reminders-toggle[aria-checked="true"]{
+  background:var(--green,#84bd91);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.18),
+    0 0 18px rgba(132,189,145,.22);
+}
+.freedom-reminders-toggle[aria-checked="true"]::after{
+  transform:translateX(20px);
+  background:#0f1411;
+}
+.freedom-reminders-toggle:disabled{
+  opacity:.45;cursor:not-allowed;
+}
+.freedom-reminders-toggle:focus-visible{
+  box-shadow:0 0 0 3px rgba(239,203,170,.35);
+}
+.freedom-reminders-card-divider{
+  height:1px;margin:16px 0 14px;
+  background:rgba(255,255,255,.08);
+}
+.freedom-reminders-confirm{
+  display:flex;align-items:center;gap:8px;
+  font-size:14px;line-height:1.3;font-weight:600;
+  color:rgba(160,158,152,.72);
+}
+.freedom-reminders-confirm svg{
+  width:18px;height:18px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.freedom-reminders-confirm.is-on{
+  color:var(--green,#84bd91);
+}
+.freedom-reminders-info-head{
+  display:flex;align-items:center;gap:8px;margin:0 0 8px;
+  color:#EFCBAA;font-size:15px;font-weight:700;letter-spacing:-.01em;
+}
+.freedom-reminders-info-head svg{
+  width:16px;height:16px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.freedom-reminders-info-copy{
+  margin:0;font-size:14px;line-height:1.45;font-weight:450;
+  color:rgba(210,206,198,.78);
+}
+.freedom-reminders-test-wrap{
+  margin-top:18px;display:flex;justify-content:center;
+}
+.freedom-reminders-test-wrap[hidden]{display:none!important}
+.freedom-reminders-test-btn{
+  border:1px solid rgba(239,203,170,.28);
+  background:transparent;color:rgba(239,203,170,.78);
+  border-radius:14px;padding:10px 16px;font-size:13px;font-weight:650;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;
+}
+.freedom-reminders-test-btn:active{background:rgba(239,203,170,.08)}
+.freedom-reminders-status{
+  margin:14px 0 0;min-height:0;text-align:center;
+  font-size:13px;line-height:1.4;color:rgba(190,188,182,.78);
+}
+.freedom-reminders-status.is-error{color:rgba(232,170,150,.95)}
+.freedom-reminders-status:empty{display:none}
+.freedom-reminders-footer{
+  margin-top:auto;padding-top:28px;text-align:center;
+  font-size:13px;line-height:1.4;color:rgba(120,118,112,.72);
+}
 body.demo-mode-active .sub183[data-more183="reminders"]{display:none!important}
 @media (prefers-reduced-motion:reduce){
   .freedom-reminders-panel{animation:none}
+  .freedom-reminders-toggle,.freedom-reminders-toggle::after{transition:none}
 }
 .demo-welcome-lines{
   margin:0 0 38px;display:flex;flex-direction:column;align-items:center;gap:0.08em;
@@ -5000,12 +5134,54 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <div class="freedom-reminders-panel-overlay" id="freedomRemindersPanelOverlay" hidden>
   <div class="freedom-reminders-panel" role="dialog" aria-modal="true" aria-labelledby="freedomRemindersPanelTitle">
     <div class="freedom-reminders-panel-top">
-      <h1 id="freedomRemindersPanelTitle">Reminders</h1>
+      <button class="freedom-reminders-back" id="freedomRemindersPanelBack" type="button" aria-label="Back to More">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 18 9 12l6-6"/></svg>
+        <span>More</span>
+      </button>
       <button class="freedom-reminders-panel-close" id="freedomRemindersPanelClose" type="button" aria-label="Close">&times;</button>
     </div>
-    <p class="empty-note" id="freedomRemindersIntro">Optional monthly check-ins when Freedom is closed. One calm reminder near the end of each month — nothing else.</p>
-    <p class="empty-note" id="freedomRemindersStatus" style="margin-top:12px" role="status"></p>
-    <div class="reminders-actions" id="freedomRemindersActions"></div>
+    <div class="freedom-reminders-hero">
+      <div class="freedom-reminders-bell" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><path d="M15.5 17.5a3.5 3.5 0 0 1-7 0"/><path d="M6 9.5a6 6 0 1 1 12 0c0 3.2.9 4.7 1.6 5.8.3.5-.1 1.2-.7 1.2H5.1c-.6 0-1-.7-.7-1.2.7-1.1 1.6-2.6 1.6-5.8Z"/></svg>
+      </div>
+      <h1 id="freedomRemindersPanelTitle">A little nudge</h1>
+      <p class="freedom-reminders-hero-copy" id="freedomRemindersIntro">A gentle reminder to check in with your Journeys and Goals. Just once a month.</p>
+    </div>
+    <section class="freedom-reminders-card" aria-label="Monthly reminders">
+      <div class="freedom-reminders-card-row">
+        <div class="freedom-reminders-card-copy">
+          <p class="freedom-reminders-card-label">Monthly reminders</p>
+          <p class="freedom-reminders-card-support">A quiet check-in near the end of each month.</p>
+        </div>
+        <button
+          class="freedom-reminders-toggle"
+          id="freedomRemindersToggle"
+          type="button"
+          role="switch"
+          aria-checked="false"
+          aria-label="Monthly reminders"
+        ></button>
+      </div>
+      <div class="freedom-reminders-card-divider" aria-hidden="true"></div>
+      <div class="freedom-reminders-confirm" id="freedomRemindersConfirm" aria-live="polite">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="m8.6 12.2 2.3 2.3 4.5-4.8"/></svg>
+        <span id="freedomRemindersConfirmText">Your reminders are off</span>
+      </div>
+    </section>
+    <section class="freedom-reminders-card" aria-label="On your terms">
+      <div class="freedom-reminders-info-head">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-9.2A3.8 3.8 0 0 1 12 8a3.8 3.8 0 0 1 7 2.8C19 15.6 12 20 12 20Z"/></svg>
+        <span>On your terms</span>
+      </div>
+      <p class="freedom-reminders-info-copy">No pressure, no daily alerts. Just a gentle invitation to come back when you’re ready.</p>
+    </section>
+    <div class="freedom-reminders-test-wrap" id="freedomRemindersTestWrap" hidden>
+      <button class="freedom-reminders-test-btn" id="freedomRemindersTestBtn" type="button">Send test reminder</button>
+    </div>
+    <p class="freedom-reminders-status" id="freedomRemindersStatus" role="status"></p>
+    <p class="freedom-reminders-footer">You can change your mind anytime.</p>
+    <!-- Legacy hook retained for tests that query #freedomRemindersActions -->
+    <div class="reminders-actions" id="freedomRemindersActions" hidden aria-hidden="true"></div>
   </div>
 </div>
 <div class="patricia-note-layer" id="patriciaNoteLayer" hidden></div>
@@ -7611,121 +7787,126 @@ async function freedomSendTestReminder(mode){
   if(data&&typeof data==="object")data.mode=data.mode||testMode;
   return data||{ok:true,mode:testMode};
 }
+let freedomRemindersBusy=false;
 function setFreedomRemindersStatus(text,isError){
   const el=byId("freedomRemindersStatus");
   if(!el)return;
   el.textContent=text||"";
-  el.style.color=isError?"rgba(232,170,150,.95)":"";
+  el.classList.toggle("is-error",!!isError&&!!text);
 }
-function renderFreedomRemindersPanel(){
-  const actions=byId("freedomRemindersActions");
+function freedomRemindersEffectivelyOn(availability,choice){
+  const avail=availability||freedomRemindersAvailability();
+  const c=choice!=null?choice:getRemindersChoice();
+  if(c!=="keep"||!avail||!avail.ok)return false;
+  try{
+    if(typeof Notification!=="undefined"&&Notification.permission==="denied")return false;
+  }catch(e){}
+  return true;
+}
+function freedomRemindersCanAttemptEnable(availability){
+  const avail=availability||freedomRemindersAvailability();
+  if(!avail)return false;
+  if(avail.ok)return true;
+  /* Permission denied can still attempt enable after the user changes system settings. */
+  return avail.reason==="permission-denied";
+}
+function renderFreedomRemindersPanel(options){
+  const opts=options||{};
+  const preserveStatus=!!opts.preserveStatus;
+  const toggle=byId("freedomRemindersToggle");
+  const confirm=byId("freedomRemindersConfirm");
+  const confirmText=byId("freedomRemindersConfirmText");
+  const testWrap=byId("freedomRemindersTestWrap");
   const intro=byId("freedomRemindersIntro");
-  if(!actions)return;
-  actions.innerHTML="";
   const availability=freedomRemindersAvailability();
   const choice=getRemindersChoice();
+  const on=freedomRemindersEffectivelyOn(availability,choice);
   if(intro){
-    intro.textContent="Optional monthly check-ins when Freedom is closed. One calm reminder near the end of each month — nothing else.";
+    intro.textContent="A gentle reminder to check in with your Journeys and Goals. Just once a month.";
   }
+  if(toggle){
+    toggle.setAttribute("aria-checked",on?"true":"false");
+    const canToggle=freedomRemindersCanAttemptEnable(availability)||on;
+    toggle.disabled=!!demoMode||freedomRemindersBusy||(!canToggle&&!on);
+  }
+  if(confirm)confirm.classList.toggle("is-on",on);
+  if(confirmText)confirmText.textContent=on?"Your reminders are on":"Your reminders are off";
+  if(testWrap)testWrap.hidden=!(on&&availability.ok&&!demoMode);
   if(demoMode){
-    setFreedomRemindersStatus("Reminders stay off in Demo Mode.",false);
+    if(!preserveStatus)setFreedomRemindersStatus("Reminders stay off in Demo Mode.",false);
     return;
   }
-  if(!availability.ok&&availability.reason!=="permission-denied"&&availability.reason!=="not-configured"){
+  if(preserveStatus)return;
+  if(on){
+    setFreedomRemindersStatus("",false);
+    return;
+  }
+  if(availability.reason==="permission-denied"){
     setFreedomRemindersStatus(availability.message,true);
-    if(choice==="keep"){
-      const off=document.createElement("button");
-      off.className="mini-btn";
-      off.type="button";
-      off.textContent="Never remind me";
-      off.addEventListener("click",()=>freedomRemindersChooseNever());
-      actions.appendChild(off);
-    }else if(!choice){
-      const never=document.createElement("button");
-      never.className="mini-btn";
-      never.type="button";
-      never.textContent="Never remind me";
-      never.addEventListener("click",()=>freedomRemindersChooseNever());
-      actions.appendChild(never);
-    }
     return;
   }
-  if(choice==="keep"){
-    let status="Reminders are on. Freedom will send one check-in near the end of each month.";
-    if(availability.reason==="permission-denied")status=availability.message;
-    setFreedomRemindersStatus(status,availability.reason==="permission-denied");
-    const off=document.createElement("button");
-    off.className="mini-btn";
-    off.type="button";
-    off.textContent="Never remind me";
-    off.addEventListener("click",()=>freedomRemindersChooseNever());
-    actions.appendChild(off);
-    if(availability.ok){
-      const testBtn=document.createElement("button");
-      testBtn.className="mini-btn gold";
-      testBtn.type="button";
-      testBtn.textContent="Send test reminder";
-      testBtn.addEventListener("click",()=>freedomRemindersSendTest());
-      actions.appendChild(testBtn);
-    }
+  if(!availability.ok){
+    setFreedomRemindersStatus(availability.message,true);
     return;
   }
-  if(choice==="never"){
-    setFreedomRemindersStatus("Reminders are off. Freedom will not ask again unless you turn them back on here.",false);
-    const on=document.createElement("button");
-    on.className="mini-btn gold";
-    on.type="button";
-    on.textContent="Keep reminders";
-    on.addEventListener("click",()=>freedomRemindersChooseKeep());
-    actions.appendChild(on);
-    return;
-  }
-  setFreedomRemindersStatus("Would you like a gentle monthly nudge while Freedom is closed?",false);
-  const keep=document.createElement("button");
-  keep.className="mini-btn gold";
-  keep.type="button";
-  keep.textContent="Keep reminders";
-  keep.addEventListener("click",()=>freedomRemindersChooseKeep());
-  const never=document.createElement("button");
-  never.className="mini-btn";
-  never.type="button";
-  never.textContent="Never remind me";
-  never.addEventListener("click",()=>freedomRemindersChooseNever());
-  actions.appendChild(keep);
-  actions.appendChild(never);
+  setFreedomRemindersStatus("",false);
 }
 async function freedomRemindersChooseKeep(){
   if(demoMode){
     setFreedomRemindersStatus("Reminders stay off in Demo Mode.",true);
-    return;
+    renderFreedomRemindersPanel({preserveStatus:true});
+    return false;
   }
   const availability=freedomRemindersAvailability();
   if(!availability.ok&&availability.reason!=="permission-denied"){
     setFreedomRemindersStatus(availability.message,true);
-    renderFreedomRemindersPanel();
-    return;
+    renderFreedomRemindersPanel({preserveStatus:true});
+    return false;
   }
+  freedomRemindersBusy=true;
+  renderFreedomRemindersPanel({preserveStatus:true});
   setFreedomRemindersStatus("Turning reminders on…",false);
   try{
     await freedomSubscribePush();
     setRemindersChoice("keep");
-    setFreedomRemindersStatus("Reminders are on. Freedom will send one check-in near the end of each month.",false);
+    freedomRemindersBusy=false;
+    renderFreedomRemindersPanel();
+    setFreedomRemindersStatus("",false);
+    return true;
   }catch(err){
     if(err&&err.code==="permission"){
       setRemindersChoice("never");
+      freedomRemindersBusy=false;
+      renderFreedomRemindersPanel({preserveStatus:true});
       setFreedomRemindersStatus("Notifications were not allowed, so reminders stay off. You can try again later from More → Reminders.",true);
     }else{
+      freedomRemindersBusy=false;
+      renderFreedomRemindersPanel({preserveStatus:true});
       setFreedomRemindersStatus((err&&err.message)||"Could not turn reminders on.",true);
     }
+    return false;
   }
-  renderFreedomRemindersPanel();
 }
 async function freedomRemindersChooseNever(){
+  freedomRemindersBusy=true;
+  renderFreedomRemindersPanel({preserveStatus:true});
   setFreedomRemindersStatus("Turning reminders off…",false);
   try{await freedomUnsubscribePush();}catch(e){}
   setRemindersChoice("never");
-  setFreedomRemindersStatus("Reminders are off. Freedom will not ask again unless you turn them back on here.",false);
+  freedomRemindersBusy=false;
   renderFreedomRemindersPanel();
+  setFreedomRemindersStatus("",false);
+  return true;
+}
+async function freedomRemindersToggleChanged(wantOn){
+  if(freedomRemindersBusy)return;
+  const currentlyOn=freedomRemindersEffectivelyOn();
+  if(wantOn===currentlyOn){
+    renderFreedomRemindersPanel();
+    return;
+  }
+  if(wantOn)await freedomRemindersChooseKeep();
+  else await freedomRemindersChooseNever();
 }
 async function freedomRemindersSendTest(mode){
   const testMode=mode==="classic"?"classic":"declarative";
@@ -7759,10 +7940,25 @@ window.closeFreedomRemindersPanel=closeFreedomRemindersPanel;
 function initFreedomRemindersUi(){
   const panel=byId("freedomRemindersPanelOverlay");
   const panelClose=byId("freedomRemindersPanelClose");
-  if(panelClose)panelClose.addEventListener("click",()=>{
+  const panelBack=byId("freedomRemindersPanelBack");
+  const toggle=byId("freedomRemindersToggle");
+  const testBtn=byId("freedomRemindersTestBtn");
+  function leaveRemindersPanel(){
     closeFreedomRemindersPanel();
     if(typeof window.showHome==="function")window.showHome();
-  });
+  }
+  if(panelClose)panelClose.addEventListener("click",leaveRemindersPanel);
+  if(panelBack)panelBack.addEventListener("click",leaveRemindersPanel);
+  if(toggle){
+    toggle.addEventListener("click",()=>{
+      if(toggle.disabled||freedomRemindersBusy)return;
+      const wantOn=toggle.getAttribute("aria-checked")!=="true";
+      freedomRemindersToggleChanged(wantOn);
+    });
+  }
+  if(testBtn){
+    testBtn.addEventListener("click",()=>freedomRemindersSendTest());
+  }
   document.querySelectorAll(".nav-btn").forEach(btn=>{
     btn.addEventListener("click",()=>{
       if(panel&&!panel.hidden)closeFreedomRemindersPanel();
@@ -7795,6 +7991,8 @@ function initFreedomRemindersUi(){
     sendTest:freedomSendTestReminder,
     chooseKeep:freedomRemindersChooseKeep,
     chooseNever:freedomRemindersChooseNever,
+    renderPanel:renderFreedomRemindersPanel,
+    isEffectivelyOn:freedomRemindersEffectivelyOn,
     copy:REMINDERS_COPY,
     _setDemoModeForTests:function(on){demoMode=!!on;}
   };

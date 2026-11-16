@@ -238,10 +238,16 @@ console.log("PASS: reminders worker helpers, subscribe/unsubscribe, cron day gat
 import fs from "node:fs";
 const index = fs.readFileSync("index.html", "utf8");
 assert.match(index, /data-more183="reminders"/);
-assert.match(index, /Keep reminders/);
-assert.match(index, /Never remind me/);
+assert.match(index, /A little nudge/);
+assert.match(index, /Your reminders are on/);
+assert.match(index, /Your reminders are off/);
+assert.match(index, /On your terms/);
+assert.match(index, /freedomRemindersToggle/);
+assert.match(index, /role="switch"/);
 assert.match(index, /freedom50-reminders-choice-v1/);
 assert.match(index, /Send test reminder/);
+assert.match(index, /freedomRemindersChooseKeep/);
+assert.match(index, /freedomRemindersChooseNever/);
 assert.equal(index.includes("Test classic notification"), false);
 assert.match(index, /freedomFormatPushDiagnostics/);
 assert.match(index, /pushStatus/);

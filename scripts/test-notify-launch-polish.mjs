@@ -12,6 +12,8 @@ import path from "node:path";
 const index = fs.readFileSync("index.html", "utf8");
 
 assert.match(index, /Send test reminder/);
+assert.match(index, /A little nudge/);
+assert.match(index, /freedomRemindersToggle/);
 assert.equal(/Test classic notification/.test(index), false);
 assert.match(index, /canSkipDecorativeSplashForReminder/);
 assert.match(index, /__FREEDOM_SKIP_DECORATIVE_SPLASH__/);
@@ -99,7 +101,7 @@ async function main() {
     await page.close();
   }
 
-  /* Reminders panel: Send test reminder present, classic button absent */
+  /* Reminders panel: redesigned markup; classic button absent; test control secondary */
   {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
@@ -109,26 +111,25 @@ async function main() {
       window.FreedomReminders._setDemoModeForTests(false);
       document.body.classList.remove("demo-mode-active");
       window.FreedomReminders.setChoice("keep");
-      /* Force availability.ok path for button render by stubbing */
-      const real = window.FreedomReminders.availability;
-      window.FreedomReminders.availability = function () {
-        return { ok: true, reason: "ok", message: "" };
-      };
-      /* availability is closed over in render — call open after setting choice + mock push config */
       window.FREEDOM_PUSH = Object.assign({}, window.FREEDOM_PUSH, {
         apiBase: "https://example.test",
         vapidPublicKey: "B".padEnd(88, "A")
       });
       window.openFreedomRemindersPanel();
-      /* Directly re-render via status path: choice keep with availability from closed-over freedomRemindersAvailability */
     });
-    /* Closed-over availability may still say not-configured; assert source + that classic string never appears in panel HTML */
-    const labels = await page.evaluate(() => {
-      /* Rebuild actions using the public choice + open panel content */
-      const actions = document.getElementById("freedomRemindersActions");
-      return actions ? actions.innerHTML : "";
+    const markup = await page.evaluate(() => {
+      const panel = document.getElementById("freedomRemindersPanelOverlay");
+      return {
+        html: panel ? panel.innerHTML : "",
+        hasToggle: !!document.getElementById("freedomRemindersToggle"),
+        hasTestBtn: !!document.getElementById("freedomRemindersTestBtn"),
+        title: document.getElementById("freedomRemindersPanelTitle")?.textContent || ""
+      };
     });
-    assert.equal(/Test classic notification/.test(labels), false);
+    assert.equal(markup.title, "A little nudge");
+    assert.equal(markup.hasToggle, true);
+    assert.equal(markup.hasTestBtn, true);
+    assert.equal(/Test classic notification/.test(markup.html), false);
     assert.equal(/Test classic notification/.test(await page.content()), false);
     console.log("PASS: classic test button absent from live Reminders panel markup");
     await page.close();
