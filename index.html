@@ -7542,6 +7542,15 @@ async function freedomUnsubscribePush(){
     }catch(e){}
   }
 }
+function freedomFormatPushDiagnostics(data){
+  if(!data||typeof data!=="object")return"";
+  const status=data.pushStatus!=null?String(data.pushStatus):"";
+  const reason=data.pushReason?String(data.pushReason).trim():"";
+  if(!status&&!reason)return"";
+  if(status&&reason)return`Push service ${status} (${reason}).`;
+  if(status)return`Push service ${status}${data.pushAccepted?" accepted":""}.`;
+  return`Push service note: ${reason}.`;
+}
 async function freedomSendTestReminder(){
   const apiBase=freedomRemindersApiBase();
   if(!apiBase)throw new Error("Reminders are not configured.");
@@ -7553,14 +7562,15 @@ async function freedomSendTestReminder(){
     headers:{"content-type":"application/json"},
     body:JSON.stringify({endpoint:subscription.endpoint})
   });
+  let data=null;
+  try{data=await res.json();}catch(e){data=null;}
   if(!res.ok){
-    let msg="Could not send a test reminder.";
-    try{
-      const data=await res.json();
-      if(data&&data.error)msg=String(data.error);
-    }catch(e){}
+    let msg=(data&&data.error)||"Could not send a test reminder.";
+    const diag=freedomFormatPushDiagnostics(data);
+    if(diag)msg=`${msg} ${diag}`;
     throw new Error(msg);
   }
+  return data||{ok:true};
 }
 function setFreedomRemindersStatus(text,isError){
   const el=byId("freedomRemindersStatus");
@@ -7681,8 +7691,15 @@ async function freedomRemindersChooseNever(){
 async function freedomRemindersSendTest(){
   setFreedomRemindersStatus("Sending a test reminder…",false);
   try{
-    await freedomSendTestReminder();
-    setFreedomRemindersStatus("Test reminder sent. If nothing appears, check notification settings for Freedom.",false);
+    const data=await freedomSendTestReminder();
+    const diag=freedomFormatPushDiagnostics(data);
+    const base=diag
+      ?`Test reminder sent. ${diag}`
+      :"Test reminder sent.";
+    setFreedomRemindersStatus(
+      `${base} If the banner still only says “Freedom / Notification”, the phone received a push but did not show Freedom’s message text.`,
+      false
+    );
   }catch(err){
     setFreedomRemindersStatus((err&&err.message)||"Could not send a test reminder.",true);
   }

@@ -192,6 +192,37 @@ async function sendOne(env, subscription) {
   return res;
 }
 
+/**
+ * Safe push-service diagnostics for /test-self.
+ * Never includes endpoints, keys, tokens, or raw bodies with secrets.
+ */
+export async function pushServiceDiagnostics(res) {
+  const pushStatus = res && typeof res.status === "number" ? res.status : 0;
+  let pushReason = "";
+  try {
+    pushReason = String((res.headers && res.headers.get("reason")) || "").trim();
+  } catch (e) {}
+  if (!pushReason && res && typeof res.clone === "function") {
+    try {
+      const ct = String((res.headers && res.headers.get("content-type")) || "").toLowerCase();
+      const clone = res.clone();
+      if (ct.includes("application/json")) {
+        const data = await clone.json();
+        if (data && typeof data.reason === "string") pushReason = data.reason.trim();
+      }
+    } catch (e) {}
+  }
+  pushReason = pushReason.replace(/[\r\n\t]+/g, " ").slice(0, 120);
+  if (/endpoint|p256|private|token|vapid|authorization|auth=/i.test(pushReason)) {
+    pushReason = "";
+  }
+  return {
+    pushStatus,
+    pushAccepted: pushStatus === 201 || pushStatus === 200,
+    pushReason
+  };
+}
+
 async function sendToAll(env, { force = false, now = new Date() } = {}) {
   const monthKey = broadcastMonthKey(now);
   if (!force) {
@@ -270,14 +301,16 @@ async function handleTestSelf(request, env, origin) {
   }
   try {
     const res = await sendOne(env, stored);
+    const diag = await pushServiceDiagnostics(res);
     if (res.status === 404 || res.status === 410) {
       await deleteSubscription(env, endpoint);
-      return json({ ok: false, error: "Subscription expired", status: res.status }, 410, origin);
+      return json({ ok: false, error: "Subscription expired", ...diag }, 410, origin);
     }
     if (!res.ok && res.status !== 201) {
-      return json({ ok: false, error: "Push service error", status: res.status }, 502, origin);
+      return json({ ok: false, error: "Push service error", ...diag }, 502, origin);
     }
-    return json({ ok: true }, 200, origin);
+    /* Notification payload/behaviour unchanged — diagnostics only. */
+    return json({ ok: true, ...diag }, 200, origin);
   } catch (e) {
     return json({ ok: false, error: "Send failed" }, 500, origin);
   }
@@ -349,5 +382,6 @@ export const __test = {
   isLastCalendarDayUtc,
   broadcastMonthKey,
   NOTIFICATION,
-  buildPushData
+  buildPushData,
+  pushServiceDiagnostics
 };

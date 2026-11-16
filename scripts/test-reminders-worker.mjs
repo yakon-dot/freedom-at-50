@@ -195,7 +195,33 @@ function createMemoryKv(seed = {}) {
   assert.ok(res.headers.get("access-control-allow-origin"));
 }
 
-console.log("PASS: reminders worker helpers, subscribe/unsubscribe, cron day gate, admin auth");
+{
+  const accepted = await __test.pushServiceDiagnostics(
+    new Response(null, { status: 201, headers: { reason: "" } })
+  );
+  assert.equal(accepted.pushStatus, 201);
+  assert.equal(accepted.pushAccepted, true);
+  assert.equal(accepted.pushReason, "");
+
+  const rejected = await __test.pushServiceDiagnostics(
+    new Response(JSON.stringify({ reason: "BadJwtToken" }), {
+      status: 403,
+      headers: { "content-type": "application/json", reason: "BadJwtToken" }
+    })
+  );
+  assert.equal(rejected.pushStatus, 403);
+  assert.equal(rejected.pushAccepted, false);
+  assert.equal(rejected.pushReason, "BadJwtToken");
+
+  const scrubbed = await __test.pushServiceDiagnostics(
+    new Response(null, {
+      status: 403,
+      headers: { reason: "endpoint=https://secret.example auth=abc" }
+    })
+  );
+  assert.equal(scrubbed.pushReason, "");
+}
+console.log("PASS: reminders worker helpers, subscribe/unsubscribe, cron day gate, admin auth, push diagnostics");
 
 /* Client source contracts in index.html / SW / config */
 import fs from "node:fs";
@@ -205,6 +231,8 @@ assert.match(index, /Keep reminders/);
 assert.match(index, /Never remind me/);
 assert.match(index, /freedom50-reminders-choice-v1/);
 assert.match(index, /Send test reminder/);
+assert.match(index, /freedomFormatPushDiagnostics/);
+assert.match(index, /pushStatus/);
 assert.match(index, /freedom-push-config\.js/);
 assert.match(index, /initFreedomRemindersUi/);
 assert.match(index, /FREEDOM_OPEN_OVERVIEW/);
