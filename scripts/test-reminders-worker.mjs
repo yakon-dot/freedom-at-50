@@ -17,7 +17,7 @@ const {
 } = mod;
 
 assert.equal(NOTIFICATION.title, "A little Freedom check-in");
-assert.match(NOTIFICATION.body, /journeys and goals are waiting/);
+assert.equal(NOTIFICATION.body, "A little nudge from Freedom. Tap to see what’s waiting.");
 assert.equal(NOTIFICATION.url, "https://yakon-dot.github.io/freedom-at-50/?opened=reminder");
 assert.equal(NOTIFICATION.url.includes("#"), false);
 assert.match(NOTIFICATION.url, /[?&]opened=reminder/);
@@ -288,7 +288,9 @@ assert.match(sw, /notificationclick/);
 assert.match(sw, /freedom-at-50-v1\.8\.6\.158/);
 assert.match(sw, /freedom-push-config\.js/);
 assert.match(sw, /A little Freedom check-in/);
+assert.match(sw, /A little nudge from Freedom\. Tap to see what’s waiting\./);
 assert.match(sw, /\?opened=reminder/);
+assert.match(index, /A little nudge from Freedom\. Tap to see what’s waiting\./);
 assert.equal(sw.includes("#overview"), false);
 assert.match(sw, /registration\.scope/);
 assert.match(sw, /client\.navigate/);
