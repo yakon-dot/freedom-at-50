@@ -255,6 +255,11 @@ assert.match(index, /opened=reminder/);
 assert.match(index, /armFromNotificationTap/);
 assert.match(index, /tryFromNotificationTap/);
 assert.match(index, /freedom50-reminder-checkin-pending-v1/);
+assert.match(index, /freedom50-reminder-checkin-rotation-v1/);
+assert.match(index, /shufflePoolIndices/);
+assert.match(index, /Still cheeky, still on your side/);
+assert.match(index, /Worth a short look\. Journeys and Goals stay useful/);
+assert.match(index, /Bring Journeys and Goals in line with the latest picture/);
 assert.equal(index.includes("demoMode") && index.includes("Reminders stay off in Demo Mode"), true);
 /* Private key material must not appear in Pages assets; public config points at live Worker */
 const cfg = fs.readFileSync("freedom-push-config.js", "utf8");
