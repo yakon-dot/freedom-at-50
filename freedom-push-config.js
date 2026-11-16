@@ -1,8 +1,7 @@
 /* Freedom at 50 — public Web Push config only.
    Private VAPID keys never belong here or in any GitHub Pages asset. */
 window.FREEDOM_PUSH = {
-  /* Set after Cloudflare Worker deploy, e.g. "https://freedom-reminders.<account>.workers.dev" */
-  apiBase: "",
-  vapidPublicKey: "BFPyGIciDrTzc1TGVqjo8obBZvOMR02K5OJkibyWVwiuAQWxSrpEMdsZVSbI128qDzX98eA6MQAejyphAwL75vg",
-  vapidSubject: "mailto:freedom-at-50-notifications@example.com"
+  apiBase: "https://freedom-reminders.dorothy-yakon.workers.dev",
+  vapidPublicKey: "BA_eBVERzQPN_6tVV_S8KqJinG74gRVbhZxeNmWm2yaDiB_NcBOX_wUZ4Zek7A0Sj-DnqobkSi5ScxyHpuoFIys",
+  vapidSubject: "mailto:dorothy.yakon@gmail.com"
 };

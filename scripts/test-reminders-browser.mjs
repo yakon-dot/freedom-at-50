@@ -3,13 +3,27 @@
  */
 import puppeteer from "puppeteer-core";
 import assert from "node:assert/strict";
+import fs from "node:fs";
 
 const BASE = process.env.FREEDOM_BASE || "http://127.0.0.1:8765";
 const CHOICE_KEY = "freedom50-reminders-choice-v1";
 
+function resolveChromePath() {
+  if (process.env.CHROME_PATH && fs.existsSync(process.env.CHROME_PATH)) {
+    return process.env.CHROME_PATH;
+  }
+  const candidates = [
+    "/usr/local/bin/google-chrome",
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+  ];
+  const found = candidates.find(p => fs.existsSync(p));
+  if (!found) throw new Error("Google Chrome not found (set CHROME_PATH)");
+  return found;
+}
+
 async function main() {
   const browser = await puppeteer.launch({
-    executablePath: "/usr/local/bin/google-chrome",
+    executablePath: resolveChromePath(),
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"]
   });
@@ -48,12 +62,22 @@ async function main() {
   const initialButtons = await page.evaluate(() =>
     [...document.querySelectorAll("#freedomRemindersActions button")].map(b => b.textContent.trim())
   );
-  /* When apiBase empty, panel shows unavailable — still must not crash */
+  /* With Worker URL configured, panel offers Keep / Never without crashing */
   const status = await page.evaluate(() => document.getElementById("freedomRemindersStatus")?.textContent || "");
   assert.ok(status.length > 0);
+  assert.equal(/not connected yet/i.test(status), false);
+  assert.ok(
+    initialButtons.includes("Keep reminders") || initialButtons.includes("Never remind me"),
+    `expected opt-in buttons, got: ${initialButtons.join(", ")}`
+  );
+  const cfgOk = await page.evaluate(() => {
+    const cfg = window.FREEDOM_PUSH || {};
+    return !!(cfg.apiBase && cfg.vapidPublicKey && !/privateKey/i.test(JSON.stringify(cfg)));
+  });
+  assert.equal(cfgOk, true);
   console.log("PASS: Personal Reminders panel opens with status:", status.slice(0, 80));
 
-  /* Choose Never via UI button (and API path) */
+  /* Choose Never via UI button (and API path) — no network subscribe */
   const clicked = await page.evaluate(async () => {
     const btn = [...document.querySelectorAll("#freedomRemindersActions button")]
       .find(b => b.textContent.trim() === "Never remind me");
