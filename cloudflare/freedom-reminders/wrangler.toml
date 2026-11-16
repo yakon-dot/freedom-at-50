@@ -1,7 +1,10 @@
 name = "freedom-reminders"
 main = "src/index.js"
 compatibility_date = "2025-03-01"
+compatibility_flags = ["nodejs_compat"]
 workers_dev = true
+# nodejs_compat: push library may fall back to node:crypto; Workers already have
+# Web Crypto, but enabling this clears the deploy warning and keeps send paths safe.
 
 # Live URL (do not rename Worker): https://freedom-reminders.dorothy-yakon.workers.dev
 [[kv_namespaces]]

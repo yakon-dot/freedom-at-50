@@ -204,16 +204,23 @@ assert.match(index, /freedom-push-config\.js/);
 assert.match(index, /initFreedomRemindersUi/);
 assert.match(index, /FREEDOM_OPEN_HOME/);
 assert.equal(index.includes("demoMode") && index.includes("Reminders stay off in Demo Mode"), true);
-/* Private key material must not appear in Pages assets */
+/* Private key material must not appear in Pages assets; public config points at live Worker */
 const cfg = fs.readFileSync("freedom-push-config.js", "utf8");
-assert.match(cfg, /vapidPublicKey:\s*"BFPyGIci/);
+assert.match(
+  cfg,
+  /apiBase:\s*"https:\/\/freedom-reminders\.dorothy-yakon\.workers\.dev"/
+);
+assert.match(cfg, /vapidPublicKey:\s*"B[A-Za-z0-9_-]{80,}"/);
 assert.equal(/privateKey|VAPID_PRIVATE/i.test(cfg), false);
 assert.equal(/privateKey|VAPID_PRIVATE/i.test(index), false);
-assert.match(cfg, /apiBase:\s*""/);
+const wrangler = fs.readFileSync("cloudflare/freedom-reminders/wrangler.toml", "utf8");
+assert.match(wrangler, /compatibility_flags\s*=\s*\[[^\]]*nodejs_compat/);
+assert.match(wrangler, /binding\s*=\s*"REMINDERS"/);
+assert.match(wrangler, /id\s*=\s*"6cd70d4f86d34240b2b2d0755ec058d7"/);
 const sw = fs.readFileSync("service-worker.js", "utf8");
 assert.match(sw, /addEventListener\("push"/);
 assert.match(sw, /notificationclick/);
 assert.match(sw, /freedom-at-50-v1\.8\.6\.155/);
 assert.match(sw, /freedom-push-config\.js/);
 assert.match(sw, /A little Freedom check-in/);
-console.log("PASS: client reminder contracts (UI, SW push, no private key in Pages)");
+console.log("PASS: client reminder contracts (UI, SW push, Worker URL, no private key in Pages)");
