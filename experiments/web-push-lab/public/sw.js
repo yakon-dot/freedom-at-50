@@ -1,4 +1,4 @@
-const LAB_VERSION = "0.1.1";
+const LAB_VERSION = "0.2.0";
 const DB_NAME = "freedom-web-push-lab";
 const STORE_NAME = "events";
 const TEST_TITLE = "Freedom Push Lab";
@@ -56,6 +56,10 @@ function parsePayload(data) {
   }
 }
 
+function safeDiagnosticText(value) {
+  return String(value || "").replace(/[\r\n\t]+/g, " ").trim().slice(0, 180);
+}
+
 self.addEventListener("install", event => {
   event.waitUntil(self.skipWaiting());
 });
@@ -69,7 +73,17 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("push", event => {
   event.waitUntil((async () => {
-    const message = parsePayload(event.data);
+    const proposed = event.notification || null;
+    const proposedData = proposed && proposed.data && typeof proposed.data === "object" ? proposed.data : {};
+    const message = proposed ? {
+      title: safeDiagnosticText(proposed.title) || TEST_TITLE,
+      body: safeDiagnosticText(proposed.body) || TEST_BODY,
+      url: self.registration.scope,
+      testId: safeDiagnosticText(proposedData.testId) || "unknown",
+      sender: safeDiagnosticText(proposedData.sender) || "node-web-push-mutable",
+      parsed: true,
+      declarative: true
+    } : parsePayload(event.data);
     await recordEvent("push-received", {
       testId: message.testId,
       sender: message.sender,
@@ -78,21 +92,31 @@ self.addEventListener("push", event => {
       declarative: !!message.declarative,
       titleMatched: message.title === TEST_TITLE,
       bodyMatched: message.body === TEST_BODY,
+      proposedNotificationPresent: !!proposed,
+      proposedTitle: proposed ? safeDiagnosticText(proposed.title) : "",
+      proposedBody: proposed ? safeDiagnosticText(proposed.body) : "",
       reason: message.reason || ""
     });
     try {
-      await self.registration.showNotification(message.title, {
-        body: message.body,
-        icon: "/lab-icon.svg",
-        badge: "/lab-icon.svg",
-        tag: `freedom-push-lab-${message.testId}`,
-        data: { url: message.url, testId: message.testId, sender: message.sender }
-      });
+      if (proposed) {
+        /* Test C: deliberately minimal replacement, with no optional presentation fields. */
+        await self.registration.showNotification(message.title, { body: message.body });
+      } else {
+        /* Preserve the existing legacy fallback used by Tests A/B on older browsers. */
+        await self.registration.showNotification(message.title, {
+          body: message.body,
+          icon: "/lab-icon.svg",
+          badge: "/lab-icon.svg",
+          tag: `freedom-push-lab-${message.testId}`,
+          data: { url: message.url, testId: message.testId, sender: message.sender }
+        });
+      }
       await recordEvent("notification-shown-by-worker", {
         testId: message.testId,
         sender: message.sender,
         titleMatched: message.title === TEST_TITLE,
-        bodyMatched: message.body === TEST_BODY
+        bodyMatched: message.body === TEST_BODY,
+        displayMode: proposed ? "minimal-proposed-notification" : "existing-legacy-notification"
       });
     } catch (error) {
       await recordEvent("notification-display-failed", {

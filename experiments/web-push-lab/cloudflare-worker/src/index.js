@@ -224,15 +224,16 @@ async function sendWithBlock65(request, env) {
   }, accepted ? 200 : 502);
 }
 
-async function sendWithNodeWebPush(request, env) {
+async function sendWithNodeWebPush(request, env, { mutable = false } = {}) {
   const input = await readAuthorizedInput(request, env);
   const vapid = readTestVapid(env);
   const testId = createTestId();
-  const sender = "node-web-push";
+  const sender = mutable ? "node-web-push-mutable" : "node-web-push";
   const payloadData = buildDiagnosticPayload({
     appOrigin: appOrigin(env, request),
     testId,
-    sender
+    sender,
+    mutable
   });
   const plaintext = JSON.stringify(payloadData);
   const details = webpush.generateRequestDetails(input.subscription, plaintext, {
@@ -318,7 +319,7 @@ export default {
         subscriptionStorage: false,
         broadcastEndpoint: false,
         configured: !!(env.VAPID_PUBLIC_KEY && env.VAPID_PRIVATE_KEY && env.LAB_ACCESS_CODE),
-        methods: ["block65-cloudflare", "node-web-push"]
+        methods: ["block65-cloudflare", "node-web-push", "node-web-push-mutable"]
       });
     }
 
@@ -357,6 +358,19 @@ export default {
           stage: error instanceof HttpError ? "request-rejected" : "sender-error",
           sender: "node-web-push",
           message: safeReason(error && error.message) || "The Node web-push sender failed before Apple accepted the request."
+        }, error instanceof HttpError ? error.status : 500);
+      }
+    }
+
+    if (request.method === "POST" && url.pathname === "/api/send/node-web-push-mutable") {
+      try {
+        return await sendWithNodeWebPush(request, env, { mutable: true });
+      } catch (error) {
+        return json({
+          ok: false,
+          stage: error instanceof HttpError ? "request-rejected" : "sender-error",
+          sender: "node-web-push-mutable",
+          message: safeReason(error && error.message) || "The mutable Node web-push sender failed before Apple accepted the request."
         }, error instanceof HttpError ? error.status : 500);
       }
     }

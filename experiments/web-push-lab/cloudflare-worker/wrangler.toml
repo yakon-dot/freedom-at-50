@@ -10,7 +10,7 @@ binding = "ASSETS"
 run_worker_first = true
 
 [vars]
-LAB_VERSION = "0.1.1"
+LAB_VERSION = "0.2.0"
 APP_ORIGIN = "https://freedom-web-push-lab.dorothy-yakon.workers.dev"
 
 # Test-only secrets and deployment-specific URLs must be supplied at deploy time:

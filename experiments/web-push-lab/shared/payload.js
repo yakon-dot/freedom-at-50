@@ -1,4 +1,4 @@
-export const LAB_VERSION = "0.1.1";
+export const LAB_VERSION = "0.2.0";
 export const TEST_TITLE = "Freedom Push Lab";
 export const TEST_BODY = "If you can read this exact sentence, the encrypted payload was decoded.";
 
@@ -6,14 +6,14 @@ export function createTestId() {
   return crypto.randomUUID();
 }
 
-export function buildDiagnosticPayload({ appOrigin, testId, sender }) {
+export function buildDiagnosticPayload({ appOrigin, testId, sender, mutable = false }) {
   const origin = new URL(appOrigin).origin;
   const navigate = new URL("/", origin);
   navigate.searchParams.set("opened", "notification");
   navigate.searchParams.set("test", testId);
   navigate.searchParams.set("sender", sender);
 
-  return {
+  const payload = {
     web_push: 8030,
     notification: {
       title: TEST_TITLE,
@@ -34,6 +34,9 @@ export function buildDiagnosticPayload({ appOrigin, testId, sender }) {
       labVersion: LAB_VERSION
     }
   };
+  /* Preserve Tests A/B byte-for-byte: only Test C receives this field. */
+  if (mutable === true) payload.mutable = true;
+  return payload;
 }
 
 export function validateSubscription(subscription) {

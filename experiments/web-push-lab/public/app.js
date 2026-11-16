@@ -18,6 +18,7 @@ const enableButton = $("#enableButton");
 const accessCodeInput = $("#accessCode");
 const block65Button = $("#block65Button");
 const nodeButton = $("#nodeButton");
+const mutableButton = $("#mutableButton");
 const summaryEl = $("#summary");
 const eventLogEl = $("#eventLog");
 const copyButton = $("#copyButton");
@@ -108,6 +109,7 @@ function updateButtons() {
   const ready = !!(state.subscription && state.config && state.config.configured && state.accessCode.length >= 8);
   block65Button.disabled = !ready;
   nodeButton.disabled = !ready;
+  mutableButton.disabled = !ready;
   enableButton.disabled = !state.config || !state.config.publicKey || !("serviceWorker" in navigator);
   if (state.subscription) enableButton.textContent = "Test notifications enabled";
 }
@@ -140,8 +142,15 @@ async function readWorkerEvents() {
       if (seen.has(key)) continue;
       const labels = {
         "service-worker-active": ["Test service worker activated", `Worker version ${record.swVersion}`],
-        "push-received": ["Service worker received decrypted push", record.detail.parsed ? `Payload parsed. Sender: ${record.detail.sender}` : `Payload could not be parsed: ${record.detail.reason || "unknown reason"}`],
-        "notification-shown-by-worker": ["Service worker requested the banner", `Title and body matched: ${record.detail.titleMatched && record.detail.bodyMatched ? "yes" : "no"}`],
+        "push-received": [
+          "Service worker received the mutable diagnostic",
+          record.detail.proposedNotificationPresent
+            ? `Proposed title: ${record.detail.proposedTitle}; proposed body: ${record.detail.proposedBody}`
+            : record.detail.parsed
+              ? `Payload parsed. Sender: ${record.detail.sender}`
+              : `Payload could not be parsed: ${record.detail.reason || "unknown reason"}`
+        ],
+        "notification-shown-by-worker": ["Service worker requested the banner", `Mode: ${record.detail.displayMode || "existing"}; title and body matched: ${record.detail.titleMatched && record.detail.bodyMatched ? "yes" : "no"}`],
         "notification-display-failed": ["Notification display failed", `${record.detail.error}: ${record.detail.message}`],
         "notification-click": ["Notification tap reached the service worker", `Sender: ${record.detail.sender}`]
       };
@@ -197,14 +206,22 @@ function diagnosticText(result) {
 }
 
 async function sendTest(sender) {
-  const button = sender === "block65-cloudflare" ? block65Button : nodeButton;
+  const button = sender === "block65-cloudflare"
+    ? block65Button
+    : sender === "node-web-push-mutable"
+      ? mutableButton
+      : nodeButton;
   const label = button.querySelector("strong").textContent;
   const original = label;
   button.disabled = true;
   button.querySelector("strong").textContent = "Sending…";
   setSummary(`${original} is encrypting the test message.`, "neutral");
   try {
-    const endpoint = sender === "block65-cloudflare" ? "/api/send/block65" : state.config.nodeSenderUrl;
+    const endpoint = sender === "block65-cloudflare"
+      ? "/api/send/block65"
+      : sender === "node-web-push-mutable"
+        ? "/api/send/node-web-push-mutable"
+        : state.config.nodeSenderUrl;
     const response = await fetch(endpoint, {
       method: "POST",
       headers: { "content-type": "application/json" },
@@ -307,6 +324,7 @@ async function init() {
 enableButton.addEventListener("click", enableNotifications);
 block65Button.addEventListener("click", () => sendTest("block65-cloudflare"));
 nodeButton.addEventListener("click", () => sendTest("node-web-push"));
+mutableButton.addEventListener("click", () => sendTest("node-web-push-mutable"));
 copyButton.addEventListener("click", copyDiagnostics);
 clearButton.addEventListener("click", clearEvents);
 accessCodeInput.addEventListener("input", () => {

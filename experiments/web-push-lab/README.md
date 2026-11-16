@@ -1,11 +1,12 @@
 # Freedom Web Push Lab
 
-Version `0.1.1`
+Version `0.2.0`
 
 This is a temporary, isolated diagnostic app for comparing two Web Push encryption implementations on an iPhone:
 
 1. `@block65/webcrypto-web-push` running in a Cloudflare Worker, matching Freedom's current sender library and runtime.
 2. `web-push` providing an independent encryption implementation in the same isolated Cloudflare runtime. A standalone Node host variant is also included for later use if runtime isolation becomes necessary.
+3. A mutable diagnostic using the unchanged Node encryption path plus only top-level `"mutable": true`, allowing WebKit's proposed notification to be inspected safely by the service worker.
 
 It is not part of the Freedom PWA. It has its own manifest, service worker, app identity, subscription and test-only VAPID keys. Subscriptions are never stored by either sender.
 

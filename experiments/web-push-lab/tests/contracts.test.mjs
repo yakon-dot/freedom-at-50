@@ -41,6 +41,17 @@ test("both sender paths use the same approved diagnostic title and body", () => 
   assert.equal(a.web_push, 8030);
   assert.equal(b.web_push, 8030);
   assert.equal(a.diagnostics.labVersion, LAB_VERSION);
+  assert.equal(Object.hasOwn(a, "mutable"), false);
+  assert.equal(Object.hasOwn(b, "mutable"), false);
+});
+
+test("Test C changes only the top-level mutable flag", () => {
+  const base = buildDiagnosticPayload({ appOrigin: "https://push-lab.example", testId: "same", sender: "node-web-push-mutable" });
+  const mutable = buildDiagnosticPayload({ appOrigin: "https://push-lab.example", testId: "same", sender: "node-web-push-mutable", mutable: true });
+  assert.equal(Object.hasOwn(base, "mutable"), false);
+  assert.equal(mutable.mutable, true);
+  delete mutable.mutable;
+  assert.deepEqual(mutable, base);
 });
 
 test("test subscription validation does not accept incomplete records", async () => {
