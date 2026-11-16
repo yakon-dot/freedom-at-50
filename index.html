@@ -6946,7 +6946,8 @@ const FREEDOM_BACKUP_META_KEYS=[
   "freedom50-positive-pattern-v1",
   "freedom50-last-app-open-at-v1",
   "freedom50-welcome-back-acked-open-at-v1",
-  "freedom50-welcome-back-last-line-v1"
+  "freedom50-welcome-back-last-line-v1",
+  "freedom50-reminder-checkin-last-line-v1"
 ];
 function collectFreedomBackupMeta(){
   const meta={};
@@ -7744,12 +7745,14 @@ function initFreedomRemindersUi(){
     navigator.serviceWorker.addEventListener("message",event=>{
       const data=event&&event.data;
       if(!data)return;
-      if(data.type!=="FREEDOM_OPEN_OVERVIEW"&&data.type!=="FREEDOM_OPEN_HOME")return;
+      if(data.type!=="FREEDOM_OPEN_REMINDER_HOME"&&data.type!=="FREEDOM_OPEN_HOME")return;
       try{
         closeFreedomRemindersPanel();
-        if(typeof window.hideHome==="function")window.hideHome();
-        if(typeof page==="function")page("overview");
-        else if(typeof window.showHome==="function")window.showHome();
+        if(typeof window.freedomOpenHomeFromReminder==="function"){
+          window.freedomOpenHomeFromReminder({cleanUrl:true,force:true});
+          return;
+        }
+        if(typeof window.showHome==="function")window.showHome();
       }catch(e){}
     });
   }
@@ -9627,6 +9630,51 @@ function page(id){
   handleDemoPageVisit(id);
 }
 window.page=page;
+/* Reminder notification open: ?opened=reminder → Home + one-shot companion check-in. */
+window.freedomOpenHomeFromReminder=function(opts){
+  const options=opts&&typeof opts==="object"?opts:{};
+  let fromQuery=false;
+  try{
+    fromQuery=new URLSearchParams(location.search).get("opened")==="reminder";
+  }catch(e){}
+  if(!fromQuery&&!window.__FREEDOM_FROM_REMINDER__&&!options.force)return false;
+  window.__FREEDOM_FROM_REMINDER__=true;
+  try{
+    if(options.cleanUrl!==false&&fromQuery){
+      const clean=new URL(location.href);
+      clean.searchParams.delete("opened");
+      const qs=clean.searchParams.toString();
+      history.replaceState({freedomPage:"home"},"",clean.pathname+(qs?"?"+qs:"")+"#home");
+    }
+  }catch(e){}
+  try{
+    if(window.FreedomMonthlyReminderCheckIn&&typeof window.FreedomMonthlyReminderCheckIn.armFromNotificationTap==="function"){
+      window.FreedomMonthlyReminderCheckIn.armFromNotificationTap();
+    }else{
+      try{sessionStorage.setItem("freedom50-reminder-checkin-pending-v1","1");}catch(e){}
+    }
+  }catch(e){}
+  try{
+    if(typeof window.showHome==="function")window.showHome();
+    else{
+      document.body.classList.add("home183");
+      const home=document.getElementById("mobile183");
+      if(home)home.setAttribute("aria-hidden","false");
+    }
+  }catch(e){}
+  try{
+    if(window.FreedomMonthlyReminderCheckIn&&typeof window.FreedomMonthlyReminderCheckIn.tryFromNotificationTap==="function"){
+      window.FreedomMonthlyReminderCheckIn.tryFromNotificationTap();
+    }
+  }catch(e){}
+  return true;
+};
+try{
+  if(new URLSearchParams(location.search).get("opened")==="reminder"){
+    window.__FREEDOM_FROM_REMINDER__=true;
+    try{sessionStorage.setItem("freedom50-reminder-checkin-pending-v1","1");}catch(e2){}
+  }
+}catch(e){}
 document.querySelectorAll(".nav-btn").forEach(btn=>btn.addEventListener("click",()=>page(btn.dataset.page)));document.querySelectorAll("[data-page-link]").forEach(card=>card.addEventListener("click",()=>page(card.dataset.pageLink)));
 function esc(v){return String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]))}
 
@@ -12512,7 +12560,12 @@ fillForm();render();initFreedomBackupUi();initFreedomRemindersUi();
 if(freedomPersonalLoadError){
   setTimeout(()=>{try{recoverPersonalStorageFromLoadError();}catch(e){}},0);
 }
+/* Reminder notification deep-link (?opened=reminder) — Home + one-shot companion check-in. */
+if(typeof window.freedomOpenHomeFromReminder==="function"&&window.freedomOpenHomeFromReminder({cleanUrl:true})){
+  /* Handled: skip normal hash boot. */
+}else{
 const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home")page("home");else if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
+}
 /* Bridge for whole-app welcome-back (defined outside this IIFE) to inspect pending
    completion celebrations without exposing the full app state. */
 window.FreedomWelcomeBackBridge={
@@ -13087,6 +13140,11 @@ function freedomBootNavPreview(open){
   window.showHome=showHome;
   window.hideHome=hideHome;
 
+  /* Apply reminder deep-link once showHome exists (flag may already be set earlier). */
+  if(window.__FREEDOM_FROM_REMINDER__&&typeof window.freedomOpenHomeFromReminder==="function"){
+    window.freedomOpenHomeFromReminder({force:true,cleanUrl:true});
+  }
+
   if(more)more.addEventListener("click",()=>{
     if(typeof window.syncInternalTestUi==="function")window.syncInternalTestUi();
     const expanded=more.getAttribute("aria-expanded")==="true";
@@ -13159,6 +13217,14 @@ function freedomBootNavPreview(open){
 
   window.addEventListener("load",()=>{
     if(!isMobile()){ hideHome(); return; }
+    if(window.__FREEDOM_FROM_REMINDER__){
+      if(typeof window.freedomOpenHomeFromReminder==="function"){
+        window.freedomOpenHomeFromReminder({force:true,cleanUrl:true});
+      }else{
+        showHome();
+      }
+      return;
+    }
     const hash=location.hash.slice(1);
     if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(hash)||hash==="archiveHub") return;
     if(hash&&hash!=="home")return;
@@ -15918,6 +15984,13 @@ window.FreedomWelcomeBack=(function(){
     if(openHandled)return false;
     if(inDemo())return false;
     if(otherTempFlowActive())return false;
+    /* Notification tap owns this open — do not replace with welcome-back. */
+    if(window.__FREEDOM_FROM_REMINDER__)return false;
+    try{
+      if(sessionStorage.getItem("freedom50-reminder-checkin-pending-v1")==="1")return false;
+      if(sessionStorage.getItem("freedom50-reminder-checkin-session-v1")==="1")return false;
+    }catch(e){}
+    if(window.FreedomMonthlyReminderCheckIn&&typeof window.FreedomMonthlyReminderCheckIn.isPending==="function"&&window.FreedomMonthlyReminderCheckIn.isPending())return false;
     if(!isEstablishedUser())return false;
     if(onboardingVisible()&&!window.__FREEDOM_WELCOME_BACK__)return false;
     openHandled=true;
@@ -15962,6 +16035,268 @@ window.FreedomWelcomeBack=(function(){
   }
   function schedule(){
     setTimeout(boot,120);
+  }
+  if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",schedule);
+  else schedule();
+  window.addEventListener("load",schedule);
+})();
+
+/* Monthly reminder notification tap → Home companion check-in.
+   Uses the shared FreedomCompanionMessage shell. Armed only by ?opened=reminder
+   or FREEDOM_OPEN_REMINDER_HOME; pending is consumed on first try so normal
+   Home visits never repeat it. */
+window.FreedomMonthlyReminderCheckIn=(function(){
+  const OWNER="monthly-reminder-checkin";
+  const APPEAR_DELAY_MS=400;
+  const PENDING_KEY="freedom50-reminder-checkin-pending-v1";
+  const SESSION_KEY="freedom50-reminder-checkin-session-v1";
+  const LAST_LINE_KEY="freedom50-reminder-checkin-last-line-v1";
+  const companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
+  const pools={
+    patricia:[
+      "That nudge was me. Freedom just keeps the door open — update a Journey or Goal if anything’s moved.",
+      "Monthly check-in, as promised. Have a peek at your Journeys and Goals when you’re ready.",
+      "Freedom pinged you because I asked. No drama — just a soft reminder to keep Journeys and Goals current."
+    ],
+    veronica:[
+      "Freedom sent that gentle reminder so your plan doesn’t drift. Update your Journeys and Goals when you have a moment.",
+      "A quiet monthly check-in. A small update to your Journeys or Goals is plenty.",
+      "That was your monthly nudge. Whenever you’re ready, review your Journeys and Goals."
+    ],
+    kevin:[
+      "That was your monthly Freedom check-in. Update Journeys and Goals if anything’s changed.",
+      "Freedom nudged you on purpose. Keep Journeys and Goals current when you can.",
+      "Monthly reminder delivered. Review Journeys and Goals and adjust what’s moved."
+    ]
+  };
+  const HIGH_PRIORITY_OWNERS={
+    "completion-flow":true,
+    "milestone-flow":true,
+    "welcome-back":true
+  };
+  let showTimer=null;
+  let retryTimer=null;
+  let retryCount=0;
+  const MAX_RETRIES=40;
+  function selectedCompanion(){
+    const select=window.freedomCompanionSelect;
+    const id=select&&typeof select.getSelected==="function"?select.getSelected():"";
+    if(id==="patricia"||id==="veronica"||id==="kevin")return id;
+    try{
+      const v=localStorage.getItem("freedom50-companion-id-v1")||"";
+      if(v==="patricia"||v==="veronica"||v==="kevin")return v;
+    }catch(e){}
+    return "patricia";
+  }
+  function inDemo(){
+    return !!(window.freedomDemo&&typeof window.freedomDemo.isActive==="function"&&window.freedomDemo.isActive());
+  }
+  function readPending(){
+    try{return sessionStorage.getItem(PENDING_KEY)==="1";}catch(e){return false;}
+  }
+  function writePending(on){
+    try{
+      if(on)sessionStorage.setItem(PENDING_KEY,"1");
+      else sessionStorage.removeItem(PENDING_KEY);
+    }catch(e){}
+  }
+  function markSessionHandled(){
+    try{sessionStorage.setItem(SESSION_KEY,"1");}catch(e){}
+  }
+  function isPending(){
+    return readPending()||!!window.__FREEDOM_FROM_REMINDER__;
+  }
+  function armFromNotificationTap(){
+    writePending(true);
+    window.__FREEDOM_FROM_REMINDER__=true;
+    retryCount=0;
+  }
+  function consumePending(){
+    writePending(false);
+    markSessionHandled();
+    window.__FREEDOM_FROM_REMINDER__=false;
+  }
+  function cancelRetry(){
+    if(retryTimer){clearTimeout(retryTimer);retryTimer=null;}
+  }
+  function scheduleRetry(){
+    if(!isPending())return;
+    if(retryCount>=MAX_RETRIES){
+      consumePending();
+      return;
+    }
+    if(retryTimer)return;
+    retryCount+=1;
+    retryTimer=setTimeout(function(){
+      retryTimer=null;
+      tryFromNotificationTap();
+    },250);
+  }
+  function isEstablishedUser(){
+    try{
+      if(localStorage.getItem("freedom50-welcome-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-look-around-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-first-time-complete-v1")!=="1")return false;
+      if(localStorage.getItem("freedom50-companion-pending-v1")==="1")return false;
+      if(localStorage.getItem("freedom50-companion-first-setup-pending-v1")==="1")return false;
+      const companion=selectedCompanion();
+      if(!companionNames[companion])return false;
+      const select=window.freedomCompanionSelect;
+      if(select&&typeof select.isPending==="function"&&select.isPending())return false;
+      if(select&&typeof select.isFirstSetupPending==="function"&&select.isFirstSetupPending())return false;
+      return true;
+    }catch(e){return false;}
+  }
+  function onboardingVisible(){
+    return ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect"].some(function(id){
+      const el=document.getElementById(id);
+      return !!el&&!el.hidden;
+    });
+  }
+  function otherTempFlowActive(){
+    return !!(window.__FREEDOM_MILESTONE_PREVIEW__||window.__FREEDOM_COMPLETION_PREVIEW__||window.__FREEDOM_COMPLETION_FLOW__||window.__FREEDOM_CLOSE_CHAPTER_FLOW__||window.__FREEDOM_MILESTONE_FLOW__||window.__FREEDOM_ORDINARY_FLOW__||window.__FREEDOM_DORMANT_FLOW__||window.__FREEDOM_RENAME_FLOW__||window.__FREEDOM_POSITIVE_PATTERN__||window.__FREEDOM_WELCOME_BACK__||window.__FREEDOM_JOURNEY_CARD_PREVIEW__||window.__FREEDOM_VICTORIES_PREVIEW__||window.__FREEDOM_MORE_PREVIEW__||window.__FREEDOM_ARCHIVE_PREVIEW__);
+  }
+  function host(){
+    return document.getElementById("freedomCompanionMsgHost");
+  }
+  function hostBlocked(){
+    const h=host();
+    if(!h||h.hidden)return false;
+    const owner=h.dataset.companionMessageOwner||"";
+    if(!owner)return !!(h.querySelector&&h.querySelector(".freedom-companion-msg"));
+    return !!HIGH_PRIORITY_OWNERS[owner];
+  }
+  function cancelPendingShow(){
+    if(showTimer){clearTimeout(showTimer);showTimer=null;}
+  }
+  function clearHost(){
+    const h=host();
+    if(!h||h.dataset.companionMessageOwner!==OWNER)return;
+    cancelPendingShow();
+    h.classList.remove("is-entering");
+    h.innerHTML="";
+    h.hidden=true;
+    delete h.dataset.companionMessageOwner;
+    if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+      window.FreedomCompanionMessage.syncScrim();
+    }
+  }
+  function readLastLines(){
+    try{
+      const v=JSON.parse(localStorage.getItem(LAST_LINE_KEY)||"null");
+      return v&&typeof v==="object"?v:{patricia:-1,veronica:-1,kevin:-1};
+    }catch(e){return {patricia:-1,veronica:-1,kevin:-1};}
+  }
+  function writeLastLine(companion,index){
+    const v=readLastLines();
+    v[companion]=index;
+    try{localStorage.setItem(LAST_LINE_KEY,JSON.stringify(v));}catch(e){}
+  }
+  function pickLine(companion){
+    const list=pools[companion]||[];
+    if(!list.length)return{index:-1,message:""};
+    const last=readLastLines()[companion];
+    if(list.length===1)return{index:0,message:list[0]};
+    let index=Math.floor(Math.random()*list.length);
+    if(index===last)index=(index+1+Math.floor(Math.random()*(list.length-1)))%list.length;
+    return{index:index,message:list[index]};
+  }
+  function findPendingCompletion(){
+    const bridge=window.FreedomWelcomeBackBridge;
+    if(!bridge||typeof bridge.findPendingCompletion!=="function")return null;
+    return bridge.findPendingCompletion();
+  }
+  function homeReady(){
+    const home=document.getElementById("mobile183");
+    return document.body.classList.contains("home183")&&
+      !!home&&home.getAttribute("aria-hidden")!=="true"&&
+      !onboardingVisible();
+  }
+  function present(message){
+    if(!window.FreedomCompanionMessage||!message)return false;
+    const h=host();
+    const companion=selectedCompanion();
+    if(!h||!companionNames[companion]||inDemo())return false;
+    cancelPendingShow();
+    showTimer=setTimeout(function(){
+      showTimer=null;
+      if(!isPending())return;
+      if(inDemo()||onboardingVisible()||hostBlocked()||!homeReady()){
+        scheduleRetry();
+        return;
+      }
+      /* Consume only when the shared companion shell actually mounts. */
+      consumePending();
+      cancelRetry();
+      if(window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.hide==="function"){
+        window.FreedomFirstCompanionSetup.hide();
+      }
+      if(window.FreedomCompanionFirstCreated&&typeof window.FreedomCompanionFirstCreated.hideAll==="function"){
+        window.FreedomCompanionFirstCreated.hideAll();
+      }
+      if(typeof window.showHome==="function")window.showHome();
+      h.dataset.companionMessageOwner=OWNER;
+      h.hidden=false;
+      window.FreedomCompanionMessage.mount(h,{
+        name:companionNames[companion],
+        message:message,
+        dismissible:true,
+        welcomeBack:true,
+        onDismiss:function(){ clearHost(); }
+      });
+      if(window.FreedomCompanionMessage&&typeof window.FreedomCompanionMessage.syncScrim==="function"){
+        window.FreedomCompanionMessage.syncScrim();
+      }
+    },APPEAR_DELAY_MS);
+    return true;
+  }
+  function tryFromNotificationTap(){
+    if(!isPending())return false;
+    if(showTimer)return true;
+    /* Permanent skip — consume so normal Home visits never inherit this tap. */
+    if(inDemo()||otherTempFlowActive()||!isEstablishedUser()){
+      consumePending();
+      cancelRetry();
+      return false;
+    }
+    /* Wait for splash/Home readiness instead of dropping the one-shot early. */
+    if(onboardingVisible()||findPendingCompletion()||hostBlocked()){
+      scheduleRetry();
+      return false;
+    }
+    if(typeof window.showHome==="function")window.showHome();
+    if(!homeReady()){
+      scheduleRetry();
+      return false;
+    }
+    const companion=selectedCompanion();
+    const picked=pickLine(companion);
+    if(!picked.message){
+      consumePending();
+      return false;
+    }
+    writeLastLine(companion,picked.index);
+    return present(picked.message);
+  }
+  return{
+    armFromNotificationTap:armFromNotificationTap,
+    tryFromNotificationTap:tryFromNotificationTap,
+    isPending:isPending,
+    clearHost:clearHost,
+    PENDING_KEY:PENDING_KEY,
+    SESSION_KEY:SESSION_KEY
+  };
+})();
+
+(function(){
+  function boot(){
+    if(!window.FreedomMonthlyReminderCheckIn||typeof window.FreedomMonthlyReminderCheckIn.tryFromNotificationTap!=="function")return;
+    if(!window.FreedomMonthlyReminderCheckIn.isPending())return;
+    window.FreedomMonthlyReminderCheckIn.tryFromNotificationTap();
+  }
+  function schedule(){
+    /* Run before welcome-back (120ms) so a reminder tap owns the companion slot. */
+    setTimeout(boot,60);
   }
   if(document.readyState==="loading")window.addEventListener("DOMContentLoaded",schedule);
   else schedule();
