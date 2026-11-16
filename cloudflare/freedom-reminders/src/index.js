@@ -213,7 +213,8 @@ export async function pushServiceDiagnostics(res) {
     } catch (e) {}
   }
   pushReason = pushReason.replace(/[\r\n\t]+/g, " ").slice(0, 120);
-  if (/endpoint|p256|private|token|vapid|authorization|auth=/i.test(pushReason)) {
+  /* Scrub only if the reason looks like it embeds secrets, not Apple codes like BadJwtToken. */
+  if (/(https?:\/\/|endpoint=|p256dh|private key|vapid [tk]=|authorization:|\bauth=)/i.test(pushReason)) {
     pushReason = "";
   }
   return {
