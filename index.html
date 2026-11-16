@@ -6981,7 +6981,8 @@ const FREEDOM_BACKUP_META_KEYS=[
   "freedom50-last-app-open-at-v1",
   "freedom50-welcome-back-acked-open-at-v1",
   "freedom50-welcome-back-last-line-v1",
-  "freedom50-reminder-checkin-last-line-v1"
+  "freedom50-reminder-checkin-last-line-v1",
+  "freedom50-reminder-checkin-rotation-v1"
 ];
 function collectFreedomBackupMeta(){
   const meta={};
@@ -16077,22 +16078,51 @@ window.FreedomMonthlyReminderCheckIn=(function(){
   const PENDING_KEY="freedom50-reminder-checkin-pending-v1";
   const SESSION_KEY="freedom50-reminder-checkin-session-v1";
   const LAST_LINE_KEY="freedom50-reminder-checkin-last-line-v1";
+  const ROTATION_KEY="freedom50-reminder-checkin-rotation-v1";
   const companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
+  /* Approved Freedom Companion Bible Monthly Reminders library — do not rewrite. */
   const pools={
     patricia:[
       "That nudge was me. Freedom just keeps the door open — update a Journey or Goal if anything’s moved.",
       "Monthly check-in, as promised. Have a peek at your Journeys and Goals when you’re ready.",
-      "Freedom pinged you because I asked. No drama — just a soft reminder to keep Journeys and Goals current."
+      "Freedom pinged you because I asked. No drama — just a soft reminder to keep Journeys and Goals current.",
+      "Surprise, it’s me again. If anything’s shifted, give your Journeys and Goals a quick once-over.",
+      "That little ping? Entirely intentional. Pop into Journeys and Goals whenever you’ve got a minute.",
+      "I kept my promise. Freedom brought you back; I’ll wait while you check Journeys and Goals.",
+      "Not a lecture, just a hello. Update a Journey or Goal if life has moved the furniture around.",
+      "Your monthly drop-in has arrived. Journeys and Goals are right there when you fancy a tidy-up.",
+      "Freedom opened the door. I’m the one waving. Review Journeys and Goals if anything needs catching up.",
+      "Still cheeky, still on your side. Glance at Journeys and Goals when you can be bothered.",
+      "That notification was my idea. No rush. Just keep Journeys and Goals roughly in touch with real life.",
+      "One calm check-in, then I’m quiet again. Nudge Journeys or Goals if something’s changed since last month."
     ],
     veronica:[
       "Freedom sent that gentle reminder so your plan doesn’t drift. Update your Journeys and Goals when you have a moment.",
       "A quiet monthly check-in. A small update to your Journeys or Goals is plenty.",
-      "That was your monthly nudge. Whenever you’re ready, review your Journeys and Goals."
+      "That was your monthly nudge. Whenever you’re ready, review your Journeys and Goals.",
+      "Freedom brought you home for a soft check-in. Your Journeys and Goals can wait until you feel ready.",
+      "Just a monthly visit, nothing more. If anything has changed, a light touch on Journeys or Goals will do.",
+      "You’re not behind. This is only a reminder. Look over Journeys and Goals when you have a little space.",
+      "Freedom held the door open for you. If anything has changed, refresh your Journeys and Goals.",
+      "A gentle hello from me. Take a breath, then update Journeys or Goals if anything has moved.",
+      "Your plan is still yours. This check-in is simply an invitation to glance at Journeys and Goals.",
+      "No pressure at all. Freedom reminded you so Journeys and Goals can stay in step with life.",
+      "I’m here if you want company while you look. Journeys and Goals are ready whenever you are.",
+      "One soft monthly touchpoint. Review Journeys and Goals whenever that feels comfortable."
     ],
     kevin:[
       "That was your monthly Freedom check-in. Update Journeys and Goals if anything’s changed.",
-      "Freedom nudged you on purpose. Keep Journeys and Goals current when you can.",
-      "Monthly reminder delivered. Review Journeys and Goals and adjust what’s moved."
+      "Freedom nudged you on purpose. Update Journeys and Goals if anything’s moved, then you’re good.",
+      "Monthly reminder delivered. Review Journeys and Goals and adjust what’s moved.",
+      "Freedom brought you in for the monthly check. If numbers or plans have moved, update Journeys and Goals.",
+      "Right on schedule. Open Journeys and Goals and tidy anything that’s out of date.",
+      "Check-in complete on Freedom’s side. Your turn: scan Journeys and Goals for what’s changed.",
+      "That was the monthly reminder doing its job. Update Journeys or Goals where life has moved on.",
+      "Worth a short look. Journeys and Goals stay useful when they match what’s actually happening.",
+      "Freedom opened Home for a reason. Review Journeys and Goals, then carry on.",
+      "Monthly loop, no fuss. If anything’s shifted, put it into Journeys and Goals.",
+      "Reminder received. Take a short look at Journeys and Goals and correct what needs correcting.",
+      "That’s your check-in. Bring Journeys and Goals in line with the latest picture, and you’re set."
     ]
   };
   const HIGH_PRIORITY_OWNERS={
@@ -16207,25 +16237,84 @@ window.FreedomMonthlyReminderCheckIn=(function(){
       window.FreedomCompanionMessage.syncScrim();
     }
   }
-  function readLastLines(){
+  function readRotationState(){
     try{
-      const v=JSON.parse(localStorage.getItem(LAST_LINE_KEY)||"null");
-      return v&&typeof v==="object"?v:{patricia:-1,veronica:-1,kevin:-1};
-    }catch(e){return {patricia:-1,veronica:-1,kevin:-1};}
+      const v=JSON.parse(localStorage.getItem(ROTATION_KEY)||"null");
+      return v&&typeof v==="object"?v:{};
+    }catch(e){return {};}
   }
-  function writeLastLine(companion,index){
-    const v=readLastLines();
-    v[companion]=index;
-    try{localStorage.setItem(LAST_LINE_KEY,JSON.stringify(v));}catch(e){}
+  function writeRotationState(state){
+    try{localStorage.setItem(ROTATION_KEY,JSON.stringify(state));}catch(e){}
+  }
+  /* Fisher–Yates shuffle. If avoidFirst is set, first index must not match it. */
+  function shufflePoolIndices(count,avoidFirst){
+    const order=[];
+    for(let i=0;i<count;i++)order.push(i);
+    for(let i=count-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      const tmp=order[i];
+      order[i]=order[j];
+      order[j]=tmp;
+    }
+    if(
+      count>1&&
+      avoidFirst!=null&&
+      Number.isFinite(avoidFirst)&&
+      avoidFirst>=0&&
+      order[0]===avoidFirst
+    ){
+      const swapWith=1+Math.floor(Math.random()*(count-1));
+      const tmp=order[0];
+      order[0]=order[swapWith];
+      order[swapWith]=tmp;
+    }
+    return order;
+  }
+  function normalizeCompanionRotation(entry,poolSize){
+    if(!entry||typeof entry!=="object")return null;
+    if(!Array.isArray(entry.order)||entry.order.length!==poolSize)return null;
+    const seen={};
+    for(let i=0;i<entry.order.length;i++){
+      const idx=entry.order[i];
+      if(!Number.isInteger(idx)||idx<0||idx>=poolSize||seen[idx])return null;
+      seen[idx]=true;
+    }
+    const next=Number(entry.next);
+    if(!Number.isInteger(next)||next<0||next>poolSize)return null;
+    return{order:entry.order.slice(),next:next};
   }
   function pickLine(companion){
     const list=pools[companion]||[];
-    if(!list.length)return{index:-1,message:""};
-    const last=readLastLines()[companion];
-    if(list.length===1)return{index:0,message:list[0]};
-    let index=Math.floor(Math.random()*list.length);
-    if(index===last)index=(index+1+Math.floor(Math.random()*(list.length-1)))%list.length;
-    return{index:index,message:list[index]};
+    const poolSize=list.length;
+    if(!poolSize)return{index:-1,message:"",cycleIndex:-1};
+    const state=readRotationState();
+    let entry=normalizeCompanionRotation(state[companion],poolSize);
+    if(!entry||entry.next>=poolSize){
+      const avoidFirst=entry&&entry.order&&entry.order.length
+        ?entry.order[entry.order.length-1]
+        :null;
+      entry={
+        order:shufflePoolIndices(poolSize,avoidFirst),
+        next:0
+      };
+    }
+    const poolIndex=entry.order[entry.next];
+    entry.next+=1;
+    state[companion]=entry;
+    writeRotationState(state);
+    /* Legacy last-line key kept in sync for older backups / diagnostics. */
+    try{
+      const legacy=JSON.parse(localStorage.getItem(LAST_LINE_KEY)||"{}")||{};
+      legacy[companion]=poolIndex;
+      localStorage.setItem(LAST_LINE_KEY,JSON.stringify(legacy));
+    }catch(e){}
+    return{
+      index:poolIndex,
+      message:list[poolIndex]||"",
+      cycleIndex:entry.next-1,
+      order:entry.order.slice(),
+      next:entry.next
+    };
   }
   function findPendingCompletion(){
     const bridge=window.FreedomWelcomeBackBridge;
@@ -16301,7 +16390,6 @@ window.FreedomMonthlyReminderCheckIn=(function(){
       consumePending();
       return false;
     }
-    writeLastLine(companion,picked.index);
     return present(picked.message);
   }
   return{
@@ -16310,7 +16398,13 @@ window.FreedomMonthlyReminderCheckIn=(function(){
     isPending:isPending,
     clearHost:clearHost,
     PENDING_KEY:PENDING_KEY,
-    SESSION_KEY:SESSION_KEY
+    SESSION_KEY:SESSION_KEY,
+    ROTATION_KEY:ROTATION_KEY,
+    pools:pools,
+    pickLine:pickLine,
+    shufflePoolIndices:shufflePoolIndices,
+    readRotationState:readRotationState,
+    writeRotationState:writeRotationState
   };
 })();
 
