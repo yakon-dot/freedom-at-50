@@ -10,11 +10,11 @@ binding = "ASSETS"
 run_worker_first = true
 
 [vars]
-LAB_VERSION = "0.1.0"
+LAB_VERSION = "0.1.1"
+APP_ORIGIN = "https://freedom-web-push-lab.dorothy-yakon.workers.dev"
 
 # Test-only secrets and deployment-specific URLs must be supplied at deploy time:
 # VAPID_PUBLIC_KEY
 # VAPID_PRIVATE_KEY
 # VAPID_SUBJECT
-# APP_ORIGIN
-# NODE_SENDER_URL
+# LAB_ACCESS_CODE

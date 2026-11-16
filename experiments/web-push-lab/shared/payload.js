@@ -1,4 +1,4 @@
-export const LAB_VERSION = "0.1.0";
+export const LAB_VERSION = "0.1.1";
 export const TEST_TITLE = "Freedom Push Lab";
 export const TEST_BODY = "If you can read this exact sentence, the encrypted payload was decoded.";
 

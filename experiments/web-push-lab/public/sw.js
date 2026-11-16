@@ -1,4 +1,4 @@
-const LAB_VERSION = "0.1.0";
+const LAB_VERSION = "0.1.1";
 const DB_NAME = "freedom-web-push-lab";
 const STORE_NAME = "events";
 const TEST_TITLE = "Freedom Push Lab";

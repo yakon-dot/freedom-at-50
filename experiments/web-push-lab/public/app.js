@@ -1,11 +1,13 @@
 const DB_NAME = "freedom-web-push-lab";
 const STORE_NAME = "events";
 const LOCAL_LOG_KEY = "freedom-web-push-lab-ui-events-v1";
+const ACCESS_CODE_KEY = "freedom-web-push-lab-access-v1";
 
 const state = {
   config: null,
   registration: null,
   subscription: null,
+  accessCode: "",
   events: []
 };
 
@@ -13,6 +15,7 @@ const $ = selector => document.querySelector(selector);
 const versionEl = $("#version");
 const checksEl = $("#environmentChecks");
 const enableButton = $("#enableButton");
+const accessCodeInput = $("#accessCode");
 const block65Button = $("#block65Button");
 const nodeButton = $("#nodeButton");
 const summaryEl = $("#summary");
@@ -102,7 +105,7 @@ function renderChecks() {
 }
 
 function updateButtons() {
-  const ready = !!(state.subscription && state.config && state.config.configured);
+  const ready = !!(state.subscription && state.config && state.config.configured && state.accessCode.length >= 8);
   block65Button.disabled = !ready;
   nodeButton.disabled = !ready;
   enableButton.disabled = !state.config || !state.config.publicKey || !("serviceWorker" in navigator);
@@ -205,7 +208,7 @@ async function sendTest(sender) {
     const response = await fetch(endpoint, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ subscription: state.subscription.toJSON() })
+      body: JSON.stringify({ subscription: state.subscription.toJSON(), accessCode: state.accessCode })
     });
     const result = await response.json();
     if (!response.ok || !result.ok) throw Object.assign(new Error(result.message || "The sender did not receive an accepted response."), { result });
@@ -257,6 +260,8 @@ async function copyDiagnostics() {
 
 async function init() {
   state.events = loadUiEvents();
+  state.accessCode = localStorage.getItem(ACCESS_CODE_KEY) || "";
+  accessCodeInput.value = state.accessCode;
   renderEvents();
 
   const opened = new URLSearchParams(location.search);
@@ -304,5 +309,10 @@ block65Button.addEventListener("click", () => sendTest("block65-cloudflare"));
 nodeButton.addEventListener("click", () => sendTest("node-web-push"));
 copyButton.addEventListener("click", copyDiagnostics);
 clearButton.addEventListener("click", clearEvents);
+accessCodeInput.addEventListener("input", () => {
+  state.accessCode = accessCodeInput.value.trim().toUpperCase();
+  localStorage.setItem(ACCESS_CODE_KEY, state.accessCode);
+  updateButtons();
+});
 
 init();
