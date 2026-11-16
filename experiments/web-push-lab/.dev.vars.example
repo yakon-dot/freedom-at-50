@@ -1,0 +1,10 @@
+# Generate a NEW test-only VAPID pair. Never paste Freedom production keys here.
+VAPID_PUBLIC_KEY=replace-with-test-public-key
+VAPID_PRIVATE_KEY=replace-with-test-private-key
+VAPID_SUBJECT=mailto:address-you-control@example.com
+
+# Public HTTPS URL of this isolated lab after an approved preview deployment.
+APP_ORIGIN=https://freedom-web-push-lab.example.workers.dev
+
+# Public HTTPS /send endpoint of the separately hosted Node sender.
+NODE_SENDER_URL=https://freedom-web-push-node.example.com/send
