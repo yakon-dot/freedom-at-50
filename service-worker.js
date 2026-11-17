@@ -1,5 +1,5 @@
 /* Freedom at 50 — wallpaper cache + safe offline shell responses + Web Push */
-const CACHE_NAME = "freedom-at-50-v1.8.6.159";
+const CACHE_NAME = "freedom-at-50-v1.8.6.160";
 const WALLPAPER_CACHE = "freedom-wallpapers-v3";
 const APP_SHELL = ["./index.html", "./manifest.webmanifest", "./freedom-push-config.js"];
 const REMINDER_TITLE = "A little nudge";

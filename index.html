@@ -716,7 +716,7 @@ html:has(#freedomMakeItYours.is-present:not([hidden])) body{
 <link rel="preload" as="image" href="./notes-wallpaper.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Freedom at 50 — Web app v1.8.6.2.2.2</title>
+<title>Freedom at 50 — Web app v1.8.6.160</title>
 <style>
 :root{--bg:#0b0c0e;--card:#111316;--card2:#15171b;--line:#2c3037;--text:#f5f4f0;--muted:#999ba4;--yellow:#e7cf63;--green:#84bd91;--blue:#79a9c9;--purple:#aa8fc9;--bronze:#c59669;--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box} html{background:var(--bg);scroll-behavior:smooth;touch-action:pan-x pan-y;-ms-touch-action:pan-x pan-y} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;touch-action:pan-x pan-y;-ms-touch-action:pan-x pan-y} button,input{font:inherit} button{color:inherit}.app{max-width:720px;margin:0 auto;min-height:100vh}
@@ -5317,7 +5317,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 </div>
 <div class="patricia-note-layer" id="patriciaNoteLayer" hidden></div>
 <div class="app">
-<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.6.2.2.2</div></div><div class="tagline">Small wins become big freedom.</div></header>
+<header><div class="brand-row"><div class="brand">Freedom at 50</div><div class="version">Web app v1.8.6.160</div></div><div class="tagline">Small wins become big freedom.</div></header>
 <main>
 <section class="page active" id="overview">
   <div class="overview-mobile">
@@ -7440,6 +7440,33 @@ function setFreedomBackupStatus(msg,isError){
   el.textContent=msg;
   el.style.color=isError?"rgba(220,120,120,.9)":"";
 }
+/* Lightweight dialog focus helpers (mobile + VoiceOver / keyboard). */
+const freedomDialogFocusMemory=new WeakMap();
+function freedomRememberDialogFocus(host){
+  try{freedomDialogFocusMemory.set(host,document.activeElement||null);}catch(e){}
+}
+function freedomRestoreDialogFocus(host){
+  try{
+    const prev=freedomDialogFocusMemory.get(host);
+    freedomDialogFocusMemory.delete(host);
+    if(prev&&typeof prev.focus==="function"&&document.contains(prev))prev.focus({preventScroll:true});
+  }catch(e){}
+}
+function freedomFocusDialogControl(preferred,host){
+  try{
+    const el=preferred||(host&&host.querySelector("button:not([disabled]),[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex='-1'])"));
+    if(el&&typeof el.focus==="function")el.focus({preventScroll:true});
+  }catch(e){}
+}
+function freedomBindDialogEscape(host,onEscape){
+  if(!host||host.dataset.escapeBound==="1"||typeof onEscape!=="function")return;
+  host.dataset.escapeBound="1";
+  host.addEventListener("keydown",function(e){
+    if(e.key!=="Escape"||host.hidden)return;
+    e.preventDefault();
+    onEscape();
+  });
+}
 function clearFreedomBackupPasswordFields(){
   const a=byId("freedomBackupPassInput");
   const b=byId("freedomBackupPassConfirm");
@@ -7448,7 +7475,10 @@ function clearFreedomBackupPasswordFields(){
 }
 function closeFreedomBackupPasswordDialog(result){
   const overlay=byId("freedomBackupPassOverlay");
-  if(overlay)overlay.hidden=true;
+  if(overlay){
+    overlay.hidden=true;
+    freedomRestoreDialogFocus(overlay);
+  }
   clearFreedomBackupPasswordFields();
   const err=byId("freedomBackupPassError");
   if(err)err.textContent="";
@@ -7483,8 +7513,10 @@ function openFreedomBackupPasswordDialog(mode){
     if(submit)submit.textContent=isExport?"Export encrypted backup":"Unlock backup";
     if(passInput)passInput.autocomplete=isExport?"new-password":"current-password";
     if(confirmInput)confirmInput.autocomplete="new-password";
+    freedomRememberDialogFocus(overlay);
     overlay.hidden=false;
-    setTimeout(()=>{try{passInput.focus();}catch(e){}},40);
+    freedomBindDialogEscape(overlay,function(){closeFreedomBackupPasswordDialog(null);});
+    setTimeout(()=>{freedomFocusDialogControl(passInput,overlay);},40);
   });
 }
 function readFreedomBackupPasswordDialog(){
@@ -7625,7 +7657,10 @@ async function restoreFreedomBackupFromFile(file){
 }
 function closeFreedomBackupPanel(){
   const panel=byId("freedomBackupPanelOverlay");
-  if(panel)panel.hidden=true;
+  if(panel){
+    panel.hidden=true;
+    freedomRestoreDialogFocus(panel);
+  }
   /* Password dialog may still be open independently — leave it alone. */
 }
 function openFreedomBackupPanel(){
@@ -7635,12 +7670,14 @@ function openFreedomBackupPanel(){
   if(typeof window.hideHome==="function")window.hideHome();
   const panel=byId("freedomBackupPanelOverlay");
   if(!panel)return;
+  freedomRememberDialogFocus(panel);
   panel.hidden=false;
   setFreedomBackupStatus("");
-  try{
-    const exportBtn=byId("freedomBackupExport");
-    if(exportBtn)exportBtn.focus();
-  }catch(e){}
+  freedomBindDialogEscape(panel,function(){
+    closeFreedomBackupPanel();
+    if(typeof window.showHome==="function")window.showHome();
+  });
+  freedomFocusDialogControl(byId("freedomBackupExport")||byId("freedomBackupPanelClose"),panel);
 }
 window.openFreedomBackupPanel=openFreedomBackupPanel;
 window.closeFreedomBackupPanel=closeFreedomBackupPanel;
@@ -7957,7 +7994,8 @@ function renderFreedomRemindersPanel(options){
   }
   if(confirm)confirm.classList.toggle("is-on",on);
   if(confirmText)confirmText.textContent=on?"Your reminders are on":"Your reminders are off";
-  if(testWrap)testWrap.hidden=!(on&&availability.ok&&!demoMode);
+  /* Test reminder is internal-only — ordinary users must not see or tap it. */
+  if(testWrap)testWrap.hidden=!(on&&availability.ok&&!demoMode&&typeof isInternalTestMode==="function"&&isInternalTestMode());
   if(demoMode){
     if(!preserveStatus)setFreedomRemindersStatus("Reminders stay off in Demo Mode.",false);
     return;
@@ -8035,6 +8073,10 @@ async function freedomRemindersToggleChanged(wantOn){
   else await freedomRemindersChooseNever();
 }
 async function freedomRemindersSendTest(mode){
+  if(typeof isInternalTestMode==="function"&&!isInternalTestMode()){
+    setFreedomRemindersStatus("Test reminders are only available in internal testing.",true);
+    return;
+  }
   const testMode=mode==="classic"?"classic":"declarative";
   setFreedomRemindersStatus("Sending a test reminder…",false);
   try{
@@ -8051,15 +8093,24 @@ async function freedomRemindersSendTest(mode){
 }
 function closeFreedomRemindersPanel(){
   const panel=byId("freedomRemindersPanelOverlay");
-  if(panel)panel.hidden=true;
+  if(panel){
+    panel.hidden=true;
+    freedomRestoreDialogFocus(panel);
+  }
 }
 function openFreedomRemindersPanel(){
   if(demoMode)return;
   if(typeof window.hideHome==="function")window.hideHome();
   const panel=byId("freedomRemindersPanelOverlay");
   if(!panel)return;
+  freedomRememberDialogFocus(panel);
   panel.hidden=false;
   renderFreedomRemindersPanel();
+  freedomBindDialogEscape(panel,function(){
+    closeFreedomRemindersPanel();
+    if(typeof window.showHome==="function")window.showHome();
+  });
+  freedomFocusDialogControl(byId("freedomRemindersToggle")||byId("freedomRemindersPanelClose"),panel);
 }
 window.openFreedomRemindersPanel=openFreedomRemindersPanel;
 window.closeFreedomRemindersPanel=closeFreedomRemindersPanel;
@@ -8208,13 +8259,21 @@ function setInternalTestEnabled(on){
   syncInternalTestUi();
 }
 function syncInternalTestUi(){
-  const btn=byId("resetFreedomMoreBtn")||document.querySelector('[data-more183="reset"]');
-  if(!btn)return;
   const show=isInternalTestMode();
-  btn.hidden=!show;
-  btn.setAttribute("aria-hidden",show?"false":"true");
-  if(show)btn.removeAttribute("tabindex");
-  else btn.setAttribute("tabindex","-1");
+  const btn=byId("resetFreedomMoreBtn")||document.querySelector('[data-more183="reset"]');
+  if(btn){
+    btn.hidden=!show;
+    btn.setAttribute("aria-hidden",show?"false":"true");
+    if(show)btn.removeAttribute("tabindex");
+    else btn.setAttribute("tabindex","-1");
+  }
+  const remindersPanel=byId("freedomRemindersPanelOverlay");
+  if(remindersPanel&&!remindersPanel.hidden&&typeof renderFreedomRemindersPanel==="function"){
+    renderFreedomRemindersPanel({preserveStatus:true});
+  }else{
+    const testWrap=byId("freedomRemindersTestWrap");
+    if(testWrap&&!show)testWrap.hidden=true;
+  }
 }
 window.syncInternalTestUi=syncInternalTestUi;
 window.isInternalTestMode=isInternalTestMode;
@@ -8234,10 +8293,10 @@ function wireInternalTestBrandUnlock(){
     taps=0;
     if(resetTimer){clearTimeout(resetTimer);resetTimer=null;}
     if(!isInternalTestMode()){
-      const ok=window.confirm("Enable Freedom internal testing on this device?\n\nThis adds Reset Freedom under More for testing only.");
+      const ok=window.confirm("Enable Freedom internal testing on this device?\n\nThis adds Reset Freedom under More, and a Reminders test control when reminders are on.");
       if(!ok)return;
       setInternalTestEnabled(true);
-      window.alert("Internal testing enabled.\n\nOpen More — you should see Archive and Reset Freedom.");
+      window.alert("Internal testing enabled.\n\nOpen More for Reset Freedom. Reminders shows Send test reminder only while testing is on.");
       return;
     }
     const ok=window.confirm("Disable Freedom internal testing on this device?\n\nReset Freedom will be hidden. Your Freedom data is not deleted.");
@@ -14723,6 +14782,7 @@ window.FreedomConfirmRemoval=(function(){
   function hideCancel(){
     if(!overlay)return;
     overlay.hidden=true;
+    if(typeof freedomRestoreDialogFocus==="function")freedomRestoreDialogFocus(overlay);
     const cb=active;
     active=null;
     clearCompletionTarget();
@@ -14745,7 +14805,9 @@ window.FreedomConfirmRemoval=(function(){
     window.completionTargetId=recordId||null;
     window.completionTargetType=type;
     bodyEl.textContent=bodyCopy(type,active.itemName);
+    if(typeof freedomRememberDialogFocus==="function")freedomRememberDialogFocus(overlay);
     overlay.hidden=false;
+    if(typeof freedomBindDialogEscape==="function")freedomBindDialogEscape(overlay,hideCancel);
     /* Focus the dialog shell — not the lilac CTA — so no browser/iOS blue focus ring */
     try{
       const dialog=overlay.querySelector(".freedom-confirm-removal-card");
@@ -14770,6 +14832,7 @@ window.FreedomConfirmRemoval=(function(){
     if(closeBtn)closeBtn.disabled=true;
     const commit=function(){
       overlay.hidden=true;
+      if(typeof freedomRestoreDialogFocus==="function")freedomRestoreDialogFocus(overlay);
       if(yesBtn)yesBtn.disabled=false;
       if(notYetBtn)notYetBtn.disabled=false;
       if(closeBtn)closeBtn.disabled=false;
@@ -17023,7 +17086,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1940",
+        "./service-worker.js?v=1941",
         { updateViaCache: "none" }
       );
 
