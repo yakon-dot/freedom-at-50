@@ -394,6 +394,172 @@ async function main() {
     await page.close();
   }
 
+  /* 7) E2E: real onboarding buttons with saved data + missing markers.
+     Does NOT call activateFreshPersonal() directly — uses Welcome → Look around →
+     Exit Demo → Start my Freedom → companion pick. */
+  {
+    const page = await browser.newPage();
+    await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
+    await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+    await page.evaluateOnNewDocument(raw => {
+      /* Seed once per tab — must not re-wipe companion/data on reload. */
+      if (sessionStorage.getItem("freedom-e2e-onboard-seeded") === "1") return;
+      sessionStorage.setItem("freedom-e2e-onboard-seeded", "1");
+      localStorage.removeItem("freedom50-welcome-complete-v1");
+      localStorage.removeItem("freedom50-look-around-complete-v1");
+      localStorage.removeItem("freedom50-first-time-complete-v1");
+      localStorage.removeItem("freedom50-companion-id-v1");
+      localStorage.removeItem("freedom50-companion-pending-v1");
+      localStorage.removeItem("freedom50-companion-first-setup-pending-v1");
+      localStorage.setItem("freedom50-mobile-v1", raw);
+    }, JSON.stringify(SAVED_STATE));
+    await page.goto(`${BASE}/index.html`, { waitUntil: "domcontentloaded", timeout: 60000 });
+
+    const readSaved = () =>
+      page.evaluate(() => {
+        const st = JSON.parse(localStorage.getItem("freedom50-mobile-v1") || "{}");
+        return {
+          loan: st.loans?.[0]?.name || null,
+          goal: st.customGoals?.[0]?.name || null,
+          pension: st.pensions?.[0]?.name || null,
+          note: st.notes?.[0]?.text || null,
+          loanCount: (st.loans || []).length,
+          pensionCount: (st.pensions || []).length,
+          noteCount: (st.notes || []).length,
+          companion: localStorage.getItem("freedom50-companion-id-v1")
+        };
+      });
+
+    const before = await readSaved();
+    assert.equal(before.loan, MARKER_LOAN);
+    assert.equal(before.goal, "Keep Kitchen");
+    assert.equal(before.pension, "Keep Pension");
+    assert.equal(before.note, "Keep this note");
+    assert.equal(before.companion, null);
+
+    /* Wait for splash to clear so Welcome buttons are actually hittable */
+    await page.waitForFunction(() => {
+      const s = document.getElementById("freedomSplash");
+      return !s || s.hidden || !s.isConnected;
+    }, { timeout: 30000 });
+
+    /* Welcome → Come in */
+    await page.waitForFunction(() => {
+      const w = document.getElementById("freedomWelcome");
+      const b = document.getElementById("freedomWelcomeComeIn");
+      return (
+        w &&
+        !w.hidden &&
+        w.classList.contains("is-ready") &&
+        b &&
+        !b.disabled &&
+        getComputedStyle(b).pointerEvents !== "none"
+      );
+    }, { timeout: 30000 });
+    await page.click("#freedomWelcomeComeIn");
+
+    /* Look around → Continue (enters Demo) */
+    await page.waitForFunction(() => {
+      const look = document.getElementById("freedomLookAround");
+      const b = document.getElementById("freedomLookContinue");
+      return (
+        look &&
+        !look.hidden &&
+        b &&
+        !b.disabled &&
+        (b.classList.contains("is-armed") || b.classList.contains("is-visible")) &&
+        getComputedStyle(b).pointerEvents !== "none"
+      );
+    }, { timeout: 30000 });
+    await page.click("#freedomLookContinue");
+
+    await page.waitForFunction(
+      () => document.body.classList.contains("demo-mode-active"),
+      { timeout: 15000 }
+    );
+
+    /* Exit Demo Mode via the DEMO MODE control → menu → Exit */
+    await page.waitForSelector("#demo183", { timeout: 10000 });
+    await page.click("#demo183");
+    await page.waitForSelector(
+      '#demoMenu.open [data-demo-action="exit"], #demoMenu [data-demo-action="exit"]',
+      { timeout: 10000 }
+    );
+    await page.evaluate(() => {
+      const menu = document.getElementById("demoMenu");
+      if (menu && !menu.classList.contains("open")) menu.classList.add("open");
+      document.querySelector('[data-demo-action="exit"]')?.click();
+    });
+
+    /* Start my Freedom */
+    await page.waitForFunction(() => {
+      const m = document.getElementById("freedomMakeItYours");
+      const b = document.getElementById("freedomMakeYoursStart");
+      return (
+        m &&
+        !m.hidden &&
+        b &&
+        !b.disabled &&
+        (b.classList.contains("is-armed") ||
+          getComputedStyle(b).pointerEvents !== "none")
+      );
+    }, { timeout: 30000 });
+    await page.click("#freedomMakeYoursStart");
+
+    /* Companion selection */
+    await page.waitForSelector("#freedomCompanionSelect:not([hidden])", {
+      timeout: 15000
+    });
+    await page.evaluate(() => {
+      document.getElementById("freedomCompanionToggle-veronica")?.click();
+    });
+    await page.waitForSelector(
+      '.freedom-companion-card[data-companion="veronica"].is-open',
+      { timeout: 8000 }
+    );
+    await page.evaluate(() => {
+      document.querySelector('[data-pick-companion="veronica"]')?.click();
+    });
+    await page.waitForFunction(
+      () => localStorage.getItem("freedom50-companion-id-v1") === "veronica",
+      { timeout: 15000 }
+    );
+
+    const afterOnboarding = await readSaved();
+    assert.equal(afterOnboarding.loan, MARKER_LOAN);
+    assert.equal(afterOnboarding.goal, "Keep Kitchen");
+    assert.equal(afterOnboarding.pension, "Keep Pension");
+    assert.equal(afterOnboarding.note, "Keep this note");
+    assert.equal(afterOnboarding.loanCount, 1);
+    assert.equal(afterOnboarding.pensionCount, 1);
+    assert.equal(afterOnboarding.noteCount, 1);
+    assert.equal(afterOnboarding.companion, "veronica");
+    /* Must not have been replaced by Demo sample journeys */
+    assert.equal(
+      await page.evaluate(() =>
+        JSON.parse(localStorage.getItem("freedom50-mobile-v1")).loans.some(
+          l => l.name === "Credit Card"
+        )
+      ),
+      false
+    );
+
+    await page.reload({ waitUntil: "domcontentloaded" });
+    await page.waitForFunction(() => typeof window.page === "function", {
+      timeout: 20000
+    });
+    const afterReload = await readSaved();
+    assert.equal(afterReload.loan, MARKER_LOAN);
+    assert.equal(afterReload.goal, "Keep Kitchen");
+    assert.equal(afterReload.pension, "Keep Pension");
+    assert.equal(afterReload.note, "Keep this note");
+    assert.equal(afterReload.companion, "veronica");
+    console.log(
+      "PASS: E2E onboarding buttons preserve saved records through Start my Freedom + companion + reload"
+    );
+    await page.close();
+  }
+
   await browser.close();
   console.log("PASS: onboarding preserve-data flows");
 }
