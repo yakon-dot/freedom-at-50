@@ -3553,9 +3553,12 @@ body.home183 .patricia-note-doodle,
   width:44px;height:44px;display:flex;align-items:center;justify-content:center;
   cursor:pointer;-webkit-tap-highlight-color:transparent;padding:0;
 }
-body.home183 .patricia-note-close,
-.patricia-note.is-demo-sticky .patricia-note-close{
+body.home183 .patricia-note-close{
   top:3%;right:7%;
+}
+/* Demo sticky notes: keep top-right, nudge X ~11px in from the paper edge. */
+.patricia-note.is-demo-sticky .patricia-note-close{
+  top:calc(3% + 6px);right:calc(7% + 11px);
 }
 @keyframes patriciaNoteHomeMaterialise{
   0%{opacity:0;filter:blur(5px)}
