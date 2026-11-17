@@ -16,8 +16,10 @@ const {
   __test
 } = mod;
 
-assert.equal(NOTIFICATION.title, "A little Freedom check-in");
-assert.equal(NOTIFICATION.body, "A little nudge from Freedom. Tap to see what’s waiting.");
+assert.equal(NOTIFICATION.title, "A little nudge");
+assert.equal(NOTIFICATION.body, "Your companion has something for you. Tap to see what’s waiting.");
+assert.equal(/freedom/i.test(NOTIFICATION.title), false);
+assert.equal(/freedom/i.test(NOTIFICATION.body), false);
 assert.equal(NOTIFICATION.url, "https://yakon-dot.github.io/freedom-at-50/?opened=reminder");
 assert.equal(NOTIFICATION.url.includes("#"), false);
 assert.match(NOTIFICATION.url, /[?&]opened=reminder/);
@@ -285,12 +287,12 @@ assert.match(pkg, /"@block65\/webcrypto-web-push"\s*:\s*"\^2\./);
 const sw = fs.readFileSync("service-worker.js", "utf8");
 assert.match(sw, /addEventListener\("push"/);
 assert.match(sw, /notificationclick/);
-assert.match(sw, /freedom-at-50-v1\.8\.6\.158/);
+assert.match(sw, /freedom-at-50-v1\.8\.6\.159/);
 assert.match(sw, /freedom-push-config\.js/);
-assert.match(sw, /A little Freedom check-in/);
-assert.match(sw, /A little nudge from Freedom\. Tap to see what’s waiting\./);
+assert.match(sw, /A little nudge/);
+assert.match(sw, /Your companion has something for you\. Tap to see what’s waiting\./);
 assert.match(sw, /\?opened=reminder/);
-assert.match(index, /A little nudge from Freedom\. Tap to see what’s waiting\./);
+assert.match(index, /Your companion has something for you\. Tap to see what’s waiting\./);
 assert.equal(sw.includes("#overview"), false);
 assert.match(sw, /registration\.scope/);
 assert.match(sw, /client\.navigate/);
