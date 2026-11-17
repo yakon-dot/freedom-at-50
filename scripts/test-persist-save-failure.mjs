@@ -25,6 +25,7 @@ assert.match(
 );
 assert.match(index, /catch\(e\)\{\s*console\.warn\("Freedom could not save personal data:",e\);\s*showSaveFailureWarning\(\);/);
 assert.match(index, /if\(!banner\.hidden\)return;/);
+assert.match(index, /\.freedom-save-fail-banner\{z-index:970\}/);
 console.log("PASS: source contracts for persist save-failure warning");
 
 function resolveChromePath() {
@@ -202,20 +203,45 @@ async function main() {
     assert.equal(again.saved, false);
     console.log("PASS: storage failure shows one warning, no Saved, data intact");
 
-    /* 4) Dismiss with OK after restoring native setItem so delayed persists stay quiet */
+    /* 4) Real iPhone-viewport tap on OK — must hit the button, not Demo/overlays */
     await page.evaluate(() => {
       if (window.__freedomNativeSetItem) {
         Storage.prototype.setItem = window.__freedomNativeSetItem;
       }
     });
     await new Promise(r => setTimeout(r, 800));
-    /* Coordinate clicks can miss the fixed banner under the top chrome; fire the control directly. */
-    await page.evaluate(() => document.getElementById("freedomSaveFailDismiss").click());
+    const tapTarget = await page.evaluate(() => {
+      const ok = document.getElementById("freedomSaveFailDismiss");
+      const banner = document.getElementById("freedomSaveFailBanner");
+      const demo = document.getElementById("demo183Wrap");
+      const r = ok.getBoundingClientRect();
+      const x = r.left + r.width / 2;
+      const y = r.top + r.height / 2;
+      const top = document.elementFromPoint(x, y);
+      return {
+        x,
+        y,
+        topId: top?.id || "",
+        okReceivesHit: !!(top && (top === ok || ok.contains(top))),
+        bannerZ: Number(getComputedStyle(banner).zIndex) || 0,
+        demoZ: Number(getComputedStyle(demo).zIndex) || 0,
+        bannerHidden: banner.hidden
+      };
+    });
+    assert.equal(tapTarget.bannerHidden, false);
+    assert.equal(tapTarget.okReceivesHit, true);
+    assert.equal(tapTarget.topId, "freedomSaveFailDismiss");
+    assert.ok(
+      tapTarget.bannerZ > tapTarget.demoZ,
+      `save-fail banner z-index (${tapTarget.bannerZ}) must sit above Demo control (${tapTarget.demoZ})`
+    );
+    /* Simulated finger tap at the visible OK centre — not element.click(). */
+    await page.touchscreen.tap(tapTarget.x, tapTarget.y);
     const dismissed = await page.evaluate(
       () => document.getElementById("freedomSaveFailBanner").hidden
     );
     assert.equal(dismissed, true);
-    console.log("PASS: OK acknowledges and hides the warning");
+    console.log("PASS: real touch tap on OK dismisses warning; nothing intercepts");
     await page.close();
   }
 
