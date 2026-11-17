@@ -3495,6 +3495,16 @@ body.home183 .patricia-note-text,
 .patricia-note.is-demo-sticky[data-note-id="goalsFirst"] .patricia-note-gap{
   height:7px;margin:0;padding:0;flex-shrink:0;
 }
+/* Pension: two short paragraphs — roomy Caveat, same sticky shell as Journey/Goals */
+.patricia-note.is-demo-sticky[data-note-id="pensionFirst"] .patricia-note-body{
+  inset:19% 9% 25% 10%;gap:3px;justify-content:center;
+}
+.patricia-note.is-demo-sticky[data-note-id="pensionFirst"] .patricia-note-text{
+  font-size:clamp(18px,4.9vw,20px);line-height:1.13;
+}
+.patricia-note.is-demo-sticky[data-note-id="pensionFirst"] .patricia-note-gap{
+  height:7px;margin:0;padding:0;flex-shrink:0;
+}
 body.home183 .patricia-note-body > .patricia-note-text,
 .patricia-note.is-demo-sticky .patricia-note-body > .patricia-note-text{max-width:90%;align-self:center}
 body.home183 .patricia-note-footer,
@@ -6860,7 +6870,7 @@ let state=loadPersonalStateFromStorage();
 let demoMode=false;
 let realStateSnapshot=null;
 let journeyDragJustEnded=false;
-let demoSession={dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};
+let demoSession={dismissedNotes:{},visited:{journey:false,goals:false,pension:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};
 function demoDaysAgoISO(days){const d=new Date();d.setDate(d.getDate()-days);return d.toISOString();}
 function demoMonthOffsetStr(months){
   const d=new Date();d.setDate(1);d.setMonth(d.getMonth()+months);
@@ -6910,7 +6920,7 @@ try{
   if(demoSaved&&demoSaved.demoMode&&demoSaved.state&&demoSaved.state.loans){
     realStateSnapshot=JSON.parse(JSON.stringify(state));
     state=demoSaved.state;
-    demoSession=Object.assign({dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}},demoSaved.demoSession||{});
+    demoSession=Object.assign({dismissedNotes:{},visited:{journey:false,goals:false,pension:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}},demoSaved.demoSession||{});
     demoMode=true;
   }
 }catch(e){}
@@ -7997,11 +8007,12 @@ const PATRICIA_NOTE_COPY={
   home:{id:"home",text:"That credit card has €200 left.\njust saying...",doodle:"patricia-eyes.png",sticky:true},
   journeyFirst:{id:"journeyFirst",text:"This is where we keep the\nthings we're getting rid of.\nFinancially speaking.\nI'm not running a skip.",sticky:true},
   goalsFirst:{id:"goalsFirst",text:"This is where the good\nstuff lives.\n\nHouses. Japan. Runaway money.\n\nPersonally, I'd add a\nfrozen cocktail machine.",sticky:true},
+  pensionFirst:{id:"pensionFirst",text:"Keep track of your pension savings here, whether you have one pension or several.\n\nAdd each pension to see how much you've built towards your future.",sticky:true},
   creditCardComplete:{id:"creditCardComplete",text:"YES! You did it! That credit card is officially history.\nI'd suggest a moment of silence, but I prefer frozen cocktails.",doodle:"patricia-celebration.png"},
   lifeHappens:{id:"lifeHappens",text:"Life happens. Sometimes the plan needs a little detour.\nWe're flexible. My knees, less so."},
   runawayMoney:{id:"runawayMoney",text:"Runaway Money just got bigger.\nNot suggesting anything. Just admiring the options.",doodle:"patricia-eyes.png"}
 };
-function resetDemoSession(){demoSession={dismissedNotes:{},visited:{journey:false,goals:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};}
+function resetDemoSession(){demoSession={dismissedNotes:{},visited:{journey:false,goals:false,pension:false},triggered:{lifeHappens:false,runawayMoney:false,creditCardComplete:false}};}
 const DEMO_BTN_CLASS="demo183";
 const DEMO_BTN_LABEL="DEMO MODE";
 const DEMO_BTN_ACTIVE_LABEL="Exit Demo Mode";
@@ -8134,6 +8145,7 @@ let demoHomeAssetsPromise=null;
 let patriciaNoteCloseReadyTimer=null;
 let journeyNoteShowToken=0;
 let goalsNoteShowToken=0;
+let pensionNoteShowToken=0;
 function clearPatriciaNoteAnimationTimers(){
   if(patriciaNoteCloseReadyTimer){clearTimeout(patriciaNoteCloseReadyTimer);patriciaNoteCloseReadyTimer=null;}
 }
@@ -8196,6 +8208,7 @@ function syncPatriciaStickyLayerClass(){
 function dismissAllPatriciaNotes(){
   journeyNoteShowToken++;
   goalsNoteShowToken++;
+  pensionNoteShowToken++;
   clearPatriciaNoteAnimationTimers();
   const layer=byId("patriciaNoteLayer");
   if(layer){layer.innerHTML="";layer.hidden=true;layer.classList.remove("is-sticky-centered");}
@@ -8225,6 +8238,7 @@ function dismissPatriciaNote(id){
   if(demoMode)persistDemoSession();
   if(id==="journeyFirst")journeyNoteShowToken++;
   if(id==="goalsFirst")goalsNoteShowToken++;
+  if(id==="pensionFirst")pensionNoteShowToken++;
   hidePatriciaNote(id);
 }
 function renderPatriciaNote(note,options){
@@ -8314,6 +8328,7 @@ function handleDemoHomeShown(){
   if(!demoMode)return;
   journeyNoteShowToken++;
   goalsNoteShowToken++;
+  pensionNoteShowToken++;
   hideOtherPatriciaNotes("home");
   const note=PATRICIA_NOTE_COPY.home;
   if(!note||demoSession.dismissedNotes[note.id])return;
@@ -8335,6 +8350,14 @@ function handleDemoGoalsShown(){
   const token=++goalsNoteShowToken;
   scheduleStickyPatriciaNote(note,()=>token===goalsNoteShowToken&&!!byId("goals")?.classList.contains("active")&&!document.body.classList.contains("home183"));
 }
+function handleDemoPensionShown(){
+  if(!demoMode)return;
+  const note=PATRICIA_NOTE_COPY.pensionFirst;
+  if(!note||demoSession.dismissedNotes[note.id])return;
+  hideOtherPatriciaNotes("pensionFirst");
+  const token=++pensionNoteShowToken;
+  scheduleStickyPatriciaNote(note,()=>token===pensionNoteShowToken&&!!byId("pension")?.classList.contains("active")&&!document.body.classList.contains("home183"));
+}
 function handleDemoPageVisit(id){
   if(!demoMode)return;
   if(id!=="journey"){
@@ -8344,6 +8367,10 @@ function handleDemoPageVisit(id){
   if(id!=="goals"){
     goalsNoteShowToken++;
     hidePatriciaNote("goalsFirst");
+  }
+  if(id!=="pension"){
+    pensionNoteShowToken++;
+    hidePatriciaNote("pensionFirst");
   }
   if(id==="journey"){
     if(!demoSession.visited.journey){
@@ -8358,6 +8385,13 @@ function handleDemoPageVisit(id){
       persistDemoSession();
     }
     handleDemoGoalsShown();
+  }
+  if(id==="pension"){
+    if(!demoSession.visited.pension){
+      demoSession.visited.pension=true;
+      persistDemoSession();
+    }
+    handleDemoPensionShown();
   }
 }
 function isGoalReached(key){
@@ -9742,8 +9776,10 @@ function page(id){
   if(id==="home"){
     journeyNoteShowToken++;
     goalsNoteShowToken++;
+    pensionNoteShowToken++;
     hidePatriciaNote("journeyFirst");
     hidePatriciaNote("goalsFirst");
+    hidePatriciaNote("pensionFirst");
     if(window.FreedomCompanionFirstCreated&&typeof window.FreedomCompanionFirstCreated.hideAll==="function")window.FreedomCompanionFirstCreated.hideAll();
     if(typeof window.showHome==="function"){window.showHome();return}
   }
