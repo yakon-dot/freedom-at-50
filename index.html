@@ -9103,12 +9103,81 @@ async function resetFreedomFreshStart(){
   try{localStorage.setItem(KEY,JSON.stringify(buildFreshUserState()));}catch(e){}
   location.replace(location.pathname+location.search);
 }
+function personalStateHasSavedRecords(st){
+  /* Detect real personal content — not onboarding markers. Used so Start my Freedom
+     never wipes a returning user's records when markers are missing/inconsistent. */
+  if(!st||typeof st!=="object"||Array.isArray(st))return false;
+  if(Array.isArray(st.loans)&&st.loans.length)return true;
+  if(Array.isArray(st.customGoals)&&st.customGoals.length)return true;
+  if(Array.isArray(st.pensions)&&st.pensions.length)return true;
+  if(Array.isArray(st.notes)&&st.notes.length)return true;
+  if(Array.isArray(st.archivedJourneys)&&st.archivedJourneys.length)return true;
+  if(Array.isArray(st.archivedGoals)&&st.archivedGoals.length)return true;
+  if(Array.isArray(st.archivedPensions)&&st.archivedPensions.length)return true;
+  if(Array.isArray(st.victories)&&st.victories.length)return true;
+  if((Number(st.houseFund)||0)>0)return true;
+  if((Number(st.holidayFund)||0)>0)return true;
+  if((Number(st.personalSavings)||0)>0)return true;
+  if((Number(st.housePocket)||0)>0)return true;
+  const life=st.goalLifetimeAdded;
+  if(life&&typeof life==="object"){
+    for(const k of Object.keys(life)){
+      if((Number(life[k])||0)>0)return true;
+    }
+  }
+  return false;
+}
+function readStoredPersonalStateForGuard(){
+  try{
+    const raw=localStorage.getItem(KEY);
+    if(raw==null||raw==="")return null;
+    const saved=JSON.parse(raw);
+    if(!saved||typeof saved!=="object"||Array.isArray(saved))return null;
+    return saved;
+  }catch(e){
+    return null;
+  }
+}
 function activateFreshPersonal(opts){
-  /* First-time Start my Freedom only: empty personal Journey/Goals/Pension records.
-     Demo samples stay in buildCanonicalDemoState(); returning users never hit this.
+  /* First-time Start my Freedom: empty personal Journey/Goals/Pension records.
+     Demo samples stay in buildCanonicalDemoState().
+     If saved personal records already exist (even when onboarding markers are
+     missing), keep them — never silently overwrite.
      opts.skipHome: Companion Selection follows — do not open Home yet. */
   opts=opts||{};
   if(demoMode)return;
+  /* Corrupt/unreadable blob: never write a fresh empty state over it. */
+  if(freedomPersonalLoadError){
+    realStateSnapshot=null;
+    dismissAllPatriciaNotes();
+    syncDemoUi();
+    render();
+    if(!opts.skipHome&&typeof window.showHome==="function")window.showHome();
+    return;
+  }
+  const stored=readStoredPersonalStateForGuard();
+  const memoryHasRecords=personalStateHasSavedRecords(state);
+  const storedHasRecords=personalStateHasSavedRecords(stored);
+  if(memoryHasRecords||storedHasRecords){
+    if(storedHasRecords&&!memoryHasRecords){
+      const merged=Object.assign({},personalStateDefaults,stored);
+      if(!Array.isArray(merged.loans))merged.loans=[];
+      if(!Array.isArray(merged.pensions))merged.pensions=[];
+      if(!Array.isArray(merged.notes))merged.notes=[];
+      if(!Array.isArray(merged.customGoals))merged.customGoals=[];
+      if(!Array.isArray(merged.archivedJourneys))merged.archivedJourneys=[];
+      if(!Array.isArray(merged.archivedGoals))merged.archivedGoals=[];
+      if(!Array.isArray(merged.archivedPensions))merged.archivedPensions=[];
+      if(!Array.isArray(merged.victories))merged.victories=[];
+      state=merged;
+    }
+    realStateSnapshot=null;
+    dismissAllPatriciaNotes();
+    syncDemoUi();
+    render();
+    if(!opts.skipHome&&typeof window.showHome==="function")window.showHome();
+    return;
+  }
   state=buildFreshUserState();
   try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
   realStateSnapshot=null;
@@ -9118,7 +9187,11 @@ function activateFreshPersonal(opts){
   if(!opts.skipHome&&typeof window.showHome==="function")window.showHome();
 }
 window.freedomDemo={openEntry:openDemoEntryFlow,exit:exitDemo,onHomeShown:handleDemoHomeShown,isActive:()=>demoMode};
-window.freedomDev={resetFreshStart:resetFreedomFreshStart,activateFreshPersonal:activateFreshPersonal};
+window.freedomDev={
+  resetFreshStart:resetFreedomFreshStart,
+  activateFreshPersonal:activateFreshPersonal,
+  personalStateHasSavedRecords:personalStateHasSavedRecords
+};
 function monthsText(balance,payment){if(balance<=0)return"Complete";if(!payment)return"Repayment not set";const m=Math.ceil(balance/payment);return m===1?"About 1 month":`About ${m} months`}
 function loanReturned(loan){return Math.max(0,(Number(loan.starting)||0)-(Number(loan.current)||0));}
 function loanReturnedPct(loan){const s=Number(loan.starting)||0;if(!s)return 0;return Math.min(100,Math.max(0,loanReturned(loan)/s*100));}
