@@ -739,6 +739,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 
 .journey-card-head{display:flex;align-items:center;gap:10px;cursor:pointer;-webkit-tap-highlight-color:transparent}.journey-card-head .loan-title{min-width:0;flex:1}.journey-card-head .pill{margin-left:auto}.journey-chevron{display:grid;place-items:center;flex:0 0 30px;width:30px;height:30px;padding:0;border:1px solid rgba(218,167,128,.28);border-radius:50%;background:rgba(218,167,128,.055);color:rgba(231,177,137,.88);transition:transform .22s ease}.journey-chevron svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.loan-card:not(.is-collapsed) .journey-chevron{transform:rotate(180deg)}.loan-card.is-collapsing .journey-chevron{transform:none}.journey-card-body[hidden]{display:none}.loan-card.is-collapsed{padding-top:17px;padding-bottom:17px}.loan-card.is-collapsed .journey-card-head+.progress{margin-top:12px}.loan-card.is-collapsed .loan-summary{display:none}.loan-card.is-collapsed .journey-card-footer{display:none}
 .update-banner{position:fixed;left:14px;right:14px;top:calc(12px + env(safe-area-inset-top,0px));z-index:120;max-width:680px;margin:0 auto;background:#f0ead0;color:#17150d;border:1px solid rgba(231,207,99,.75);border-radius:18px;padding:12px 12px 12px 15px;box-shadow:0 12px 34px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:space-between;gap:12px}.update-banner[hidden]{display:none}.update-banner strong{display:block;font-size:14px}.update-banner span{display:block;font-size:12px;opacity:.72;margin-top:2px}.update-btn{border:0;background:#17150d;color:#f5f4f0;border-radius:12px;padding:10px 13px;font-weight:760;white-space:nowrap}
+/* Personal save failure: same shell as update banner; above Demo control so OK stays tappable. */
+.freedom-save-fail-banner{z-index:970}
 
 .archive-goal-btn{margin-top:14px;width:auto;padding:10px 14px;border-radius:999px;border:1px solid rgba(231,207,99,.45);background:transparent;color:var(--gold);font-size:13px;font-weight:750;cursor:pointer}
 .archive-goal-btn:active{transform:translateY(1px)}
@@ -3729,7 +3731,7 @@ body.home183 .demo183.is-demo-active{
 }
 @media (orientation:landscape) and (hover:none) and (pointer:coarse){
   .freedom-landscape{display:flex}
-  .app,.bottom-nav,.mobile183,.demo183-wrap,.update-banner,.save-note{
+  .app,.bottom-nav,.mobile183,.demo183-wrap,.update-banner,.freedom-save-fail-banner,.save-note{
     visibility:hidden!important;pointer-events:none!important;
   }
 }
@@ -5191,6 +5193,10 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <div class="update-banner" id="updateBanner" hidden>
   <div><strong>Freedom has been updated</strong><span>Tap once to load the newest version.</span></div>
   <button class="update-btn" id="updateNow" type="button">Update now</button>
+</div>
+<div class="update-banner freedom-save-fail-banner" id="freedomSaveFailBanner" hidden role="alert" aria-live="assertive">
+  <div><strong>Your changes couldn't be saved.</strong><span>Please try again before closing Freedom.</span></div>
+  <button class="update-btn" id="freedomSaveFailDismiss" type="button">OK</button>
 </div>
 <div class="demo-banner" id="demoBanner" hidden>
   <span>DEMO MODE</span>
@@ -7242,14 +7248,48 @@ if(Array.isArray(state.customGoals)){
 if(state.housePocketArchiveRemoved===undefined)state.housePocketArchiveRemoved=false;
 if(state.housePocketArchived===undefined)state.housePocketArchived=false;
 const euro0=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",maximumFractionDigits:0}).format(Number(n)||0);const euro2=n=>new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR",minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);const byId=id=>document.getElementById(id);const number=id=>Math.max(0,Number(byId(id).value)||0);
-function showSaved(){const note=byId("saveNote");note.classList.add("show");clearTimeout(showSaved.timer);showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200)}
+function hideSavedToast(){
+  const note=byId("saveNote");
+  if(!note)return;
+  note.classList.remove("show");
+  clearTimeout(showSaved.timer);
+}
+function hideSaveFailureWarning(){
+  const banner=byId("freedomSaveFailBanner");
+  if(banner)banner.hidden=true;
+}
+function showSaveFailureWarning(){
+  /* One banner only — repeated failed persists must not stack or re-flash. */
+  const banner=byId("freedomSaveFailBanner");
+  if(!banner)return;
+  hideSavedToast();
+  if(!banner.hidden)return;
+  banner.hidden=false;
+}
+function showSaved(){
+  hideSaveFailureWarning();
+  const note=byId("saveNote");
+  if(!note)return;
+  note.classList.add("show");
+  clearTimeout(showSaved.timer);
+  showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200);
+}
 function persistDemoSession(){sessionStorage.setItem(DEMO_SESSION_KEY,JSON.stringify({demoMode:true,state,demoSession}));}
 function persist(){
   if(demoMode){persistDemoSession();return;}
   /* Corrupt/unreadable personal KEY: never overwrite the stored blob. */
   if(freedomPersonalLoadError)return;
-  try{localStorage.setItem(KEY,JSON.stringify(state));showSaved();}catch(e){console.warn("Freedom could not save personal data:",e);}
+  try{
+    localStorage.setItem(KEY,JSON.stringify(state));
+    showSaved();
+  }catch(e){
+    console.warn("Freedom could not save personal data:",e);
+    showSaveFailureWarning();
+  }
 }
+byId("freedomSaveFailDismiss")?.addEventListener("click",function(){
+  hideSaveFailureWarning();
+});
 function recoverPersonalStorageFromLoadError(){
   if(!freedomPersonalLoadError||demoMode)return;
   const msg=freedomPersonalLoadError==="unreadable"
