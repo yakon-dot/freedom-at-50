@@ -9323,21 +9323,42 @@ function isLoanMoneySectionOpen(i){
   if(preview&&Number(preview.loanIndex)===Number(i)&&preview.moneyOpen!=null)return !!preview.moneyOpen;
   return false;
 }
-function journeyPlanSummaryHtml(loan){
-  if(!loan)return`<div class="goal-section-summary-line">Plan not set</div>`;
-  const mode=loan.payoffMode==="date"?"date":"monthly";
+function getLoanLivePlanningValues(i){
+  const loan=state.loans[i];
+  if(!loan)return null;
+  let payment=Math.max(0,Number(loan.payment)||0);
+  let freedomDate=loan.freedomDate||null;
+  let payoffMode=loan.payoffMode==="date"?"date":"monthly";
+  const card=document.querySelector(`#loanList .loan-card[data-loan-index="${i}"]`);
+  if(card){
+    const paymentEl=card.querySelector(`input[data-loan="${i}"][data-field="payment"]`);
+    if(paymentEl)payment=Math.max(0,Number(paymentEl.value)||0);
+    const dateEl=card.querySelector(`input[data-loan="${i}"][data-field="freedomDate"]`);
+    if(dateEl){
+      const v=String(dateEl.value||"").trim();
+      freedomDate=v?`${v}-01`:null;
+    }
+    const activeMode=card.querySelector(`[data-loan-mode="${i}"].active`);
+    if(activeMode)payoffMode=activeMode.dataset.mode==="date"?"date":"monthly";
+  }
+  return{payment,freedomDate,payoffMode,current:Math.max(0,Number(loan.current)||0)};
+}
+function journeyPlanSummaryHtml(loan,live){
+  if(!loan&&!live)return`<div class="goal-section-summary-line">Plan not set</div>`;
+  const current=live?live.current:(Number(loan.current)||0);
+  const mode=(live?live.payoffMode:loan.payoffMode)==="date"?"date":"monthly";
   if(mode==="date"){
-    const label=formatGoalMonthLabel(loan.freedomDate);
-    const needed=formatEstimatedMonthlyNeeded(loan.current,loan.freedomDate);
+    const freedomDate=live?live.freedomDate:loan.freedomDate;
+    const label=formatGoalMonthLabel(freedomDate);
+    const needed=formatEstimatedMonthlyNeeded(current,freedomDate);
     if(!label)return`<div class="goal-section-summary-line">Freedom date not set</div>`;
-    const bal=Number(loan.current)||0;
-    if(bal<=0)return`<div class="goal-section-summary-line">Freedom ${esc(label)} · Complete</div>`;
+    if(current<=0)return`<div class="goal-section-summary-line">Freedom ${esc(label)} · Complete</div>`;
     return`<div class="goal-section-summary-line">${esc(`Freedom ${label} · ${needed}`)}</div>`;
   }
-  const payment=Number(loan.payment)||0;
+  const payment=live?Number(live.payment)||0:Number(loan.payment)||0;
   if(!(payment>0))return`<div class="goal-section-summary-line">Monthly repayment not set</div>`;
-  const forecast=freedomForecast(loan.current,payment);
-  if((Number(loan.current)||0)<=0)return`<div class="goal-section-summary-line">${esc(`${euro0(payment)}/month · Complete`)}</div>`;
+  const forecast=freedomForecast(current,payment);
+  if(current<=0)return`<div class="goal-section-summary-line">${esc(`${euro0(payment)}/month · Complete`)}</div>`;
   const freedomLabel=forecast.line2?`Freedom ${forecast.line2}`:forecast.line1;
   return`<div class="goal-section-summary-line">${esc(`${euro0(payment)}/month · ${freedomLabel}`)}</div>`;
 }
@@ -9346,7 +9367,7 @@ function refreshLoanPlanSummary(i,card){
   if(!card)return;
   const sum=card.querySelector(`[data-loan-plan-summary="${i}"]`);
   if(!sum)return;
-  sum.innerHTML=journeyPlanSummaryHtml(state.loans[i]);
+  sum.innerHTML=journeyPlanSummaryHtml(state.loans[i],getLoanLivePlanningValues(i));
 }
 function journeyPlanFieldsHtml(i,loan){
   const mode=loan.payoffMode==="date"?"date":"monthly";
@@ -10445,6 +10466,8 @@ function saveGoal(key){
     if(g.hasTarget&&targetEl)g.target=Math.max(0,Number(targetEl.value)||0);
     if(plannedEl)g.plannedMonthly=Math.max(0,Number(plannedEl.value)||0);
     if(dateEl)g.goalDate=dateEl.value||null;
+    const modeBtn=document.querySelector(`#goalsList .goal-card[data-goal-key="${CSS.escape(key)}"] [data-goal-plan-mode="${CSS.escape(key)}"].active`);
+    if(modeBtn)g.planMode=modeBtn.dataset.mode==="date"?"date":"monthly";
     if(!g.planMode)g.planMode="monthly";
     /* Capture progress AFTER target fields match completion's canonical source, BEFORE add. */
     prevReached=isGoalReached(key);
@@ -10485,6 +10508,8 @@ function saveGoal(key){
     if(goalUsesTarget(key)&&targetEl)state.goalTargets[key]=Math.max(0,Number(targetEl.value)||0);
     if(plannedEl)setGoalPlannedMonthly(key,plannedEl.value);
     if(dateEl)setGoalDate(key,dateEl.value||null);
+    const modeBtn=document.querySelector(`#goalsList .goal-card[data-goal-key="${CSS.escape(key)}"] [data-goal-plan-mode="${CSS.escape(key)}"].active`);
+    if(modeBtn)setGoalPlanMode(key,modeBtn.dataset.mode);
     prevReached=isGoalReached(key);
     prevProgress=goalProgressRatio(key);
     hadPriorGenuineContribution=(Number(state.goalLifetimeAdded&&state.goalLifetimeAdded[key])||0)>0;
@@ -10641,25 +10666,32 @@ function formatGoalMonthlyNeeded(remaining,goalDateStr){
   if(amt===null||!isFinite(amt)||amt<=0)return"Choose a goal date";
   return`${euro2(amt)} / month`;
 }
-function journeyMonthlyCommitment(loan){
-  if(!loan||(Number(loan.current)||0)<=0)return 0;
-  if(loan.payoffMode==="date"){
-    const amt=estimatedMonthlyNeeded(loan.current,loan.freedomDate);
+function journeyMonthlyCommitment(loan,live){
+  if(!loan&&!live)return 0;
+  const current=live?live.current:(Number(loan.current)||0);
+  if(current<=0)return 0;
+  const mode=(live?live.payoffMode:loan.payoffMode)==="date"?"date":"monthly";
+  if(mode==="date"){
+    const freedomDate=live?live.freedomDate:loan.freedomDate;
+    const amt=estimatedMonthlyNeeded(current,freedomDate);
     if(amt===null||!isFinite(amt)||amt<=0)return 0;
     return amt;
   }
-  const payment=Math.max(0,Number(loan.payment)||0);
+  const payment=live?Math.max(0,Number(live.payment)||0):Math.max(0,Number(loan.payment)||0);
   return payment>0?payment:0;
 }
 function journeyMonthlyCommitmentsTotal(){
-  return state.loans.reduce((sum,loan)=>sum+journeyMonthlyCommitment(loan),0);
+  return state.loans.reduce((sum,loan,i)=>sum+journeyMonthlyCommitment(loan,getLoanLivePlanningValues(i)),0);
 }
 function getGoalLivePlanningValues(key){
   const card=document.querySelector(`#goalsList .goal-card[data-goal-key="${CSS.escape(key)}"]`);
   let usesTarget=goalUsesTarget(key);
+  let planMode=getGoalPlanMode(key);
   if(card){
     const hasTargetEl=card.querySelector(`[data-goal-has-target="${CSS.escape(key)}"]`);
     if(hasTargetEl)usesTarget=!!hasTargetEl.checked;
+    const activeMode=card.querySelector(`[data-goal-plan-mode="${CSS.escape(key)}"].active`);
+    if(activeMode)planMode=activeMode.dataset.mode==="date"?"date":"monthly";
   }
   const targetId=key.startsWith("custom:")?`goalTarget_custom_${Number(key.slice(7))}`:`goalTarget_${key}`;
   let target=getGoalTargetAmount(key);
@@ -10679,7 +10711,7 @@ function getGoalLivePlanningValues(key){
     plannedMonthly,
     goalDate,
     current:getGoalCurrentBalance(key),
-    planMode:getGoalPlanMode(key)
+    planMode
   };
 }
 function goalMonthlyContribution(key){
@@ -10748,11 +10780,14 @@ function isGoalMoneySectionOpen(key){
 function goalSectionChevronHtml(){
   return `<span class="goal-section-chevron" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m7 9 5 5 5-5"/></svg></span>`;
 }
-function goalPlanSummaryHtml(key,current,target){
-  const remaining=Math.max(0,(Number(target)||0)-(Number(current)||0));
-  const mode=getGoalPlanMode(key);
+function goalPlanSummaryHtml(key,current,target,live){
+  const v=live||getGoalLivePlanningValues(key);
+  const cur=current!=null?Number(current)||0:v.current;
+  const tgt=target!=null?Number(target)||0:v.target;
+  const remaining=Math.max(0,tgt-cur);
+  const mode=v.planMode==="date"?"date":"monthly";
   if(mode==="date"){
-    const date=getGoalDate(key);
+    const date=v.goalDate;
     const label=formatGoalMonthLabel(date);
     const amt=estimatedMonthlyNeeded(remaining,date);
     const line1=label?`Goal date · ${label}`:"Goal date not set";
@@ -10761,7 +10796,7 @@ function goalPlanSummaryHtml(key,current,target){
     else if(amt!==null&&isFinite(amt)&&amt>0)line2=`${euro2(amt)}/month needed`;
     return `<div class="goal-section-summary-line">${esc(line1)}</div><div class="goal-section-summary-line">${esc(line2)}</div>`;
   }
-  const planned=getGoalPlannedMonthly(key);
+  const planned=Math.max(0,Number(v.plannedMonthly)||0);
   const shortDate=goalForecastShortDate(remaining,planned);
   const line1=planned>0?`Monthly saving · ${euro0(planned)}`:"Monthly saving not set";
   let line2="Set a monthly saving";
@@ -10774,9 +10809,8 @@ function refreshGoalPlanSummary(key,card){
   if(!card)return;
   const sum=card.querySelector(`[data-goal-plan-summary="${CSS.escape(key)}"]`);
   if(!sum)return;
-  const targetEl=card.querySelector(`#${CSS.escape(key.startsWith("custom:")?`goalTarget_custom_${Number(key.slice(7))}`:`goalTarget_${key}`)}`);
-  const target=Math.max(0,Number(targetEl&&targetEl.value)||getGoalTargetAmount(key));
-  sum.innerHTML=goalPlanSummaryHtml(key,getGoalCurrentBalance(key),target);
+  const live=getGoalLivePlanningValues(key);
+  sum.innerHTML=goalPlanSummaryHtml(key,live.current,live.target,live);
 }
 function goalPlanSectionHtml(key,current,target,ids){
   const open=isGoalPlanSectionOpen(key);
@@ -11049,38 +11083,26 @@ function renderGoals(){
   list.querySelectorAll("[data-goal-plan-mode]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const key=btn.dataset.goalPlanMode,mode=btn.dataset.mode;
-    setGoalPlanMode(key,mode);
+    /* Plan mode commits on Save; toggle panels for live preview only. */
     const wrap=btn.closest(".goal-plan-wrap");
     if(wrap){
       wrap.querySelectorAll("[data-goal-plan-mode]").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
       wrap.querySelectorAll("[data-goal-plan-panel]").forEach(p=>{p.hidden=p.dataset.goalPlanPanel!==mode;});
       refreshGoalPlanForecast(key,btn.closest(".goal-card"));
-    }else{
-      persist();renderGoals();
     }
   }));
   list.querySelectorAll("[data-goal-planned]").forEach(inp=>inp.addEventListener("input",e=>{
     const key=inp.dataset.goalPlanned;
-    setGoalPlannedMonthly(key,inp.value);
     refreshGoalPlanForecast(key,inp.closest(".goal-card"));
   }));
   list.querySelectorAll("[data-goal-date]").forEach(inp=>inp.addEventListener("input",e=>{
     const key=inp.dataset.goalDate;
-    setGoalDate(key,inp.value||null);
     refreshGoalPlanForecast(key,inp.closest(".goal-card"));
   }));
   list.querySelectorAll("input[id^=\"goalTarget_\"]").forEach(inp=>inp.addEventListener("input",e=>{
     const card=inp.closest(".goal-card");
     const key=card&&card.dataset.goalKey;
     if(!key)return;
-    const target=Math.max(0,Number(inp.value)||0);
-    if(key.startsWith("custom:")){
-      const g=state.customGoals[Number(key.slice(7))];
-      if(g)g.target=target;
-    }else{
-      if(!state.goalTargets)state.goalTargets={};
-      state.goalTargets[key]=target;
-    }
     refreshGoalPlanForecast(key,card);
   }));
   list.querySelectorAll("[data-life-happens-toggle]").forEach(btn=>btn.addEventListener("click",e=>{
@@ -11377,11 +11399,12 @@ function renderLoans(){
     loan=loan||state.loans[i];
     card=card||list.querySelector(`.loan-card[data-loan-index="${i}"]`);
     if(!loan||!card)return;
-    if(loan.payoffMode==="date"){
+    const live=getLoanLivePlanningValues(i)||{payment:loan.payment,freedomDate:loan.freedomDate,payoffMode:loan.payoffMode,current:loan.current};
+    if(live.payoffMode==="date"){
       const el=card.querySelector(`[data-needed-for="${i}"]`);
-      if(el)el.textContent=formatEstimatedMonthlyNeeded(loan.current,loan.freedomDate);
+      if(el)el.textContent=formatEstimatedMonthlyNeeded(live.current,live.freedomDate);
     }else{
-      const fc=freedomForecast(loan.current,loan.payment);
+      const fc=freedomForecast(live.current,live.payment);
       const el=card.querySelector(`[data-freedom-for="${i}"]`);
       const dateEl=card.querySelector(`[data-freedom-date-for="${i}"]`);
       if(el)el.textContent=fc.line1;
@@ -11401,9 +11424,8 @@ function renderLoans(){
   list.querySelectorAll("input[data-loan]").forEach(input=>{
     input.addEventListener("input",e=>{
       const i=Number(e.target.dataset.loan),field=e.target.dataset.field;
-      /* Name is applied on Save only — keeps the prior name available for rename detection. */
+      /* Name / plan fields commit on Save only — live previews use DOM values. */
       if(field==="name")return;
-      applyLoanField(i,field,e.target.value);
       refreshLoanDerived(i);
     });
   });
@@ -11412,7 +11434,7 @@ function renderLoans(){
     const i=Number(btn.dataset.loanMode),mode=btn.dataset.mode;
     const loan=state.loans[i];
     if(!loan)return;
-    loan.payoffMode=mode;
+    /* Payoff mode commits on Save; toggle panels for live preview only. */
     const card=btn.closest(".loan-card");
     card.querySelectorAll("[data-loan-mode]").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
     card.querySelectorAll("[data-mode-panel]").forEach(p=>{p.hidden=p.dataset.modePanel!==mode;});
@@ -11512,6 +11534,7 @@ function renderLoans(){
     const nameEl=card?.querySelector(`input[data-loan="${i}"][data-field="name"]`);
     const paymentEl=card?.querySelector(`input[data-loan="${i}"][data-field="payment"]`);
     const dateEl=card?.querySelector(`input[data-loan="${i}"][data-field="freedomDate"]`);
+    const modeBtn=card?.querySelector(`[data-loan-mode="${i}"].active`);
     const renameOldName=loan.name||"";
     if(nameEl&&!applyLoanField(i,"name",nameEl.value)){
       nameEl.value=loan.name;
@@ -11519,6 +11542,7 @@ function renderLoans(){
       freedomSaveFeedback.cancel(saveKey);
       return;
     }
+    if(modeBtn)loan.payoffMode=modeBtn.dataset.mode==="date"?"date":"monthly";
     if(paymentEl)applyLoanField(i,"payment",paymentEl.value);
     if(dateEl)applyLoanField(i,"freedomDate",dateEl.value);
     const renameNewName=loan.name||"";
