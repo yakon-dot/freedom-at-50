@@ -148,41 +148,56 @@ async function main() {
   assert.equal(stillBlocked.checked, false);
   console.log("PASS: Toggle on without Worker stays safe / explained");
 
-  /* Restore config; simulate keep + ok availability so confirmation/test show correctly.
-     (Subscribe cannot succeed in this headless shell without a real push service.) */
+  /* Real UI path: keep + push available + permission granted → reminders on.
+     Never touch testWrap.hidden directly — only setInternalTestEnabled + renderPanel. */
   await page.evaluate(() => {
     window.FREEDOM_PUSH = Object.assign({}, window.FREEDOM_PUSH, {
       apiBase: "https://freedom-reminders.dorothy-yakon.workers.dev",
       vapidPublicKey: "B".padEnd(88, "A")
     });
-    window.FreedomReminders.setChoice("keep");
-  });
-  /* Force Notification.permission granted for effective-on display if possible */
-  await page.evaluate(() => {
     try {
-      Object.defineProperty(Notification, "permission", { configurable: true, get: () => "granted" });
+      Object.defineProperty(Notification, "permission", {
+        configurable: true,
+        get: () => "granted"
+      });
     } catch (e) {}
-    /* availability may still fail for ios-not-installed / missing SW — stub through choice + direct UI update */
-    const toggle = document.getElementById("freedomRemindersToggle");
-    const confirm = document.getElementById("freedomRemindersConfirm");
-    const confirmText = document.getElementById("freedomRemindersConfirmText");
-    const testWrap = document.getElementById("freedomRemindersTestWrap");
-    if (toggle) {
-      toggle.setAttribute("aria-checked", "true");
-      toggle.disabled = false;
-    }
-    if (confirm) confirm.classList.add("is-on");
-    if (confirmText) confirmText.textContent = "Your reminders are on";
-    if (testWrap) testWrap.hidden = false;
+    window.FreedomReminders._setDemoModeForTests(false);
+    document.body.classList.remove("demo-mode-active");
+    window.setInternalTestEnabled(false);
+    window.FreedomReminders.setChoice("keep");
+    window.FreedomReminders.renderPanel();
   });
+  const availPublic = await page.evaluate(() => window.FreedomReminders.availability());
+  assert.equal(availPublic.ok, true, "headless Chrome should report reminders available");
   const onVisual = await panelState(page);
+  assert.equal(onVisual.choice, "keep");
   assert.equal(onVisual.checked, true);
   assert.equal(onVisual.confirm, "Your reminders are on");
-  assert.equal(onVisual.testVisible, true);
-  const testLabel = await page.evaluate(() => document.getElementById("freedomRemindersTestBtn")?.textContent?.trim());
-  assert.equal(testLabel, "Send test reminder");
+  assert.equal(onVisual.testVisible, false);
   assert.equal(/Test classic notification/.test(await page.content()), false);
-  console.log("PASS: Enabled visual state shows sage confirmation + secondary test button");
+  console.log("PASS: Enabled reminders hide test button for ordinary users");
+
+  await page.evaluate(() => {
+    window.setInternalTestEnabled(true);
+    window.FreedomReminders.renderPanel();
+  });
+  const internalVisual = await panelState(page);
+  assert.equal(internalVisual.checked, true);
+  assert.equal(internalVisual.testVisible, true);
+  const testLabel = await page.evaluate(() =>
+    document.getElementById("freedomRemindersTestBtn")?.textContent?.trim()
+  );
+  assert.equal(testLabel, "Send test reminder");
+  console.log("PASS: Internal testing reveals Send test reminder");
+
+  await page.evaluate(() => {
+    window.setInternalTestEnabled(false);
+    window.FreedomReminders.renderPanel();
+  });
+  const afterDisable = await panelState(page);
+  assert.equal(afterDisable.checked, true);
+  assert.equal(afterDisable.testVisible, false);
+  console.log("PASS: Disabling internal testing hides Send test reminder again");
 
   /* iOS Home Screen guidance present */
   const sourceHasIos = await page.evaluate(() => {
