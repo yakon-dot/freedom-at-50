@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0E1220">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>Freedom Web Push Lab</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/lab-icon.svg">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="eyebrow"><span class="pulse" aria-hidden="true"></span> Isolated diagnostic</div>
+      <h1>Web Push Lab</h1>
+      <p class="intro">This test is separate from Freedom. It stores no subscription and uses test-only notification keys.</p>
+      <div class="version" id="version">Version loading…</div>
+    </header>
+
+    <section class="card" aria-labelledby="setup-title">
+      <div class="section-heading">
+        <span class="step">1</span>
+        <div>
+          <h2 id="setup-title">Prepare this iPhone</h2>
+          <p>Open from the Home Screen, then enable the temporary test subscription.</p>
+        </div>
+      </div>
+      <div class="checks" id="environmentChecks" aria-live="polite"></div>
+      <label class="access-field" for="accessCode">
+        <span>Temporary test access code</span>
+        <input id="accessCode" type="text" inputmode="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="Enter the code supplied with the link">
+      </label>
+      <button class="primary" id="enableButton" type="button">Enable test notifications</button>
+      <p class="microcopy">This does not read or change Freedom’s notification subscription.</p>
+    </section>
+
+    <section class="card" aria-labelledby="compare-title">
+      <div class="section-heading">
+        <span class="step">2</span>
+        <div>
+          <h2 id="compare-title">Compare the senders</h2>
+          <p>Send one at a time. Both use the exact same title and message.</p>
+        </div>
+      </div>
+
+      <div class="message-sample">
+        <strong>Freedom Push Lab</strong>
+        <span>If you can read this exact sentence, the encrypted payload was decoded.</span>
+      </div>
+
+      <button class="test-button" id="block65Button" type="button" disabled>
+        <span class="method">Test A</span>
+        <span class="button-copy"><strong>Current Cloudflare method</strong><small>@block65/webcrypto-web-push</small></span>
+        <span class="arrow" aria-hidden="true">›</span>
+      </button>
+
+      <button class="test-button" id="nodeButton" type="button" disabled>
+        <span class="method alternate">Test B</span>
+        <span class="button-copy"><strong>Independent Node method</strong><small>web-push</small></span>
+        <span class="arrow" aria-hidden="true">›</span>
+      </button>
+
+      <button class="test-button" id="mutableButton" type="button" disabled>
+        <span class="method diagnostic">Test C</span>
+        <span class="button-copy"><strong>Mutable diagnostic</strong><small>Node web-push + mutable: true</small></span>
+        <span class="arrow" aria-hidden="true">›</span>
+      </button>
+    </section>
+
+    <section class="card diagnostics" aria-labelledby="results-title">
+      <div class="section-heading compact">
+        <span class="step">3</span>
+        <div>
+          <h2 id="results-title">What happened</h2>
+          <p>The timeline stays here after you tap a notification.</p>
+        </div>
+      </div>
+      <div id="summary" class="summary neutral" aria-live="polite">No test sent yet.</div>
+      <ol id="eventLog" class="event-log"></ol>
+      <div class="diagnostic-actions">
+        <button class="quiet" id="copyButton" type="button">Copy safe diagnostics</button>
+        <button class="quiet" id="clearButton" type="button">Clear</button>
+      </div>
+    </section>
+
+    <section class="privacy-note">
+      <strong>Temporary and isolated</strong>
+      <p>The test subscription is submitted only when you tap a test button. It is not saved by either sender.</p>
+    </section>
+  </main>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

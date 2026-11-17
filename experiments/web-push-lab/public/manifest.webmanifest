@@ -1,0 +1,19 @@
+{
+  "id": "/freedom-web-push-lab",
+  "name": "Freedom Web Push Lab",
+  "short_name": "Push Lab",
+  "description": "Temporary isolated diagnostic for iPhone Web Push.",
+  "start_url": "/?source=homescreen",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#0E1220",
+  "theme_color": "#0E1220",
+  "icons": [
+    {
+      "src": "/lab-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

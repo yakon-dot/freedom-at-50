@@ -1,0 +1,25 @@
+{
+  "name": "freedom-web-push-lab",
+  "version": "0.2.0",
+  "private": true,
+  "type": "module",
+  "description": "Isolated iPhone Web Push diagnostic app. It does not use Freedom subscriptions or production keys.",
+  "scripts": {
+    "check": "node --check cloudflare-worker/src/index.js && node --check node-sender/src/server.js && node --check public/app.js && node --check public/sw.js",
+    "test": "node --test tests/*.test.mjs",
+    "verify": "npm run check && npm test",
+    "dev": "wrangler dev --config cloudflare-worker/wrangler.toml",
+    "start:node": "node node-sender/src/server.js",
+    "deploy": "echo \"This diagnostic must not be deployed without explicit approval.\" && exit 1"
+  },
+  "dependencies": {
+    "@block65/webcrypto-web-push": "2.0.0",
+    "web-push": "4.0.0"
+  },
+  "devDependencies": {
+    "wrangler": "4.163.0"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
