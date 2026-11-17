@@ -665,6 +665,29 @@ html:has(#freedomMakeItYours.is-present:not([hidden])) body{
 }
 .freedom-companion-pick:active{opacity:.72}
 .freedom-companion-pick.is-confirming{pointer-events:none;cursor:default}
+/* Change-companion mode: cancel + current selection marker (same screen, no new layout). */
+#freedomCompanionSelect .freedom-companion-change-close{
+  display:none;position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:14px;z-index:3;
+  width:40px;height:40px;margin:0;padding:0;border:0;border-radius:50%;
+  background:rgba(14,16,19,.35);color:rgba(239,203,170,.78);font-size:24px;line-height:1;
+  place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#freedomCompanionSelect.is-change-mode .freedom-companion-change-close{display:grid}
+#freedomCompanionSelect .freedom-companion-change-close:active{
+  color:rgba(245,244,240,.9);background:rgba(14,16,19,.5);
+}
+.freedom-companion-current{
+  display:none;flex:0 0 auto;align-self:center;
+  margin:0 0 0 2px;padding:3px 8px;border-radius:999px;
+  border:1px solid rgba(239,203,170,.28);
+  background:rgba(239,203,170,.08);
+  font-family:inherit;font-size:10px;font-weight:600;letter-spacing:.02em;
+  color:rgba(239,203,170,.78);line-height:1.2;white-space:nowrap;
+}
+.freedom-companion-card.is-current .freedom-companion-current{display:inline-flex}
+.freedom-companion-card.is-current{
+  border-color:rgba(239,203,170,.22);
+}
 @media (prefers-reduced-motion:reduce){
   #freedomCompanionSelect.is-exiting{transition:none}
   .freedom-companion-card-panel{transition:none}
@@ -2651,8 +2674,6 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .subwrap183.open .sub183:nth-child(2){transition-delay:.13s}
 .subwrap183.open .sub183:nth-child(3){transition-delay:.21s}
 .subwrap183.open .sub183:nth-child(4){transition-delay:.29s}
-/* Companion is not ready yet — keep markup for later, hide from More submenu */
-.sub183[data-more183="companion"],
 .sub183[hidden]{display:none!important;opacity:0!important;pointer-events:none!important;padding:0!important;margin:0!important;height:0!important;overflow:hidden!important}
 .demo-banner{
   display:none!important;
@@ -4161,6 +4182,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
   </div>
 </div>
 <div id="freedomCompanionSelect" class="freedom-companion-select" hidden aria-label="Companion selection">
+  <button type="button" class="freedom-companion-change-close" id="freedomCompanionChangeClose" hidden aria-label="Close">×</button>
   <div class="freedom-companion-wallpaper" aria-hidden="true">
     <div class="freedom-look-cloud freedom-look-cloud-bl">
       <span class="freedom-look-smoke freedom-look-smoke-a"></span>
@@ -4619,6 +4641,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
   var COMPANION_ACK_MS=700;
   var companionOpenId=null;
   var companionSelecting=false;
+  var companionChangeMode=false;
   var companionNames={patricia:"Patricia",veronica:"Veronica",kevin:"Kevin"};
   function getSelectedCompanion(){
     try{
@@ -4648,24 +4671,66 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
       else localStorage.removeItem(COMPANION_FIRST_SETUP_PENDING_KEY);
     }catch(e){}
   }
+  function syncChangeCompanionUi(){
+    if(!companionSelect)return;
+    var current=getSelectedCompanion();
+    companionSelect.classList.toggle("is-change-mode",!!companionChangeMode);
+    var closeBtn=document.getElementById("freedomCompanionChangeClose");
+    if(closeBtn){
+      closeBtn.hidden=!companionChangeMode;
+      closeBtn.setAttribute("aria-hidden",companionChangeMode?"false":"true");
+    }
+    companionSelect.querySelectorAll(".freedom-companion-card").forEach(function(card){
+      var id=card.getAttribute("data-companion");
+      var isCurrent=!!companionChangeMode&&id===current;
+      card.classList.toggle("is-current",isCurrent);
+      var badge=card.querySelector(".freedom-companion-current");
+      if(isCurrent){
+        if(!badge){
+          badge=document.createElement("span");
+          badge.className="freedom-companion-current";
+          badge.textContent="Current companion";
+          var toggle=card.querySelector(".freedom-companion-card-toggle");
+          var nameEl=card.querySelector(".freedom-companion-card-name");
+          if(toggle&&nameEl)toggle.insertBefore(badge,nameEl.nextSibling);
+          else if(toggle)toggle.appendChild(badge);
+        }
+        badge.hidden=false;
+      }else if(badge){
+        badge.hidden=true;
+      }
+    });
+  }
   function hideCompanionSelect(){
     if(!companionSelect)return;
-    companionSelect.classList.remove("is-present","is-exiting","is-entering","is-enter-ready","is-enter-done");
+    companionSelect.classList.remove("is-present","is-exiting","is-entering","is-enter-ready","is-enter-done","is-change-mode");
     companionSelect.hidden=true;
     companionSelect.setAttribute("aria-hidden","true");
     companionSelect.style.zIndex="";
     companionOpenId=null;
     companionSelecting=false;
+    companionChangeMode=false;
     companionSelect.querySelectorAll(".freedom-companion-card.is-open").forEach(function(card){
       card.classList.remove("is-open");
       var btn=card.querySelector(".freedom-companion-card-toggle");
       if(btn)btn.setAttribute("aria-expanded","false");
+    });
+    companionSelect.querySelectorAll(".freedom-companion-card.is-current").forEach(function(card){
+      card.classList.remove("is-current");
+    });
+    companionSelect.querySelectorAll(".freedom-companion-current").forEach(function(badge){
+      badge.hidden=true;
     });
     companionSelect.querySelectorAll(".freedom-companion-pick").forEach(function(btn){
       var id=btn.getAttribute("data-pick-companion");
       if(id&&companionNames[id])btn.textContent="Pick "+companionNames[id];
       btn.classList.remove("is-confirming");
     });
+    var closeBtn=document.getElementById("freedomCompanionChangeClose");
+    if(closeBtn){
+      closeBtn.hidden=true;
+      closeBtn.setAttribute("aria-hidden","true");
+    }
   }
   function ensureCompanionCardVisible(card){
     if(!companionSelect||!card)return;
@@ -4747,10 +4812,12 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
       it for the cover duration only.
       Entrance starts when this screen becomes the uncovered destination (not while
       still beneath a cover), so the wallpaper-first beat is part of Companion itself.
+      opts.changeMode: More → Change companion. Same screen, no onboarding pending flags.
     */
     if(!companionSelect)return false;
     opts=opts||{};
-    setCompanionPending(true);
+    companionChangeMode=!!opts.changeMode;
+    if(!companionChangeMode)setCompanionPending(true);
     companionSelecting=false;
     companionSelect.hidden=false;
     companionSelect.setAttribute("aria-hidden","false");
@@ -4762,6 +4829,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     void companionSelect.offsetWidth;
     companionSelect.style.transition="";
     setCompanionOpen(null);
+    syncChangeCompanionUi();
     var scroll=companionSelect.querySelector(".freedom-companion-scroll");
     if(scroll)scroll.scrollTop=0;
     /* Companion is the authoritative surface — Home must not remain eligible underneath. */
@@ -4770,6 +4838,20 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     if(opts.beneathCover)prepareCompanionEntrance();
     else startCompanionEntrance();
     return true;
+  }
+  function openCompanionChange(){
+    /* Established users only — never restart first-time pending / Demo. */
+    if(!getSelectedCompanion())return false;
+    if(window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.hide==="function"){
+      window.FreedomFirstCompanionSetup.hide();
+    }
+    return presentCompanionSelect({changeMode:true});
+  }
+  function cancelCompanionChange(){
+    if(!companionChangeMode||companionSelecting)return;
+    hideCompanionSelect();
+    if(typeof window.showHome==="function")window.showHome();
+    else document.body.classList.add("home183");
   }
   function finishMakeYoursToCompanion(){
     hideMakeItYours();
@@ -4809,10 +4891,12 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     else document.body.classList.add("home183");
   }
   function finishCompanionToHome(){
+    var wasChange=companionChangeMode;
     hideCompanionSelect();
     /* Home was staged under Companion before the fade; keep it authoritative. */
     stagePersonalHomeUnderCompanion();
-    if(window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.mountAfterSelection==="function"){
+    /* First-time setup only — never after More → Change companion. */
+    if(!wasChange&&window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.mountAfterSelection==="function"){
       window.FreedomFirstCompanionSetup.mountAfterSelection();
     }
   }
@@ -4820,11 +4904,31 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     if(companionSelecting)return;
     if(id!=="patricia"&&id!=="veronica"&&id!=="kevin")return;
     companionSelecting=true;
+    var isChange=companionChangeMode;
+    var previous=getSelectedCompanion();
+    /* Same companion via Change companion: return Home without replaying setup. */
+    if(isChange&&previous===id){
+      stagePersonalHomeUnderCompanion();
+      if(prefersReducedMotion()||!companionSelect||companionSelect.hidden){
+        finishCompanionToHome();
+        return;
+      }
+      companionSelect.classList.add("is-exiting");
+      queueMakeYoursTimer(function(){
+        finishCompanionToHome();
+      },ONBOARD_FADE_MS);
+      return;
+    }
     /* Persist immediately, then briefly acknowledge on the same Pick button. */
     saveSelectedCompanion(id);
-    setFirstCompanionSetupPending(true);
-    setCompanionPending(false);
-    markFirstTimeComplete();
+    if(isChange){
+      /* Switch only the companion id. Keep journeys, progress, reminders, rotation. */
+      setCompanionPending(false);
+    }else{
+      setFirstCompanionSetupPending(true);
+      setCompanionPending(false);
+      markFirstTimeComplete();
+    }
     if(pickBtn){
       pickBtn.textContent=companionNames[id]+" it is.";
       pickBtn.classList.add("is-confirming");
@@ -4849,6 +4953,11 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     companionSelect.addEventListener("click",function(e){
       if(companionSelecting){
         e.preventDefault();
+        return;
+      }
+      if(e.target.closest("#freedomCompanionChangeClose")){
+        e.preventDefault();
+        cancelCompanionChange();
         return;
       }
       var pick=e.target.closest("[data-pick-companion]");
@@ -4889,6 +4998,9 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
   window.freedomCompanionSelect={
     show:presentCompanionSelect,
     hide:hideCompanionSelect,
+    openForChange:openCompanionChange,
+    cancelChange:cancelCompanionChange,
+    isChangeMode:function(){return !!companionChangeMode;},
     isPending:isCompanionPending,
     getSelected:getSelectedCompanion,
     isFirstSetupPending:isFirstCompanionSetupPending,
@@ -5063,7 +5175,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
         <button class="sub183" type="button" data-more183="archive">Archive</button>
         <button class="sub183" type="button" data-more183="backup">Backup</button>
         <button class="sub183" type="button" data-more183="reminders">Reminders</button>
-        <button class="sub183" type="button" data-more183="companion" hidden aria-hidden="true" tabindex="-1">Companion</button>
+        <button class="sub183" type="button" data-more183="companion">Change companion</button>
         <button class="sub183" type="button" data-more183="reset" id="resetFreedomMoreBtn" hidden aria-hidden="true" tabindex="-1">Reset Freedom</button>
       </div>
     </nav>
@@ -13468,9 +13580,10 @@ function freedomBootNavPreview(open){
         if(typeof window.openFreedomRemindersPanel==="function")window.openFreedomRemindersPanel();
         return;
       }
-      /* Companion destination is reserved; keep Home rather than the desktop More page. */
       if(key==="companion"){
-        showHome();
+        if(window.freedomCompanionSelect&&typeof window.freedomCompanionSelect.openForChange==="function"){
+          window.freedomCompanionSelect.openForChange();
+        }
         return;
       }
       if(typeof window.page==="function")window.page("more");
