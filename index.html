@@ -5407,11 +5407,6 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <section class="page" id="notes"><div class="notes-hero"><p class="notes-hero-desc">Payments, plans, goals and<br>journeys you don't want to forget.</p></div><div class="notes-actions"><button class="mini-btn" id="toggleAddNote" type="button">＋ Add note</button></div><article class="card note-card add-note-card is-editing" id="addNoteCard" data-color="yellow" hidden></article><div class="stack" id="notesList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="victories"><div class="victories-page"><div class="victories-confetti" aria-hidden="true"><span class="is-sparkle" style="left:18%;top:10%;background:#ffb078"></span><span class="is-diamond" style="left:34%;top:8%;background:#ff3f9b"></span><span class="is-confetti" style="left:52%;top:12%;background:#a855d8;transform:rotate(-28deg)"></span><span class="is-sparkle" style="left:66%;top:9%;background:#ff8a45"></span><span class="is-diamond" style="left:78%;top:14%;background:#d060c8"></span><span class="is-confetti" style="left:24%;top:16%;background:#ff4c97;transform:rotate(22deg)"></span><span class="is-sparkle" style="left:42%;top:18%;background:#efcbaa"></span><span class="is-diamond" style="left:58%;top:17%;background:#ffb078"></span><span class="is-confetti" style="left:72%;top:20%;background:#e889b4;transform:rotate(-16deg)"></span><span class="is-sparkle" style="left:12%;top:22%;background:#a855d8"></span><span class="is-diamond" style="left:86%;top:22%;background:#ff8a45"></span><span class="is-confetti" style="left:30%;top:28%;background:#ff3f9b;transform:rotate(12deg)"></span><span class="is-sparkle" style="left:48%;top:30%;background:#d060c8"></span><span class="is-diamond" style="left:64%;top:27%;background:#ff4c97"></span><span class="is-confetti" style="left:16%;top:34%;background:#ffb078;transform:rotate(-20deg)"></span><span class="is-sparkle" style="left:38%;top:36%;background:#ff8a45"></span><span class="is-diamond" style="left:55%;top:38%;background:#e889b4"></span><span class="is-confetti" style="left:70%;top:35%;background:#a855d8;transform:rotate(18deg)"></span><span class="is-sparkle" style="left:82%;top:40%;background:#ff3f9b"></span><span class="is-diamond" style="left:22%;top:42%;background:#efcbaa"></span><span class="is-confetti" style="left:44%;top:44%;background:#ff8a45;transform:rotate(-10deg)"></span><span class="is-sparkle" style="left:60%;top:46%;background:#d060c8"></span><span class="is-diamond" style="left:76%;top:48%;background:#ffb078"></span><span class="is-confetti" style="left:10%;top:48%;background:#ff4c97;transform:rotate(26deg)"></span><span class="is-sparkle" style="left:33%;top:50%;background:#a855d8"></span><span class="is-diamond" style="left:50%;top:52%;background:#e889b4"></span><span class="is-confetti" style="left:68%;top:51%;background:#ff3f9b;transform:rotate(-14deg)"></span><span class="is-sparkle" style="left:88%;top:50%;background:#ff8a45"></span></div><header class="victories-hero"><h1 class="victories-title">Victories<span class="victories-title-trophy" aria-hidden="true">🏆</span></h1><p class="victories-subtitle">The things you finished along the way.</p></header><div class="victories-sections" id="victoriesSections"></div></div></section>
-<section class="page" id="more"><div class="eyebrow">More</div><h1>The plan behind the numbers.</h1><p class="intro">A calm place for the extra information that does not need to compete with your progress.</p><div class="stack"><article class="card"><div class="label">Monthly freedom waiting</div><div class="value" id="monthlyFreedom"></div><div class="detail">The monthly repayments currently attached to accounts with a stated repayment.</div></article><article class="card"><h2>Product principle</h2><p class="empty-note">Even when finances are under control, carrying financial responsibility can still feel overwhelming. Freedom at 50 is designed to make that responsibility feel clearer, calmer and more manageable.</p></article><article class="card" id="moreDemo"><h2>Demo Mode</h2><p class="empty-note">Explore a fictional Freedom story. Your real numbers stay safely tucked away.</p></article>
-<article class="card" id="moreCompanion"><h2>Companion</h2><p class="empty-note">Patricia lives here when the companion layer needs its own space. For now, Home stays quiet unless there is a reason for her to appear.</p></article>
-<article class="card" id="moreSettings"><h2>Settings & privacy</h2><p class="empty-note">This HTML file stores edits only in this browser on this device. It does not connect to a bank or upload your figures anywhere.</p></article>
-<article class="card" id="moreReports"><h2>Reports</h2><p class="empty-note">Progress summaries and reporting views will live here.</p></article>
-<article class="card" id="moreBackup"><h2>Backup & export</h2><p class="empty-note">Open Backup from Home → More to export or restore a password-protected backup in the current Freedom interface. Freedom does not upload backups or keep your password.</p></article></div></section>
 </main></div>
 <nav class="bottom-nav" aria-label="Main navigation">
 <button class="nav-btn" data-page="home" type="button">
@@ -9893,6 +9888,14 @@ function page(id){
   if(window.FreedomDateRecognition&&typeof window.FreedomDateRecognition.onPageChange==="function"){
     window.FreedomDateRecognition.onPageChange(id);
   }
+  /* Legacy #more / Reports page removed — old hashes land on Home (mobile) or Overview. */
+  if(id==="more"){
+    if(typeof window.showHome==="function"){
+      window.showHome();
+      if(document.body.classList.contains("home183"))return;
+    }
+    id="overview";
+  }
   if(id==="home"){
     journeyNoteShowToken++;
     goalsNoteShowToken++;
@@ -12770,7 +12773,7 @@ function render(){
   const totalCurrent=current+(countHousePocket?state.housePocket:0);
   const pct=totalOriginal?Math.max(0,(totalOriginal-totalCurrent)/totalOriginal*100):0;
   const monthly=state.loans.reduce((s,x)=>s+x.payment,0)+((countHousePocket&&state.housePocket>0)?(Number(state.housePocketMonthly)||0):0);
-const overviewReturnedEl=byId("overviewReturned");const overviewProgressEl=byId("overviewProgress");if(overviewReturnedEl){const rv=euro0(loanReturned+hpReturned);if(overviewReturnedEl.textContent!==rv){freedomMotion.flashValue(overviewReturnedEl);overviewReturnedEl.textContent=rv;}}if(overviewProgressEl){const pv=Math.round(pct)+"%";if(overviewProgressEl.textContent!==pv){freedomMotion.flashValue(overviewProgressEl);overviewProgressEl.textContent=pv;}}if(byId("overviewProgressBar"))byId("overviewProgressBar").style.width=Math.min(100,pct)+"%";if(byId("overviewHouse"))byId("overviewHouse").textContent=euro0(state.houseFund);if(byId("overviewHoliday"))byId("overviewHoliday").textContent=euro0(state.holidayFund);if(byId("overviewSavings"))byId("overviewSavings").textContent=euro0(state.personalSavings);updateOverviewPensionCard();byId("monthlyFreedom").textContent=euro0(monthly);
+const overviewReturnedEl=byId("overviewReturned");const overviewProgressEl=byId("overviewProgress");if(overviewReturnedEl){const rv=euro0(loanReturned+hpReturned);if(overviewReturnedEl.textContent!==rv){freedomMotion.flashValue(overviewReturnedEl);overviewReturnedEl.textContent=rv;}}if(overviewProgressEl){const pv=Math.round(pct)+"%";if(overviewProgressEl.textContent!==pv){freedomMotion.flashValue(overviewProgressEl);overviewProgressEl.textContent=pv;}}if(byId("overviewProgressBar"))byId("overviewProgressBar").style.width=Math.min(100,pct)+"%";if(byId("overviewHouse"))byId("overviewHouse").textContent=euro0(state.houseFund);if(byId("overviewHoliday"))byId("overviewHoliday").textContent=euro0(state.holidayFund);if(byId("overviewSavings"))byId("overviewSavings").textContent=euro0(state.personalSavings);updateOverviewPensionCard();
 const hp=state.housePocket,hpm=state.housePocketMonthly;const hpProgress=Math.max(0,Math.min(100,(HOUSE_POCKET_START-hp)/HOUSE_POCKET_START*100));const next=nextLoan();
 const cleanEmptyOverview=!!state.overviewExcludeHousePocket&&!(state.loans&&state.loans.length);
 byId("victoryCard")?.classList.remove("is-empty-victory");
@@ -12959,7 +12962,7 @@ if(freedomPersonalLoadError){
 if(typeof window.freedomOpenHomeFromReminder==="function"&&window.freedomOpenHomeFromReminder({cleanUrl:true})){
   /* Handled: skip normal hash boot. */
 }else{
-const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home")page("home");else if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
+const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home"||initial==="more")page("home");else if(["overview","journey","goals","pension","notes","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
 }
 /* Bridge for whole-app welcome-back (defined outside this IIFE) to inspect pending
    completion celebrations without exposing the full app state. */
@@ -13586,25 +13589,21 @@ function freedomBootNavPreview(open){
         }
         return;
       }
-      if(typeof window.page==="function")window.page("more");
-      setTimeout(()=>{
-        const destinations={more:"more"};
-        const el=document.getElementById(destinations[key]||"more");
-        if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
-      },60);
+      /* Unknown More keys stay on Home — never open the retired legacy More page. */
+      showHome();
     });
   });
 
   window.addEventListener("popstate",()=>{
     if(typeof window.page!=="function")return;
     const hash=location.hash.slice(1);
-    if(hash==="home"||hash===""){
+    if(hash==="home"||hash===""||hash==="more"){
       window.__freedomIgnoreHistory=true;
       try{ showHome(); }
       finally{ window.__freedomIgnoreHistory=false; }
       return;
     }
-    const id=["overview","journey","goals","pension","notes","more","archive","victories"].includes(hash)?hash:(hash==="archiveHub"?"archive":"");
+    const id=["overview","journey","goals","pension","notes","archive","victories"].includes(hash)?hash:(hash==="archiveHub"?"archive":"");
     if(!id)return;
     window.__freedomIgnoreHistory=true;
     try{ window.page(id); }
@@ -13622,7 +13621,11 @@ function freedomBootNavPreview(open){
       return;
     }
     const hash=location.hash.slice(1);
-    if(["overview","journey","goals","pension","notes","more","archive","victories"].includes(hash)||hash==="archiveHub") return;
+    if(hash==="more"){
+      showHome();
+      return;
+    }
+    if(["overview","journey","goals","pension","notes","archive","victories"].includes(hash)||hash==="archiveHub") return;
     if(hash&&hash!=="home")return;
     if(!document.body.classList.contains("home183")) return;
     showHome();
