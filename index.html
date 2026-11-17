@@ -3493,10 +3493,12 @@ body.home183 .patricia-note-layer,
   position:absolute;inset:13% 16% 26% 13%;display:flex;flex-direction:column;
   justify-content:flex-start;gap:2px;overflow:hidden;
 }
+/* All sticky notes: handwriting only (paper stays square).
+   Tiny left shift keeps tilted text optically centred on the paper. */
 body.home183 .patricia-note-body,
 .patricia-note.is-demo-sticky .patricia-note-body{
   inset:18% 8% 24% 10%;gap:3px;justify-content:center;
-  transform:rotate(-2deg);transform-origin:50% 50%;
+  transform:rotate(-2deg) translateX(-2%);transform-origin:50% 50%;
 }
 .patricia-note-text{
   margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
@@ -3524,9 +3526,9 @@ body.home183 .patricia-note-text,
 .patricia-note.is-demo-sticky[data-note-id="goalsFirst"] .patricia-note-gap{
   height:7px;margin:0;padding:0;flex-shrink:0;
 }
-/* Pension: two short paragraphs — roomy Caveat, same sticky shell as Journey/Goals */
+/* Pension: shorter approved copy — roomier inset so handwriting breathes */
 .patricia-note.is-demo-sticky[data-note-id="pensionFirst"] .patricia-note-body{
-  inset:19% 9% 25% 10%;gap:3px;justify-content:center;
+  inset:21% 10% 27% 11%;gap:8px;justify-content:center;
 }
 .patricia-note.is-demo-sticky[data-note-id="pensionFirst"] .patricia-note-text{
   font-size:clamp(18px,4.9vw,20px);line-height:1.13;
@@ -8125,7 +8127,7 @@ const PATRICIA_NOTE_COPY={
   home:{id:"home",text:"That credit card has €200 left.\njust saying...",doodle:"patricia-eyes.png",sticky:true},
   journeyFirst:{id:"journeyFirst",text:"This is where we keep the\nthings we're getting rid of.\nFinancially speaking.\nI'm not running a skip.",sticky:true},
   goalsFirst:{id:"goalsFirst",text:"This is where the good\nstuff lives.\n\nHouses. Japan. Runaway money.\n\nPersonally, I'd add a\nfrozen cocktail machine.",sticky:true},
-  pensionFirst:{id:"pensionFirst",text:"Keep track of your pension savings here, whether you have one pension or several.\n\nAdd each pension to see how much you've built towards your future.",sticky:true},
+  pensionFirst:{id:"pensionFirst",text:"Keep track of your pension savings here, whether you have one or several.\n\nSee how much you've built towards your future.",sticky:true},
   creditCardComplete:{id:"creditCardComplete",text:"YES! You did it! That credit card is officially history.\nI'd suggest a moment of silence, but I prefer frozen cocktails.",doodle:"patricia-celebration.png"},
   lifeHappens:{id:"lifeHappens",text:"Life happens. Sometimes the plan needs a little detour.\nWe're flexible. My knees, less so."},
   runawayMoney:{id:"runawayMoney",text:"Runaway Money just got bigger.\nNot suggesting anything. Just admiring the options.",doodle:"patricia-eyes.png"}

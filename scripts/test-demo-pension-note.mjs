@@ -7,9 +7,9 @@ import puppeteer from "puppeteer-core";
 
 const index = fs.readFileSync("index.html", "utf8");
 const APPROVED =
-  "Keep track of your pension savings here, whether you have one pension or several.\n\nAdd each pension to see how much you've built towards your future.";
+  "Keep track of your pension savings here, whether you have one or several.\n\nSee how much you've built towards your future.";
 const APPROVED_SOURCE =
-  "Keep track of your pension savings here, whether you have one pension or several.\\n\\nAdd each pension to see how much you've built towards your future.";
+  "Keep track of your pension savings here, whether you have one or several.\\n\\nSee how much you've built towards your future.";
 
 assert.match(index, /pensionFirst/);
 assert.match(index, /handleDemoPensionShown/);
