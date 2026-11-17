@@ -71,8 +71,20 @@ async function main() {
   );
   assert.equal(version, "Web app v1.8.6.160");
 
+  /* Real Reminders UI: never assign testWrap.hidden in the test. */
   await page.evaluate(() => {
+    window.FREEDOM_PUSH = Object.assign({}, window.FREEDOM_PUSH, {
+      apiBase: "https://freedom-reminders.dorothy-yakon.workers.dev",
+      vapidPublicKey: "B".padEnd(88, "A")
+    });
+    try {
+      Object.defineProperty(Notification, "permission", {
+        configurable: true,
+        get: () => "granted"
+      });
+    } catch (e) {}
     window.FreedomReminders._setDemoModeForTests(false);
+    document.body.classList.remove("demo-mode-active");
     window.setInternalTestEnabled(false);
     window.FreedomReminders.setChoice("keep");
     window.openFreedomRemindersPanel();
@@ -82,31 +94,23 @@ async function main() {
   const publicState = await page.evaluate(() => {
     const panel = document.getElementById("freedomRemindersPanelOverlay");
     const wrap = document.getElementById("freedomRemindersTestWrap");
-    window.FreedomReminders.renderPanel();
-    /* Force ordinary gate evaluation with keep + no internal */
-    if (wrap) {
-      wrap.hidden = !(
-        false /* force public path */
-      );
-      wrap.hidden = true;
-      const onWant =
-        window.FreedomReminders.getChoice() === "keep" &&
-        !window.isInternalTestMode();
-      void onWant;
-    }
+    const avail = window.FreedomReminders.availability();
     return {
       panelOpen: panel && !panel.hidden,
+      availOk: !!avail.ok,
+      remindersOn: window.FreedomReminders.isEffectivelyOn(),
       testHidden: wrap ? wrap.hidden : true,
       internal: window.isInternalTestMode(),
       escapeBound: panel?.dataset.escapeBound === "1",
-      activeIsToggle:
-        document.activeElement === document.getElementById("freedomRemindersToggle") ||
-        document.activeElement === document.getElementById("freedomRemindersPanelClose")
+      confirm: document.getElementById("freedomRemindersConfirmText")?.textContent?.trim()
     };
   });
   assert.equal(publicState.panelOpen, true);
+  assert.equal(publicState.availOk, true);
+  assert.equal(publicState.remindersOn, true);
   assert.equal(publicState.internal, false);
   assert.equal(publicState.testHidden, true);
+  assert.equal(publicState.confirm, "Your reminders are on");
   assert.equal(publicState.escapeBound, true);
   console.log("PASS: Reminders Escape bound; test hidden without internal mode");
 
@@ -124,29 +128,41 @@ async function main() {
   assert.equal(afterEsc.home, true);
   console.log("PASS: Escape closes Reminders and returns Home");
 
-  /* Internal mode reveals test when reminders kept on */
+  /* Internal mode + active reminders → real render shows test button */
   await page.evaluate(() => {
     window.setInternalTestEnabled(true);
     window.FreedomReminders.setChoice("keep");
     window.openFreedomRemindersPanel();
-    const wrap = document.getElementById("freedomRemindersTestWrap");
-    const avail = window.FreedomReminders.availability();
-    if (wrap) {
-      wrap.hidden = !(
-        window.isInternalTestMode() &&
-        window.FreedomReminders.getChoice() === "keep" &&
-        !document.body.classList.contains("demo-mode-active") &&
-        (avail.ok || true)
-      );
-    }
   });
+  await page.waitForSelector("#freedomRemindersPanelOverlay:not([hidden])");
   const internal = await page.evaluate(() => ({
     testHidden: document.getElementById("freedomRemindersTestWrap")?.hidden === true,
-    label: document.getElementById("freedomRemindersTestBtn")?.textContent?.trim()
+    label: document.getElementById("freedomRemindersTestBtn")?.textContent?.trim(),
+    remindersOn: window.FreedomReminders.isEffectivelyOn(),
+    internal: window.isInternalTestMode()
   }));
+  assert.equal(internal.internal, true);
+  assert.equal(internal.remindersOn, true);
   assert.equal(internal.testHidden, false);
   assert.equal(internal.label, "Send test reminder");
   console.log("PASS: Internal testing shows Send test reminder");
+
+  /* Disable internal testing → real render hides it again while reminders stay on */
+  await page.evaluate(() => {
+    window.setInternalTestEnabled(false);
+    window.FreedomReminders.renderPanel();
+  });
+  const afterInternalOff = await page.evaluate(() => ({
+    testHidden: document.getElementById("freedomRemindersTestWrap")?.hidden === true,
+    remindersOn: window.FreedomReminders.isEffectivelyOn(),
+    internal: window.isInternalTestMode(),
+    confirm: document.getElementById("freedomRemindersConfirmText")?.textContent?.trim()
+  }));
+  assert.equal(afterInternalOff.internal, false);
+  assert.equal(afterInternalOff.remindersOn, true);
+  assert.equal(afterInternalOff.testHidden, true);
+  assert.equal(afterInternalOff.confirm, "Your reminders are on");
+  console.log("PASS: Disabling internal testing hides Send test reminder again");
 
   /* Backup panel Escape */
   await page.evaluate(() => {
