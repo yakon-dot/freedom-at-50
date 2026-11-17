@@ -25,7 +25,7 @@ assert.match(
 /* Shared sticky rule tilts handwriting on ALL sticky notes (Home + Demo). */
 assert.match(
   index,
-  /body\.home183 \.patricia-note-body,\s*\.patricia-note\.is-demo-sticky \.patricia-note-body\{[^}]*transform:rotate\(-2deg\)/
+  /body\.home183 \.patricia-note-body,\s*\.patricia-note\.is-demo-sticky \.patricia-note-body\{[^}]*transform:rotate\(-2deg\) translateX\(-2%\)/
 );
 /* Paper itself must not be rotated */
 assert.equal(/patricia-note-paper\{[^}]*rotate/.test(index), false);

@@ -3493,11 +3493,12 @@ body.home183 .patricia-note-layer,
   position:absolute;inset:13% 16% 26% 13%;display:flex;flex-direction:column;
   justify-content:flex-start;gap:2px;overflow:hidden;
 }
-/* All sticky notes: handwriting only (paper stays square). */
+/* All sticky notes: handwriting only (paper stays square).
+   Tiny left shift keeps tilted text optically centred on the paper. */
 body.home183 .patricia-note-body,
 .patricia-note.is-demo-sticky .patricia-note-body{
   inset:18% 8% 24% 10%;gap:3px;justify-content:center;
-  transform:rotate(-2deg);transform-origin:50% 50%;
+  transform:rotate(-2deg) translateX(-2%);transform-origin:50% 50%;
 }
 .patricia-note-text{
   margin:0;font-family:"Caveat","Segoe Print","Bradley Hand",cursive;
