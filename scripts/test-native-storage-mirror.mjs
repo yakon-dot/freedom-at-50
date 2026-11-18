@@ -15,10 +15,17 @@ const nativeSrc = fs.readFileSync(path.join(root, "freedom-native-storage.js"), 
 assert.match(index, /freedom-native-storage\.js/);
 assert.match(index, /freedomQueueNativeMirrorAfterLocalWrite/);
 assert.match(index, /freedomNativeBootHydrate/);
+assert.match(index, /freedomNativeStorageReady/);
+assert.match(index, /freedomCompleteAppBoot/);
+assert.match(index, /Reset was cancelled so your data cannot come back unexpectedly/);
+assert.match(index, /could not update the native recovery copy/);
 assert.match(index, /FreedomNativeStorage/);
 assert.match(nativeSrc, /DIRECTORY_DATA|"DATA"/);
 assert.match(nativeSrc, /registerPlugin\("Filesystem"\)/);
 assert.match(nativeSrc, /decideHydrateAction/);
+assert.match(nativeSrc, /enqueueMirrorOp/);
+assert.match(nativeSrc, /mirrorEpoch/);
+assert.match(nativeSrc, /empty-local-rich-mirror/);
 assert.equal(/Preferences/.test(nativeSrc), false, "Do not store financial mirrors in UserDefaults Preferences");
 console.log("PASS: source contracts for native storage mirror");
 
@@ -116,7 +123,19 @@ const metaKeys = [
   assert.equal(empty.action, "empty");
   const bad = api.parseMirrorEnvelope('{"version":1,"state":[]}');
   assert.equal(bad.ok, false);
-  console.log("PASS: empty devices stay empty; invalid mirror rejected");
+  const emptyLocalRichMirror = api.decideHydrateAction({
+    local: {
+      status: "valid",
+      state: { loans: [], customGoals: [], pensions: [], notes: [] }
+    },
+    mirror: {
+      ok: true,
+      envelope: { version: 1, state: sampleState, meta: { "freedom50-companion-id-v1": "patricia" } }
+    }
+  });
+  assert.equal(emptyLocalRichMirror.action, "restore-from-mirror");
+  assert.equal(emptyLocalRichMirror.reason, "empty-local-rich-mirror");
+  console.log("PASS: empty devices stay empty; empty local cannot wipe richer mirror at boot");
 }
 
 {
@@ -256,6 +275,101 @@ const metaKeys = [
   const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
   assert.ok(pkg.dependencies["@capacitor/filesystem"]);
   console.log("PASS: Capacitor prepare + SW + package include native storage assets");
+}
+
+{
+  const files = new Map();
+  const writeLog = [];
+  let releaseFirstWrite = null;
+  let firstWriteStarted = false;
+  const api = loadNativeApi({
+    isNativePlatform: () => true,
+    isPluginAvailable: name => name === "Filesystem",
+    registerPlugin: () => ({
+      async readFile({ path }) {
+        if (!files.has(path)) throw new Error("File does not exist");
+        return { data: files.get(path) };
+      },
+      async writeFile({ path, data }) {
+        if (!firstWriteStarted) {
+          firstWriteStarted = true;
+          await new Promise(resolve => {
+            releaseFirstWrite = resolve;
+          });
+        } else {
+          await new Promise(resolve => setTimeout(resolve, 5));
+        }
+        const parsed = JSON.parse(data);
+        writeLog.push(parsed.state.tag);
+        files.set(path, data);
+        return { uri: path };
+      },
+      async deleteFile({ path }) {
+        files.delete(path);
+      }
+    })
+  });
+
+  const storage = memoryStorage({
+    "freedom50-mobile-v1": JSON.stringify({ ...sampleState, tag: "first" })
+  });
+  const first = api.mirrorFromLocalStorage({
+    storage,
+    storageKey: "freedom50-mobile-v1",
+    metaKeys,
+    allowEmpty: true
+  });
+  await Promise.resolve();
+  await Promise.resolve();
+  assert.equal(typeof releaseFirstWrite, "function", "first write should be waiting");
+
+  storage.setItem(
+    "freedom50-mobile-v1",
+    JSON.stringify({ ...sampleState, tag: "second" })
+  );
+  const second = api.mirrorFromLocalStorage({
+    storage,
+    storageKey: "freedom50-mobile-v1",
+    metaKeys,
+    allowEmpty: true
+  });
+
+  releaseFirstWrite();
+  const results = await Promise.all([first, second]);
+  assert.equal(results[0].ok, true);
+  assert.equal(results[1].ok, true);
+  assert.deepEqual(writeLog, ["first", "second"]);
+  const finalEnvelope = api.parseMirrorEnvelope(files.get(api.path));
+  assert.equal(finalEnvelope.ok, true);
+  assert.equal(finalEnvelope.envelope.state.tag, "second");
+  console.log("PASS: rapid consecutive saves serialize; newest state wins after delayed writes");
+
+  storage.setItem(
+    "freedom50-mobile-v1",
+    JSON.stringify({ ...sampleState, tag: "stale-after-clear" })
+  );
+  const stale = api.mirrorFromLocalStorage({
+    storage,
+    storageKey: "freedom50-mobile-v1",
+    metaKeys,
+    allowEmpty: true
+  });
+  const cleared = api.clearMirror();
+  const staleResult = await stale;
+  const clearResult = await cleared;
+  assert.equal(clearResult.ok, true);
+  assert.equal(files.has(api.path), false);
+  assert.ok(
+    staleResult.ok === false || staleResult.ok === true,
+    "stale write settles without throwing"
+  );
+  if (staleResult.ok) {
+    /* If the stale write landed before clear ran, clear must still leave no file. */
+    assert.equal(files.has(api.path), false);
+  } else {
+    assert.equal(staleResult.error, "superseded");
+  }
+  console.log("PASS: clearMirror invalidates in-flight writes so reset cannot resurrect data");
 }
 
 console.log("Summary: native storage mirror tests passed");

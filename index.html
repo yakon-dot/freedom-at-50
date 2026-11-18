@@ -4877,7 +4877,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     if(!companionSelect||companionSelect.hidden)presentCompanionSelect();
     else startCompanionEntrance();
   }
-  function goMakeYoursToCompanion(){
+  async function goMakeYoursToCompanion(){
     /*
       Start my Freedom → Companion Selection (not Home yet).
       Exit Demo already left Demo Mode and may have shown Home under the sage
@@ -4889,7 +4889,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     stopButtonSheen(makeYoursStart,"makeYoursStart");
     setCompanionPending(true);
     if(typeof window.freedomDev==="object"&&typeof window.freedomDev.activateFreshPersonal==="function"){
-      window.freedomDev.activateFreshPersonal({skipHome:true});
+      await window.freedomDev.activateFreshPersonal({skipHome:true});
     }
     /* Authoritative next destination before uncovering sage. */
     presentCompanionSelect({beneathCover:true});
@@ -7288,6 +7288,26 @@ function showSaved(){
 }
 function persistDemoSession(){sessionStorage.setItem(DEMO_SESSION_KEY,JSON.stringify({demoMode:true,state,demoSession}));}
 let freedomNativePersistGen=0;
+function freedomIsNativeApp(){
+  return !!(window.FreedomNativeStorage&&typeof window.FreedomNativeStorage.isNative==="function"&&window.FreedomNativeStorage.isNative());
+}
+/* Native: block personal saves until hydrate finishes so empty boot state cannot wipe a valid mirror. */
+let freedomNativeStorageReady=!freedomIsNativeApp();
+if(!freedomNativeStorageReady){
+  try{
+    document.documentElement.dataset.freedomNativeBoot="1";
+    document.documentElement.style.pointerEvents="none";
+  }catch(e){}
+}
+function freedomMarkNativeStorageReady(){
+  freedomNativeStorageReady=true;
+  try{
+    if(document.documentElement.dataset.freedomNativeBoot==="1"){
+      delete document.documentElement.dataset.freedomNativeBoot;
+      document.documentElement.style.pointerEvents="";
+    }
+  }catch(e){}
+}
 function freedomNativeMirrorMetaKeys(){
   try{
     return Array.isArray(FREEDOM_BACKUP_META_KEYS)?FREEDOM_BACKUP_META_KEYS:[];
@@ -7296,7 +7316,7 @@ function freedomNativeMirrorMetaKeys(){
   }
 }
 function freedomQueueNativeMirrorAfterLocalWrite(){
-  if(!window.FreedomNativeStorage||typeof window.FreedomNativeStorage.isNative!=="function"||!window.FreedomNativeStorage.isNative()){
+  if(!freedomIsNativeApp()){
     showSaved();
     return;
   }
@@ -7322,6 +7342,11 @@ function persist(){
   if(demoMode){persistDemoSession();return;}
   /* Corrupt/unreadable personal KEY: never overwrite the stored blob. */
   if(freedomPersonalLoadError)return;
+  if(!freedomNativeStorageReady){
+    console.warn("Freedom is still preparing native storage; personal save blocked.");
+    showSaveFailureWarning();
+    return;
+  }
   try{
     localStorage.setItem(KEY,JSON.stringify(state));
   }catch(e){
@@ -7346,20 +7371,27 @@ function recoverPersonalStorageFromLoadError(){
   state=buildFreshUserState();
   try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){console.warn("Freedom could not write fresh personal data:",e);freedomPersonalLoadError="unreadable";return;}
   realStateSnapshot=null;
-  if(window.FreedomNativeStorage&&typeof window.FreedomNativeStorage.writeSnapshot==="function"){
-    window.FreedomNativeStorage.writeSnapshot(state,typeof collectFreedomBackupMeta==="function"?collectFreedomBackupMeta():{}).catch(()=>{});
+  if(freedomIsNativeApp()&&typeof window.FreedomNativeStorage.writeSnapshot==="function"){
+    window.FreedomNativeStorage.writeSnapshot(state,typeof collectFreedomBackupMeta==="function"?collectFreedomBackupMeta():{}).catch(err=>{
+      console.warn("Freedom could not update native mirror after storage recovery:",err);
+    });
   }
   if(typeof render==="function")render();
 }
 async function freedomNativeBootHydrate(){
-  if(demoMode)return;
+  if(demoMode){
+    freedomMarkNativeStorageReady();
+    return{ok:true,skipped:true};
+  }
   if(!window.FreedomNativeStorage||typeof window.FreedomNativeStorage.hydrateLocalStorage!=="function"){
     if(freedomPersonalLoadError)recoverPersonalStorageFromLoadError();
-    return;
+    freedomMarkNativeStorageReady();
+    return{ok:true,skipped:true};
   }
   if(!window.FreedomNativeStorage.isNative()){
     if(freedomPersonalLoadError)recoverPersonalStorageFromLoadError();
-    return;
+    freedomMarkNativeStorageReady();
+    return{ok:true,skipped:true};
   }
   let result=null;
   try{
@@ -7367,19 +7399,20 @@ async function freedomNativeBootHydrate(){
       storageKey:KEY,
       metaKeys:freedomNativeMirrorMetaKeys(),
       loadError:freedomPersonalLoadError,
+      hasSavedRecords:personalStateHasSavedRecords,
       reload:true
     });
   }catch(e){
     console.warn("Freedom native storage hydrate failed:",e);
   }
-  if(result&&result.reloaded)return;
+  if(result&&result.reloaded)return result;
   if(result&&result.action==="needs-user-recover"){
     recoverPersonalStorageFromLoadError();
-    return;
-  }
-  if(freedomPersonalLoadError&&!(result&&result.action==="restore-from-mirror")){
+  }else if(freedomPersonalLoadError&&!(result&&result.action==="restore-from-mirror")){
     recoverPersonalStorageFromLoadError();
   }
+  freedomMarkNativeStorageReady();
+  return result||{ok:true};
 }
 /* Password-protected backups (v2): Web Crypto PBKDF2-HMAC-SHA-256 + AES-256-GCM.
    Work factor: 210000 PBKDF2 iterations — practical on current iPhones / Safari PWAs while
@@ -7703,7 +7736,7 @@ async function exportFreedomBackup(){
     clearFreedomBackupPasswordFields();
   }
 }
-function writeFreedomBackupToDevice(checked){
+async function writeFreedomBackupToDevice(checked){
   try{
     /* Replace — never merge with current personal records.
        Allowed even when freedomPersonalLoadError is set: restore is the recovery path
@@ -7717,14 +7750,13 @@ function writeFreedomBackupToDevice(checked){
     });
     freedomPersonalLoadError=null;
     try{sessionStorage.removeItem(DEMO_SESSION_KEY);}catch(e){}
-    const reloadNow=()=>{location.reload();};
-    if(window.FreedomNativeStorage&&window.FreedomNativeStorage.isNative&&window.FreedomNativeStorage.isNative()){
-      window.FreedomNativeStorage.writeSnapshot(checked.state,checked.meta||{})
-        .catch(err=>console.warn("Freedom could not update native mirror after backup restore:",err))
-        .finally(reloadNow);
-      return{ok:true};
+    if(freedomIsNativeApp()){
+      const mirrored=await window.FreedomNativeStorage.writeSnapshot(checked.state,checked.meta||{});
+      if(!mirrored||!mirrored.ok){
+        return{ok:false,error:"Restored data was saved on this device, but Freedom could not update the native recovery copy. Try again before closing Freedom."};
+      }
     }
-    reloadNow();
+    location.reload();
     return{ok:true};
   }catch(e){
     return{ok:false,error:"Could not write the restored data on this device."};
@@ -7888,7 +7920,9 @@ function initFreedomBackupUi(){
   };
   window.FreedomNativeStorageBoot={
     hydrate:freedomNativeBootHydrate,
-    queueMirror:freedomQueueNativeMirrorAfterLocalWrite
+    queueMirror:freedomQueueNativeMirrorAfterLocalWrite,
+    isReady:function(){return freedomNativeStorageReady;},
+    markReady:freedomMarkNativeStorageReady
   };
 }
 const REMINDERS_CHOICE_KEY="freedom50-reminders-choice-v1";
@@ -9228,12 +9262,20 @@ async function resetFreedomFreshStart(){
   try{
     if(typeof freedomUnsubscribePush==="function")await freedomUnsubscribePush();
   }catch(e){}
-  clearFreedomStorageKeys();
-  try{
-    if(window.FreedomNativeStorage&&typeof window.FreedomNativeStorage.clearMirror==="function"){
-      await window.FreedomNativeStorage.clearMirror();
+  /* Clear native mirror first. If this fails, abort so old finances cannot return later. */
+  if(freedomIsNativeApp()&&typeof window.FreedomNativeStorage.clearMirror==="function"){
+    let cleared=null;
+    try{
+      cleared=await window.FreedomNativeStorage.clearMirror();
+    }catch(e){
+      cleared={ok:false,error:e};
     }
-  }catch(e){}
+    if(!cleared||!cleared.ok){
+      window.alert("Freedom could not clear the native recovery copy on this device.\n\nReset was cancelled so your data cannot come back unexpectedly from the recovery copy.\n\nPlease try again.");
+      return;
+    }
+  }
+  clearFreedomStorageKeys();
   try{localStorage.setItem(KEY,JSON.stringify(buildFreshUserState()));}catch(e){}
   location.replace(location.pathname+location.search);
 }
@@ -9272,7 +9314,7 @@ function readStoredPersonalStateForGuard(){
     return null;
   }
 }
-function activateFreshPersonal(opts){
+async function activateFreshPersonal(opts){
   /* First-time Start my Freedom: empty personal Journey/Goals/Pension records.
      Demo samples stay in buildCanonicalDemoState().
      If saved personal records already exist (even when onboarding markers are
@@ -9287,6 +9329,11 @@ function activateFreshPersonal(opts){
     syncDemoUi();
     render();
     if(!opts.skipHome&&typeof window.showHome==="function")window.showHome();
+    return;
+  }
+  if(!freedomNativeStorageReady){
+    console.warn("Freedom is still preparing native storage; fresh personal start blocked.");
+    showSaveFailureWarning();
     return;
   }
   const stored=readStoredPersonalStateForGuard();
@@ -9313,9 +9360,20 @@ function activateFreshPersonal(opts){
     return;
   }
   state=buildFreshUserState();
-  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
-  if(window.FreedomNativeStorage&&typeof window.FreedomNativeStorage.writeSnapshot==="function"){
-    window.FreedomNativeStorage.writeSnapshot(state,typeof collectFreedomBackupMeta==="function"?collectFreedomBackupMeta():{}).catch(()=>{});
+  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){
+    showSaveFailureWarning();
+    return;
+  }
+  if(freedomIsNativeApp()&&typeof window.FreedomNativeStorage.writeSnapshot==="function"){
+    const mirrored=await window.FreedomNativeStorage.writeSnapshot(
+      state,
+      typeof collectFreedomBackupMeta==="function"?collectFreedomBackupMeta():{}
+    );
+    if(!mirrored||!mirrored.ok){
+      console.warn("Freedom could not update native mirror for fresh personal start:",mirrored&&mirrored.error);
+      showSaveFailureWarning();
+      return;
+    }
   }
   realStateSnapshot=null;
   dismissAllPatriciaNotes();
@@ -13292,19 +13350,25 @@ document.addEventListener("click",e=>{
   if(e.target.closest("#demoMenu")||e.target.closest("#demo183"))return;
   closeDemoMenu();
 });
-fillForm();render();initFreedomBackupUi();initFreedomRemindersUi();
-setTimeout(()=>{
+async function freedomCompleteAppBoot(){
+  /* Native: finish hydrate/recovery before first interactive render + saves. */
   try{
-    if(typeof freedomNativeBootHydrate==="function")freedomNativeBootHydrate();
+    if(typeof freedomNativeBootHydrate==="function")await freedomNativeBootHydrate();
     else if(freedomPersonalLoadError)recoverPersonalStorageFromLoadError();
-  }catch(e){}
-},0);
-/* Reminder notification deep-link (?opened=reminder) — Home + one-shot companion check-in. */
-if(typeof window.freedomOpenHomeFromReminder==="function"&&window.freedomOpenHomeFromReminder({cleanUrl:true})){
-  /* Handled: skip normal hash boot. */
-}else{
-const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home"||initial==="more")page("home");else if(["overview","journey","goals","pension","notes","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
+  }catch(e){
+    console.warn("Freedom boot storage prepare failed:",e);
+    freedomMarkNativeStorageReady();
+  }
+  if(freedomIsNativeApp()&&!freedomNativeStorageReady)freedomMarkNativeStorageReady();
+  fillForm();render();initFreedomBackupUi();initFreedomRemindersUi();
+  /* Reminder notification deep-link (?opened=reminder) — Home + one-shot companion check-in. */
+  if(typeof window.freedomOpenHomeFromReminder==="function"&&window.freedomOpenHomeFromReminder({cleanUrl:true})){
+    /* Handled: skip normal hash boot. */
+  }else{
+    const initial=location.hash.slice(1);if(initial==="archiveHub")page("archive");else if(initial==="home"||initial==="more")page("home");else if(["overview","journey","goals","pension","notes","archive","victories"].includes(initial))page(initial);else if(document.querySelector(".page.active")){const boot=document.querySelector(".page.active").id;if(["overview","journey","goals","pension","notes"].includes(boot)){if(!document.body.classList.contains("home183")){freedomMotion.activePage=boot;freedomMotion.pageEnter(boot);}else{freedomMotion.activePage=null;}}else if(boot==="archive"){freedomMotion.activePage="archive";page("archive");}else if(boot==="victories"){freedomMotion.activePage="victories";page("victories");}}
+  }
 }
+void freedomCompleteAppBoot();
 /* Bridge for whole-app welcome-back (defined outside this IIFE) to inspect pending
    completion celebrations without exposing the full app state. */
 window.FreedomWelcomeBackBridge={

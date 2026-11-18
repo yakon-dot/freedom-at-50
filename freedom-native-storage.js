@@ -5,6 +5,9 @@
  * On native iOS, a mirror is written to the app Data directory via
  * @capacitor/filesystem so WebView localStorage loss can be recovered.
  *
+ * Writes are serialized on one queue. clearMirror bumps an epoch so a later
+ * queued write cannot recreate financial data after a successful reset clear.
+ *
  * Privacy: the mirror is plaintext JSON inside the app sandbox (iOS Data
  * Protection). It is not application-level encrypted. Prefer encrypted
  * Backup & export for off-device copies. This module no-ops on the web PWA.
@@ -16,6 +19,8 @@
   var MIRROR_PATH = "freedom-native-mirror-v1.json";
   var DIRECTORY_DATA = "DATA";
   var ENCODING_UTF8 = "utf8";
+  var mirrorEpoch = 0;
+  var opChain = Promise.resolve();
 
   function isNativePlatform() {
     try {
@@ -36,6 +41,17 @@
     } catch (e) {
       return null;
     }
+  }
+
+  function enqueueMirrorOp(fn) {
+    var run = opChain.then(function () {
+      return fn();
+    });
+    opChain = run.then(
+      function () {},
+      function () {}
+    );
+    return run;
   }
 
   function isPlainObject(value) {
@@ -78,15 +94,51 @@
     }
   }
 
+  function defaultHasSavedRecords(st) {
+    if (!isPlainObject(st)) return false;
+    if (Array.isArray(st.loans) && st.loans.length) return true;
+    if (Array.isArray(st.customGoals) && st.customGoals.length) return true;
+    if (Array.isArray(st.pensions) && st.pensions.length) return true;
+    if (Array.isArray(st.notes) && st.notes.length) return true;
+    if (Array.isArray(st.archivedJourneys) && st.archivedJourneys.length) return true;
+    if (Array.isArray(st.archivedGoals) && st.archivedGoals.length) return true;
+    if (Array.isArray(st.archivedPensions) && st.archivedPensions.length) return true;
+    if (Array.isArray(st.victories) && st.victories.length) return true;
+    if ((Number(st.houseFund) || 0) > 0) return true;
+    if ((Number(st.holidayFund) || 0) > 0) return true;
+    if ((Number(st.personalSavings) || 0) > 0) return true;
+    if ((Number(st.housePocket) || 0) > 0) return true;
+    var life = st.goalLifetimeAdded;
+    if (life && typeof life === "object") {
+      for (var k of Object.keys(life)) {
+        if ((Number(life[k]) || 0) > 0) return true;
+      }
+    }
+    return false;
+  }
+
   /**
    * Pure decision helper — safe to unit test without Capacitor.
-   * Never chooses to overwrite valid localStorage with empty/default data.
+   * Never chooses to overwrite valid localStorage with empty/default data,
+   * and never prefers an empty local shell over a richer valid mirror at boot.
    */
   function decideHydrateAction(input) {
     var ls = input && input.local ? input.local : { status: "missing", state: null };
     var mirror = input && input.mirror && input.mirror.ok ? input.mirror.envelope : null;
+    var hasSavedRecords =
+      input && typeof input.hasSavedRecords === "function"
+        ? input.hasSavedRecords
+        : defaultHasSavedRecords;
 
     if (ls.status === "valid") {
+      if (mirror && !hasSavedRecords(ls.state) && hasSavedRecords(mirror.state)) {
+        return {
+          action: "restore-from-mirror",
+          state: mirror.state,
+          meta: mirror.meta || {},
+          reason: "empty-local-rich-mirror"
+        };
+      }
       return { action: "keep-local", seedMirror: true, localState: ls.state };
     }
     if (mirror) {
@@ -133,13 +185,15 @@
     }
   }
 
-  async function writeSnapshot(state, meta) {
+  async function writeSnapshotNow(state, meta, epochSeen) {
     if (!isNativePlatform()) return { ok: true, skipped: true };
     if (!isPlainObject(state)) return { ok: false, error: "invalid-state" };
+    if (epochSeen !== mirrorEpoch) return { ok: false, error: "superseded" };
     var fs = getFilesystem();
     if (!fs) return { ok: false, error: "filesystem-unavailable" };
     var envelope = buildEnvelope(state, meta);
     try {
+      if (epochSeen !== mirrorEpoch) return { ok: false, error: "superseded" };
       await fs.writeFile({
         path: MIRROR_PATH,
         data: JSON.stringify(envelope),
@@ -147,29 +201,44 @@
         encoding: ENCODING_UTF8,
         recursive: true
       });
+      if (epochSeen !== mirrorEpoch) return { ok: false, error: "superseded" };
       return { ok: true, savedAt: envelope.savedAt };
     } catch (e) {
       return { ok: false, error: e };
     }
   }
 
-  async function clearMirror() {
-    if (!isNativePlatform()) return { ok: true, skipped: true };
-    var fs = getFilesystem();
-    if (!fs) return { ok: false, error: "filesystem-unavailable" };
-    try {
-      await fs.deleteFile({
-        path: MIRROR_PATH,
-        directory: DIRECTORY_DATA
-      });
-      return { ok: true };
-    } catch (e) {
-      var message = String((e && e.message) || e || "");
-      if (/does not exist|not found|ENOENT|MISSING/i.test(message)) {
-        return { ok: true, missing: true };
+  function writeSnapshot(state, meta) {
+    if (!isNativePlatform()) return Promise.resolve({ ok: true, skipped: true });
+    var epochSeen = mirrorEpoch;
+    return enqueueMirrorOp(function () {
+      return writeSnapshotNow(state, meta, epochSeen);
+    });
+  }
+
+  function clearMirror() {
+    if (!isNativePlatform()) return Promise.resolve({ ok: true, skipped: true });
+    /* Invalidate any writes already queued so they cannot recreate the file after clear. */
+    mirrorEpoch += 1;
+    var epochSeen = mirrorEpoch;
+    return enqueueMirrorOp(async function () {
+      if (epochSeen !== mirrorEpoch) return { ok: false, error: "superseded" };
+      var fs = getFilesystem();
+      if (!fs) return { ok: false, error: "filesystem-unavailable" };
+      try {
+        await fs.deleteFile({
+          path: MIRROR_PATH,
+          directory: DIRECTORY_DATA
+        });
+        return { ok: true };
+      } catch (e) {
+        var message = String((e && e.message) || e || "");
+        if (/does not exist|not found|ENOENT|MISSING/i.test(message)) {
+          return { ok: true, missing: true };
+        }
+        return { ok: false, error: e };
       }
-      return { ok: false, error: e };
-    }
+    });
   }
 
   function collectMetaFromStorage(storage, metaKeys) {
@@ -185,34 +254,37 @@
     return meta;
   }
 
-  async function mirrorFromLocalStorage(options) {
+  function mirrorFromLocalStorage(options) {
     options = options || {};
-    if (!isNativePlatform()) return { ok: true, skipped: true };
+    if (!isNativePlatform()) return Promise.resolve({ ok: true, skipped: true });
     var storage = options.storage || global.localStorage;
     var storageKey = options.storageKey || "freedom50-mobile-v1";
     var metaKeys = options.metaKeys || [];
-    var raw = null;
-    try {
-      raw = storage.getItem(storageKey);
-    } catch (e) {
-      return { ok: false, error: e };
-    }
-    var classified = classifyLocalStorageRaw(raw, null);
-    if (classified.status !== "valid") {
-      return { ok: false, error: "local-invalid", status: classified.status };
-    }
-    /* Never mirror an intentional empty wipe unless caller allows it. */
-    if (options.requireRecords && typeof options.hasSavedRecords === "function") {
-      if (!options.hasSavedRecords(classified.state) && options.allowEmpty !== true) {
-        /* Still mirror established empty personal shells when meta says onboarding done. */
-        var metaProbe = collectMetaFromStorage(storage, metaKeys);
-        if (metaProbe["freedom50-welcome-complete-v1"] !== "1") {
-          return { ok: false, error: "refuse-empty-overwrite" };
+    var epochSeen = mirrorEpoch;
+    return enqueueMirrorOp(function () {
+      if (epochSeen !== mirrorEpoch) return { ok: false, error: "superseded" };
+      var raw = null;
+      try {
+        raw = storage.getItem(storageKey);
+      } catch (e) {
+        return { ok: false, error: e };
+      }
+      var classified = classifyLocalStorageRaw(raw, null);
+      if (classified.status !== "valid") {
+        return { ok: false, error: "local-invalid", status: classified.status };
+      }
+      if (options.requireRecords && typeof options.hasSavedRecords === "function") {
+        if (!options.hasSavedRecords(classified.state) && options.allowEmpty !== true) {
+          var metaProbe = collectMetaFromStorage(storage, metaKeys);
+          if (metaProbe["freedom50-welcome-complete-v1"] !== "1") {
+            return { ok: false, error: "refuse-empty-overwrite" };
+          }
         }
       }
-    }
-    var meta = collectMetaFromStorage(storage, metaKeys);
-    return writeSnapshot(classified.state, meta);
+      var meta = collectMetaFromStorage(storage, metaKeys);
+      /* Read localStorage only when this queued op runs so the newest save wins. */
+      return writeSnapshotNow(classified.state, meta, epochSeen);
+    });
   }
 
   function applyMirrorToLocalStorage(storage, storageKey, metaKeys, snapshot) {
@@ -248,6 +320,8 @@
     var storageKey = options.storageKey || "freedom50-mobile-v1";
     var metaKeys = options.metaKeys || [];
     var loadError = options.loadError || null;
+    var hasSavedRecords =
+      typeof options.hasSavedRecords === "function" ? options.hasSavedRecords : defaultHasSavedRecords;
     var raw = null;
     try {
       raw = storage.getItem(storageKey);
@@ -257,7 +331,11 @@
     }
     var local = classifyLocalStorageRaw(raw, loadError);
     var mirror = await readMirrorEnvelope();
-    var decision = decideHydrateAction({ local: local, mirror: mirror });
+    var decision = decideHydrateAction({
+      local: local,
+      mirror: mirror,
+      hasSavedRecords: hasSavedRecords
+    });
 
     if (decision.action === "keep-local") {
       var seed = await writeSnapshot(
@@ -305,12 +383,18 @@
     parseMirrorEnvelope: parseMirrorEnvelope,
     classifyLocalStorageRaw: classifyLocalStorageRaw,
     decideHydrateAction: decideHydrateAction,
+    defaultHasSavedRecords: defaultHasSavedRecords,
     readMirrorEnvelope: readMirrorEnvelope,
     writeSnapshot: writeSnapshot,
     clearMirror: clearMirror,
     mirrorFromLocalStorage: mirrorFromLocalStorage,
     hydrateLocalStorage: hydrateLocalStorage,
     applyMirrorToLocalStorage: applyMirrorToLocalStorage,
-    collectMetaFromStorage: collectMetaFromStorage
+    collectMetaFromStorage: collectMetaFromStorage,
+    /* Test helpers */
+    _getMirrorEpoch: function () {
+      return mirrorEpoch;
+    },
+    _enqueueMirrorOp: enqueueMirrorOp
   };
 })(typeof window !== "undefined" ? window : globalThis);

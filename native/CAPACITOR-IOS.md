@@ -58,9 +58,9 @@ npm run cap:sync
 
 - **Live store (unchanged):** WebView `localStorage` (`freedom50-mobile-v1` + onboarding/companion meta keys). GitHub Pages / PWA behaviour is unchanged — `freedom-native-storage.js` no-ops unless `Capacitor.isNativePlatform()` is true.
 - **Native mirror:** `@capacitor/filesystem` file `freedom-native-mirror-v1.json` in the app **Data** directory (iOS Documents sandbox). Chosen instead of Preferences/UserDefaults because Apple documents UserDefaults as unencrypted and unsuitable for personal/sensitive data.
-- **On save (native only):** after a successful `localStorage` write, Freedom mirrors state + backup meta keys. The “Saved locally ✓” toast appears only if the mirror write also succeeds; mirror failure shows the existing save-failure warning.
-- **On launch (native only):** valid localStorage always wins. If localStorage is missing/corrupt/unreadable and a valid mirror exists, Freedom restores into localStorage and reloads. It never overwrites valid local data with empty/default data.
-- **Encrypted Backup & export** remains the off-device recovery path (password-protected). Reset / fresh-start clears the native mirror too.
+- **On save (native only):** after a successful `localStorage` write, Freedom mirrors state + backup meta keys on a **serialized write queue** (newest localStorage snapshot wins). The “Saved locally ✓” toast appears only if the mirror write also succeeds; mirror failure shows the existing save-failure warning.
+- **On launch (native only):** hydrate finishes **before** the first interactive render/saves. Personal `persist()` stays blocked until ready. Valid localStorage usually wins; an empty local shell does **not** overwrite a richer valid mirror. Missing/corrupt/unreadable localStorage restores from a valid mirror and reloads.
+- **Encrypted Backup & export** remains the off-device recovery path (password-protected). Restore reloads only after the native mirror write succeeds. Reset / fresh-start clears the native mirror **first** and aborts visibly if that clear fails.
 
 ### Privacy / security
 
