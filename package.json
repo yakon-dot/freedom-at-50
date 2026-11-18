@@ -10,7 +10,8 @@
     "cap:open": "npx cap open ios",
     "test:capacitor-web": "node scripts/test-capacitor-web-prepare.mjs",
     "test:native-storage": "node scripts/test-native-storage-mirror.mjs",
-    "test:native-notifications": "node scripts/test-native-notifications.mjs"
+    "test:native-notifications": "node scripts/test-native-notifications.mjs",
+    "test:splash-layout": "node scripts/test-splash-layout-stability.mjs"
   },
   "dependencies": {
     "@capacitor/core": "^8.6.2",
