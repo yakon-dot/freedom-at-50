@@ -1711,6 +1711,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.journey-active-v313 #journey .journey-card-head{align-items:flex-start}
   body.journey-active-v313 #journey .loan-summary-single{grid-template-columns:1fr}
+  body.journey-active-v313 #journey .loan-summary-returned-pair{grid-template-columns:1fr 1fr;gap:10px}
   body.journey-active-v313 #journey .journey-head-main{min-width:0;flex:1}
   body.journey-active-v313 #journey .loan-amount{
     margin-top:8px;font-size:28px;line-height:1;font-weight:720;
@@ -1870,7 +1871,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     box-sizing:border-box;
   }
   body.journey-active-v313 #journey .journey-repayment-msg{
-    margin:8px 0 0;font-size:11px;line-height:1.45;color:var(--muted);
+    margin:10px 0 0;padding:10px 12px;border-radius:12px;
+    font-size:13px;line-height:1.45;font-weight:600;
+    color:#f0c8c8;background:rgba(168,72,72,.18);
+    border:1px solid rgba(220,120,120,.35);
   }
   body.journey-active-v313 #journey .journey-repayment-msg[hidden]{display:none!important}
   body.journey-active-v313 #journey .journey-last-repayment{
@@ -3209,6 +3213,18 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
   outline:none!important;
   box-shadow:none!important;
 }
+.freedom-confirm-removal-btn.is-danger{
+  background:rgba(168,72,72,.22);color:#f0c0c0;
+  box-shadow:inset 0 0 0 1px rgba(220,120,120,.35);
+}
+.freedom-confirm-removal-btn.is-danger:focus,
+.freedom-confirm-removal-btn.is-danger:focus-visible,
+.freedom-confirm-removal-btn.is-danger:active{
+  outline:none!important;
+  box-shadow:inset 0 0 0 1px rgba(220,120,120,.45)!important;
+}
+.freedom-confirm-removal-card.is-delete-mode .freedom-confirm-removal-emoji{display:none}
+.freedom-confirm-removal-card.is-delete-mode .freedom-confirm-removal-title{padding-top:8px}
 @keyframes freedomConfirmRemovalEnter{
   from{opacity:0;transform:translateY(10px) scale(.98)}
   to{opacity:1;transform:none}
@@ -5295,12 +5311,13 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <div class="freedom-confirm-removal-overlay" id="freedomConfirmRemovalOverlay" hidden>
   <div class="freedom-confirm-removal-card" role="dialog" aria-modal="true" aria-labelledby="freedomConfirmRemovalTitle" aria-describedby="freedomConfirmRemovalBody">
     <button class="freedom-confirm-removal-close" id="freedomConfirmRemovalClose" type="button" aria-label="Close">&times;</button>
-    <div class="freedom-confirm-removal-emoji" aria-hidden="true">🥳</div>
+    <div class="freedom-confirm-removal-emoji" id="freedomConfirmRemovalEmoji" aria-hidden="true">🥳</div>
     <h2 class="freedom-confirm-removal-title" id="freedomConfirmRemovalTitle">Ready to close this chapter?</h2>
     <p class="freedom-confirm-removal-body" id="freedomConfirmRemovalBody"></p>
     <div class="freedom-confirm-removal-actions">
-      <button class="freedom-confirm-removal-btn is-secondary" id="freedomConfirmRemovalNotYet" type="button">Not yet</button>
-      <button class="freedom-confirm-removal-btn is-primary" id="freedomConfirmRemovalYes" type="button">Yes, one step closer</button>
+      <button class="freedom-confirm-removal-btn is-secondary" id="freedomConfirmRemovalNotYet" type="button">Keep in Goals</button>
+      <button class="freedom-confirm-removal-btn is-primary" id="freedomConfirmRemovalYes" type="button">Move to Victories</button>
+      <button class="freedom-confirm-removal-btn is-danger" id="freedomConfirmRemovalDelete" type="button" hidden>Delete Goal</button>
     </div>
   </div>
 </div>
@@ -9125,6 +9142,31 @@ function moveCompletedItemToVictories(kind,itemName,opts){
   return finish();
 }
 window.moveCompletedItemToVictories=moveCompletedItemToVictories;
+/* Permanent delete of an active Journey/Goal by stable record id (no Victories entry). */
+function permanentlyDeleteActiveItem(kind,recordId){
+  const id=String(recordId||"").trim();
+  if(!id)return false;
+  if(kind==="goal"){
+    if(builtInGoalMeta&&builtInGoalMeta[id]){
+      if(!state.deletedBuiltInGoals)state.deletedBuiltInGoals={};
+      state.deletedBuiltInGoals[id]=true;
+      if(state.hiddenBuiltInGoals)delete state.hiddenBuiltInGoals[id];
+      persist();render();
+      return true;
+    }
+    const i=state.customGoals.findIndex(g=>g&&String(g.id)===id);
+    if(i<0)return false;
+    state.customGoals.splice(i,1);
+    persist();render();
+    return true;
+  }
+  const i=state.loans.findIndex(l=>l&&String(l.id)===id);
+  if(i<0)return false;
+  state.loans.splice(i,1);
+  persist();render();
+  return true;
+}
+window.permanentlyDeleteActiveItem=permanentlyDeleteActiveItem;
 /* Back-compat alias for earlier preview wiring. */
 window.archiveCompletedActiveItem=function(kind,itemName){
   return moveCompletedItemToVictories(kind,itemName);
@@ -9715,7 +9757,7 @@ function journeyMoneyFieldsHtml(i,loan){
   const lastRepay=loan.lastRepaymentAmount!=null&&loan.lastRepaymentDate
     ?`<strong>${euro2(loan.lastRepaymentAmount)} · ${formatRepaymentDate(loan.lastRepaymentDate)}</strong>`
     :`<span>—</span>`;
-  return`<div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><p class="journey-repayment-msg" data-loan-repayment-msg="${i}" hidden></p><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div>`;
+  return`<div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><p class="journey-repayment-msg" data-loan-repayment-msg="${i}" hidden role="alert" aria-live="assertive"></p><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div>`;
 }
 function journeyMoneySectionHtml(i,loan){
   const open=isLoanMoneySectionOpen(i);
@@ -9724,8 +9766,11 @@ function journeyMoneySectionHtml(i,loan){
 function buildLoanExpandedBody(i,loan){
   const returned=loanReturned(loan);
   const pct=loanReturnedPct(loan);
-  const statusHtml=`<div class="journey-status"><div class="loan-summary loan-summary-single"><div class="loan-stat"><small>Money returned</small><strong class="journey-returned-value" data-returned-for="${i}">${euro2(returned)} · ${pct.toFixed(1)}%</strong></div></div></div>`;
-  const footerHtml=`<div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">Archive journey</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button><button class="save-btn" data-save-loan="${i}" type="button">Save</button></div>`;
+  const starting=Math.max(0,Number(loan.starting)||0);
+  const statusHtml=`<div class="journey-status"><div class="loan-summary loan-summary-returned-pair"><div class="loan-stat"><small>Money returned</small><strong class="journey-returned-value" data-returned-for="${i}">${euro2(returned)} · ${pct.toFixed(1)}%</strong></div><div class="loan-stat"><small>Original loan amount</small><strong class="journey-starting-value" data-starting-for="${i}">${euro2(starting)}</strong></div></div></div>`;
+  const completedCelebrated=(Number(loan.current)||0)<=0&&!!loan.completionExperienced;
+  const archiveLabel=completedCelebrated?"Move to Victories":"Archive journey";
+  const footerHtml=`<div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">${archiveLabel}</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button><button class="save-btn" data-save-loan="${i}" type="button">Save</button></div>`;
   return`${statusHtml}${journeyPlanSectionHtml(i,loan)}${journeyMoneySectionHtml(i,loan)}${footerHtml}`;
 }
 
@@ -10674,13 +10719,22 @@ function loanCorrectBalanceInputId(i){
 }
 function correctBalanceFieldsHtml(opts){
   const {toggleAttr,toggleVal,saveAttr,saveVal,correctId,correctOpen}=opts;
-  return `<div class="goal-correct-wrap"><button class="goal-correct-btn" type="button" ${toggleAttr}="${esc(toggleVal)}">Correct balance</button><div class="goal-correct-expand card-body-wrap${correctOpen?"":" is-collapsed"}"><div class="goal-correct-panel journey-card-body"><p class="goal-correct-note">Use this if your balance doesn't match your actual savings.</p><div class="goal-field"><label for="${correctId}">Actual balance</label><input class="goal-field-value" id="${correctId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Actual balance"></div><button class="goal-correct-save" type="button" ${saveAttr}="${esc(saveVal)}">Save correction</button></div></div></div>`;
+  const note=opts.note||"Use this if your balance doesn't match your actual savings.";
+  return `<div class="goal-correct-wrap"><button class="goal-correct-btn" type="button" ${toggleAttr}="${esc(toggleVal)}">Correct balance</button><div class="goal-correct-expand card-body-wrap${correctOpen?"":" is-collapsed"}"><div class="goal-correct-panel journey-card-body"><p class="goal-correct-note">${esc(note)}</p><div class="goal-field"><label for="${correctId}">Actual balance</label><input class="goal-field-value" id="${correctId}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Actual balance"></div><button class="goal-correct-save" type="button" ${saveAttr}="${esc(saveVal)}">Save correction</button></div></div></div>`;
 }
 function goalCorrectBalanceFieldsHtml(key,correctId,correctOpen){
   return correctBalanceFieldsHtml({toggleAttr:"data-correct-balance-toggle",toggleVal:key,saveAttr:"data-correct-balance-save",saveVal:key,correctId,correctOpen});
 }
 function loanCorrectBalanceFieldsHtml(i,correctId,correctOpen){
-  return correctBalanceFieldsHtml({toggleAttr:"data-loan-correct-balance-toggle",toggleVal:String(i),saveAttr:"data-loan-correct-balance-save",saveVal:String(i),correctId,correctOpen});
+  return correctBalanceFieldsHtml({
+    toggleAttr:"data-loan-correct-balance-toggle",
+    toggleVal:String(i),
+    saveAttr:"data-loan-correct-balance-save",
+    saveVal:String(i),
+    correctId,
+    correctOpen,
+    note:"Use this if the balance shown doesn't match what you actually have left to pay."
+  });
 }
 function applyBalanceCorrection(key,correctedAmount){
   const prev=getGoalCurrentBalance(key);
@@ -11242,9 +11296,11 @@ function renderSavingsGoalCard(key){
   const fieldsHtml=goalSavingsExpandedFieldsHtml(key,usesTarget,target,current,isCustom?customIndex:null);
   const toggleHtml=`<div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="${ids.hasTargetId}" data-goal-has-target="${esc(key)}"${hasTargetChecked} aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div>`;
   const progressBody=usesTarget?goalProgressBlock(current,target,barId):"";
+  const completedCelebrated=usesTarget&&isGoalReached(key)&&isGoalCompletionExperienced(key);
+  const archiveLabel=completedCelebrated?"Move to Victories":"Archive";
   const actions=isCustom
-    ? `<button class="mini-btn danger" data-archive-goal="${customIndex}" type="button">Archive</button><button class="mini-btn delete" data-delete-goal="${customIndex}" type="button">Delete</button>`
-    : `<button class="mini-btn danger" data-archive-built-in="${key}" type="button">Archive</button><button class="mini-btn delete" data-delete-built-in="${key}" type="button">Delete</button>`;
+    ? `<button class="mini-btn danger" data-archive-goal="${customIndex}" type="button">${archiveLabel}</button><button class="mini-btn delete" data-delete-goal="${customIndex}" type="button">Delete</button>`
+    : `<button class="mini-btn danger" data-archive-built-in="${key}" type="button">${archiveLabel}</button><button class="mini-btn delete" data-delete-built-in="${key}" type="button">Delete</button>`;
   const bodyInner=`${toggleHtml}${fieldsHtml}${progressBody}<div class="goal-action-row">${actions}<button class="save-btn" data-save-goal="${esc(key)}" type="button">Save</button></div>`;
   const body=wrapCardBody(bodyInner,collapsed);
   card.innerHTML=head+progressHtml+body;
@@ -11334,9 +11390,28 @@ function renderGoals(){
   list.querySelectorAll("[data-delete-built-in]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const key=e.currentTarget.dataset.deleteBuiltIn,m=builtInGoalMeta[key];
-    if(!m||!confirm(`Delete ${goalDisplayName(key)}?`)) return;
-    const card=e.currentTarget.closest(".goal-card");
-    freedomMotion.exitCard(card,()=>{state.deletedBuiltInGoals[key]=true;persist();render();});
+    if(!m)return;
+    const doRemove=()=>{
+      const card=document.querySelector(`#goalsList [data-delete-built-in="${CSS.escape(key)}"]`)?.closest(".goal-card");
+      const remove=()=>{
+        if(typeof window.permanentlyDeleteActiveItem==="function")window.permanentlyDeleteActiveItem("goal",key);
+        else{state.deletedBuiltInGoals[key]=true;persist();render();}
+      };
+      if(card)freedomMotion.exitCard(card,remove);
+      else remove();
+    };
+    if(window.FreedomConfirmRemoval&&typeof window.FreedomConfirmRemoval.show==="function"){
+      window.FreedomConfirmRemoval.show({
+        mode:"delete",
+        kind:"goal",
+        itemName:goalDisplayName(key),
+        recordId:String(key),
+        onDelete:doRemove
+      });
+      return;
+    }
+    if(!confirm(`Delete ${goalDisplayName(key)}?`)) return;
+    doRemove();
   }));
   list.querySelectorAll("[data-archive-goal]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
@@ -11360,9 +11435,30 @@ function renderGoals(){
   list.querySelectorAll("[data-delete-goal]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const i=Number(e.currentTarget.dataset.deleteGoal);
-    if(!state.customGoals[i]||!confirm("Delete this goal?")) return;
-    const card=e.currentTarget.closest(".goal-card");
-    freedomMotion.exitCard(card,()=>{state.customGoals.splice(i,1);persist();render();});
+    const goal=state.customGoals[i];
+    if(!goal)return;
+    const recordId=ensureGoalRecordId(goal);
+    const doRemove=()=>{
+      const card=document.querySelector(`#goalsList [data-delete-goal="${i}"]`)?.closest(".goal-card");
+      const remove=()=>{
+        if(typeof window.permanentlyDeleteActiveItem==="function")window.permanentlyDeleteActiveItem("goal",recordId);
+        else{state.customGoals.splice(i,1);persist();render();}
+      };
+      if(card)freedomMotion.exitCard(card,remove);
+      else remove();
+    };
+    if(window.FreedomConfirmRemoval&&typeof window.FreedomConfirmRemoval.show==="function"){
+      window.FreedomConfirmRemoval.show({
+        mode:"delete",
+        kind:"goal",
+        itemName:goal.name||"Goal",
+        recordId:recordId,
+        onDelete:doRemove
+      });
+      return;
+    }
+    if(!confirm("Delete this goal?")) return;
+    doRemove();
   }));
   const rec=byId("recordHousePocket");
   if(rec) rec.addEventListener("click",()=>{
@@ -11849,7 +11945,12 @@ function renderLoans(){
       if(msgEl){
         msgEl.textContent=`Your remaining balance is ${euro2(remaining)}. You can enter up to ${euro2(remaining)}.`;
         msgEl.hidden=false;
+        msgEl.setAttribute("role","alert");
+        msgEl.setAttribute("aria-live","assertive");
+        try{msgEl.scrollIntoView({block:"nearest",behavior:"smooth"});}catch(err){}
       }
+      /* Keep Money movements open so the warning stays in view. */
+      try{loanMoneySectionOpen[i]=true;}catch(err){}
       input?.focus();
       return;
     }
@@ -12001,11 +12102,33 @@ function renderLoans(){
     const loan=state.loans[i];
     if(!loan)return;
     const completed=loan.current<=0;
+    const recordId=ensureLoanRecordId(loan);
+    const doRemove=()=>{
+      const card=document.querySelector(`#loanList [data-delete-loan="${i}"]`)?.closest(".loan-card")
+        ||document.querySelector(`#loanList .loan-card[data-record-id="${CSS.escape(recordId)}"]`);
+      const remove=()=>{
+        if(typeof window.permanentlyDeleteActiveItem==="function"){
+          window.permanentlyDeleteActiveItem("journey",recordId);
+          return;
+        }
+        state.loans.splice(i,1);persist();render();
+      };
+      if(completed&&card)freedomMotion.exitCompletedVictory(card,remove);
+      else if(card)freedomMotion.exitCard(card,remove);
+      else remove();
+    };
+    if(window.FreedomConfirmRemoval&&typeof window.FreedomConfirmRemoval.show==="function"){
+      window.FreedomConfirmRemoval.show({
+        mode:"delete",
+        kind:"journey",
+        itemName:loan.name||"Journey",
+        recordId:recordId,
+        onDelete:doRemove
+      });
+      return;
+    }
     if(!confirm(completed?"Delete this completed victory permanently?":"Delete this journey?"))return;
-    const card=e.currentTarget.closest(".loan-card");
-    const remove=()=>{state.loans.splice(i,1);persist();render();};
-    if(completed)freedomMotion.exitCompletedVictory(card,remove);
-    else freedomMotion.exitCard(card,remove);
+    doRemove();
   }));
   setupLoanReorder(list);
 }
@@ -12385,7 +12508,7 @@ function savePension(i){
   if(overviewEl)p.showInOverview=overviewEl.checked;
   const statementChanged=Math.abs(nextStatement-prevStatement)>1e-9;
   const newStatementEl=byId(`pensionNewStatement_${i}`);
-  /* Same-balance reset only when the explicit New pension statement control is ticked. */
+  /* Same-balance reset only when the explicit new-statement control is ticked. */
   const sameBalanceNewStatement=!statementChanged&&!!(newStatementEl&&newStatementEl.checked);
   const statementIntent=statementChanged||sameBalanceNewStatement;
   let statementIncreased=false;
@@ -12423,7 +12546,7 @@ function renderPensionCard(i){
   const autoOn=!!p.autoContrib;
   const autoChecked=autoOn?" checked":"";
   const estimateNote=`<p class="pension-estimate-note" data-pension-auto-note="${i}">${esc(pensionAutoStatusText(autoOn))}</p>`;
-  const newStatementHtml=`<div class="pension-new-statement-setting" data-pension-new-statement-wrap="${i}"><div class="pension-new-statement-copy"><strong>New pension statement</strong><p>Tick if you've received a new statement showing the same balance.</p></div><label class="pension-toggle"><input type="checkbox" id="pensionNewStatement_${i}" data-pension-new-statement="${i}" aria-label="New pension statement"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div>`;
+  const newStatementHtml=`<div class="pension-new-statement-setting" data-pension-new-statement-wrap="${i}"><div class="pension-new-statement-copy"><strong>Received a new pension statement?</strong><p>Tick this if your latest statement shows the same pension value. This tells Freedom to start calculating future contributions from the new statement date.</p></div><label class="pension-toggle"><input type="checkbox" id="pensionNewStatement_${i}" data-pension-new-statement="${i}" aria-label="Received a new pension statement?"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div>`;
   const bodyInner=`<div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Current pension value</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${statementValue||""}" placeholder="0.00" data-pension-statement-saved="${statementValue}"></div>${newStatementHtml}<div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-auto-setting"><div class="pension-auto-copy"><strong>Calculate contributions automatically</strong>${estimateNote}</div><label class="pension-toggle"><input type="checkbox" id="pensionAuto_${i}" data-pension-auto="${i}"${autoChecked} aria-label="Calculate contributions automatically"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div></div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div>`;
   const body=wrapCardBody(bodyInner,collapsed);
   card.innerHTML=head+body;
@@ -12665,7 +12788,7 @@ function collectVictoryItems(){
   if(window.__FREEDOM_VICTORIES_PREVIEW__&&Array.isArray(window.__FREEDOM_VICTORIES_PREVIEW__.items)){
     return window.__FREEDOM_VICTORIES_PREVIEW__.items.slice();
   }
-  /* Victories is completed history only (Yes, one step closer). Keep Archive separate. */
+  /* Victories holds completed Journeys/Goals. Archive is unfinished items put aside. */
   return (Array.isArray(state.victories)?state.victories:[]).map(function(x){
     return {
       kind:x.kind==="goal"?"goal":"journey",
@@ -15298,13 +15421,17 @@ window.FreedomCompanionMessage=(function(){
   };
 })();
 
-/* Confirm Removal — system card shown only after completion CompanionMessage dismiss. */
+/* Confirm Removal — close-chapter (Victories) and destructive delete. */
 window.FreedomConfirmRemoval=(function(){
   const overlay=document.getElementById("freedomConfirmRemovalOverlay");
+  const card=overlay&&overlay.querySelector(".freedom-confirm-removal-card");
+  const titleEl=document.getElementById("freedomConfirmRemovalTitle");
   const bodyEl=document.getElementById("freedomConfirmRemovalBody");
+  const emojiEl=document.getElementById("freedomConfirmRemovalEmoji");
   const closeBtn=document.getElementById("freedomConfirmRemovalClose");
   const notYetBtn=document.getElementById("freedomConfirmRemovalNotYet");
   const yesBtn=document.getElementById("freedomConfirmRemovalYes");
+  const deleteBtn=document.getElementById("freedomConfirmRemovalDelete");
   let active=null;
   function clearCompletionTarget(){
     try{
@@ -15312,12 +15439,54 @@ window.FreedomConfirmRemoval=(function(){
       window.completionTargetType=null;
     }catch(e){}
   }
-  function bodyCopy(kind,itemName){
-    const name=String(itemName||"This item");
-    if(kind==="goal"){
-      return name+" will be removed from your active Goals and added to your completed history.";
+  function setBusy(on){
+    if(yesBtn)yesBtn.disabled=!!on;
+    if(notYetBtn)notYetBtn.disabled=!!on;
+    if(deleteBtn)deleteBtn.disabled=!!on;
+    if(closeBtn)closeBtn.disabled=!!on;
+  }
+  function applyCloseChapterCopy(kind){
+    const isGoal=kind==="goal";
+    if(titleEl)titleEl.textContent="Ready to close this chapter?";
+    if(emojiEl)emojiEl.hidden=false;
+    if(card)card.classList.remove("is-delete-mode");
+    if(notYetBtn){
+      notYetBtn.hidden=false;
+      notYetBtn.textContent=isGoal?"Keep in Goals":"Keep in Journeys";
     }
-    return name+" will be removed from your active Journey and added to your completed history.";
+    if(yesBtn){
+      yesBtn.hidden=false;
+      yesBtn.textContent="Move to Victories";
+      yesBtn.className="freedom-confirm-removal-btn is-primary";
+    }
+    if(deleteBtn){
+      deleteBtn.hidden=!isGoal;
+      deleteBtn.textContent="Delete Goal";
+    }
+    if(bodyEl){
+      bodyEl.textContent=isGoal
+        ?"Choose what happens next. Move it to Victories, keep it in Goals, or delete it permanently."
+        :"Move this Journey to Victories, or keep it in your active Journey list.";
+    }
+  }
+  function applyDeleteCopy(kind,itemName){
+    const isGoal=kind==="goal";
+    const name=String(itemName||(isGoal?"this Goal":"this Journey"));
+    if(titleEl)titleEl.textContent=isGoal?"Delete this Goal?":"Delete this Journey?";
+    if(emojiEl)emojiEl.hidden=true;
+    if(card)card.classList.add("is-delete-mode");
+    if(notYetBtn){
+      notYetBtn.hidden=false;
+      notYetBtn.textContent="Cancel";
+    }
+    if(yesBtn)yesBtn.hidden=true;
+    if(deleteBtn){
+      deleteBtn.hidden=false;
+      deleteBtn.textContent=isGoal?"Delete Goal":"Delete Journey";
+    }
+    if(bodyEl){
+      bodyEl.textContent=name+" will be permanently removed from Freedom. This cannot be undone.";
+    }
   }
   function hideCancel(){
     if(!overlay)return;
@@ -15326,29 +15495,48 @@ window.FreedomConfirmRemoval=(function(){
     const cb=active;
     active=null;
     clearCompletionTarget();
+    setBusy(false);
     if(cb&&typeof cb.onCancel==="function")cb.onCancel();
   }
   function show(opts){
     opts=opts||{};
     if(!overlay||!bodyEl)return;
     const type=opts.kind==="goal"?"goal":"journey";
+    const mode=opts.mode==="delete"?"delete":"closeChapter";
     const recordId=String(opts.recordId||"").trim();
     active={
+      mode:mode,
       completionTargetId:recordId,
       completionTargetType:type,
       itemName:opts.itemName||"",
       amount:opts.amount,
       completedAt:opts.completedAt,
       onDone:typeof opts.onDone==="function"?opts.onDone:(typeof opts.onConfirm==="function"?opts.onConfirm:null),
-      onCancel:opts.onCancel
+      onCancel:opts.onCancel,
+      onDelete:typeof opts.onDelete==="function"?opts.onDelete:null
     };
     window.completionTargetId=recordId||null;
     window.completionTargetType=type;
-    bodyEl.textContent=bodyCopy(type,active.itemName);
+    if(mode==="delete")applyDeleteCopy(type,active.itemName);
+    else{
+      applyCloseChapterCopy(type);
+      if(bodyEl&&opts.kind==="goal"){
+        /* Prefer Victories wording; keep item name when useful. */
+        const name=String(active.itemName||"").trim();
+        bodyEl.textContent=name
+          ?name+" can move to Victories, stay in Goals, or be deleted permanently."
+          :"Choose what happens next. Move it to Victories, keep it in Goals, or delete it permanently.";
+      }else if(bodyEl){
+        const name=String(active.itemName||"").trim();
+        bodyEl.textContent=name
+          ?name+" will be removed from your active Journey and added to Victories."
+          :"This Journey will be removed from your active Journey and added to Victories.";
+      }
+    }
+    setBusy(false);
     if(typeof freedomRememberDialogFocus==="function")freedomRememberDialogFocus(overlay);
     overlay.hidden=false;
     if(typeof freedomBindDialogEscape==="function")freedomBindDialogEscape(overlay,hideCancel);
-    /* Focus the dialog shell — not the lilac CTA — so no browser/iOS blue focus ring */
     try{
       const dialog=overlay.querySelector(".freedom-confirm-removal-card");
       if(dialog){
@@ -15359,23 +15547,19 @@ window.FreedomConfirmRemoval=(function(){
   }
   function onConfirmYes(){
     if(!overlay||!active||overlay.hidden)return;
+    if(active.mode==="delete")return;
     const target=active;
     active=null;
     const recordId=String(target.completionTargetId||"").trim();
     const type=target.completionTargetType==="goal"?"goal":"journey";
     const modal=overlay.querySelector(".freedom-confirm-removal-card");
-    /* Keep modal visible — it is the animation target. Journey/Goal cards stay static. */
     try{ if(yesBtn)yesBtn.blur(); }catch(e){}
     try{ if(document.activeElement&&document.activeElement.blur)document.activeElement.blur(); }catch(e){}
-    if(yesBtn)yesBtn.disabled=true;
-    if(notYetBtn)notYetBtn.disabled=true;
-    if(closeBtn)closeBtn.disabled=true;
+    setBusy(true);
     const commit=function(){
       overlay.hidden=true;
       if(typeof freedomRestoreDialogFocus==="function")freedomRestoreDialogFocus(overlay);
-      if(yesBtn)yesBtn.disabled=false;
-      if(notYetBtn)notYetBtn.disabled=false;
-      if(closeBtn)closeBtn.disabled=false;
+      setBusy(false);
       if(typeof window.moveCompletedItemToVictories==="function"&&recordId){
         window.moveCompletedItemToVictories(type,target.itemName,{
           recordId:recordId,
@@ -15394,9 +15578,28 @@ window.FreedomConfirmRemoval=(function(){
     }
     commit();
   }
+  function onConfirmDelete(){
+    if(!overlay||!active||overlay.hidden)return;
+    const target=active;
+    active=null;
+    const recordId=String(target.completionTargetId||"").trim();
+    const type=target.completionTargetType==="goal"?"goal":"journey";
+    overlay.hidden=true;
+    if(typeof freedomRestoreDialogFocus==="function")freedomRestoreDialogFocus(overlay);
+    setBusy(false);
+    clearCompletionTarget();
+    if(typeof target.onDelete==="function"){
+      target.onDelete();
+      return;
+    }
+    if(typeof window.permanentlyDeleteActiveItem==="function"&&recordId){
+      window.permanentlyDeleteActiveItem(type,recordId);
+    }
+  }
   closeBtn&&closeBtn.addEventListener("click",hideCancel);
   notYetBtn&&notYetBtn.addEventListener("click",hideCancel);
   yesBtn&&yesBtn.addEventListener("click",onConfirmYes);
+  deleteBtn&&deleteBtn.addEventListener("click",onConfirmDelete);
   overlay&&overlay.addEventListener("click",function(e){
     if(e.target===overlay)hideCancel();
   });
@@ -15404,7 +15607,7 @@ window.FreedomConfirmRemoval=(function(){
     show:show,
     hide:hideCancel,
     getTarget:function(){
-      return active?{id:active.completionTargetId,type:active.completionTargetType}:null;
+      return active?{id:active.completionTargetId,type:active.completionTargetType,mode:active.mode}:null;
     }
   };
 })();

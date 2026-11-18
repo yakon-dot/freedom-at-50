@@ -1,7 +1,7 @@
 /**
  * Pension statement baseline:
  * - Changed balance still resets the baseline
- * - Same balance resets only when "New pension statement" is ticked
+ * - Same balance resets only when the new-statement control is ticked
  * - Checkbox shows only while entered value matches the saved statement
  * - Ordinary Saves and Demo Mode leave the baseline alone
  */
@@ -10,16 +10,23 @@ import fs from "node:fs";
 import puppeteer from "puppeteer-core";
 
 const index = fs.readFileSync("index.html", "utf8");
-assert.match(index, /New pension statement/);
+assert.match(index, /Received a new pension statement\?/);
 assert.match(
   index,
-  /Tick if you've received a new statement showing the same balance\./
+  /Tick this if your latest statement shows the same pension value\. This tells Freedom to start calculating future contributions from the new statement date\./
 );
 assert.match(index, /sameBalanceNewStatement/);
 assert.match(index, /syncPensionNewStatementVisibility/);
 assert.match(index, /pensionResetStatementBaseline/);
 assert.equal(/dataset\.statementEdited/.test(index), false);
-assert.equal(/Tick if you've received a new statement showing the same balance\.—|—Tick if you've received/.test(index), false);
+assert.equal(
+  /Tick this if your latest statement shows the same pension value\.—|—Tick this if your latest statement/.test(
+    index
+  ),
+  false
+);
+assert.equal(/New pension statement(?!\?)/.test(index), false);
+assert.equal(/Tick if you've received a new statement showing the same balance\./.test(index), false);
 console.log("PASS: source contracts for pension statement baseline");
 
 function resolveChromePath() {
@@ -168,16 +175,16 @@ async function main() {
     });
     assert.equal(visibility.initial.hidden, false);
     assert.equal(visibility.initial.checked, false);
-    assert.equal(visibility.initial.label, "New pension statement");
+    assert.equal(visibility.initial.label, "Received a new pension statement?");
     assert.equal(
       visibility.initial.help,
-      "Tick if you've received a new statement showing the same balance."
+      "Tick this if your latest statement shows the same pension value. This tells Freedom to start calculating future contributions from the new statement date."
     );
     assert.equal(visibility.whenChanged.hidden, true);
     assert.equal(visibility.whenChanged.checked, false);
     assert.equal(visibility.whenRestored.hidden, false);
     assert.equal(visibility.whenRestored.checked, false);
-    console.log("PASS: New pension statement checkbox visibility");
+    console.log("PASS: new pension statement checkbox visibility");
     await page.close();
   }
 
@@ -264,7 +271,7 @@ async function main() {
     });
     assert.equal(afterSave.hidden, false);
     assert.equal(afterSave.checked, false);
-    console.log("PASS: same-balance Save requires New pension statement tick");
+    console.log("PASS: same-balance Save requires new pension statement tick");
     await page.close();
   }
 
