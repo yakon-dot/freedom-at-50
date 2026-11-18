@@ -17,6 +17,7 @@ const ROOT_FILES = [
   "freedom-push-config.js",
   "freedom-native-storage.js",
   "freedom-native-notifications.js",
+  "freedom-native-backup.js",
   "icon-192.png",
   "icon-512.png",
   "companion-select-wallpaper.jpg",

@@ -3248,14 +3248,31 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
 .freedom-backup-pass-field label{
   font-size:13px;font-weight:620;color:rgba(236,232,224,.78);font-family:inherit;
 }
+.freedom-backup-pass-input-row{
+  position:relative;display:flex;align-items:center;width:100%;
+}
 .freedom-backup-pass-field input{
   width:100%;box-sizing:border-box;border-radius:14px;border:1px solid rgba(255,255,255,.1);
-  background:#12151a;color:var(--text);padding:12px 14px;font-size:16px;font-family:inherit;
+  background:#12151a;color:var(--text);padding:12px 44px 12px 14px;font-size:16px;font-family:inherit;
   -webkit-appearance:none;appearance:none;
 }
 .freedom-backup-pass-field input:focus{
   outline:none;border-color:rgba(231,207,99,.45);
 }
+.freedom-backup-pass-visibility{
+  position:absolute;right:4px;top:50%;transform:translateY(-50%);
+  width:40px;height:40px;border:0;border-radius:12px;background:transparent;
+  color:rgba(236,232,224,.72);display:inline-flex;align-items:center;justify-content:center;
+  cursor:pointer;-webkit-tap-highlight-color:transparent;outline:none;padding:0;
+}
+.freedom-backup-pass-visibility:focus-visible{
+  box-shadow:0 0 0 2px rgba(231,207,99,.45);
+}
+.freedom-backup-pass-visibility svg{
+  width:20px;height:20px;display:block;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.freedom-backup-pass-visibility[aria-pressed="true"]{color:rgba(231,207,99,.92)}
 .freedom-backup-pass-error{
   margin:0 0 12px;font-size:13px;line-height:1.4;color:rgba(220,120,120,.95);min-height:0;
 }
@@ -5294,11 +5311,27 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     <p class="freedom-backup-pass-body" id="freedomBackupPassBody"></p>
     <div class="freedom-backup-pass-field" id="freedomBackupPassFieldWrap">
       <label for="freedomBackupPassInput">Password</label>
-      <input id="freedomBackupPassInput" type="password" autocomplete="new-password" enterkeyhint="next">
+      <div class="freedom-backup-pass-input-row">
+        <input id="freedomBackupPassInput" type="password" autocomplete="new-password" enterkeyhint="next">
+        <button class="freedom-backup-pass-visibility" id="freedomBackupPassVisibility" type="button" aria-label="Show password" aria-pressed="false" aria-controls="freedomBackupPassInput">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M2.2 12s3.4-6.2 9.8-6.2S21.8 12 21.8 12s-3.4 6.2-9.8 6.2S2.2 12 2.2 12Z"/>
+            <circle cx="12" cy="12" r="2.6"/>
+          </svg>
+        </button>
+      </div>
     </div>
     <div class="freedom-backup-pass-field" id="freedomBackupPassConfirmWrap">
       <label for="freedomBackupPassConfirm">Confirm password</label>
-      <input id="freedomBackupPassConfirm" type="password" autocomplete="new-password" enterkeyhint="done">
+      <div class="freedom-backup-pass-input-row">
+        <input id="freedomBackupPassConfirm" type="password" autocomplete="new-password" enterkeyhint="done">
+        <button class="freedom-backup-pass-visibility" id="freedomBackupPassConfirmVisibility" type="button" aria-label="Show password" aria-pressed="false" aria-controls="freedomBackupPassConfirm">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M2.2 12s3.4-6.2 9.8-6.2S21.8 12 21.8 12s-3.4 6.2-9.8 6.2S2.2 12 2.2 12Z"/>
+            <circle cx="12" cy="12" r="2.6"/>
+          </svg>
+        </button>
+      </div>
     </div>
     <p class="freedom-backup-pass-error" id="freedomBackupPassError" role="alert"></p>
     <div class="freedom-backup-pass-actions">
@@ -5499,6 +5532,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <script src="./freedom-push-config.js"></script>
 <script src="./freedom-native-storage.js"></script>
 <script src="./freedom-native-notifications.js"></script>
+<script src="./freedom-native-backup.js"></script>
 <script>
 (function(){
 "use strict";
@@ -7669,6 +7703,30 @@ function clearFreedomBackupPasswordFields(){
   const b=byId("freedomBackupPassConfirm");
   if(a)a.value="";
   if(b)b.value="";
+  resetFreedomBackupPasswordVisibility();
+}
+function setFreedomBackupPasswordVisibility(input,button,visible){
+  if(!input)return;
+  const show=!!visible;
+  input.type=show?"text":"password";
+  if(button){
+    button.setAttribute("aria-pressed",show?"true":"false");
+    button.setAttribute("aria-label",show?"Hide password":"Show password");
+  }
+}
+function resetFreedomBackupPasswordVisibility(){
+  setFreedomBackupPasswordVisibility(byId("freedomBackupPassInput"),byId("freedomBackupPassVisibility"),false);
+  setFreedomBackupPasswordVisibility(byId("freedomBackupPassConfirm"),byId("freedomBackupPassConfirmVisibility"),false);
+}
+function wireFreedomBackupPasswordVisibility(button,input){
+  if(!button||!input||button.dataset.visibilityBound==="1")return;
+  button.dataset.visibilityBound="1";
+  button.addEventListener("click",function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    const show=button.getAttribute("aria-pressed")!=="true";
+    setFreedomBackupPasswordVisibility(input,button,show);
+  });
 }
 function closeFreedomBackupPasswordDialog(result){
   const overlay=byId("freedomBackupPassOverlay");
@@ -7740,6 +7798,30 @@ function readFreedomBackupPasswordDialog(){
   if(err)err.textContent="";
   return password;
 }
+async function freedomDeliverEncryptedBackupFile(json,filename){
+  /* Native iOS WKWebView ignores <a download> — write a temp file and open the share sheet. */
+  if(freedomIsNativeApp()){
+    if(!window.FreedomNativeBackup||typeof window.FreedomNativeBackup.shareEncryptedJson!=="function"){
+      return{ok:false,error:"Freedom could not open the iOS share sheet for this backup."};
+    }
+    return window.FreedomNativeBackup.shareEncryptedJson(json,filename);
+  }
+  try{
+    const blob=new Blob([json],{type:"application/json"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url;
+    a.download=filename;
+    a.rel="noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),2000);
+    return{ok:true,mode:"download"};
+  }catch(e){
+    return{ok:false,error:(e&&e.message)||"Could not download the backup file in this browser."};
+  }
+}
 async function exportFreedomBackup(){
   if(demoMode){
     setFreedomBackupStatus("You’re in Demo Mode. Exit Demo Mode first to create a personal backup — Demo data stays separate and is not saved as your personal backup.",true);
@@ -7763,18 +7845,21 @@ async function exportFreedomBackup(){
     if(Object.prototype.hasOwnProperty.call(envelope,"password")||/\"password\"\s*:/i.test(json)){
       throw new Error("Refusing to write a backup that contains the password.");
     }
-    const blob=new Blob([json],{type:"application/json"});
     const stamp=new Date().toISOString().slice(0,10);
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement("a");
-    a.href=url;
-    a.download="freedom-backup-"+stamp+".json";
-    a.rel="noopener";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(()=>URL.revokeObjectURL(url),2000);
-    setFreedomBackupStatus("Encrypted backup downloaded. Save it somewhere recoverable (for example iCloud Drive). Freedom cannot recover a forgotten password.");
+    const filename="freedom-backup-"+stamp+".json";
+    const delivered=await freedomDeliverEncryptedBackupFile(json,filename);
+    if(!delivered||!delivered.ok){
+      if(delivered&&delivered.cancelled){
+        setFreedomBackupStatus(delivered.error||"Export cancelled — no backup file was saved.");
+        return;
+      }
+      throw new Error((delivered&&delivered.error)||"Could not export the encrypted backup.");
+    }
+    if(delivered.mode==="share"){
+      setFreedomBackupStatus("Encrypted backup ready. Use the iOS share sheet to save it to Files or iCloud Drive. Freedom cannot recover a forgotten password.");
+    }else{
+      setFreedomBackupStatus("Encrypted backup downloaded. Save it somewhere recoverable (for example iCloud Drive). Freedom cannot recover a forgotten password.");
+    }
   }catch(e){
     setFreedomBackupStatus((e&&e.message)||"Could not create a backup on this device.",true);
   }finally{
@@ -7896,6 +7981,9 @@ function initFreedomBackupUi(){
   const closeBtn=byId("freedomBackupPassClose");
   const passInput=byId("freedomBackupPassInput");
   const confirmInput=byId("freedomBackupPassConfirm");
+  wireFreedomBackupPasswordVisibility(byId("freedomBackupPassVisibility"),passInput);
+  wireFreedomBackupPasswordVisibility(byId("freedomBackupPassConfirmVisibility"),confirmInput);
+  resetFreedomBackupPasswordVisibility();
   if(exportBtn){
     exportBtn.addEventListener("click",e=>{
       e.preventDefault();

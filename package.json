@@ -11,13 +11,15 @@
     "test:capacitor-web": "node scripts/test-capacitor-web-prepare.mjs",
     "test:native-storage": "node scripts/test-native-storage-mirror.mjs",
     "test:native-notifications": "node scripts/test-native-notifications.mjs",
-    "test:splash-layout": "node scripts/test-splash-layout-stability.mjs"
+    "test:splash-layout": "node scripts/test-splash-layout-stability.mjs",
+    "test:native-backup": "node scripts/test-native-backup-export.mjs"
   },
   "dependencies": {
     "@capacitor/core": "^8.6.2",
     "@capacitor/filesystem": "^8.1.5",
     "@capacitor/ios": "^8.6.2",
-    "@capacitor/local-notifications": "^8.3.1"
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capacitor/share": "^8.0.3"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.6.2",
