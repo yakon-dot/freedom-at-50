@@ -59,6 +59,13 @@ npm run cap:sync
 - No framework rewrite.
 - Demo Mode, onboarding, calculations, companion copy, and Web Push code paths are not migrated in this step.
 
+## Encrypted backup export (native)
+
+- PWA export still uses a browser download (`<a download>`).
+- WKWebView does **not** honour that download attribute, which made export appear to close with no file.
+- Native export writes the same encrypted JSON to the app **Cache** directory via Filesystem, then opens the iOS share sheet through `@capacitor/share` so the file can be saved to Files / iCloud Drive.
+- Envelope format, password rules and restore decryption are unchanged. `SharePlugin` is SPM-anchored like Filesystem.
+
 ## Native storage safeguard
 
 - **Live store (unchanged):** WebView `localStorage` (`freedom50-mobile-v1` + onboarding/companion meta keys). GitHub Pages / PWA behaviour is unchanged — `freedom-native-storage.js` no-ops unless `Capacitor.isNativePlatform()` is true.
