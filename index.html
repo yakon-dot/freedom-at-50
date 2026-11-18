@@ -9816,7 +9816,7 @@ function buildLoanExpandedBody(i,loan){
   const starting=Math.max(0,Number(loan.starting)||0);
   const statusHtml=`<div class="journey-status"><div class="loan-summary loan-summary-returned-pair"><div class="loan-stat"><small>Money returned</small><strong class="journey-returned-value" data-returned-for="${i}">${euro2(returned)} · ${pct.toFixed(1)}%</strong></div><div class="loan-stat"><small>Original loan amount</small><strong class="journey-starting-value" data-starting-for="${i}">${euro2(starting)}</strong></div></div></div>`;
   const completedCelebrated=(Number(loan.current)||0)<=0&&!!loan.completionExperienced;
-  const archiveLabel=completedCelebrated?"Move to Victories":"Archive journey";
+  const archiveLabel=completedCelebrated?"Archive":"Archive journey";
   const footerHtml=`<div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">${archiveLabel}</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button><button class="save-btn" data-save-loan="${i}" type="button">Save</button></div>`;
   return`${statusHtml}${journeyPlanSectionHtml(i,loan)}${journeyMoneySectionHtml(i,loan)}${footerHtml}`;
 }
@@ -11344,7 +11344,7 @@ function renderSavingsGoalCard(key){
   const toggleHtml=`<div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="${ids.hasTargetId}" data-goal-has-target="${esc(key)}"${hasTargetChecked} aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div>`;
   const progressBody=usesTarget?goalProgressBlock(current,target,barId):"";
   const completedCelebrated=usesTarget&&isGoalReached(key)&&isGoalCompletionExperienced(key);
-  const archiveLabel=completedCelebrated?"Move to Victories":"Archive";
+  const archiveLabel="Archive";
   const actions=isCustom
     ? `<button class="mini-btn danger" data-archive-goal="${customIndex}" type="button">${archiveLabel}</button><button class="mini-btn delete" data-delete-goal="${customIndex}" type="button">Delete</button>`
     : `<button class="mini-btn danger" data-archive-built-in="${key}" type="button">${archiveLabel}</button><button class="mini-btn delete" data-delete-built-in="${key}" type="button">Delete</button>`;
