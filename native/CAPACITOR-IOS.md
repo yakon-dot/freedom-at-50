@@ -11,6 +11,11 @@ Locked in `capacitor.config.json`:
 
 Rationale: reverse-DNS from the GitHub org `yakon-dot`, hyphen removed (common Apple ID style), with a short product segment. Treat this as permanent before App Store / push certificates are created.
 
+## Safe areas / splash layout
+
+- `ios.contentInset` is **`never`**. Freedom already uses `viewport-fit=cover` and CSS `env(safe-area-inset-*)` (same model as the PWA). Capacitor’s `automatic` scroll-view inset can resize the WebView a frame or two after launch, which made the loading logo briefly sit too high and then jump down.
+- The particle splash waits for a stable splash padding/viewport signature before sampling the logo position so assembly targets match the final CSS center. Animation duration and visuals are unchanged.
+
 ## Environment requirements
 
 - Node.js 20+ (22+ fine)

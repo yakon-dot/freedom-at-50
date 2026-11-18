@@ -31,6 +31,7 @@ const config = JSON.parse(fs.readFileSync(path.join(root, "capacitor.config.json
 assert.equal(config.appName, "Freedom");
 assert.equal(config.appId, "com.yakondot.freedom");
 assert.equal(config.webDir, "www");
+assert.equal(config.ios.contentInset, "never");
 
 assert.equal(fs.existsSync(path.join(root, ".github", "workflows")), false);
 assert.ok(fs.existsSync(path.join(root, "service-worker.js")), "PWA service worker must remain at repo root");

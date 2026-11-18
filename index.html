@@ -3994,8 +3994,6 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     splash.classList.add("is-logo-final");
   }
 
-  if(!ctx||reduced){showStatic();return;}
-
   function resizeCanvas(){
     var ratio=Math.min(2,window.devicePixelRatio||1);
     var width=Math.max(1,window.innerWidth);
@@ -4006,6 +4004,49 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     canvas.style.height=height+"px";
     ctx.setTransform(ratio,0,0,ratio,0,0);
     return {width:width,height:height};
+  }
+
+  /* Native WKWebView (and occasionally Safari) can report 0 safe-area insets /
+     a taller viewport for 1–2 frames, then settle. Sampling the logo early makes
+     particles assemble high; the CSS-centered img then jumps down. Wait for a
+     stable splash layout before measuring — animation timing is unchanged. */
+  function splashLayoutSignature(){
+    var padTop=0;
+    var padBottom=0;
+    try{
+      var style=getComputedStyle(splash);
+      padTop=parseFloat(style.paddingTop)||0;
+      padBottom=parseFloat(style.paddingBottom)||0;
+    }catch(e){}
+    return [
+      Math.round(padTop),
+      Math.round(padBottom),
+      Math.round(window.innerWidth||0),
+      Math.round(window.innerHeight||0)
+    ].join("x");
+  }
+  function whenSplashLayoutReady(done){
+    var frames=0;
+    var last="";
+    var stable=0;
+    function tick(){
+      frames+=1;
+      var next=splashLayoutSignature();
+      if(next===last)stable+=1;
+      else stable=0;
+      last=next;
+      if((stable>=1&&frames>=2)||frames>=12){
+        done();
+        return;
+      }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+
+  if(!ctx||reduced){
+    whenSplashLayoutReady(showStatic);
+    return;
   }
 
   function logoTargetPoints(){
@@ -4114,7 +4155,11 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     }catch(error){showStatic();}
   }
 
-  function start(){requestAnimationFrame(function(){requestAnimationFrame(play);});}
+  function start(){
+    whenSplashLayoutReady(function(){
+      requestAnimationFrame(function(){requestAnimationFrame(play);});
+    });
+  }
   if(logo.complete&&logo.naturalWidth)start();
   else{
     logo.addEventListener("load",start,{once:true});
