@@ -23,7 +23,7 @@ assert.match(index, /freedom-native-backup\.js/);
 assert.match(index, /freedomDeliverEncryptedBackupFile/);
 assert.match(index, /FreedomNativeBackup\.shareEncryptedJson/);
 assert.match(index, /iOS share sheet/);
-assert.match(index, /Export cancelled — no backup file was saved/);
+assert.match(index, /Export cancelled\. No backup file was saved/);
 assert.match(index, /freedomBackupPassVisibility/);
 assert.match(index, /freedomBackupPassConfirmVisibility/);
 assert.match(index, /Show password/);

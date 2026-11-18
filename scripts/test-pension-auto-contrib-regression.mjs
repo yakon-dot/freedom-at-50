@@ -18,7 +18,7 @@ assert.match(index, /rates\.personal\+rates\.employer/);
 assert.match(index, /Received a new pension statement\?/);
 assert.match(
   index,
-  /Tick this if your latest statement shows the same pension value\. This tells Freedom to start calculating future contributions from the new statement date\./
+  /Tick this if you've received a new statement showing the same balance as before\./
 );
 console.log("PASS: source contracts for pension auto-contrib");
 

@@ -9,9 +9,9 @@ import puppeteer from "puppeteer-core";
 
 const APPROVED = {
   patricia: [
-    "That nudge was me. Freedom just keeps the door open — update a Journey or Goal if anything’s moved.",
+    "That nudge was me. Freedom just keeps the door open. Update a Journey or Goal if anything’s moved.",
     "Monthly check-in, as promised. Have a peek at your Journeys and Goals when you’re ready.",
-    "Freedom pinged you because I asked. No drama — just a soft reminder to keep Journeys and Goals current.",
+    "Freedom pinged you because I asked. No drama, just a soft reminder to keep Journeys and Goals current.",
     "Surprise, it’s me again. If anything’s shifted, give your Journeys and Goals a quick once-over.",
     "That little ping? Entirely intentional. Pop into Journeys and Goals whenever you’ve got a minute.",
     "I kept my promise. Freedom brought you back; I’ll wait while you check Journeys and Goals.",

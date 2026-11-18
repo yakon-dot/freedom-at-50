@@ -13,20 +13,17 @@ const index = fs.readFileSync("index.html", "utf8");
 assert.match(index, /Received a new pension statement\?/);
 assert.match(
   index,
-  /Tick this if your latest statement shows the same pension value\. This tells Freedom to start calculating future contributions from the new statement date\./
+  /Tick this if you've received a new statement showing the same balance as before\./
 );
 assert.match(index, /sameBalanceNewStatement/);
 assert.match(index, /syncPensionNewStatementVisibility/);
 assert.match(index, /pensionResetStatementBaseline/);
 assert.equal(/dataset\.statementEdited/.test(index), false);
+assert.equal(/New pension statement(?!\?)/.test(index), false);
 assert.equal(
-  /Tick this if your latest statement shows the same pension value\.—|—Tick this if your latest statement/.test(
-    index
-  ),
+  /Tick this if your latest statement shows the same pension value/.test(index),
   false
 );
-assert.equal(/New pension statement(?!\?)/.test(index), false);
-assert.equal(/Tick if you've received a new statement showing the same balance\./.test(index), false);
 console.log("PASS: source contracts for pension statement baseline");
 
 function resolveChromePath() {
@@ -178,7 +175,7 @@ async function main() {
     assert.equal(visibility.initial.label, "Received a new pension statement?");
     assert.equal(
       visibility.initial.help,
-      "Tick this if your latest statement shows the same pension value. This tells Freedom to start calculating future contributions from the new statement date."
+      "Tick this if you've received a new statement showing the same balance as before."
     );
     assert.equal(visibility.whenChanged.hidden, true);
     assert.equal(visibility.whenChanged.checked, false);

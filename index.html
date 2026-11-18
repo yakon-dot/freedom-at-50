@@ -716,7 +716,7 @@ html:has(#freedomMakeItYours.is-present:not([hidden])) body{
 <link rel="preload" as="image" href="./notes-wallpaper.jpg">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Freedom at 50 — Web app v1.8.6.160</title>
+<title>Freedom at 50 · Web app v1.8.6.160</title>
 <style>
 :root{--bg:#0b0c0e;--card:#111316;--card2:#15171b;--line:#2c3037;--text:#f5f4f0;--muted:#999ba4;--yellow:#e7cf63;--green:#84bd91;--blue:#79a9c9;--purple:#aa8fc9;--bronze:#c59669;--safe-bottom:env(safe-area-inset-bottom,0px)}
 *{box-sizing:border-box} html{background:var(--bg);scroll-behavior:smooth;touch-action:pan-x pan-y;-ms-touch-action:pan-x pan-y} body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;touch-action:pan-x pan-y;-ms-touch-action:pan-x pan-y} button,input{font:inherit} button{color:inherit}.app{max-width:720px;margin:0 auto;min-height:100vh}
@@ -1158,6 +1158,20 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.archive-active-v316 .archive-victories-wrap .victories-row{
     padding:14px 16px;border-bottom:1px solid rgba(220,190,150,.07);
   }
+  body.archive-active-v316 .archive-victories-wrap .victories-row{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  }
+  body.archive-active-v316 .archive-victories-wrap .victories-row-main{flex:1;min-width:0}
+  body.archive-active-v316 .archive-victories-wrap .victories-row-delete{
+    flex:0 0 auto;width:34px;height:34px;margin-top:2px;padding:0;border:0;border-radius:10px;
+    background:transparent;color:rgba(190,188,182,.42);display:inline-flex;align-items:center;justify-content:center;
+    -webkit-tap-highlight-color:transparent;cursor:pointer;
+  }
+  body.archive-active-v316 .archive-victories-wrap .victories-row-delete svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  body.archive-active-v316 .archive-victories-wrap .victories-row-delete:active{
+    color:rgba(236,232,224,.72);background:rgba(255,255,255,.04);
+  }
+
   body.archive-active-v316 .archive-victories-wrap .victories-row:last-child{border-bottom:0}
   body.archive-active-v316 .archive-victories-wrap .victories-row-name{
     font-size:16px;font-weight:650;letter-spacing:-.02em;color:rgba(236,232,224,.84);
@@ -1286,6 +1300,20 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.victories-active-v317 .victories-row{
     padding:14px 16px;border-bottom:1px solid rgba(220,190,150,.07);
   }
+  body.victories-active-v317 .victories-row{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  }
+  body.victories-active-v317 .victories-row-main{flex:1;min-width:0}
+  body.victories-active-v317 .victories-row-delete{
+    flex:0 0 auto;width:34px;height:34px;margin-top:2px;padding:0;border:0;border-radius:10px;
+    background:transparent;color:rgba(190,188,182,.42);display:inline-flex;align-items:center;justify-content:center;
+    -webkit-tap-highlight-color:transparent;cursor:pointer;
+  }
+  body.victories-active-v317 .victories-row-delete svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  body.victories-active-v317 .victories-row-delete:active{
+    color:rgba(236,232,224,.72);background:rgba(255,255,255,.04);
+  }
+
   body.victories-active-v317 .victories-row:last-child{border-bottom:0}
   body.victories-active-v317 .victories-row-name{
     font-size:16px;font-weight:650;letter-spacing:-.02em;color:rgba(236,232,224,.84);
@@ -3165,6 +3193,8 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
   margin:0 0 22px;width:100%;font-size:15px;line-height:1.55;font-weight:450;
   color:rgba(190,188,182,.78);font-family:inherit;
 }
+.freedom-confirm-removal-body:empty,
+.freedom-confirm-removal-body[hidden]{display:none!important;margin:0;padding:0;min-height:0}
 .freedom-confirm-removal-actions{
   width:100%;display:flex;flex-direction:column;gap:10px;
 }
@@ -3214,14 +3244,14 @@ body.pension-active-v315 #pension .freedom-companion-msg-host.is-page-response:n
   box-shadow:none!important;
 }
 .freedom-confirm-removal-btn.is-danger{
-  background:rgba(168,72,72,.22);color:#f0c0c0;
-  box-shadow:inset 0 0 0 1px rgba(220,120,120,.35);
+  background:#B86A61;color:#fff;
+  box-shadow:none;
 }
 .freedom-confirm-removal-btn.is-danger:focus,
 .freedom-confirm-removal-btn.is-danger:focus-visible,
 .freedom-confirm-removal-btn.is-danger:active{
   outline:none!important;
-  box-shadow:inset 0 0 0 1px rgba(220,120,120,.45)!important;
+  box-shadow:none!important;
 }
 .freedom-confirm-removal-card.is-delete-mode .freedom-confirm-removal-emoji{display:none}
 .freedom-confirm-removal-card.is-delete-mode .freedom-confirm-removal-title{padding-top:8px}
@@ -5316,7 +5346,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     <p class="freedom-confirm-removal-body" id="freedomConfirmRemovalBody"></p>
     <div class="freedom-confirm-removal-actions">
       <button class="freedom-confirm-removal-btn is-secondary" id="freedomConfirmRemovalNotYet" type="button">Keep in Goals</button>
-      <button class="freedom-confirm-removal-btn is-primary" id="freedomConfirmRemovalYes" type="button">Move to Victories</button>
+      <button class="freedom-confirm-removal-btn is-primary" id="freedomConfirmRemovalYes" type="button">Archive</button>
       <button class="freedom-confirm-removal-btn is-danger" id="freedomConfirmRemovalDelete" type="button" hidden>Delete Goal</button>
     </div>
   </div>
@@ -5363,8 +5393,8 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
       <h1 id="freedomBackupPanelTitle">Backup &amp; export</h1>
       <button class="freedom-backup-panel-close" id="freedomBackupPanelClose" type="button" aria-label="Close">&times;</button>
     </div>
-    <p class="empty-note">Download a password-protected backup of your personal Freedom data, or restore from one you saved earlier. Encryption happens on this device — Freedom does not upload backups or keep your password.</p>
-    <p class="empty-note" style="margin-top:10px">Save the file somewhere you can recover if this phone is lost — for example iCloud Drive, another cloud drive, or a computer. Do not rely only on On My iPhone storage.</p>
+    <p class="empty-note">Download a password-protected backup of your personal Freedom data, or restore from one you saved earlier. Encryption happens on this device. Freedom does not upload backups or keep your password.</p>
+    <p class="empty-note" style="margin-top:10px">Save the file somewhere you can recover if this phone is lost: for example iCloud Drive, another cloud drive, or a computer. Do not rely only on On My iPhone storage.</p>
     <p class="empty-note" style="margin-top:10px">If you forget the password, that backup cannot be opened. Freedom cannot recover it.</p>
     <div class="backup-actions">
       <button class="mini-btn gold" id="freedomBackupExport" type="button">Export backup</button>
@@ -5489,7 +5519,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
             </svg>
           </div>
           <div class="overview-card-main">
-            <div class="overview-card-label">Freedom progress</div>
+            <div class="overview-card-label">Journey Progress</div>
             <div class="overview-card-value" id="overviewProgress">0%</div>
             <div class="overview-progress"><span id="overviewProgressBar" data-progress-key="overviewProgressBar"></span></div>
           </div>
@@ -5520,7 +5550,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <div class="journey-actions"><article class="card monthly-summary-card" id="journeyMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="journeyMonthlyAmount">€0/month</div><div class="monthly-summary-label">in monthly commitments</div></article><button class="mini-btn gold" id="toggleAddJourney" type="button">＋ Add journey</button></div><article class="card add-journey-card" id="addJourneyCard" hidden><div class="add-journey-head"><h2>Add a new journey</h2><button class="add-journey-close" id="closeAddJourney" type="button" aria-label="Close">×</button></div><p class="empty-note">Add any debt or financial commitment you want Freedom to track.</p><label for="newJourneyName">Journey name</label><input id="newJourneyName" type="text" placeholder="e.g. Car Loan"><div class="editor-grid"><div><label for="newJourneyStarting">How much did you borrow?</label><input id="newJourneyStarting" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newJourneyCurrent">How much is left to pay?</label><input id="newJourneyCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><label for="newJourneyPayment">How much do you want to pay each month?</label><input id="newJourneyPayment" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><button class="save-btn" id="addJourney">Add Journey</button></article><div class="stack" id="loanList"></div></section>
 <section class="page" id="goals"><div class="eyebrow">Goals</div><div class="goals-hero"><h1>Something worth<br>moving towards.</h1><p>Built a little at a time.</p></div><div class="freedom-companion-msg-host is-page-response" id="freedomGoalsCompanionMsgHost" aria-live="polite" hidden></div>
 <div class="goals-actions"><article class="card monthly-summary-card" id="goalsMonthlySummary" aria-live="polite"><div class="monthly-summary-amount" id="goalsMonthlyAmount">€0/month</div><div class="monthly-summary-label">needed to keep your goals on track</div></article><button class="mini-btn gold" id="toggleAddGoal" type="button">＋ Add goal</button></div><article class="card add-journey-card add-goal-card" id="addGoalCard" hidden><div class="add-goal-head"><h2>Add a new goal</h2><button class="add-goal-close" id="closeAddGoal" type="button" aria-label="Close">×</button></div><p class="empty-note">Use this for savings pots, purchases, trips or anything else you want to build towards.</p><label for="newGoalName">Goal name</label><input id="newGoalName" type="text" placeholder="e.g. New Kitchen"><label for="newGoalCurrent">Starting balance</label><input id="newGoalCurrent" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"><div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="newGoalHasTarget" aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div><div class="add-goal-target-wrap" id="newGoalTargetWrap" hidden><label for="newGoalTarget">Target amount</label><input id="newGoalTarget" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><button class="save-btn" id="addGoal">Add Goal</button></article><div class="stack" id="goalsList"></div></section>
-<section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>A little today, more freedom tomorrow.</p></div><details class="card pension-demo-intro" id="pensionDemoIntro"><summary class="pension-demo-total"><span>Combined pension value</span><strong id="pensionDemoCombinedValue">€0</strong></summary><p>Keep track of your pensions in one place, including those from previous jobs. Freedom estimates balances from your last statement plus monthly contributions — not investment growth, fees or market changes. Update the statement balance when a new statement arrives.</p></details><div class="freedom-companion-msg-host is-page-response" id="freedomPensionCompanionMsgHost" aria-live="polite" hidden></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><p class="pension-field-hint" id="newPensionValueHint">You can find this on your latest pension statement.</p><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00" aria-describedby="newPensionValueHint"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><div class="pension-auto-setting"><div class="pension-auto-copy"><strong>Calculate contributions automatically</strong><p class="pension-estimate-note" id="newPensionAutoNote">Balance reflects your last entered statement value. Automatic contributions are off.</p></div><label class="pension-toggle"><input type="checkbox" id="newPensionAuto" aria-label="Calculate contributions automatically"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
+<section class="page" id="pension"><div class="eyebrow">Pension</div><div class="pension-hero"><h1>Future freedom,<br>growing quietly.</h1><p>A little today, more freedom tomorrow.</p></div><details class="card pension-demo-intro" id="pensionDemoIntro"><summary class="pension-demo-total"><span>Combined pension value</span><strong id="pensionDemoCombinedValue">€0</strong></summary><p>Keep track of your pensions in one place, including those from previous jobs. Freedom estimates balances from your last statement plus monthly contributions, not investment growth, fees or market changes. Update the statement balance when a new statement arrives.</p></details><div class="freedom-companion-msg-host is-page-response" id="freedomPensionCompanionMsgHost" aria-live="polite" hidden></div><div class="pension-actions"><button class="mini-btn gold" id="toggleAddPension" type="button">＋ Add pension</button></div><article class="card add-journey-card add-pension-card" id="addPensionCard" hidden><div class="add-pension-head"><h2>Add a new pension</h2><button class="add-pension-close" id="closeAddPension" type="button" aria-label="Close">×</button></div><p class="empty-note">Track any pension pot: workplace, personal or from a previous employer.</p><label for="newPensionName">Pension name</label><input id="newPensionName" type="text" placeholder="e.g. Irish Life"><label for="newPensionValue">Current pension value</label><p class="pension-field-hint" id="newPensionValueHint">You can find this on your latest pension statement.</p><input id="newPensionValue" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00" aria-describedby="newPensionValueHint"><div class="editor-grid"><div><label for="newPensionPersonal">Your monthly contribution</label><input id="newPensionPersonal" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div><div><label for="newPensionEmployer">Employer contribution</label><input id="newPensionEmployer" inputmode="decimal" type="number" min="0" step="0.01" placeholder="0.00"></div></div><div class="pension-auto-setting"><div class="pension-auto-copy"><strong>Calculate contributions automatically</strong><p class="pension-estimate-note" id="newPensionAutoNote">Balance reflects your last entered statement value. Automatic contributions are off.</p></div><label class="pension-toggle"><input type="checkbox" id="newPensionAuto" aria-label="Calculate contributions automatically"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><button class="save-btn" id="addPension">Add Pension</button></article><div class="stack" id="pensionList"></div></section>
 <section class="page" id="notes"><div class="notes-hero"><p class="notes-hero-desc">Payments, plans, goals and<br>journeys you don't want to forget.</p></div><div class="notes-actions"><button class="mini-btn" id="toggleAddNote" type="button">＋ Add note</button></div><article class="card note-card add-note-card is-editing" id="addNoteCard" data-color="yellow" hidden></article><div class="stack" id="notesList"></div></section>
 <section class="page" id="archive"><div class="archive-page"><header class="archive-hero"><h1 class="archive-title">Archive</h1><p class="archive-subtitle">Things that were part of your journey.<br>Kept here, not forgotten.</p></header><div class="archive-sections" id="archiveSections"></div><p class="archive-footer-note">Restored items will return to their original section.<br>Deleted items are removed permanently.</p></div></section>
 <section class="page" id="victories"><div class="victories-page"><div class="victories-confetti" aria-hidden="true"><span class="is-sparkle" style="left:18%;top:10%;background:#ffb078"></span><span class="is-diamond" style="left:34%;top:8%;background:#ff3f9b"></span><span class="is-confetti" style="left:52%;top:12%;background:#a855d8;transform:rotate(-28deg)"></span><span class="is-sparkle" style="left:66%;top:9%;background:#ff8a45"></span><span class="is-diamond" style="left:78%;top:14%;background:#d060c8"></span><span class="is-confetti" style="left:24%;top:16%;background:#ff4c97;transform:rotate(22deg)"></span><span class="is-sparkle" style="left:42%;top:18%;background:#efcbaa"></span><span class="is-diamond" style="left:58%;top:17%;background:#ffb078"></span><span class="is-confetti" style="left:72%;top:20%;background:#e889b4;transform:rotate(-16deg)"></span><span class="is-sparkle" style="left:12%;top:22%;background:#a855d8"></span><span class="is-diamond" style="left:86%;top:22%;background:#ff8a45"></span><span class="is-confetti" style="left:30%;top:28%;background:#ff3f9b;transform:rotate(12deg)"></span><span class="is-sparkle" style="left:48%;top:30%;background:#d060c8"></span><span class="is-diamond" style="left:64%;top:27%;background:#ff4c97"></span><span class="is-confetti" style="left:16%;top:34%;background:#ffb078;transform:rotate(-20deg)"></span><span class="is-sparkle" style="left:38%;top:36%;background:#ff8a45"></span><span class="is-diamond" style="left:55%;top:38%;background:#e889b4"></span><span class="is-confetti" style="left:70%;top:35%;background:#a855d8;transform:rotate(18deg)"></span><span class="is-sparkle" style="left:82%;top:40%;background:#ff3f9b"></span><span class="is-diamond" style="left:22%;top:42%;background:#efcbaa"></span><span class="is-confetti" style="left:44%;top:44%;background:#ff8a45;transform:rotate(-10deg)"></span><span class="is-sparkle" style="left:60%;top:46%;background:#d060c8"></span><span class="is-diamond" style="left:76%;top:48%;background:#ffb078"></span><span class="is-confetti" style="left:10%;top:48%;background:#ff4c97;transform:rotate(26deg)"></span><span class="is-sparkle" style="left:33%;top:50%;background:#a855d8"></span><span class="is-diamond" style="left:50%;top:52%;background:#e889b4"></span><span class="is-confetti" style="left:68%;top:51%;background:#ff3f9b;transform:rotate(-14deg)"></span><span class="is-sparkle" style="left:88%;top:50%;background:#ff8a45"></span></div><header class="victories-hero"><h1 class="victories-title">Victories<span class="victories-title-trophy" aria-hidden="true">🏆</span></h1><p class="victories-subtitle">The things you finished along the way.</p></header><div class="victories-sections" id="victoriesSections"></div></div></section>
@@ -7841,7 +7871,7 @@ async function freedomDeliverEncryptedBackupFile(json,filename){
 }
 async function exportFreedomBackup(){
   if(demoMode){
-    setFreedomBackupStatus("You’re in Demo Mode. Exit Demo Mode first to create a personal backup — Demo data stays separate and is not saved as your personal backup.",true);
+    setFreedomBackupStatus("You’re in Demo Mode. Exit Demo Mode first to create a personal backup. Demo data stays separate and is not saved as your personal backup.",true);
     return;
   }
   /* Corrupt/unreadable storage: in-memory state is a fresh empty shell — do not export it as personal data. */
@@ -7867,7 +7897,7 @@ async function exportFreedomBackup(){
     const delivered=await freedomDeliverEncryptedBackupFile(json,filename);
     if(!delivered||!delivered.ok){
       if(delivered&&delivered.cancelled){
-        setFreedomBackupStatus(delivered.error||"Export cancelled — no backup file was saved.");
+        setFreedomBackupStatus(delivered.error||"Export cancelled. No backup file was saved.");
         return;
       }
       throw new Error((delivered&&delivered.error)||"Could not export the encrypted backup.");
@@ -7919,7 +7949,7 @@ async function applyDecryptedFreedomBackup(checked){
 async function restoreFreedomBackupFromFile(file){
   if(!file)return;
   if(demoMode){
-    setFreedomBackupStatus("You’re in Demo Mode. Exit Demo Mode first to restore a personal backup — Demo data stays separate and will not be mixed with your personal finances.",true);
+    setFreedomBackupStatus("You’re in Demo Mode. Exit Demo Mode first to restore a personal backup. Demo data stays separate and will not be mixed with your personal finances.",true);
     return;
   }
   const reader=new FileReader();
@@ -8013,7 +8043,7 @@ function initFreedomBackupUi(){
       e.preventDefault();
       e.stopPropagation();
       if(demoMode){
-        setFreedomBackupStatus("You’re in Demo Mode. Exit Demo Mode first to restore a personal backup — Demo data stays separate and will not be mixed with your personal finances.",true);
+        setFreedomBackupStatus("You’re in Demo Mode. Exit Demo Mode first to restore a personal backup. Demo data stays separate and will not be mixed with your personal finances.",true);
         return;
       }
       fileInput.value="";
@@ -8130,7 +8160,7 @@ function freedomRemindersNativeAvailable(){
 }
 function freedomRemindersAvailability(){
   if(demoMode){
-    return{ok:false,reason:"demo",message:"Reminders are only available in personal mode — not while Demo Mode is on."};
+    return{ok:false,reason:"demo",message:"Reminders are only available in personal mode, not while Demo Mode is on."};
   }
   /* Native Capacitor: local notifications — do not require Web Push / Home Screen PWA. */
   if(freedomRemindersNativeAvailable()){
@@ -8788,7 +8818,7 @@ function renderPatriciaNote(note,options){
   wrap.dataset.noteId=note.id;
   const lines=note.text.split("\n");
   let bodyHtml;
-  // Eyes/doodle footer is Home-only — not part of the default sticky layout.
+  // Eyes/doodle footer is Home-only  -  not part of the default sticky layout.
   if(note.id==="home"&&note.doodle&&lines.length>1){
     const lead=lines.slice(0,-1).map(line=>`<p class="patricia-note-text">${esc(line)}</p>`).join("");
     const last=lines[lines.length-1];
@@ -9142,6 +9172,23 @@ function moveCompletedItemToVictories(kind,itemName,opts){
   return finish();
 }
 window.moveCompletedItemToVictories=moveCompletedItemToVictories;
+/* Permanent delete of one Victories record only (Archive → Victories). */
+function permanentlyDeleteVictory(victoryId){
+  const id=String(victoryId||"").trim();
+  if(!id)return false;
+  if(id==="housePocket"){
+    state.housePocketArchiveRemoved=true;
+    persist();render();
+    return true;
+  }
+  if(!Array.isArray(state.victories))return false;
+  const i=state.victories.findIndex(v=>v&&String(v.id)===id);
+  if(i<0)return false;
+  state.victories.splice(i,1);
+  persist();render();
+  return true;
+}
+window.permanentlyDeleteVictory=permanentlyDeleteVictory;
 /* Permanent delete of an active Journey/Goal by stable record id (no Victories entry). */
 function permanentlyDeleteActiveItem(kind,recordId){
   const id=String(recordId||"").trim();
@@ -9746,7 +9793,7 @@ function journeyPlanFieldsHtml(i,loan){
   const forecast=freedomForecast(loan.current,loan.payment);
   const needed=formatEstimatedMonthlyNeeded(loan.current,loan.freedomDate);
   const dateVal=freedomDateInputValue(loan.freedomDate);
-  return`<div class="journey-plan-label">Plan my payoff by</div><div class="journey-mode-switch"><button class="journey-mode-btn${mode==="monthly"?" active":""}" type="button" data-loan-mode="${i}" data-mode="monthly">Monthly repayment</button><button class="journey-mode-btn${mode==="date"?" active":""}" type="button" data-loan-mode="${i}" data-mode="date">Freedom date</button></div><div class="journey-mode-panel" data-mode-panel="monthly"${mode!=="monthly"?" hidden":""}><div class="loan-stat"><small>How much do you want to pay each month?</small><input class="loan-stat-value" data-loan="${i}" data-field="payment" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.payment}" aria-label="How much do you want to pay each month?"></div><div class="loan-stat loan-stat-forecast"><small>Estimated freedom</small><strong class="freedom-estimate" data-freedom-for="${i}">${esc(forecast.line1)}</strong><span class="freedom-date-estimate" data-freedom-date-for="${i}">${esc(forecast.line2)}</span></div></div><div class="journey-mode-panel" data-mode-panel="date"${mode!=="date"?" hidden":""}><div class="loan-stat journey-freedom-date-stat"><small>I want this gone by</small><input class="loan-stat-value journey-freedom-date-input" id="loanFreedomDate_${i}" data-loan="${i}" data-field="freedomDate" type="month" value="${dateVal}" aria-label="Freedom date"></div><div class="loan-stat loan-stat-forecast"><small>Estimated monthly repayment needed</small><strong class="freedom-estimate-needed" data-needed-for="${i}">${esc(needed)}</strong><span class="journey-estimate-note">Estimate only — excludes interest and charges</span></div></div>`;
+  return`<div class="journey-plan-label">Plan my payoff by</div><div class="journey-mode-switch"><button class="journey-mode-btn${mode==="monthly"?" active":""}" type="button" data-loan-mode="${i}" data-mode="monthly">Monthly repayment</button><button class="journey-mode-btn${mode==="date"?" active":""}" type="button" data-loan-mode="${i}" data-mode="date">Freedom date</button></div><div class="journey-mode-panel" data-mode-panel="monthly"${mode!=="monthly"?" hidden":""}><div class="loan-stat"><small>How much do you want to pay each month?</small><input class="loan-stat-value" data-loan="${i}" data-field="payment" inputmode="decimal" type="number" min="0" step="0.01" value="${loan.payment}" aria-label="How much do you want to pay each month?"></div><div class="loan-stat loan-stat-forecast"><small>Estimated freedom</small><strong class="freedom-estimate" data-freedom-for="${i}">${esc(forecast.line1)}</strong><span class="freedom-date-estimate" data-freedom-date-for="${i}">${esc(forecast.line2)}</span></div></div><div class="journey-mode-panel" data-mode-panel="date"${mode!=="date"?" hidden":""}><div class="loan-stat journey-freedom-date-stat"><small>I want this gone by</small><input class="loan-stat-value journey-freedom-date-input" id="loanFreedomDate_${i}" data-loan="${i}" data-field="freedomDate" type="month" value="${dateVal}" aria-label="Freedom date"></div><div class="loan-stat loan-stat-forecast"><small>Estimated monthly repayment needed</small><strong class="freedom-estimate-needed" data-needed-for="${i}">${esc(needed)}</strong><span class="journey-estimate-note">Estimate only. Excludes interest and charges</span></div></div>`;
 }
 function journeyPlanSectionHtml(i,loan){
   const open=isLoanPlanSectionOpen(i);
@@ -9756,7 +9803,7 @@ function journeyPlanSectionHtml(i,loan){
 function journeyMoneyFieldsHtml(i,loan){
   const lastRepay=loan.lastRepaymentAmount!=null&&loan.lastRepaymentDate
     ?`<strong>${euro2(loan.lastRepaymentAmount)} · ${formatRepaymentDate(loan.lastRepaymentDate)}</strong>`
-    :`<span>—</span>`;
+    :`<span>-</span>`;
   return`<div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><p class="journey-repayment-msg" data-loan-repayment-msg="${i}" hidden role="alert" aria-live="assertive"></p><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div>`;
 }
 function journeyMoneySectionHtml(i,loan){
@@ -9769,7 +9816,7 @@ function buildLoanExpandedBody(i,loan){
   const starting=Math.max(0,Number(loan.starting)||0);
   const statusHtml=`<div class="journey-status"><div class="loan-summary loan-summary-returned-pair"><div class="loan-stat"><small>Money returned</small><strong class="journey-returned-value" data-returned-for="${i}">${euro2(returned)} · ${pct.toFixed(1)}%</strong></div><div class="loan-stat"><small>Original loan amount</small><strong class="journey-starting-value" data-starting-for="${i}">${euro2(starting)}</strong></div></div></div>`;
   const completedCelebrated=(Number(loan.current)||0)<=0&&!!loan.completionExperienced;
-  const archiveLabel=completedCelebrated?"Move to Victories":"Archive journey";
+  const archiveLabel=completedCelebrated?"Archive":"Archive journey";
   const footerHtml=`<div class="journey-card-footer"><button class="mini-btn danger" data-archive-loan="${i}" type="button">${archiveLabel}</button><button class="mini-btn delete" data-delete-loan="${i}" type="button">Delete</button><button class="save-btn" data-save-loan="${i}" type="button">Save</button></div>`;
   return`${statusHtml}${journeyPlanSectionHtml(i,loan)}${journeyMoneySectionHtml(i,loan)}${footerHtml}`;
 }
@@ -9806,7 +9853,7 @@ const freedomMotion={
   },
   prepareCards(pageId){
     if(this.reduced)return;
-    // Journey cards must open already settled — no drop-in / stagger entrance.
+    // Journey cards must open already settled  -  no drop-in / stagger entrance.
     if(pageId==="journey")return;
     this.pageCards(pageId).forEach(card=>{
       if(card.classList.contains("freedom-card-new"))return;
@@ -11139,12 +11186,12 @@ function goalsMonthlyNeededTotal(){
 function updateMonthlySummaryCards(){
   const journeySummary=byId("journeyMonthlySummary");
   const journeyEl=byId("journeyMonthlyAmount");
-  // Hide only when the Journey dataset is empty — not when the calculated amount is €0.
+  // Hide only when the Journey dataset is empty  -  not when the calculated amount is €0.
   if(journeySummary)journeySummary.hidden=!(Array.isArray(state.loans)&&state.loans.length);
   if(journeyEl)journeyEl.textContent=`${euro0(journeyMonthlyCommitmentsTotal())}/month`;
   const goalsSummary=byId("goalsMonthlySummary");
   const goalsEl=byId("goalsMonthlyAmount");
-  // Hide only when there are zero visible Goal records — not when the calculated amount is €0.
+  // Hide only when there are zero visible Goal records  -  not when the calculated amount is €0.
   if(goalsSummary)goalsSummary.hidden=!visibleGoalKeys().length;
   if(goalsEl)goalsEl.textContent=`${euro0(goalsMonthlyNeededTotal())}/month`;
 }
@@ -11297,7 +11344,7 @@ function renderSavingsGoalCard(key){
   const toggleHtml=`<div class="goal-target-setting"><span>Set a target</span><label class="goal-toggle"><input type="checkbox" id="${ids.hasTargetId}" data-goal-has-target="${esc(key)}"${hasTargetChecked} aria-label="Set a target"><span class="goal-toggle-track"></span><span class="goal-toggle-thumb"></span></label></div>`;
   const progressBody=usesTarget?goalProgressBlock(current,target,barId):"";
   const completedCelebrated=usesTarget&&isGoalReached(key)&&isGoalCompletionExperienced(key);
-  const archiveLabel=completedCelebrated?"Move to Victories":"Archive";
+  const archiveLabel="Archive";
   const actions=isCustom
     ? `<button class="mini-btn danger" data-archive-goal="${customIndex}" type="button">${archiveLabel}</button><button class="mini-btn delete" data-delete-goal="${customIndex}" type="button">Delete</button>`
     : `<button class="mini-btn danger" data-archive-built-in="${key}" type="button">${archiveLabel}</button><button class="mini-btn delete" data-delete-built-in="${key}" type="button">Delete</button>`;
@@ -12546,7 +12593,7 @@ function renderPensionCard(i){
   const autoOn=!!p.autoContrib;
   const autoChecked=autoOn?" checked":"";
   const estimateNote=`<p class="pension-estimate-note" data-pension-auto-note="${i}">${esc(pensionAutoStatusText(autoOn))}</p>`;
-  const newStatementHtml=`<div class="pension-new-statement-setting" data-pension-new-statement-wrap="${i}"><div class="pension-new-statement-copy"><strong>Received a new pension statement?</strong><p>Tick this if your latest statement shows the same pension value. This tells Freedom to start calculating future contributions from the new statement date.</p></div><label class="pension-toggle"><input type="checkbox" id="pensionNewStatement_${i}" data-pension-new-statement="${i}" aria-label="Received a new pension statement?"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div>`;
+  const newStatementHtml=`<div class="pension-new-statement-setting" data-pension-new-statement-wrap="${i}"><div class="pension-new-statement-copy"><strong>Received a new pension statement?</strong><p>Tick this if you've received a new statement showing the same balance as before.</p></div><label class="pension-toggle"><input type="checkbox" id="pensionNewStatement_${i}" data-pension-new-statement="${i}" aria-label="Received a new pension statement?"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div>`;
   const bodyInner=`<div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Current pension value</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${statementValue||""}" placeholder="0.00" data-pension-statement-saved="${statementValue}"></div>${newStatementHtml}<div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-auto-setting"><div class="pension-auto-copy"><strong>Calculate contributions automatically</strong>${estimateNote}</div><label class="pension-toggle"><input type="checkbox" id="pensionAuto_${i}" data-pension-auto="${i}"${autoChecked} aria-label="Calculate contributions automatically"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div></div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div>`;
   const body=wrapCardBody(bodyInner,collapsed);
   card.innerHTML=head+body;
@@ -12791,6 +12838,7 @@ function collectVictoryItems(){
   /* Victories holds completed Journeys/Goals. Archive is unfinished items put aside. */
   return (Array.isArray(state.victories)?state.victories:[]).map(function(x){
     return {
+      id:x.id||"",
       kind:x.kind==="goal"?"goal":"journey",
       name:x.name||(x.kind==="goal"?"Goal":"Journey"),
       amount:Number(x.amount)||0,
@@ -12798,12 +12846,19 @@ function collectVictoryItems(){
     };
   });
 }
+function victoriesDeleteIconHtml(){
+  return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 13h8l1-13"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>`;
+}
 function victoriesRow(item){
   const status=item.kind==="goal"?"Goal reached":"Paid off";
   const amount=formatVictoryAmount(item.amount);
   const date=formatVictoryDate(item.completedAt);
   const dateLine=date?("Completed "+date):"Completed";
-  return `<div class="victories-row"><div class="victories-row-main"><div class="victories-row-name">${esc(item.name)}</div><div class="victories-row-meta victories-row-meta-status">${esc(status)}</div><div class="victories-row-meta">${esc(amount)}</div><div class="victories-row-meta">${esc(dateLine)}</div></div></div>`;
+  const id=String(item.id||"").trim();
+  const deleteBtn=id
+    ?`<button class="victories-row-delete" type="button" data-delete-victory-record="${esc(id)}" aria-label="Delete ${esc(item.name||"victory")}">${victoriesDeleteIconHtml()}</button>`
+    :"";
+  return `<div class="victories-row"${id?` data-victory-id="${esc(id)}"`:""}><div class="victories-row-main"><div class="victories-row-name">${esc(item.name)}</div><div class="victories-row-meta victories-row-meta-status">${esc(status)}</div><div class="victories-row-meta">${esc(amount)}</div><div class="victories-row-meta">${esc(dateLine)}</div></div>${deleteBtn}</div>`;
 }
 function renderVictories(){
   const wrap=byId("victoriesSections");
@@ -12819,6 +12874,25 @@ function renderVictories(){
   }
   const rows=items.map(victoriesRow).join("");
   wrap.innerHTML=`<section class="victories-section"><div class="victories-section-head"><div class="victories-section-label">Your Victories</div><span class="victories-section-count">${items.length}</span></div><div class="victories-section-card">${rows}</div></section>`;
+  wrap.querySelectorAll("[data-delete-victory-record]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const id=String(e.currentTarget.dataset.deleteVictoryRecord||"").trim();
+    if(!id)return;
+    const item=(Array.isArray(state.victories)?state.victories:[]).find(v=>v&&String(v.id)===id);
+    const doRemove=()=>{if(typeof window.permanentlyDeleteVictory==="function")window.permanentlyDeleteVictory(id);};
+    if(window.FreedomConfirmRemoval&&typeof window.FreedomConfirmRemoval.show==="function"){
+      window.FreedomConfirmRemoval.show({
+        mode:"delete",
+        kind:"victory",
+        itemName:(item&&item.name)||"Victory",
+        recordId:id,
+        onDelete:doRemove
+      });
+      return;
+    }
+    if(!confirm("Delete this Victory record permanently?"))return;
+    doRemove();
+  }));
 }
 function archiveActions(restoreAttrs,deleteAttrs){
   return `<div class="archive-actions"><button class="archive-btn-restore" type="button" ${restoreAttrs}>Restore</button><button class="archive-btn-delete" type="button" ${deleteAttrs}>Delete</button></div>`;
@@ -12845,11 +12919,9 @@ function renderArchive(){
       {text:completedDate?`Completed · ${completedDate}`:"Completed"}
     ],archiveActions('data-restore-victory="housePocket"','data-delete-victory="housePocket"')," archive-row-victory"));
   }
-  if(victories.length)sections.push(archiveSection("Completed Victories",victories.length,victories.join("")));
-  const goals=[];
-  Object.entries(state.hiddenBuiltInGoals).forEach(([key,hidden])=>{
-    if(!hidden||state.deletedBuiltInGoals[key])return;
-    goals.push(archiveRow(goalDisplayName(key),[{text:"Archived"}],
+  Object.entries(state.hiddenBuiltInGoals||{}).forEach(([key,hidden])=>{
+    if(!hidden||(state.deletedBuiltInGoals&&state.deletedBuiltInGoals[key]))return;
+    archivedRows.push(archiveRow(goalDisplayName(key),[{text:"Archived"}],
       archiveActions(`data-restore-built-in="${key}"`,`data-delete-built-in-archive="${key}"`)));
   });
   state.archivedGoals.forEach((x,i)=>{
@@ -12889,8 +12961,38 @@ function renderArchive(){
     state.housePocketArchived=false;state.housePocketArchiveRemoved=false;persist();render();
   }));
   wrap.querySelectorAll("[data-delete-victory]").forEach(btn=>btn.addEventListener("click",()=>{
-    if(!confirm("Delete this completed victory permanently?"))return;
-    state.housePocketArchiveRemoved=true;persist();render();
+    const doRemove=()=>{if(typeof window.permanentlyDeleteVictory==="function")window.permanentlyDeleteVictory("housePocket");else{state.housePocketArchiveRemoved=true;persist();render();}};
+    if(window.FreedomConfirmRemoval&&typeof window.FreedomConfirmRemoval.show==="function"){
+      window.FreedomConfirmRemoval.show({
+        mode:"delete",
+        kind:"victory",
+        itemName:"House Pocket",
+        recordId:"housePocket",
+        onDelete:doRemove
+      });
+      return;
+    }
+    if(!confirm("Delete this Victory record permanently?"))return;
+    doRemove();
+  }));
+  wrap.querySelectorAll("[data-delete-victory-record]").forEach(btn=>btn.addEventListener("click",e=>{
+    e.stopPropagation();
+    const id=String(e.currentTarget.dataset.deleteVictoryRecord||"").trim();
+    if(!id)return;
+    const item=(Array.isArray(state.victories)?state.victories:[]).find(v=>v&&String(v.id)===id);
+    const doRemove=()=>{if(typeof window.permanentlyDeleteVictory==="function")window.permanentlyDeleteVictory(id);};
+    if(window.FreedomConfirmRemoval&&typeof window.FreedomConfirmRemoval.show==="function"){
+      window.FreedomConfirmRemoval.show({
+        mode:"delete",
+        kind:"victory",
+        itemName:(item&&item.name)||"Victory",
+        recordId:id,
+        onDelete:doRemove
+      });
+      return;
+    }
+    if(!confirm("Delete this Victory record permanently?"))return;
+    doRemove();
   }));
   wrap.querySelectorAll("[data-restore-built-in]").forEach(btn=>btn.addEventListener("click",e=>{
     state.hiddenBuiltInGoals[e.currentTarget.dataset.restoreBuiltIn]=false;persist();render();
@@ -15456,7 +15558,7 @@ window.FreedomConfirmRemoval=(function(){
     }
     if(yesBtn){
       yesBtn.hidden=false;
-      yesBtn.textContent="Move to Victories";
+      yesBtn.textContent="Archive";
       yesBtn.className="freedom-confirm-removal-btn is-primary";
     }
     if(deleteBtn){
@@ -15464,15 +15566,18 @@ window.FreedomConfirmRemoval=(function(){
       deleteBtn.textContent="Delete Goal";
     }
     if(bodyEl){
-      bodyEl.textContent=isGoal
-        ?"Choose what happens next. Move it to Victories, keep it in Goals, or delete it permanently."
-        :"Move this Journey to Victories, or keep it in your active Journey list.";
+      bodyEl.textContent="";
+      bodyEl.hidden=true;
     }
+    if(overlay)overlay.removeAttribute("aria-describedby");
   }
   function applyDeleteCopy(kind,itemName){
     const isGoal=kind==="goal";
-    const name=String(itemName||(isGoal?"this Goal":"this Journey"));
-    if(titleEl)titleEl.textContent=isGoal?"Delete this Goal?":"Delete this Journey?";
+    const isVictory=kind==="victory";
+    const name=String(itemName||(isVictory?"this Victory":(isGoal?"this Goal":"this Journey")));
+    if(titleEl){
+      titleEl.textContent=isVictory?"Delete this Victory?":(isGoal?"Delete this Goal?":"Delete this Journey?");
+    }
     if(emojiEl)emojiEl.hidden=true;
     if(card)card.classList.add("is-delete-mode");
     if(notYetBtn){
@@ -15482,11 +15587,15 @@ window.FreedomConfirmRemoval=(function(){
     if(yesBtn)yesBtn.hidden=true;
     if(deleteBtn){
       deleteBtn.hidden=false;
-      deleteBtn.textContent=isGoal?"Delete Goal":"Delete Journey";
+      deleteBtn.textContent=isVictory?"Delete":(isGoal?"Delete Goal":"Delete Journey");
     }
     if(bodyEl){
-      bodyEl.textContent=name+" will be permanently removed from Freedom. This cannot be undone.";
+      bodyEl.hidden=false;
+      bodyEl.textContent=isVictory
+        ?"This Victory record will be permanently deleted. This cannot be undone."
+        :(name+" will be permanently removed from Freedom. This cannot be undone.");
     }
+    if(overlay)overlay.setAttribute("aria-describedby","freedomConfirmRemovalBody");
   }
   function hideCancel(){
     if(!overlay)return;
@@ -15501,7 +15610,7 @@ window.FreedomConfirmRemoval=(function(){
   function show(opts){
     opts=opts||{};
     if(!overlay||!bodyEl)return;
-    const type=opts.kind==="goal"?"goal":"journey";
+    const type=opts.kind==="victory"?"victory":(opts.kind==="goal"?"goal":"journey");
     const mode=opts.mode==="delete"?"delete":"closeChapter";
     const recordId=String(opts.recordId||"").trim();
     active={
@@ -15516,23 +15625,9 @@ window.FreedomConfirmRemoval=(function(){
       onDelete:typeof opts.onDelete==="function"?opts.onDelete:null
     };
     window.completionTargetId=recordId||null;
-    window.completionTargetType=type;
+    window.completionTargetType=type==="victory"?null:type;
     if(mode==="delete")applyDeleteCopy(type,active.itemName);
-    else{
-      applyCloseChapterCopy(type);
-      if(bodyEl&&opts.kind==="goal"){
-        /* Prefer Victories wording; keep item name when useful. */
-        const name=String(active.itemName||"").trim();
-        bodyEl.textContent=name
-          ?name+" can move to Victories, stay in Goals, or be deleted permanently."
-          :"Choose what happens next. Move it to Victories, keep it in Goals, or delete it permanently.";
-      }else if(bodyEl){
-        const name=String(active.itemName||"").trim();
-        bodyEl.textContent=name
-          ?name+" will be removed from your active Journey and added to Victories."
-          :"This Journey will be removed from your active Journey and added to Victories.";
-      }
-    }
+    else applyCloseChapterCopy(type);
     setBusy(false);
     if(typeof freedomRememberDialogFocus==="function")freedomRememberDialogFocus(overlay);
     overlay.hidden=false;
@@ -15583,13 +15678,17 @@ window.FreedomConfirmRemoval=(function(){
     const target=active;
     active=null;
     const recordId=String(target.completionTargetId||"").trim();
-    const type=target.completionTargetType==="goal"?"goal":"journey";
+    const type=target.completionTargetType==="victory"?"victory":(target.completionTargetType==="goal"?"goal":"journey");
     overlay.hidden=true;
     if(typeof freedomRestoreDialogFocus==="function")freedomRestoreDialogFocus(overlay);
     setBusy(false);
     clearCompletionTarget();
     if(typeof target.onDelete==="function"){
       target.onDelete();
+      return;
+    }
+    if(type==="victory"&&typeof window.permanentlyDeleteVictory==="function"&&recordId){
+      window.permanentlyDeleteVictory(recordId);
       return;
     }
     if(typeof window.permanentlyDeleteActiveItem==="function"&&recordId){
@@ -17266,9 +17365,9 @@ window.FreedomMonthlyReminderCheckIn=(function(){
   /* Approved Freedom Companion Bible Monthly Reminders library — do not rewrite. */
   const pools={
     patricia:[
-      "That nudge was me. Freedom just keeps the door open — update a Journey or Goal if anything’s moved.",
+      "That nudge was me. Freedom just keeps the door open. Update a Journey or Goal if anything’s moved.",
       "Monthly check-in, as promised. Have a peek at your Journeys and Goals when you’re ready.",
-      "Freedom pinged you because I asked. No drama — just a soft reminder to keep Journeys and Goals current.",
+      "Freedom pinged you because I asked. No drama, just a soft reminder to keep Journeys and Goals current.",
       "Surprise, it’s me again. If anything’s shifted, give your Journeys and Goals a quick once-over.",
       "That little ping? Entirely intentional. Pop into Journeys and Goals whenever you’ve got a minute.",
       "I kept my promise. Freedom brought you back; I’ll wait while you check Journeys and Goals.",
