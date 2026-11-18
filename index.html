@@ -2468,25 +2468,32 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.pension-active-v315 #pension .pension-stat strong{
     font-size:15px;font-weight:500;letter-spacing:-.01em;color:rgba(236,232,224,.72);
   }
-  body.pension-active-v315 #pension .pension-auto-setting{
+  body.pension-active-v315 #pension .pension-auto-setting,
+  body.pension-active-v315 #pension .pension-new-statement-setting{
     display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
     margin-top:14px;padding:12px 0 2px;border-top:1px solid rgba(220,190,150,.08);
   }
-  body.pension-active-v315 #pension .pension-auto-copy{
+  body.pension-active-v315 #pension .pension-new-statement-setting[hidden]{display:none!important}
+  body.pension-active-v315 #pension .pension-auto-copy,
+  body.pension-active-v315 #pension .pension-new-statement-copy{
     min-width:0;flex:1;
   }
-  body.pension-active-v315 #pension .pension-auto-copy strong{
+  body.pension-active-v315 #pension .pension-auto-copy strong,
+  body.pension-active-v315 #pension .pension-new-statement-copy strong{
     display:block;font-size:13px;font-weight:600;letter-spacing:-.01em;
     color:rgba(236,232,224,.82);margin-bottom:4px;
   }
-  body.pension-active-v315 #pension .pension-auto-copy p{
+  body.pension-active-v315 #pension .pension-auto-copy p,
+  body.pension-active-v315 #pension .pension-new-statement-copy p{
     margin:0;font-size:12px;line-height:1.45;font-weight:500;
     color:rgba(190,188,182,.58);
   }
-  body.pension-active-v315 #pension .pension-auto-setting .pension-toggle input:checked + .pension-toggle-track{
+  body.pension-active-v315 #pension .pension-auto-setting .pension-toggle input:checked + .pension-toggle-track,
+  body.pension-active-v315 #pension .pension-new-statement-setting .pension-toggle input:checked + .pension-toggle-track{
     background:rgba(132,189,145,.42);border-color:rgba(132,189,145,.55);
   }
-  body.pension-active-v315 #pension .pension-auto-setting .pension-toggle input:checked + .pension-toggle-track + .pension-toggle-thumb{
+  body.pension-active-v315 #pension .pension-auto-setting .pension-toggle input:checked + .pension-toggle-track + .pension-toggle-thumb,
+  body.pension-active-v315 #pension .pension-new-statement-setting .pension-toggle input:checked + .pension-toggle-track + .pension-toggle-thumb{
     background:rgba(172,186,161,.95);
   }
   body.pension-active-v315 #pension .pension-overview-setting{
@@ -12016,8 +12023,12 @@ function savePension(i){
   const nextAuto=autoEl?!!autoEl.checked:prevAuto;
   if(overviewEl)p.showInOverview=overviewEl.checked;
   const statementChanged=Math.abs(nextStatement-prevStatement)>1e-9;
+  const newStatementEl=byId(`pensionNewStatement_${i}`);
+  /* Same-balance reset only when the explicit New pension statement control is ticked. */
+  const sameBalanceNewStatement=!statementChanged&&!!(newStatementEl&&newStatementEl.checked);
+  const statementIntent=statementChanged||sameBalanceNewStatement;
   let statementIncreased=false;
-  if(statementChanged){
+  if(statementIntent){
     statementIncreased=nextStatement>prevStatement;
     p.autoContrib=nextAuto;
     pensionResetStatementBaseline(p,nextStatement,nextPersonal,nextEmployer,new Date());
@@ -12051,7 +12062,8 @@ function renderPensionCard(i){
   const autoOn=!!p.autoContrib;
   const autoChecked=autoOn?" checked":"";
   const estimateNote=`<p class="pension-estimate-note" data-pension-auto-note="${i}">${esc(pensionAutoStatusText(autoOn))}</p>`;
-  const bodyInner=`<div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Current pension value</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${statementValue||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-auto-setting"><div class="pension-auto-copy"><strong>Calculate contributions automatically</strong>${estimateNote}</div><label class="pension-toggle"><input type="checkbox" id="pensionAuto_${i}" data-pension-auto="${i}"${autoChecked} aria-label="Calculate contributions automatically"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div></div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div>`;
+  const newStatementHtml=`<div class="pension-new-statement-setting" data-pension-new-statement-wrap="${i}"><div class="pension-new-statement-copy"><strong>New pension statement</strong><p>Tick if you've received a new statement showing the same balance.</p></div><label class="pension-toggle"><input type="checkbox" id="pensionNewStatement_${i}" data-pension-new-statement="${i}" aria-label="New pension statement"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div>`;
+  const bodyInner=`<div class="pension-fields"><div class="pension-field"><label for="pensionValue_${i}">Current pension value</label><input class="pension-field-value" id="pensionValue_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${statementValue||""}" placeholder="0.00" data-pension-statement-saved="${statementValue}"></div>${newStatementHtml}<div class="pension-field"><label for="pensionPersonal_${i}">Your monthly contribution</label><input class="pension-field-value" id="pensionPersonal_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.personal||""}" placeholder="0.00"></div><div class="pension-field"><label for="pensionEmployer_${i}">Employer contribution</label><input class="pension-field-value" id="pensionEmployer_${i}" inputmode="decimal" type="number" min="0" step="0.01" value="${p.employer||""}" placeholder="0.00"></div></div><div class="pension-auto-setting"><div class="pension-auto-copy"><strong>Calculate contributions automatically</strong>${estimateNote}</div><label class="pension-toggle"><input type="checkbox" id="pensionAuto_${i}" data-pension-auto="${i}"${autoChecked} aria-label="Calculate contributions automatically"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-summary"><div class="pension-stat"><small>Total added monthly</small><strong data-pension-monthly="${i}">${euro2(monthly)}</strong></div><div class="pension-stat"><small>Annual contributions</small><strong data-pension-annual="${i}">${euro2(annual)}</strong></div></div><div class="pension-overview-setting"><span>Show in Overview</span><label class="pension-toggle"><input type="checkbox" id="pensionOverview_${i}" data-pension-overview="${i}"${overviewChecked} aria-label="Show in Overview"><span class="pension-toggle-track"></span><span class="pension-toggle-thumb"></span></label></div><div class="pension-action-row"><button class="mini-btn danger" data-archive-pension="${i}" type="button">Archive</button><button class="mini-btn delete" data-delete-pension="${i}" type="button">Delete</button><button class="save-btn" data-save-pension="${i}" type="button">Save</button></div>`;
   const body=wrapCardBody(bodyInner,collapsed);
   card.innerHTML=head+body;
   return card;
@@ -12245,9 +12257,21 @@ function renderPensions(){
     const card=e.currentTarget.closest(".pension-card");
     freedomMotion.exitCard(card,()=>{state.pensions.splice(i,1);persist();render();});
   }));
+  function syncPensionNewStatementVisibility(i){
+    const valueEl=byId(`pensionValue_${i}`);
+    const wrap=list.querySelector(`[data-pension-new-statement-wrap="${i}"]`);
+    const box=byId(`pensionNewStatement_${i}`);
+    if(!valueEl||!wrap)return;
+    const saved=Number(valueEl.dataset.pensionStatementSaved);
+    const entered=Math.max(0,Number(valueEl.value)||0);
+    const same=Number.isFinite(saved)&&Math.abs(entered-saved)<=1e-9;
+    wrap.hidden=!same;
+    if(!same&&box)box.checked=false;
+  }
   list.querySelectorAll(".pension-field-value").forEach(input=>{
     input.addEventListener("input",e=>{
       const i=Number(e.target.id.split("_").pop());
+      if(e.target.id.startsWith("pensionValue_"))syncPensionNewStatementVisibility(i);
       const personal=Math.max(0,Number(byId(`pensionPersonal_${i}`)?.value)||0);
       const employer=Math.max(0,Number(byId(`pensionEmployer_${i}`)?.value)||0);
       const monthly=personal+employer;
@@ -12257,6 +12281,7 @@ function renderPensions(){
       if(aEl) aEl.textContent=euro2(monthly*12);
     });
   });
+  state.pensions.forEach((_,i)=>syncPensionNewStatementVisibility(i));
   setupPensionReorder(list);
 }
 function formatArchiveDate(iso){
