@@ -15,6 +15,7 @@ const ROOT_FILES = [
   "manifest.webmanifest",
   "service-worker.js",
   "freedom-push-config.js",
+  "freedom-native-storage.js",
   "icon-192.png",
   "icon-512.png",
   "companion-select-wallpaper.jpg",

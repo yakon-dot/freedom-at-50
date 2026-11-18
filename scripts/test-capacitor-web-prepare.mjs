@@ -19,6 +19,7 @@ assert.ok(fs.existsSync(path.join(www, "index.html")));
 assert.ok(fs.existsSync(path.join(www, "service-worker.js")));
 assert.ok(fs.existsSync(path.join(www, "manifest.webmanifest")));
 assert.ok(fs.existsSync(path.join(www, "freedom-push-config.js")));
+assert.ok(fs.existsSync(path.join(www, "freedom-native-storage.js")));
 assert.ok(fs.existsSync(path.join(www, "assets", "freedom-logo-horizontal.png")));
 
 const wwwIndex = fs.readFileSync(path.join(www, "index.html"), "utf8");

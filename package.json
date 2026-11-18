@@ -8,10 +8,12 @@
     "cap:prepare": "node scripts/prepare-capacitor-web.mjs",
     "cap:sync": "npm run cap:prepare && npx cap sync ios",
     "cap:open": "npx cap open ios",
-    "test:capacitor-web": "node scripts/test-capacitor-web-prepare.mjs"
+    "test:capacitor-web": "node scripts/test-capacitor-web-prepare.mjs",
+    "test:native-storage": "node scripts/test-native-storage-mirror.mjs"
   },
   "dependencies": {
     "@capacitor/core": "^8.6.2",
+    "@capacitor/filesystem": "^8.1.5",
     "@capacitor/ios": "^8.6.2"
   },
   "devDependencies": {

@@ -5452,6 +5452,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 </nav>
 <div class="save-note" id="saveNote">Saved locally ✓</div>
 <script src="./freedom-push-config.js"></script>
+<script src="./freedom-native-storage.js"></script>
 <script>
 (function(){
 "use strict";
@@ -7286,17 +7287,50 @@ function showSaved(){
   showSaved.timer=setTimeout(()=>note.classList.remove("show"),1200);
 }
 function persistDemoSession(){sessionStorage.setItem(DEMO_SESSION_KEY,JSON.stringify({demoMode:true,state,demoSession}));}
+let freedomNativePersistGen=0;
+function freedomNativeMirrorMetaKeys(){
+  try{
+    return Array.isArray(FREEDOM_BACKUP_META_KEYS)?FREEDOM_BACKUP_META_KEYS:[];
+  }catch(e){
+    return[];
+  }
+}
+function freedomQueueNativeMirrorAfterLocalWrite(){
+  if(!window.FreedomNativeStorage||typeof window.FreedomNativeStorage.isNative!=="function"||!window.FreedomNativeStorage.isNative()){
+    showSaved();
+    return;
+  }
+  const gen=++freedomNativePersistGen;
+  window.FreedomNativeStorage.mirrorFromLocalStorage({
+    storageKey:KEY,
+    metaKeys:freedomNativeMirrorMetaKeys(),
+    allowEmpty:true
+  }).then(result=>{
+    if(gen!==freedomNativePersistGen)return;
+    if(result&&result.ok)showSaved();
+    else{
+      console.warn("Freedom could not mirror personal data to native storage:",result&&result.error);
+      showSaveFailureWarning();
+    }
+  }).catch(err=>{
+    if(gen!==freedomNativePersistGen)return;
+    console.warn("Freedom could not mirror personal data to native storage:",err);
+    showSaveFailureWarning();
+  });
+}
 function persist(){
   if(demoMode){persistDemoSession();return;}
   /* Corrupt/unreadable personal KEY: never overwrite the stored blob. */
   if(freedomPersonalLoadError)return;
   try{
     localStorage.setItem(KEY,JSON.stringify(state));
-    showSaved();
   }catch(e){
     console.warn("Freedom could not save personal data:",e);
     showSaveFailureWarning();
+    return;
   }
+  /* PWA: Saved after localStorage only. Native: Saved only after mirror also succeeds. */
+  freedomQueueNativeMirrorAfterLocalWrite();
 }
 byId("freedomSaveFailDismiss")?.addEventListener("click",function(){
   hideSaveFailureWarning();
@@ -7312,7 +7346,40 @@ function recoverPersonalStorageFromLoadError(){
   state=buildFreshUserState();
   try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){console.warn("Freedom could not write fresh personal data:",e);freedomPersonalLoadError="unreadable";return;}
   realStateSnapshot=null;
+  if(window.FreedomNativeStorage&&typeof window.FreedomNativeStorage.writeSnapshot==="function"){
+    window.FreedomNativeStorage.writeSnapshot(state,typeof collectFreedomBackupMeta==="function"?collectFreedomBackupMeta():{}).catch(()=>{});
+  }
   if(typeof render==="function")render();
+}
+async function freedomNativeBootHydrate(){
+  if(demoMode)return;
+  if(!window.FreedomNativeStorage||typeof window.FreedomNativeStorage.hydrateLocalStorage!=="function"){
+    if(freedomPersonalLoadError)recoverPersonalStorageFromLoadError();
+    return;
+  }
+  if(!window.FreedomNativeStorage.isNative()){
+    if(freedomPersonalLoadError)recoverPersonalStorageFromLoadError();
+    return;
+  }
+  let result=null;
+  try{
+    result=await window.FreedomNativeStorage.hydrateLocalStorage({
+      storageKey:KEY,
+      metaKeys:freedomNativeMirrorMetaKeys(),
+      loadError:freedomPersonalLoadError,
+      reload:true
+    });
+  }catch(e){
+    console.warn("Freedom native storage hydrate failed:",e);
+  }
+  if(result&&result.reloaded)return;
+  if(result&&result.action==="needs-user-recover"){
+    recoverPersonalStorageFromLoadError();
+    return;
+  }
+  if(freedomPersonalLoadError&&!(result&&result.action==="restore-from-mirror")){
+    recoverPersonalStorageFromLoadError();
+  }
 }
 /* Password-protected backups (v2): Web Crypto PBKDF2-HMAC-SHA-256 + AES-256-GCM.
    Work factor: 210000 PBKDF2 iterations — practical on current iPhones / Safari PWAs while
@@ -7650,7 +7717,14 @@ function writeFreedomBackupToDevice(checked){
     });
     freedomPersonalLoadError=null;
     try{sessionStorage.removeItem(DEMO_SESSION_KEY);}catch(e){}
-    location.reload();
+    const reloadNow=()=>{location.reload();};
+    if(window.FreedomNativeStorage&&window.FreedomNativeStorage.isNative&&window.FreedomNativeStorage.isNative()){
+      window.FreedomNativeStorage.writeSnapshot(checked.state,checked.meta||{})
+        .catch(err=>console.warn("Freedom could not update native mirror after backup restore:",err))
+        .finally(reloadNow);
+      return{ok:true};
+    }
+    reloadNow();
     return{ok:true};
   }catch(e){
     return{ok:false,error:"Could not write the restored data on this device."};
@@ -7811,6 +7885,10 @@ function initFreedomBackupUi(){
     openPanel:openFreedomBackupPanel,
     closePanel:closeFreedomBackupPanel,
     _setDemoModeForTests:function(on){demoMode=!!on;}
+  };
+  window.FreedomNativeStorageBoot={
+    hydrate:freedomNativeBootHydrate,
+    queueMirror:freedomQueueNativeMirrorAfterLocalWrite
   };
 }
 const REMINDERS_CHOICE_KEY="freedom50-reminders-choice-v1";
@@ -9151,6 +9229,11 @@ async function resetFreedomFreshStart(){
     if(typeof freedomUnsubscribePush==="function")await freedomUnsubscribePush();
   }catch(e){}
   clearFreedomStorageKeys();
+  try{
+    if(window.FreedomNativeStorage&&typeof window.FreedomNativeStorage.clearMirror==="function"){
+      await window.FreedomNativeStorage.clearMirror();
+    }
+  }catch(e){}
   try{localStorage.setItem(KEY,JSON.stringify(buildFreshUserState()));}catch(e){}
   location.replace(location.pathname+location.search);
 }
@@ -9231,6 +9314,9 @@ function activateFreshPersonal(opts){
   }
   state=buildFreshUserState();
   try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+  if(window.FreedomNativeStorage&&typeof window.FreedomNativeStorage.writeSnapshot==="function"){
+    window.FreedomNativeStorage.writeSnapshot(state,typeof collectFreedomBackupMeta==="function"?collectFreedomBackupMeta():{}).catch(()=>{});
+  }
   realStateSnapshot=null;
   dismissAllPatriciaNotes();
   syncDemoUi();
@@ -13207,9 +13293,12 @@ document.addEventListener("click",e=>{
   closeDemoMenu();
 });
 fillForm();render();initFreedomBackupUi();initFreedomRemindersUi();
-if(freedomPersonalLoadError){
-  setTimeout(()=>{try{recoverPersonalStorageFromLoadError();}catch(e){}},0);
-}
+setTimeout(()=>{
+  try{
+    if(typeof freedomNativeBootHydrate==="function")freedomNativeBootHydrate();
+    else if(freedomPersonalLoadError)recoverPersonalStorageFromLoadError();
+  }catch(e){}
+},0);
 /* Reminder notification deep-link (?opened=reminder) — Home + one-shot companion check-in. */
 if(typeof window.freedomOpenHomeFromReminder==="function"&&window.freedomOpenHomeFromReminder({cleanUrl:true})){
   /* Handled: skip normal hash boot. */
@@ -17274,7 +17363,7 @@ if ("serviceWorker" in navigator && freedomIsLocalPreviewHost) {
 
     try {
       registration = await navigator.serviceWorker.register(
-        "./service-worker.js?v=1941",
+        "./service-worker.js?v=1942",
         { updateViaCache: "none" }
       );
 

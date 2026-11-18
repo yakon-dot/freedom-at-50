@@ -21,9 +21,10 @@ assert.match(index, /function hideSaveFailureWarning/);
 assert.match(index, /showSaveFailureWarning\(\)/);
 assert.match(
   index,
-  /localStorage\.setItem\(KEY,JSON\.stringify\(state\)\);\s*showSaved\(\);/
+  /localStorage\.setItem\(KEY,JSON\.stringify\(state\)\);\s*\}catch\(e\)\{\s*console\.warn\("Freedom could not save personal data:",e\);\s*showSaveFailureWarning\(\);\s*return;\s*\}\s*\/\* PWA: Saved after localStorage only/
 );
-assert.match(index, /catch\(e\)\{\s*console\.warn\("Freedom could not save personal data:",e\);\s*showSaveFailureWarning\(\);/);
+assert.match(index, /freedomQueueNativeMirrorAfterLocalWrite\(\)/);
+assert.match(index, /Freedom could not mirror personal data to native storage/);
 assert.match(index, /if\(!banner\.hidden\)return;/);
 assert.match(index, /\.freedom-save-fail-banner\{z-index:970\}/);
 console.log("PASS: source contracts for persist save-failure warning");

@@ -1,0 +1,261 @@
+/**
+ * Native storage safeguard tests:
+ * hydrate decisions, failed writes, overwrite protection, PWA no-op path.
+ */
+import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import vm from "node:vm";
+import { fileURLToPath } from "node:url";
+
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const index = fs.readFileSync(path.join(root, "index.html"), "utf8");
+const nativeSrc = fs.readFileSync(path.join(root, "freedom-native-storage.js"), "utf8");
+
+assert.match(index, /freedom-native-storage\.js/);
+assert.match(index, /freedomQueueNativeMirrorAfterLocalWrite/);
+assert.match(index, /freedomNativeBootHydrate/);
+assert.match(index, /FreedomNativeStorage/);
+assert.match(nativeSrc, /DIRECTORY_DATA|"DATA"/);
+assert.match(nativeSrc, /registerPlugin\("Filesystem"\)/);
+assert.match(nativeSrc, /decideHydrateAction/);
+assert.equal(/Preferences/.test(nativeSrc), false, "Do not store financial mirrors in UserDefaults Preferences");
+console.log("PASS: source contracts for native storage mirror");
+
+function loadNativeApi(capacitorMock) {
+  const sandbox = {
+    window: {},
+    globalThis: {},
+    console
+  };
+  sandbox.window.Capacitor = capacitorMock;
+  sandbox.globalThis = sandbox.window;
+  vm.runInNewContext(nativeSrc, sandbox, { filename: "freedom-native-storage.js" });
+  return sandbox.window.FreedomNativeStorage;
+}
+
+function memoryStorage(initial = {}) {
+  const map = new Map(Object.entries(initial));
+  return {
+    getItem(k) {
+      return map.has(k) ? map.get(k) : null;
+    },
+    setItem(k, v) {
+      map.set(String(k), String(v));
+    },
+    removeItem(k) {
+      map.delete(k);
+    },
+    _map: map
+  };
+}
+
+const sampleState = {
+  loans: [{ name: "Card", starting: 1000, current: 400, payment: 50 }],
+  customGoals: [{ id: "g1", name: "House", current: 200, target: 5000 }],
+  pensions: [],
+  notes: [{ id: "n1", text: "keep" }],
+  archivedJourneys: [],
+  archivedGoals: [],
+  archivedPensions: [],
+  victories: []
+};
+
+const metaKeys = [
+  "freedom50-welcome-complete-v1",
+  "freedom50-companion-id-v1"
+];
+
+{
+  const api = loadNativeApi(undefined);
+  assert.equal(api.isNative(), false);
+  const decision = api.decideHydrateAction({
+    local: { status: "valid", state: sampleState },
+    mirror: { ok: true, envelope: { version: 1, state: { loans: [] }, meta: {} } }
+  });
+  assert.equal(decision.action, "keep-local");
+  assert.equal(decision.seedMirror, true);
+  console.log("PASS: valid localStorage wins over mirror (no overwrite)");
+}
+
+{
+  const api = loadNativeApi(undefined);
+  const decision = api.decideHydrateAction({
+    local: { status: "missing", state: null },
+    mirror: { ok: true, envelope: { version: 1, state: sampleState, meta: { "freedom50-companion-id-v1": "patricia" } } }
+  });
+  assert.equal(decision.action, "restore-from-mirror");
+  assert.equal(decision.state.loans[0].name, "Card");
+  assert.equal(decision.meta["freedom50-companion-id-v1"], "patricia");
+  console.log("PASS: missing localStorage restores from mirror");
+}
+
+{
+  const api = loadNativeApi(undefined);
+  for (const status of ["corrupt", "unreadable"]) {
+    const decision = api.decideHydrateAction({
+      local: { status, state: null },
+      mirror: { ok: true, envelope: { version: 1, state: sampleState, meta: {} } }
+    });
+    assert.equal(decision.action, "restore-from-mirror", status);
+  }
+  const noMirror = api.decideHydrateAction({
+    local: { status: "corrupt", state: null },
+    mirror: { ok: false, reason: "missing" }
+  });
+  assert.equal(noMirror.action, "needs-user-recover");
+  console.log("PASS: corrupt/unreadable localStorage restores mirror or asks user");
+}
+
+{
+  const api = loadNativeApi(undefined);
+  const empty = api.decideHydrateAction({
+    local: { status: "missing", state: null },
+    mirror: { ok: false, reason: "missing" }
+  });
+  assert.equal(empty.action, "empty");
+  const bad = api.parseMirrorEnvelope('{"version":1,"state":[]}');
+  assert.equal(bad.ok, false);
+  console.log("PASS: empty devices stay empty; invalid mirror rejected");
+}
+
+{
+  const files = new Map();
+  let writeShouldFail = false;
+  const api = loadNativeApi({
+    isNativePlatform: () => true,
+    isPluginAvailable: name => name === "Filesystem",
+    registerPlugin: () => ({
+      async readFile({ path }) {
+        if (!files.has(path)) {
+          const err = new Error("File does not exist");
+          throw err;
+        }
+        return { data: files.get(path) };
+      },
+      async writeFile({ path, data }) {
+        if (writeShouldFail) throw new Error("disk full");
+        files.set(path, data);
+        return { uri: path };
+      },
+      async deleteFile({ path }) {
+        files.delete(path);
+      }
+    })
+  });
+
+  assert.equal(api.isNative(), true);
+  const storage = memoryStorage({
+    "freedom50-mobile-v1": JSON.stringify(sampleState),
+    "freedom50-welcome-complete-v1": "1",
+    "freedom50-companion-id-v1": "patricia"
+  });
+
+  const mirrored = await api.mirrorFromLocalStorage({
+    storage,
+    storageKey: "freedom50-mobile-v1",
+    metaKeys,
+    allowEmpty: true
+  });
+  assert.equal(mirrored.ok, true);
+  assert.equal(files.size, 1);
+
+  storage.removeItem("freedom50-mobile-v1");
+  storage.removeItem("freedom50-welcome-complete-v1");
+  storage.removeItem("freedom50-companion-id-v1");
+
+  let reloaded = false;
+  const hydrated = await api.hydrateLocalStorage({
+    storage,
+    storageKey: "freedom50-mobile-v1",
+    metaKeys,
+    loadError: null,
+    reloadFn: () => {
+      reloaded = true;
+    }
+  });
+  assert.equal(hydrated.action, "restore-from-mirror");
+  assert.equal(hydrated.reloaded, true);
+  assert.equal(reloaded, true);
+  const restored = JSON.parse(storage.getItem("freedom50-mobile-v1"));
+  assert.equal(restored.customGoals[0].name, "House");
+  assert.equal(storage.getItem("freedom50-companion-id-v1"), "patricia");
+  console.log("PASS: persistence + recovery round-trip via mocked Filesystem");
+
+  writeShouldFail = true;
+  const failed = await api.writeSnapshot(sampleState, {});
+  assert.equal(failed.ok, false);
+  console.log("PASS: failed native writes report ok:false");
+
+  writeShouldFail = false;
+  const keepStorage = memoryStorage({
+    "freedom50-mobile-v1": JSON.stringify(sampleState),
+    "freedom50-companion-id-v1": "kevin"
+  });
+  files.clear();
+  files.set(
+    api.path,
+    JSON.stringify({
+      version: 1,
+      savedAt: "2020-01-01T00:00:00.000Z",
+      state: { loans: [], customGoals: [], pensions: [], notes: [] },
+      meta: { "freedom50-companion-id-v1": "patricia" }
+    })
+  );
+  const keep = await api.hydrateLocalStorage({
+    storage: keepStorage,
+    storageKey: "freedom50-mobile-v1",
+    metaKeys,
+    loadError: null,
+    reload: false
+  });
+  assert.equal(keep.action, "keep-local");
+  assert.equal(JSON.parse(keepStorage.getItem("freedom50-mobile-v1")).loans[0].name, "Card");
+  assert.equal(keepStorage.getItem("freedom50-companion-id-v1"), "kevin");
+  const seeded = api.parseMirrorEnvelope(files.get(api.path));
+  assert.equal(seeded.ok, true);
+  assert.equal(seeded.envelope.state.loans[0].name, "Card");
+  assert.equal(seeded.envelope.meta["freedom50-companion-id-v1"], "kevin");
+  console.log("PASS: hydrate never overwrites valid local data; seeds mirror from local");
+
+  await api.clearMirror();
+  assert.equal(files.has(api.path), false);
+  console.log("PASS: clearMirror removes native snapshot");
+}
+
+{
+  const api = loadNativeApi({
+    isNativePlatform: () => false,
+    isPluginAvailable: () => false,
+    registerPlugin: () => {
+      throw new Error("should not register on web");
+    }
+  });
+  const result = await api.hydrateLocalStorage({
+    storage: memoryStorage(),
+    storageKey: "freedom50-mobile-v1",
+    metaKeys,
+    reload: false
+  });
+  assert.equal(result.skipped, true);
+  const mirror = await api.mirrorFromLocalStorage({
+    storage: memoryStorage({ "freedom50-mobile-v1": JSON.stringify(sampleState) }),
+    storageKey: "freedom50-mobile-v1",
+    metaKeys,
+    allowEmpty: true
+  });
+  assert.equal(mirror.skipped, true);
+  console.log("PASS: web/PWA path no-ops without touching Filesystem");
+}
+
+{
+  const prepare = fs.readFileSync(path.join(root, "scripts/prepare-capacitor-web.mjs"), "utf8");
+  assert.match(prepare, /freedom-native-storage\.js/);
+  const sw = fs.readFileSync(path.join(root, "service-worker.js"), "utf8");
+  assert.match(sw, /freedom-native-storage\.js/);
+  const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
+  assert.ok(pkg.dependencies["@capacitor/filesystem"]);
+  console.log("PASS: Capacitor prepare + SW + package include native storage assets");
+}
+
+console.log("Summary: native storage mirror tests passed");
