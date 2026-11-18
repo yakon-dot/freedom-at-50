@@ -814,10 +814,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     font-size:clamp(19px,5.05vw,21.5px);line-height:1.2;font-weight:500;
     letter-spacing:.01em;color:#272045;text-align:center;
   }
-  /* Fixed under the yellow paper. Stack above the list so scrolling cards
-     pass underneath without covering the control. */
+  /* Stationary; under the list so scrolling cards pass over without being blocked.
+     Sit fully below the yellow paper, right-aligned with the note cards (16px inset). */
   body.notes-active-v318 #notes .notes-actions{
-    position:fixed;z-index:20;
+    position:fixed;z-index:3;
     left:auto;
     /* Align with note cards: main 18px + #notes 16px horizontal inset. */
     right:34px;
@@ -13429,19 +13429,29 @@ function restoreNotesScrollPos(pos){
     requestAnimationFrame(apply);
   });
 }
-function withNotesScrollPreserved(run){
+function withNotesScrollPreserved(run,yAdjust){
   const pos=getNotesScrollPos();
+  const adjusted={
+    x:Number(pos.x)||0,
+    y:Math.max(0,(Number(pos.y)||0)+(Number(yAdjust)||0))
+  };
   notesScrollPreserveDepth++;
   let result;
   try{result=typeof run==="function"?run():undefined;}
   finally{
     notesScrollPreserveDepth=Math.max(0,notesScrollPreserveDepth-1);
-    restoreNotesScrollPos(pos);
-    setTimeout(()=>restoreNotesScrollPos(pos),0);
-    setTimeout(()=>restoreNotesScrollPos(pos),50);
-    setTimeout(()=>restoreNotesScrollPos(pos),120);
+    restoreNotesScrollPos(adjusted);
+    setTimeout(()=>restoreNotesScrollPos(adjusted),0);
+    setTimeout(()=>restoreNotesScrollPos(adjusted),50);
+    setTimeout(()=>restoreNotesScrollPos(adjusted),120);
   }
   return result;
+}
+function notesComposeFormBlockHeight(){
+  const form=byId("addNoteCard");
+  if(!form||form.hidden)return 0;
+  const mb=parseFloat(getComputedStyle(form).marginBottom)||0;
+  return Math.max(0,form.offsetHeight+mb);
 }
 function renderNotes(){
   const list=byId("notesList");
@@ -13630,12 +13640,16 @@ function saveComposeNote(){
     createdAt:new Date().toISOString(),checklist
   };
   sortNoteChecklist(note);
+  /* Closing the compose form removes in-flow height above the list (same pattern as
+     Journey/Goals: cards sit under the page chrome). Compensate so scroll restore
+     does not pull the newest Note up over the fixed Add note band. */
+  const composeShrink=notesComposeFormBlockHeight();
   withNotesScrollPreserved(()=>{
     state.notes.unshift(note);
     persist();
     closeAddNoteForm();
     renderNotes();
-  });
+  },-composeShrink);
 }
 
 function fillForm(){const hp=byId("housePocketRemaining");if(hp)hp.value=state.housePocket}

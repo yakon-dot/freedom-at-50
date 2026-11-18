@@ -9,8 +9,10 @@ import puppeteer from "puppeteer-core";
 const index = fs.readFileSync("index.html", "utf8");
 assert.match(index, /function withNotesScrollPreserved/);
 assert.match(index, /function restoreNotesScrollPos/);
+assert.match(index, /function notesComposeFormBlockHeight/);
 assert.match(index, /function saveComposeNote/);
 assert.match(index, /state\.notes\.unshift\(note\)/);
+assert.match(index, /withNotesScrollPreserved\(\(\)=>\{[\s\S]*?\},-composeShrink\)/);
 assert.match(index, /focus\(\{preventScroll:true\}\)/);
 assert.equal(/window\.scrollTo\(\{top:0,behavior:"smooth"\}\)/.test(index), false);
 assert.equal(/openAddNoteForm[\s\S]{0,400}window\.scrollTo\(\{top:0/.test(index), false);
@@ -126,13 +128,19 @@ async function main() {
     await page.waitForSelector("#addNoteCard:not([hidden]) #newNoteTitle", {
       timeout: 5000
     });
-    const midScroll = await page.evaluate(
-      () => window.scrollY || document.scrollingElement?.scrollTop || 0
-    );
+    const mid = await page.evaluate(() => {
+      const form = document.getElementById("addNoteCard");
+      const mb = form ? parseFloat(getComputedStyle(form).marginBottom) || 0 : 0;
+      return {
+        scrollY: window.scrollY || document.scrollingElement?.scrollTop || 0,
+        formBlock: form && !form.hidden ? form.offsetHeight + mb : 0
+      };
+    });
     assert.ok(
-      midScroll > 120,
-      `opening Add note jumped toward top from ${beforeScroll} to ${midScroll}`
+      mid.scrollY > 120,
+      `opening Add note jumped toward top from ${beforeScroll} to ${mid.scrollY}`
     );
+    assert.ok(mid.formBlock > 100, `expected open compose form height, got ${mid.formBlock}`);
     await page.evaluate(t => {
       const titleEl = document.getElementById("newNoteTitle");
       const bodyEl = document.getElementById("newNoteBody");
@@ -154,14 +162,19 @@ async function main() {
     const after = await page.evaluate(
       () => window.scrollY || document.scrollingElement?.scrollTop || 0
     );
+    /* Closing compose removes in-flow height; scroll is adjusted by that block so
+       the list does not jump up over Add note. Do not require an unchanged Y. */
+    const expected = Math.max(0, mid.scrollY - mid.formBlock);
     assert.ok(
-      after > 120,
-      `saving note jumped toward top from ${beforeScroll} to ${after}`
+      Math.abs(after - expected) < 80,
+      `saving note scroll ${after} should stay near ${expected} (mid ${mid.scrollY} − form ${mid.formBlock})`
     );
-    assert.ok(
-      Math.abs(after - beforeScroll) < 180,
-      `saving note shifted scroll too far from ${beforeScroll} to ${after}`
-    );
+    if (expected > 120) {
+      assert.ok(
+        after > 120,
+        `saving note jumped toward top from ${beforeScroll} to ${after}`
+      );
+    }
   }
 
   await createNote("Fresh Note A");
