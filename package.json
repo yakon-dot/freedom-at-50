@@ -1,0 +1,21 @@
+{
+  "name": "freedom-at-50",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Freedom personal finance progress app — static PWA with optional Capacitor iOS shell",
+  "type": "module",
+  "scripts": {
+    "cap:prepare": "node scripts/prepare-capacitor-web.mjs",
+    "cap:sync": "npm run cap:prepare && npx cap sync ios",
+    "cap:open": "npx cap open ios",
+    "test:capacitor-web": "node scripts/test-capacitor-web-prepare.mjs"
+  },
+  "dependencies": {
+    "@capacitor/core": "^8.6.2",
+    "@capacitor/ios": "^8.6.2"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.6.2",
+    "puppeteer-core": "^24.2.0"
+  }
+}
