@@ -112,7 +112,7 @@
       return { ok: true, mode: "share", uri: uri };
     } catch (e) {
       if (isShareCancelled(e)) {
-        return { ok: false, cancelled: true, error: "Export cancelled — no backup file was saved." };
+        return { ok: false, cancelled: true, error: "Export cancelled. No backup file was saved." };
       }
       return {
         ok: false,

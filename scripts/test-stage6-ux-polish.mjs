@@ -1,6 +1,6 @@
 /**
  * Stage 6 UX polish contracts + smoke:
- * - Goal completion close-chapter offers Move to Victories / Keep / Delete
+ * - Goal completion close-chapter offers Archive / Keep / Delete (no body copy)
  * - Journey original loan amount beside Money returned
  * - Correct Balance Journey note uses "left to pay"
  * - Overpay message is assertive + styled alert
@@ -12,14 +12,16 @@ import puppeteer from "puppeteer-core";
 
 const index = fs.readFileSync("index.html", "utf8");
 
-assert.match(index, /yesBtn\.textContent="Move to Victories"/);
+assert.match(index, /yesBtn\.textContent="Archive"/);
 assert.match(index, /notYetBtn\.textContent=isGoal\?"Keep in Goals":"Keep in Journeys"/);
 assert.equal(/Keep in Journey(?!s)/.test(index), false);
-assert.match(index, /deleteBtn\.textContent=isGoal\?"Delete Goal":"Delete Journey"/);
+assert.match(index, /deleteBtn\.textContent=isVictory\?"Delete":\(isGoal\?"Delete Goal":"Delete Journey"\)/);
 assert.match(index, /mode:"delete"/);
 assert.match(index, /permanentlyDeleteActiveItem/);
 assert.match(index, /Original loan amount/);
 assert.match(index, /loan-summary-returned-pair/);
+assert.match(index, /Journey Progress/);
+assert.equal(/Freedom progress/i.test(index), false);
 assert.match(
   index,
   /Use this if the balance shown doesn't match what you actually have left to pay\./
@@ -27,12 +29,6 @@ assert.match(
 assert.match(index, /role="alert" aria-live="assertive"/);
 assert.match(index, /\.journey-repayment-msg\{/);
 assert.equal(/completed history/i.test(index), false);
-assert.equal(
-  /Use this if the balance shown doesn't match what you actually have left to pay\.—|—Use this if the balance shown/.test(
-    index
-  ),
-  false
-);
 console.log("PASS: source contracts for Stage 6 UX polish");
 
 function resolveChromePath() {
@@ -323,6 +319,7 @@ async function main() {
       return {
         title: document.getElementById("freedomConfirmRemovalTitle")?.textContent,
         body: document.getElementById("freedomConfirmRemovalBody")?.textContent,
+        bodyHidden: !!document.getElementById("freedomConfirmRemovalBody")?.hidden,
         keep: document.getElementById("freedomConfirmRemovalNotYet")?.textContent,
         yes: document.getElementById("freedomConfirmRemovalYes")?.textContent,
         del: document.getElementById("freedomConfirmRemovalDelete")?.textContent,
@@ -332,13 +329,14 @@ async function main() {
       };
     });
     assert.equal(labels.title, "Ready to close this chapter?");
-    assert.match(labels.body, /Victories/);
     assert.equal(labels.keep, "Keep in Goals");
-    assert.equal(labels.yes, "Move to Victories");
+    assert.equal(labels.yes, "Archive");
     assert.equal(labels.del, "Delete Goal");
     assert.equal(labels.delHidden, false);
     assert.equal(labels.keepHidden, false);
     assert.equal(labels.yesHidden, false);
+    assert.equal(labels.bodyHidden, true);
+    assert.equal((labels.body || "").trim(), "");
 
     const journeyLabels = await page.evaluate(() => {
       window.FreedomConfirmRemoval.show({
@@ -351,14 +349,16 @@ async function main() {
       return {
         keep: document.getElementById("freedomConfirmRemovalNotYet")?.textContent,
         yes: document.getElementById("freedomConfirmRemovalYes")?.textContent,
-        delHidden: !!document.getElementById("freedomConfirmRemovalDelete")?.hidden
+        delHidden: !!document.getElementById("freedomConfirmRemovalDelete")?.hidden,
+        bodyHidden: !!document.getElementById("freedomConfirmRemovalBody")?.hidden
       };
     });
     assert.equal(journeyLabels.keep, "Keep in Journeys");
-    assert.equal(journeyLabels.yes, "Move to Victories");
+    assert.equal(journeyLabels.yes, "Archive");
     assert.equal(journeyLabels.delHidden, true);
+    assert.equal(journeyLabels.bodyHidden, true);
     console.log("PASS: Goal completion offers three clear choices");
-    console.log("PASS: Journey completion uses Keep in Journeys");
+    console.log("PASS: Journey completion uses Keep in Journeys + Archive");
     await page.close();
   }
 
