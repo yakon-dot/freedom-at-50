@@ -796,8 +796,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   body.notes-active-v318 .app>main{padding-top:0;overscroll-behavior-y:none}
   body.notes-active-v318 #notes{
     position:relative;z-index:5;
-    /* Compact stack: paper → ~14px → Add note → ~22px → first card. */
-    padding:calc(var(--notes-safe-top) + var(--notes-paper-bottom) + 72px) 16px calc(180px + var(--safe-bottom));
+    /* Compact stack: paper → ~14px → Add note (in flow) → ~22px → first card. */
+    padding:calc(var(--notes-safe-top) + var(--notes-paper-bottom) + 14px) 16px calc(180px + var(--safe-bottom));
     min-height:calc(100dvh + 75vw);
   }
   body.notes-active-v318 #notes .notes-hero{
@@ -814,18 +814,15 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     font-size:clamp(19px,5.05vw,21.5px);line-height:1.2;font-weight:500;
     letter-spacing:.01em;color:#272045;text-align:center;
   }
-  /* Stationary; under the list so scrolling cards pass over without being blocked.
-     Sit fully below the yellow paper, right-aligned with the note cards (16px inset). */
+  /* In-flow above all Note cards (never under them). Sticky keeps it below the
+     yellow paper while scrolling; z-index stays above the list. */
   body.notes-active-v318 #notes .notes-actions{
-    position:fixed;z-index:3;
-    left:auto;
-    /* Align with note cards: main 18px + #notes 16px horizontal inset. */
-    right:34px;
-    /* ~14px below the yellow scrap bottom. */
+    position:sticky;
     top:calc(var(--notes-safe-top) + var(--notes-paper-bottom) + 14px);
+    z-index:20;
+    left:auto;right:auto;
     display:flex;justify-content:flex-end;align-items:center;
-    margin:0;pointer-events:none;
-    /* Avoid any inherited transform/filter creating a fixed containing block. */
+    margin:0 0 22px;pointer-events:none;
     transform:none;filter:none;will-change:auto;
   }
   body.notes-active-v318 #notes #toggleAddNote{
