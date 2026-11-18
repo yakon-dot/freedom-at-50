@@ -11,6 +11,8 @@ const index = fs.readFileSync("index.html", "utf8");
 assert.match(index, /data-loan-repayment-msg/);
 assert.match(index, /Your remaining balance is \$\{euro2\(remaining\)\}\. You can enter up to \$\{euro2\(remaining\)\}\./);
 assert.match(index, /if\(amount>remaining\)/);
+assert.match(index, /role="alert" aria-live="assertive"/);
+assert.match(index, /\.journey-repayment-msg\{/);
 assert.equal(/Your remaining balance is.*—|—.*You can enter/.test(index), false);
 console.log("PASS: source contracts for journey repayment max");
 
@@ -124,9 +126,13 @@ async function main() {
       document.querySelector("[data-add-repayment='0']").click();
       const msg = document.querySelector('[data-loan-repayment-msg="0"]');
       const after = JSON.parse(localStorage.getItem("freedom50-mobile-v1")).loans[0];
+      const style = msg ? getComputedStyle(msg) : null;
       return {
         msgHidden: !!msg?.hidden,
         msgText: msg?.textContent || "",
+        role: msg?.getAttribute("role"),
+        live: msg?.getAttribute("aria-live"),
+        bg: style?.backgroundColor || "",
         beforeCurrent: before.current,
         beforeLast: before.lastRepaymentAmount,
         afterCurrent: after.current,
@@ -135,6 +141,9 @@ async function main() {
       };
     });
     assert.equal(result.msgHidden, false);
+    assert.equal(result.role, "alert");
+    assert.equal(result.live, "assertive");
+    assert.notEqual(result.bg, "rgba(0, 0, 0, 0)");
     assert.equal(
       result.msgText,
       "Your remaining balance is €80.00. You can enter up to €80.00."
