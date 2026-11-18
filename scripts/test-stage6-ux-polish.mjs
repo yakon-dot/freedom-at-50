@@ -13,7 +13,8 @@ import puppeteer from "puppeteer-core";
 const index = fs.readFileSync("index.html", "utf8");
 
 assert.match(index, /yesBtn\.textContent="Move to Victories"/);
-assert.match(index, /notYetBtn\.textContent=isGoal\?"Keep in Goals":"Keep in Journey"/);
+assert.match(index, /notYetBtn\.textContent=isGoal\?"Keep in Goals":"Keep in Journeys"/);
+assert.equal(/Keep in Journey(?!s)/.test(index), false);
 assert.match(index, /deleteBtn\.textContent=isGoal\?"Delete Goal":"Delete Journey"/);
 assert.match(index, /mode:"delete"/);
 assert.match(index, /permanentlyDeleteActiveItem/);
@@ -338,7 +339,26 @@ async function main() {
     assert.equal(labels.delHidden, false);
     assert.equal(labels.keepHidden, false);
     assert.equal(labels.yesHidden, false);
+
+    const journeyLabels = await page.evaluate(() => {
+      window.FreedomConfirmRemoval.show({
+        kind: "journey",
+        itemName: "Test Loan",
+        recordId: "loan-orig-1",
+        amount: 2000,
+        completedAt: new Date().toISOString()
+      });
+      return {
+        keep: document.getElementById("freedomConfirmRemovalNotYet")?.textContent,
+        yes: document.getElementById("freedomConfirmRemovalYes")?.textContent,
+        delHidden: !!document.getElementById("freedomConfirmRemovalDelete")?.hidden
+      };
+    });
+    assert.equal(journeyLabels.keep, "Keep in Journeys");
+    assert.equal(journeyLabels.yes, "Move to Victories");
+    assert.equal(journeyLabels.delHidden, true);
     console.log("PASS: Goal completion offers three clear choices");
+    console.log("PASS: Journey completion uses Keep in Journeys");
     await page.close();
   }
 

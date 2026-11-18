@@ -4,7 +4,7 @@
  * - Value is recomputed from statement + autoPeriods (no duplicate on reload)
  * - Month-boundary accrual uses completed months only
  * - Manual statement change with new balance resets baseline
- * - Same-balance statement needs the "New pension statement" tick (kept)
+ * - Same-balance statement needs the new-statement tick (kept)
  */
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -15,7 +15,11 @@ assert.match(index, /function pensionEstimatedValue/);
 assert.match(index, /function syncPensionEstimate/);
 assert.match(index, /function pensionEnableAutoContrib/);
 assert.match(index, /rates\.personal\+rates\.employer/);
-assert.match(index, /New pension statement/);
+assert.match(index, /Received a new pension statement\?/);
+assert.match(
+  index,
+  /Tick this if your latest statement shows the same pension value\. This tells Freedom to start calculating future contributions from the new statement date\./
+);
 console.log("PASS: source contracts for pension auto-contrib");
 
 function resolveChromePath() {
