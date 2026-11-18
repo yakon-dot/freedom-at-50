@@ -1,6 +1,7 @@
 /**
- * Notes layout: "+ Add note" must sit above all Note cards on a mobile viewport.
- * Data order alone is insufficient — assert real getBoundingClientRect positions.
+ * Notes layout: fixed "+ Add note" stays in place and above Note cards.
+ * At rest, the first card starts below the button. While scrolling, cards may
+ * pass under it but must not paint over it (stacking).
  */
 import assert from "node:assert/strict";
 import fs from "node:fs";
@@ -8,17 +9,17 @@ import puppeteer from "puppeteer-core";
 
 const index = fs.readFileSync("index.html", "utf8");
 assert.match(index, /#notes \.notes-actions\{/);
-assert.match(index, /position:sticky/);
-assert.match(index, /z-index:20/);
-assert.equal(
-  /#notes \.notes-actions\{[^}]*position:fixed/s.test(index),
-  false
-);
+assert.match(index, /position:fixed;z-index:20/);
+assert.equal(/#notes \.notes-actions\{[^}]*position:sticky/s.test(index), false);
 assert.equal(
   /Stationary; under the list so scrolling cards pass over/.test(index),
   false
 );
-console.log("PASS: source contracts for Notes Add button stacking");
+assert.match(
+  index,
+  /padding:calc\(var\(--notes-safe-top\) \+ var\(--notes-paper-bottom\) \+ 72px\)/
+);
+console.log("PASS: source contracts for fixed Notes Add button stacking");
 
 function resolveChromePath() {
   if (process.env.CHROME_PATH && fs.existsSync(process.env.CHROME_PATH)) {
@@ -54,6 +55,8 @@ const SAVED_STATE = {
   customGoals: [],
   pensions: [],
   notes: [
+    noteFixture("note-d", "Fourth Note", "2026-11-18T15:00:00.000Z"),
+    noteFixture("note-c", "Third Note", "2026-11-18T16:00:00.000Z"),
     noteFixture("note-b", "Second Note", "2026-11-18T17:00:00.000Z"),
     noteFixture("note-a", "First Note", "2026-11-18T18:00:00.000Z")
   ],
@@ -103,6 +106,7 @@ async function measureLayout(page) {
     const btn = document.getElementById("toggleAddNote");
     const actions = document.querySelector("#notes .notes-actions");
     const list = document.getElementById("notesList");
+    const addCard = document.getElementById("addNoteCard");
     const cards = [...document.querySelectorAll("#notesList .note-card")];
     const btnRect = btn.getBoundingClientRect();
     const cardRects = cards.map(card => {
@@ -118,6 +122,7 @@ async function measureLayout(page) {
       btnBottom: btnRect.bottom,
       actionsZ: getComputedStyle(actions).zIndex,
       listZ: getComputedStyle(list).zIndex,
+      addCardZ: addCard ? getComputedStyle(addCard).zIndex : "0",
       actionsPosition: getComputedStyle(actions).position,
       titles: cardRects.map(c => c.title),
       cards: cardRects,
@@ -126,7 +131,21 @@ async function measureLayout(page) {
   });
 }
 
-function assertButtonAboveCards(layout, label) {
+function assertStackingBeatsList(layout, label) {
+  const actionsZ = Number(layout.actionsZ);
+  const listZ = Number(layout.listZ);
+  const addCardZ = Number(layout.addCardZ);
+  assert.ok(
+    actionsZ > listZ,
+    `${label}: Add note stacking (${actionsZ}) must beat list (${listZ})`
+  );
+  assert.ok(
+    actionsZ > addCardZ,
+    `${label}: Add note stacking (${actionsZ}) must beat add form (${addCardZ})`
+  );
+}
+
+function assertCardsBelowButton(layout, label) {
   assert.ok(layout.cards.length >= 1, `${label}: expected note cards`);
   for (const card of layout.cards) {
     assert.ok(
@@ -134,12 +153,6 @@ function assertButtonAboveCards(layout, label) {
       `${label}: card "${card.title}" top ${card.top} must be below Add note bottom ${layout.btnBottom}`
     );
   }
-  const actionsZ = Number(layout.actionsZ);
-  const listZ = Number(layout.listZ);
-  assert.ok(
-    actionsZ > listZ,
-    `${label}: Add note stacking (${actionsZ}) must beat list (${listZ})`
-  );
 }
 
 async function main() {
@@ -156,15 +169,16 @@ async function main() {
   await waitHome(page);
   await openNotes(page);
 
-  /* At rest: button above every card; newest first. */
+  /* At rest: fixed button above every card; newest first. */
   let layout = await measureLayout(page);
-  assert.equal(layout.actionsPosition, "sticky");
+  assert.equal(layout.actionsPosition, "fixed");
   assert.equal(layout.titles[0], "First Note");
   assert.equal(layout.titles[1], "Second Note");
-  assertButtonAboveCards(layout, "initial");
-  console.log("PASS: initial layout keeps Add note above cards");
+  assertCardsBelowButton(layout, "initial");
+  assertStackingBeatsList(layout, "initial");
+  console.log("PASS: initial layout keeps fixed Add note above cards");
 
-  /* Create another note and re-check visual order. */
+  /* Create another note and re-check visual order + scroll stay. */
   const beforeScroll = layout.scrollY;
   await page.evaluate(() => document.getElementById("toggleAddNote")?.click());
   await page.waitForSelector("#addNoteCard:not([hidden]) #newNoteTitle", {
@@ -190,32 +204,37 @@ async function main() {
 
   layout = await measureLayout(page);
   assert.equal(layout.titles[0], "Brand New Note");
-  assertButtonAboveCards(layout, "after create");
+  assertCardsBelowButton(layout, "after create");
+  assertStackingBeatsList(layout, "after create");
   assert.ok(
     Math.abs(layout.scrollY - beforeScroll) < 180,
     `scroll jumped from ${beforeScroll} to ${layout.scrollY}`
   );
-  console.log("PASS: after create, Add note still above all cards");
+  console.log("PASS: after create, fixed Add note still above all cards");
 
-  /* After a modest scroll, sticky button stays put and keeps higher stacking. */
-  const stuckTop = layout.btnTop;
-  await page.mouse.wheel({ deltaY: 240 });
+  /* While scrolling, button stays fixed; cards may pass under but not over. */
+  const fixedTop = layout.btnTop;
+  await page.mouse.wheel({ deltaY: 320 });
   await new Promise(r => setTimeout(r, 120));
   layout = await measureLayout(page);
   assert.ok(layout.scrollY > 40, `expected some scroll, got ${layout.scrollY}`);
-  assert.equal(layout.actionsPosition, "sticky");
+  assert.equal(layout.actionsPosition, "fixed");
   assert.ok(
-    Number(layout.actionsZ) > Number(layout.listZ),
-    `after scroll: Add note z-index ${layout.actionsZ} must beat list ${layout.listZ}`
+    Math.abs(layout.btnTop - fixedTop) < 2,
+    `fixed Add note moved from ${fixedTop} to ${layout.btnTop}`
+  );
+  assertStackingBeatsList(layout, "after scroll");
+  const overlapping = layout.cards.filter(
+    c => c.top < layout.btnBottom && c.bottom > layout.btnTop
   );
   assert.ok(
-    Math.abs(layout.btnTop - stuckTop) < 2,
-    `sticky Add note moved from ${stuckTop} to ${layout.btnTop}`
+    overlapping.length >= 1,
+    "expected at least one Note card under the fixed Add note band while scrolling"
   );
-  console.log("PASS: sticky Add note stays above the list while scrolling");
+  console.log("PASS: fixed Add note stays visible above scrolling Notes");
 
   await browser.close();
-  console.log("PASS: Notes Add button visual stacking");
+  console.log("PASS: Notes Add button fixed stacking");
 }
 
 main().catch(err => {
