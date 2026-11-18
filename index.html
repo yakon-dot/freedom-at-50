@@ -13389,14 +13389,71 @@ function updateNotesCardFade(){
     card.style.pointerEvents=rect.bottom<exitStart+12?"none":"";
   });
 }
+let notesScrollPreserveDepth=0;
+function getNotesScrollPos(){
+  const se=document.scrollingElement||document.documentElement;
+  const y=window.scrollY||window.pageYOffset||(se&&se.scrollTop)||document.body.scrollTop||0;
+  const x=window.scrollX||window.pageXOffset||(se&&se.scrollLeft)||document.body.scrollLeft||0;
+  return {x:Number(x)||0,y:Number(y)||0};
+}
+function restoreNotesScrollPos(pos){
+  if(!pos)return;
+  const x=Number(pos.x)||0;
+  const y=Number(pos.y)||0;
+  const apply=()=>{
+    const se=document.scrollingElement||document.documentElement;
+    /* Prefer instant restore so global scroll-behavior:smooth cannot animate
+       back toward the top while Notes re-renders / focus moves. */
+    try{
+      if(se&&typeof se.scrollTo==="function")se.scrollTo({left:x,top:y,behavior:"instant"});
+      else if(se){se.scrollLeft=x;se.scrollTop=y;}
+    }catch(err){
+      if(se){se.scrollLeft=x;se.scrollTop=y;}
+    }
+    try{window.scrollTo({left:x,top:y,behavior:"instant"});}
+    catch(err2){
+      try{window.scrollTo(x,y);}catch(err3){}
+    }
+    if(document.documentElement){
+      document.documentElement.scrollLeft=x;
+      document.documentElement.scrollTop=y;
+    }
+    if(document.body){
+      document.body.scrollLeft=x;
+      document.body.scrollTop=y;
+    }
+  };
+  apply();
+  requestAnimationFrame(()=>{
+    apply();
+    requestAnimationFrame(apply);
+  });
+}
+function withNotesScrollPreserved(run){
+  const pos=getNotesScrollPos();
+  notesScrollPreserveDepth++;
+  let result;
+  try{result=typeof run==="function"?run():undefined;}
+  finally{
+    notesScrollPreserveDepth=Math.max(0,notesScrollPreserveDepth-1);
+    restoreNotesScrollPos(pos);
+    setTimeout(()=>restoreNotesScrollPos(pos),0);
+    setTimeout(()=>restoreNotesScrollPos(pos),50);
+    setTimeout(()=>restoreNotesScrollPos(pos),120);
+  }
+  return result;
+}
 function renderNotes(){
   const list=byId("notesList");
   if(!list)return;
+  const nestedPreserve=notesScrollPreserveDepth>0;
+  const scrollPos=nestedPreserve?null:getNotesScrollPos();
   ensureNotesArray();
   const notes=sortedNotes();
   if(!notes.length){
     list.innerHTML="";
     updateNotesCardFade();
+    if(scrollPos)restoreNotesScrollPos(scrollPos);
     return;
   }
   list.innerHTML=notes.map(noteCardHtml).join("");
@@ -13521,7 +13578,11 @@ function renderNotes(){
       renderNotes();
     });
   });
-  requestAnimationFrame(updateNotesCardFade);
+  requestAnimationFrame(()=>{
+    updateNotesCardFade();
+    if(scrollPos)restoreNotesScrollPos(scrollPos);
+  });
+  if(scrollPos)restoreNotesScrollPos(scrollPos);
 }
 function closeAddNoteForm(){
   const card=byId("addNoteCard");
@@ -13536,14 +13597,17 @@ function openAddNoteForm(){
   resetNotesCompose();
   card.hidden=false;
   renderComposeNoteForm();
-  /* Keep the form in the notes content band below the stationary Add note button. */
-  window.scrollTo({top:0,behavior:"smooth"});
+  /* Never jump to page top. Tiny nudge only when the form is already near the fixed Add button. */
   requestAnimationFrame(()=>{
     const btn=byId("toggleAddNote");
-    if(!btn||!card)return;
-    const gap=card.getBoundingClientRect().top-btn.getBoundingClientRect().bottom;
-    if(gap<16)window.scrollBy({top:gap-24,behavior:"smooth"});
-    byId("newNoteTitle")?.focus();
+    const live=byId("addNoteCard");
+    if(!live)return;
+    if(btn){
+      const gap=live.getBoundingClientRect().top-btn.getBoundingClientRect().bottom;
+      if(gap<12&&gap>-60)window.scrollBy({top:gap-16,behavior:"auto"});
+    }
+    try{byId("newNoteTitle")?.focus({preventScroll:true});}
+    catch(err){try{byId("newNoteTitle")?.focus();}catch(e){}}
   });
 }
 function saveComposeNote(){
@@ -13556,7 +13620,8 @@ function saveComposeNote(){
     .filter(item=>item.text||item.checked);
   if(!title&&!body&&!checklist.length){
     alert("Add a title, note text, or checklist item first.");
-    (byId("newNoteBody")||byId("newNoteTitle"))?.focus();
+    try{(byId("newNoteBody")||byId("newNoteTitle"))?.focus({preventScroll:true});}
+    catch(err){(byId("newNoteBody")||byId("newNoteTitle"))?.focus();}
     return;
   }
   const note={
@@ -13565,10 +13630,12 @@ function saveComposeNote(){
     createdAt:new Date().toISOString(),checklist
   };
   sortNoteChecklist(note);
-  state.notes.unshift(note);
-  persist();
-  closeAddNoteForm();
-  renderNotes();
+  withNotesScrollPreserved(()=>{
+    state.notes.unshift(note);
+    persist();
+    closeAddNoteForm();
+    renderNotes();
+  });
 }
 
 function fillForm(){const hp=byId("housePocketRemaining");if(hp)hp.value=state.housePocket}
