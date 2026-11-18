@@ -22,12 +22,29 @@ assert.match(index, /could not update the native recovery copy/);
 assert.match(index, /FreedomNativeStorage/);
 assert.match(nativeSrc, /DIRECTORY_DATA|"DATA"/);
 assert.match(nativeSrc, /registerPlugin\("Filesystem"\)/);
+assert.match(nativeSrc, /plugins\.Filesystem/);
 assert.match(nativeSrc, /decideHydrateAction/);
 assert.match(nativeSrc, /enqueueMirrorOp/);
 assert.match(nativeSrc, /mirrorEpoch/);
 assert.match(nativeSrc, /empty-local-rich-mirror/);
 assert.equal(/Preferences/.test(nativeSrc), false, "Do not store financial mirrors in UserDefaults Preferences");
-console.log("PASS: source contracts for native storage mirror");
+const capAppSpm = fs.readFileSync(
+  path.join(root, "ios/App/CapApp-SPM/Sources/CapApp-SPM/CapApp-SPM.swift"),
+  "utf8"
+);
+assert.match(capAppSpm, /import FilesystemPlugin/);
+assert.match(capAppSpm, /FreedomCapAppSPMPluginAnchor/);
+assert.match(capAppSpm, /FilesystemPlugin\.self/);
+assert.match(capAppSpm, /dead-strip|NSClassFromString|packageClassList/);
+const capConfig = JSON.parse(
+  fs.readFileSync(path.join(root, "ios/App/App/capacitor.config.json"), "utf8")
+);
+assert.ok(
+  Array.isArray(capConfig.packageClassList) &&
+    capConfig.packageClassList.includes("FilesystemPlugin"),
+  "packageClassList must include FilesystemPlugin for native registration"
+);
+console.log("PASS: source contracts for native storage mirror + SPM plugin anchor");
 
 function loadNativeApi(capacitorMock) {
   const sandbox = {
@@ -265,6 +282,59 @@ const metaKeys = [
   });
   assert.equal(mirror.skipped, true);
   console.log("PASS: web/PWA path no-ops without touching Filesystem");
+}
+
+{
+  let registerCalls = 0;
+  const injected = {
+    async writeFile() {
+      return { uri: "injected" };
+    },
+    async readFile() {
+      return { data: "{}" };
+    },
+    async deleteFile() {}
+  };
+  const apiInjected = loadNativeApi({
+    isNativePlatform: () => true,
+    isPluginAvailable: () => false,
+    Plugins: { Filesystem: injected },
+    registerPlugin: () => {
+      registerCalls += 1;
+      throw new Error("should prefer injected Plugins.Filesystem");
+    }
+  });
+  const fsInjected = apiInjected.getFilesystem();
+  assert.equal(fsInjected, injected);
+  assert.equal(registerCalls, 0);
+
+  const apiRegister = loadNativeApi({
+    isNativePlatform: () => true,
+    isPluginAvailable: () => false,
+    Plugins: {},
+    registerPlugin: name => {
+      registerCalls += 1;
+      assert.equal(name, "Filesystem");
+      return {
+        async writeFile() {
+          return { uri: "proxy" };
+        }
+      };
+    }
+  });
+  registerCalls = 0;
+  const fsProxy = apiRegister.getFilesystem();
+  assert.equal(registerCalls, 1);
+  assert.equal(typeof fsProxy.writeFile, "function");
+
+  const apiMissing = loadNativeApi({
+    isNativePlatform: () => true,
+    isPluginAvailable: () => false,
+    Plugins: {},
+    registerPlugin: () => null
+  });
+  assert.equal(apiMissing.getFilesystem(), null);
+  console.log("PASS: getFilesystem prefers JSExport proxy and still registers when headers lag");
 }
 
 {
