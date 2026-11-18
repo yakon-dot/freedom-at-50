@@ -1163,13 +1163,13 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.archive-active-v316 .archive-victories-wrap .victories-row-main{flex:1;min-width:0}
   body.archive-active-v316 .archive-victories-wrap .victories-row-delete{
-    flex:0 0 auto;width:34px;height:34px;margin-top:2px;padding:0;border:0;border-radius:10px;
-    background:transparent;color:rgba(190,188,182,.42);display:inline-flex;align-items:center;justify-content:center;
+    flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;margin:-4px -6px 0 0;padding:0;border:0;border-radius:12px;
+    background:transparent;color:rgba(210,208,202,.62);display:inline-flex;align-items:center;justify-content:center;
     -webkit-tap-highlight-color:transparent;cursor:pointer;
   }
-  body.archive-active-v316 .archive-victories-wrap .victories-row-delete svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  body.archive-active-v316 .archive-victories-wrap .victories-row-delete svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
   body.archive-active-v316 .archive-victories-wrap .victories-row-delete:active{
-    color:rgba(236,232,224,.72);background:rgba(255,255,255,.04);
+    color:rgba(236,232,224,.86);background:rgba(255,255,255,.05);
   }
 
   body.archive-active-v316 .archive-victories-wrap .victories-row:last-child{border-bottom:0}
@@ -1305,13 +1305,13 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   }
   body.victories-active-v317 .victories-row-main{flex:1;min-width:0}
   body.victories-active-v317 .victories-row-delete{
-    flex:0 0 auto;width:34px;height:34px;margin-top:2px;padding:0;border:0;border-radius:10px;
-    background:transparent;color:rgba(190,188,182,.42);display:inline-flex;align-items:center;justify-content:center;
+    flex:0 0 auto;width:44px;height:44px;min-width:44px;min-height:44px;margin:-4px -6px 0 0;padding:0;border:0;border-radius:12px;
+    background:transparent;color:rgba(210,208,202,.62);display:inline-flex;align-items:center;justify-content:center;
     -webkit-tap-highlight-color:transparent;cursor:pointer;
   }
-  body.victories-active-v317 .victories-row-delete svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  body.victories-active-v317 .victories-row-delete svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
   body.victories-active-v317 .victories-row-delete:active{
-    color:rgba(236,232,224,.72);background:rgba(255,255,255,.04);
+    color:rgba(236,232,224,.86);background:rgba(255,255,255,.05);
   }
 
   body.victories-active-v317 .victories-row:last-child{border-bottom:0}
@@ -10699,6 +10699,44 @@ const builtInGoalMeta={
   holidayFund:{name:"Holiday Fund",valueKey:"holidayFund",cardId:"holidayFundCard",overviewId:"overviewHolidayCard"},
   personalSavings:{name:"Personal Savings",valueKey:"personalSavings",cardId:"personalSavingsCard",overviewId:"overviewSavingsCard"}
 };
+/* Clean-slate / new-user defaults hide built-ins from Goals via hiddenBuiltInGoals.
+   That flag alone must not list them under Archive → Archived. */
+function builtInGoalHasUserActivity(key){
+  const m=builtInGoalMeta[key];
+  if(!m)return false;
+  /* Do not treat boot-default goalTargets/goalHasTarget as activity — House Fund
+     and Personal Savings get default targets on load without the user creating them. */
+  if((Number(state[m.valueKey])||0)>0)return true;
+  if((Number(state.goalLifetimeAdded&&state.goalLifetimeAdded[key])||0)>0)return true;
+  if((Number(state.goalStartingBalance&&state.goalStartingBalance[key])||0)>0)return true;
+  if((Number(state.goalPlannedMonthly&&state.goalPlannedMonthly[key])||0)>0)return true;
+  if((Number(state.goalLifeHappensTotal&&state.goalLifeHappensTotal[key])||0)>0)return true;
+  if(state.goalDate&&state.goalDate[key])return true;
+  if(state.goalCompletedAt&&state.goalCompletedAt[key])return true;
+  return false;
+}
+function builtInGoalInVictories(key){
+  return Array.isArray(state.victories)&&state.victories.some(v=>v&&v.kind==="goal"&&String(v.recordId)===String(key));
+}
+function shouldShowBuiltInGoalInArchive(key){
+  if(!(state.hiddenBuiltInGoals&&state.hiddenBuiltInGoals[key]))return false;
+  if(state.deletedBuiltInGoals&&state.deletedBuiltInGoals[key])return false;
+  /* Completed chapters belong under Victories, not Archived. */
+  if(builtInGoalInVictories(key))return false;
+  if(state.builtInGoalArchivedAt&&state.builtInGoalArchivedAt[key])return true;
+  /* Legacy installs: user-hidden with real progress, no archivedAt stamp yet. */
+  return builtInGoalHasUserActivity(key);
+}
+function markBuiltInGoalArchived(key){
+  if(!builtInGoalMeta[key])return;
+  if(!state.hiddenBuiltInGoals)state.hiddenBuiltInGoals={};
+  state.hiddenBuiltInGoals[key]=true;
+  if(!state.builtInGoalArchivedAt)state.builtInGoalArchivedAt={};
+  state.builtInGoalArchivedAt[key]=new Date().toISOString();
+}
+function clearBuiltInGoalArchived(key){
+  if(state.builtInGoalArchivedAt)delete state.builtInGoalArchivedAt[key];
+}
 const goalLifeHappensOpen={};
 const goalCorrectBalanceOpen={};
 const loanCorrectBalanceOpen={};
@@ -11432,7 +11470,7 @@ function renderGoals(){
     }
     if(!confirm(`Archive ${goalDisplayName(key)}?\n\nIt will disappear from Goals and Overview, but you can restore it later from More.`)) return;
     const card=e.currentTarget.closest(".goal-card");
-    freedomMotion.exitCard(card,()=>{state.hiddenBuiltInGoals[key]=true;persist();render();});
+    freedomMotion.exitCard(card,()=>{markBuiltInGoalArchived(key);persist();render();});
   }));
   list.querySelectorAll("[data-delete-built-in]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
@@ -12919,9 +12957,11 @@ function renderArchive(){
       {text:completedDate?`Completed · ${completedDate}`:"Completed"}
     ],archiveActions('data-restore-victory="housePocket"','data-delete-victory="housePocket"')," archive-row-victory"));
   }
-  Object.entries(state.hiddenBuiltInGoals||{}).forEach(([key,hidden])=>{
-    if(!hidden||(state.deletedBuiltInGoals&&state.deletedBuiltInGoals[key]))return;
-    archivedRows.push(archiveRow(goalDisplayName(key),[{text:"Archived"}],
+  Object.keys(builtInGoalMeta).forEach(key=>{
+    if(!shouldShowBuiltInGoalInArchive(key))return;
+    const archivedAt=state.builtInGoalArchivedAt&&state.builtInGoalArchivedAt[key];
+    const date=formatArchiveDate(archivedAt);
+    archivedRows.push(archiveRow(goalDisplayName(key),[{text:date?`Archived · ${date}`:"Archived"}],
       archiveActions(`data-restore-built-in="${key}"`,`data-delete-built-in-archive="${key}"`)));
   });
   state.archivedGoals.forEach((x,i)=>{
@@ -12995,12 +13035,20 @@ function renderArchive(){
     doRemove();
   }));
   wrap.querySelectorAll("[data-restore-built-in]").forEach(btn=>btn.addEventListener("click",e=>{
-    state.hiddenBuiltInGoals[e.currentTarget.dataset.restoreBuiltIn]=false;persist();render();
+    const key=e.currentTarget.dataset.restoreBuiltIn;
+    if(!state.hiddenBuiltInGoals)state.hiddenBuiltInGoals={};
+    state.hiddenBuiltInGoals[key]=false;
+    clearBuiltInGoalArchived(key);
+    persist();render();
   }));
   wrap.querySelectorAll("[data-delete-built-in-archive]").forEach(btn=>btn.addEventListener("click",e=>{
     const key=e.currentTarget.dataset.deleteBuiltInArchive;
     if(!confirm(`Delete ${goalDisplayName(key)} permanently?`))return;
-    state.deletedBuiltInGoals[key]=true;persist();render();
+    if(!state.deletedBuiltInGoals)state.deletedBuiltInGoals={};
+    state.deletedBuiltInGoals[key]=true;
+    clearBuiltInGoalArchived(key);
+    if(state.hiddenBuiltInGoals)delete state.hiddenBuiltInGoals[key];
+    persist();render();
   }));
   wrap.querySelectorAll("[data-restore-goal]").forEach(btn=>btn.addEventListener("click",e=>{
     const i=Number(e.currentTarget.dataset.restoreGoal),item=state.archivedGoals[i];
