@@ -1,18 +1,25 @@
 /**
  * Pension statement baseline:
- * - Editing the statement value field (even with the same number) resets the baseline
- * - Ordinary Save of name / contributions / auto / Overview does not
- * - Auto on/off and combined totals stay coherent; Demo leaves personal data alone
+ * - Changed balance still resets the baseline
+ * - Same balance resets only when "New pension statement" is ticked
+ * - Checkbox shows only while entered value matches the saved statement
+ * - Ordinary Saves and Demo Mode leave the baseline alone
  */
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import puppeteer from "puppeteer-core";
 
 const index = fs.readFileSync("index.html", "utf8");
-assert.match(index, /dataset\.statementEdited/);
-assert.match(index, /statementIntent/);
-assert.match(index, /statementEdited\|\|statementChanged|statementChanged\|\|statementEdited/);
+assert.match(index, /New pension statement/);
+assert.match(
+  index,
+  /Tick if you've received a new statement showing the same balance\./
+);
+assert.match(index, /sameBalanceNewStatement/);
+assert.match(index, /syncPensionNewStatementVisibility/);
 assert.match(index, /pensionResetStatementBaseline/);
+assert.equal(/dataset\.statementEdited/.test(index), false);
+assert.equal(/Tick if you've received a new statement showing the same balance\.—|—Tick if you've received/.test(index), false);
 console.log("PASS: source contracts for pension statement baseline");
 
 function resolveChromePath() {
@@ -64,7 +71,6 @@ function multiState(pensions) {
 
 async function seedEstablished(page, state) {
   await page.evaluateOnNewDocument(raw => {
-    /* Skip on reload so persistence checks keep the saved personal blob. */
     if (sessionStorage.getItem("freedom50-test-seeded-v1") === "1") return;
     sessionStorage.setItem("freedom50-test-seeded-v1", "1");
     localStorage.setItem("freedom50-welcome-complete-v1", "1");
@@ -124,7 +130,58 @@ async function main() {
   });
   const nowMonth = currentMonthKey();
 
-  /* 1) Same-balance statement edit resets baseline */
+  /* 1) Checkbox visibility: shown when value matches, hidden when it differs */
+  {
+    const page = await browser.newPage();
+    await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
+    await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
+    await seedEstablished(page, multiState([pensionFixture()]));
+    await page.goto(`${BASE}/index.html`, { waitUntil: "domcontentloaded", timeout: 60000 });
+    await waitHome(page);
+    await openPension(page);
+    await expandFirst(page);
+    const visibility = await page.evaluate(() => {
+      const wrap = document.querySelector('[data-pension-new-statement-wrap="0"]');
+      const box = document.getElementById("pensionNewStatement_0");
+      const label = wrap?.querySelector("strong")?.textContent?.trim();
+      const help = wrap?.querySelector("p")?.textContent?.trim();
+      const initial = {
+        hidden: !!wrap?.hidden,
+        checked: !!box?.checked,
+        label,
+        help
+      };
+      const el = document.getElementById("pensionValue_0");
+      el.value = "12000";
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+      const whenChanged = {
+        hidden: !!wrap.hidden,
+        checked: !!box.checked
+      };
+      el.value = "10000";
+      el.dispatchEvent(new Event("input", { bubbles: true }));
+      const whenRestored = {
+        hidden: !!wrap.hidden,
+        checked: !!box.checked
+      };
+      return { initial, whenChanged, whenRestored };
+    });
+    assert.equal(visibility.initial.hidden, false);
+    assert.equal(visibility.initial.checked, false);
+    assert.equal(visibility.initial.label, "New pension statement");
+    assert.equal(
+      visibility.initial.help,
+      "Tick if you've received a new statement showing the same balance."
+    );
+    assert.equal(visibility.whenChanged.hidden, true);
+    assert.equal(visibility.whenChanged.checked, false);
+    assert.equal(visibility.whenRestored.hidden, false);
+    assert.equal(visibility.whenRestored.checked, false);
+    console.log("PASS: New pension statement checkbox visibility");
+    await page.close();
+  }
+
+  /* 2) Same balance without tick does not reset; with tick does */
   {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
@@ -138,18 +195,42 @@ async function main() {
       const p = JSON.parse(localStorage.getItem("freedom50-mobile-v1")).pensions[0];
       return {
         statementMonth: p.statementMonth,
-        statementValue: p.statementValue,
         autoStart: p.autoPeriods?.[0]?.startMonth,
         value: p.value
       };
     });
     assert.equal(before.statementMonth, "2024-01");
-    assert.ok(before.value > before.statementValue);
+    assert.ok(before.value > 10000);
 
     await page.evaluate(() => {
       const el = document.getElementById("pensionValue_0");
       el.value = "10000";
       el.dispatchEvent(new Event("input", { bubbles: true }));
+      document.querySelector("[data-save-pension='0']").click();
+    });
+    await page.waitForFunction(
+      () => document.querySelector("#pensionList .pension-card.is-collapsed, #pensionList .pension-card.is-collapsing") ||
+        document.getElementById("pensionNewStatement_0"),
+      { timeout: 5000 }
+    );
+    await new Promise(r => setTimeout(r, 700));
+    const noTick = await page.evaluate(() => {
+      const p = JSON.parse(localStorage.getItem("freedom50-mobile-v1")).pensions[0];
+      return {
+        statementMonth: p.statementMonth,
+        autoStart: p.autoPeriods?.[0]?.startMonth,
+        statementValue: p.statementValue
+      };
+    });
+    assert.equal(noTick.statementMonth, "2024-01");
+    assert.equal(noTick.autoStart, before.autoStart);
+    assert.equal(noTick.statementValue, 10000);
+
+    await expandFirst(page);
+    await page.evaluate(() => {
+      const box = document.getElementById("pensionNewStatement_0");
+      box.checked = true;
+      box.dispatchEvent(new Event("change", { bubbles: true }));
       document.querySelector("[data-save-pension='0']").click();
     });
     await page.waitForFunction(
@@ -159,28 +240,35 @@ async function main() {
       { timeout: 5000 },
       nowMonth
     );
-    const after = await page.evaluate(() => {
+    const ticked = await page.evaluate(() => {
       const p = JSON.parse(localStorage.getItem("freedom50-mobile-v1")).pensions[0];
       return {
         statementMonth: p.statementMonth,
         statementValue: p.statementValue,
         autoStart: p.autoPeriods?.[0]?.startMonth,
         autoCount: (p.autoPeriods || []).length,
-        value: p.value,
-        personal: p.personal
+        value: p.value
       };
     });
-    assert.equal(after.statementValue, 10000);
-    assert.equal(after.statementMonth, nowMonth);
-    assert.equal(after.autoCount, 1);
-    assert.notEqual(after.autoStart, "2024-02");
-    assert.equal(after.value, 10000);
-    assert.equal(after.personal, 100);
-    console.log("PASS: same-balance statement edit resets baseline");
+    assert.equal(ticked.statementValue, 10000);
+    assert.equal(ticked.statementMonth, nowMonth);
+    assert.equal(ticked.autoCount, 1);
+    assert.notEqual(ticked.autoStart, "2024-02");
+    assert.equal(ticked.value, 10000);
+
+    await expandFirst(page);
+    const afterSave = await page.evaluate(() => {
+      const wrap = document.querySelector('[data-pension-new-statement-wrap="0"]');
+      const box = document.getElementById("pensionNewStatement_0");
+      return { hidden: !!wrap?.hidden, checked: !!box?.checked };
+    });
+    assert.equal(afterSave.hidden, false);
+    assert.equal(afterSave.checked, false);
+    console.log("PASS: same-balance Save requires New pension statement tick");
     await page.close();
   }
 
-  /* 2) Higher and lower statement balances also reset */
+  /* 3) Changed balances still reset without needing the checkbox */
   {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
@@ -194,6 +282,8 @@ async function main() {
       const el = document.getElementById("pensionValue_0");
       el.value = "12000";
       el.dispatchEvent(new Event("input", { bubbles: true }));
+      const wrap = document.querySelector('[data-pension-new-statement-wrap="0"]');
+      window.__hiddenWhileChanged = !!wrap.hidden;
       document.querySelector("[data-save-pension='0']").click();
     });
     await page.waitForFunction(
@@ -202,9 +292,11 @@ async function main() {
           .statementValue === 12000,
       { timeout: 5000 }
     );
-    let p = await page.evaluate(
-      () => JSON.parse(localStorage.getItem("freedom50-mobile-v1")).pensions[0]
-    );
+    let p = await page.evaluate(() => ({
+      ...JSON.parse(localStorage.getItem("freedom50-mobile-v1")).pensions[0],
+      hiddenWhileChanged: window.__hiddenWhileChanged
+    }));
+    assert.equal(p.hiddenWhileChanged, true);
     assert.equal(p.statementMonth, nowMonth);
     assert.equal(p.value, 12000);
 
@@ -227,11 +319,11 @@ async function main() {
     assert.equal(p.statementValue, 9000);
     assert.equal(p.statementMonth, nowMonth);
     assert.equal(p.value, 9000);
-    console.log("PASS: higher and lower statement balances reset baseline");
+    console.log("PASS: higher and lower balances reset without checkbox");
     await page.close();
   }
 
-  /* 3) Ordinary Save without touching statement value keeps baseline */
+  /* 4) Ordinary settings Save does not reset */
   {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
@@ -271,8 +363,7 @@ async function main() {
         employer: p.employer,
         statementMonth: p.statementMonth,
         statementValue: p.statementValue,
-        autoStart: p.autoPeriods?.[0]?.startMonth,
-        value: p.value
+        autoStart: p.autoPeriods?.[0]?.startMonth
       };
     });
     assert.equal(after.name, "BASELINE-POT-RENAMED");
@@ -281,12 +372,11 @@ async function main() {
     assert.equal(after.statementMonth, before.statementMonth);
     assert.equal(after.statementValue, 10000);
     assert.equal(after.autoStart, before.autoStart);
-    assert.ok(after.value >= before.value);
     console.log("PASS: name/contribution Save does not reset statement baseline");
     await page.close();
   }
 
-  /* 4) Auto toggle on/off without statement edit does not reset baseline */
+  /* 5) Auto toggle on/off without new-statement tick does not reset */
   {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
@@ -339,7 +429,7 @@ async function main() {
     await page.close();
   }
 
-  /* 5) Multiple pensions / combined totals / Overview / persistence */
+  /* 6) Multi-pension totals / persistence / Demo isolation */
   {
     const page = await browser.newPage();
     await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
@@ -364,9 +454,7 @@ async function main() {
     await openPension(page);
     await expandFirst(page);
     await page.evaluate(() => {
-      const el = document.getElementById("pensionValue_0");
-      el.value = "10000";
-      el.dispatchEvent(new Event("input", { bubbles: true }));
+      document.getElementById("pensionNewStatement_0").checked = true;
       document.querySelector("[data-save-pension='0']").click();
     });
     await page.waitForFunction(
@@ -421,18 +509,7 @@ async function main() {
     assert.equal(persisted.aMonth, nowMonth);
     assert.equal(persisted.aValue, 10000);
     assert.equal(persisted.bMonth, "2024-01");
-    console.log("PASS: multi-pension totals and persistence");
-    await page.close();
-  }
 
-  /* 6) Demo Mode isolation */
-  {
-    const page = await browser.newPage();
-    await page.setViewport({ width: 390, height: 844, isMobile: true, hasTouch: true });
-    await page.emulateMediaFeatures([{ name: "prefers-reduced-motion", value: "reduce" }]);
-    await seedEstablished(page, multiState([pensionFixture()]));
-    await page.goto(`${BASE}/index.html`, { waitUntil: "domcontentloaded", timeout: 60000 });
-    await waitHome(page);
     await page.evaluate(() => window.enterDemo());
     await page.waitForFunction(
       () => document.body.classList.contains("demo-mode-active"),
@@ -442,16 +519,14 @@ async function main() {
       const personal = JSON.parse(localStorage.getItem("freedom50-mobile-v1"));
       return {
         demo: document.body.classList.contains("demo-mode-active"),
-        name: personal.pensions[0].name,
-        statementMonth: personal.pensions[0].statementMonth,
-        statementValue: personal.pensions[0].statementValue
+        aMonth: personal.pensions[0].statementMonth,
+        aValue: personal.pensions[0].statementValue
       };
     });
     assert.equal(demo.demo, true);
-    assert.equal(demo.name, "BASELINE-POT");
-    assert.equal(demo.statementMonth, "2024-01");
-    assert.equal(demo.statementValue, 10000);
-    console.log("PASS: Demo Mode leaves personal pension baseline intact");
+    assert.equal(demo.aMonth, nowMonth);
+    assert.equal(demo.aValue, 10000);
+    console.log("PASS: multi-pension totals, persistence and Demo isolation");
     await page.close();
   }
 
