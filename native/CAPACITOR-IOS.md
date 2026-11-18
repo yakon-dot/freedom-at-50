@@ -54,12 +54,19 @@ npm run cap:sync
 - No framework rewrite.
 - Demo Mode, onboarding, calculations, companion copy, and Web Push code paths are not migrated in this step.
 
-## Storage notes (no migration yet)
+## Native storage safeguard
 
-- Freedom already persists financial state in **localStorage** (`freedom50-mobile-v1` and related `freedom50-*` keys).
-- Inside Capacitor’s WKWebView, localStorage continues to work for that WebView origin. It is **not** shared with Safari / Home Screen PWA storage.
-- localStorage can still be cleared if the app is deleted, or in rare WebView data-loss cases. It is not a backup target.
-- Safest near-term native approach (future task): keep localStorage as the live store, then add a Capacitor Preferences or filesystem mirror plus the existing encrypted backup/export flow for restore. Do not replace storage until that path is tested end-to-end.
+- **Live store (unchanged):** WebView `localStorage` (`freedom50-mobile-v1` + onboarding/companion meta keys). GitHub Pages / PWA behaviour is unchanged — `freedom-native-storage.js` no-ops unless `Capacitor.isNativePlatform()` is true.
+- **Native mirror:** `@capacitor/filesystem` file `freedom-native-mirror-v1.json` in the app **Data** directory (iOS Documents sandbox). Chosen instead of Preferences/UserDefaults because Apple documents UserDefaults as unencrypted and unsuitable for personal/sensitive data.
+- **On save (native only):** after a successful `localStorage` write, Freedom mirrors state + backup meta keys on a **serialized write queue** (newest localStorage snapshot wins). The “Saved locally ✓” toast appears only if the mirror write also succeeds; mirror failure shows the existing save-failure warning.
+- **On launch (native only):** hydrate finishes **before** the first interactive render/saves. Personal `persist()` stays blocked until ready. Valid localStorage usually wins; an empty local shell does **not** overwrite a richer valid mirror. Missing/corrupt/unreadable localStorage restores from a valid mirror and reloads.
+- **Encrypted Backup & export** remains the off-device recovery path (password-protected). Restore reloads only after the native mirror write succeeds. Reset / fresh-start clears the native mirror **first** and aborts visibly if that clear fails.
+
+### Privacy / security
+
+- The native mirror is **plaintext JSON** inside the app sandbox, covered by iOS Data Protection for app container files (available after first unlock). It is **not** application-level encrypted.
+- Risk accepted for automatic recovery without a password when WebView storage is cleared. Off-device or shared copies should still use encrypted Backup & export.
+- Uninstalling the app removes localStorage and the mirror. Device backups may include the sandbox file depending on the user’s backup settings.
 
 ## Notifications notes (no native push yet)
 
