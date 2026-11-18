@@ -35,9 +35,23 @@
     if (!isNativePlatform()) return null;
     try {
       var cap = global.Capacitor;
-      if (!cap || typeof cap.registerPlugin !== "function") return null;
-      if (!cap.isPluginAvailable || !cap.isPluginAvailable("Filesystem")) return null;
-      return cap.registerPlugin("Filesystem");
+      if (!cap) return null;
+      var plugins = cap.Plugins || {};
+      /* Prefer the native-injected JSExport proxy when Capacitor registered the plugin. */
+      if (plugins.Filesystem && typeof plugins.Filesystem.writeFile === "function") {
+        return plugins.Filesystem;
+      }
+      if (typeof cap.registerPlugin !== "function") return null;
+      /*
+        Do not require isPluginAvailable() up front. On a healthy Capacitor iOS bridge
+        registerPlugin("Filesystem") binds to PluginHeaders / native methods. Returning
+        null solely because isPluginAvailable is false hides useful bridge errors and
+        matched the dead-stripped SPM registration failure mode too aggressively.
+      */
+      var proxy = cap.registerPlugin("Filesystem");
+      if (proxy && typeof proxy.writeFile === "function") return proxy;
+      if (proxy) return proxy;
+      return null;
     } catch (e) {
       return null;
     }
@@ -380,6 +394,7 @@
     version: MIRROR_VERSION,
     path: MIRROR_PATH,
     isNative: isNativePlatform,
+    getFilesystem: getFilesystem,
     parseMirrorEnvelope: parseMirrorEnvelope,
     classifyLocalStorageRaw: classifyLocalStorageRaw,
     decideHydrateAction: decideHydrateAction,
