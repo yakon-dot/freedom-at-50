@@ -69,11 +69,16 @@ npm run cap:sync
 - Risk accepted for automatic recovery without a password when WebView storage is cleared. Off-device or shared copies should still use encrypted Backup & export.
 - Uninstalling the app removes localStorage and the mirror. Device backups may include the sandbox file depending on the user’s backup settings.
 
-## Notifications notes (no native push yet)
+## Native monthly reminders (local notifications)
 
-- Current reminders use **Web Push** + the service worker (and a Cloudflare Worker).
-- WKWebView does not provide the same Web Push / service-worker notification behaviour as Safari PWA.
-- Future native work should use `@capacitor/push-notifications` (APNs) with a carefully tested bridge; leave the PWA Web Push path intact for GitHub Pages users.
+- **PWA path (unchanged):** Web Push + service worker + Cloudflare Worker (`0 17 28-31 * *` UTC, last calendar day only).
+- **Native iOS path:** `@capacitor/local-notifications` schedules the next 12 end-of-month reminders at **17:00 local** on-device. No APNs, no Worker changes, no extra server cost.
+- Why local (not APNs): Freedom’s reminder is a fixed monthly cadence with fixed copy. Local scheduling matches that without push certificates, Worker APNs integration, or ongoing push delivery cost. Trade-off: iOS may drop far-future local schedules if the app is unused for a long time — Freedom re-schedules the rolling 12-month window whenever reminders stay on and the app opens.
+- **SPM linking:** `CapApp-SPM.swift` also retains `LocalNotificationsPlugin.self` (same dead-strip pattern as Filesystem).
+- Tap handling uses the existing Home + one-shot companion check-in path (`freedomOpenHomeFromReminder` / `FreedomMonthlyReminderCheckIn`). Native and Web Push are mutually exclusive at runtime (`freedomRemindersNativeAvailable()`).
+- **Apple Developer Program:** installing on a real iPhone / App Store still needs a paid membership (already required for the native shell). Local notifications do **not** need the Push Notifications capability, APNs keys, or App Store Connect push setup. Those are only required if Freedom later moves to remote APNs.
+- **Signing:** `DEVELOPMENT_TEAM` is not committed in the Xcode project. Select your Team in Xcode (Signing & Capabilities) for local device builds.
+- **Disable / reschedule:** turning reminders off cancels every pending/delivered Freedom reminder (monthly ids + test id) discovered via `getPending` / delivered lists — not `cancelAll`, so unrelated notifications stay. Reschedule writes the new 12-month set first, then removes Freedom orphans, so a failed refresh cannot wipe active reminders while the UI still says they are on. Disable only flips the preference after cancel succeeds.
 
 ## After cloning
 

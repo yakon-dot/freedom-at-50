@@ -5453,6 +5453,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <div class="save-note" id="saveNote">Saved locally ✓</div>
 <script src="./freedom-push-config.js"></script>
 <script src="./freedom-native-storage.js"></script>
+<script src="./freedom-native-notifications.js"></script>
 <script>
 (function(){
 "use strict";
@@ -7974,9 +7975,16 @@ function freedomPushSupported(){
     "Notification" in window
   );
 }
+function freedomRemindersNativeAvailable(){
+  return !!(typeof freedomIsNativeApp==="function"&&freedomIsNativeApp()&&window.FreedomNativeNotifications&&typeof window.FreedomNativeNotifications.enableMonthlyReminders==="function");
+}
 function freedomRemindersAvailability(){
   if(demoMode){
     return{ok:false,reason:"demo",message:"Reminders are only available in personal mode — not while Demo Mode is on."};
+  }
+  /* Native Capacitor: local notifications — do not require Web Push / Home Screen PWA. */
+  if(freedomRemindersNativeAvailable()){
+    return{ok:true,reason:"native-local",message:""};
   }
   if(!window.isSecureContext){
     return{ok:false,reason:"insecure",message:"Reminders need a secure connection (https)."};
@@ -8124,6 +8132,7 @@ function freedomRemindersEffectivelyOn(availability,choice){
   const avail=availability||freedomRemindersAvailability();
   const c=choice!=null?choice:getRemindersChoice();
   if(c!=="keep"||!avail||!avail.ok)return false;
+  if(avail.reason==="native-local")return true;
   try{
     if(typeof Notification!=="undefined"&&Notification.permission==="denied")return false;
   }catch(e){}
@@ -8194,7 +8203,12 @@ async function freedomRemindersChooseKeep(){
   renderFreedomRemindersPanel({preserveStatus:true});
   setFreedomRemindersStatus("Turning reminders on…",false);
   try{
-    await freedomSubscribePush();
+    if(freedomRemindersNativeAvailable()){
+      const scheduled=await window.FreedomNativeNotifications.enableMonthlyReminders();
+      if(!scheduled||!scheduled.ok)throw new Error("Could not schedule Freedom reminders on this iPhone.");
+    }else{
+      await freedomSubscribePush();
+    }
     setRemindersChoice("keep");
     freedomRemindersBusy=false;
     renderFreedomRemindersPanel();
@@ -8218,7 +8232,21 @@ async function freedomRemindersChooseNever(){
   freedomRemindersBusy=true;
   renderFreedomRemindersPanel({preserveStatus:true});
   setFreedomRemindersStatus("Turning reminders off…",false);
-  try{await freedomUnsubscribePush();}catch(e){}
+  try{
+    if(freedomRemindersNativeAvailable()){
+      const cleared=await window.FreedomNativeNotifications.disableMonthlyReminders();
+      if(!cleared||!cleared.ok){
+        throw new Error("Could not cancel scheduled Freedom reminders on this iPhone.");
+      }
+    }else{
+      await freedomUnsubscribePush();
+    }
+  }catch(err){
+    freedomRemindersBusy=false;
+    renderFreedomRemindersPanel({preserveStatus:true});
+    setFreedomRemindersStatus((err&&err.message)||"Could not turn reminders off. Your reminders stay on until they can be cancelled.",true);
+    return false;
+  }
   setRemindersChoice("never");
   freedomRemindersBusy=false;
   renderFreedomRemindersPanel();
@@ -8240,9 +8268,15 @@ async function freedomRemindersSendTest(mode){
     setFreedomRemindersStatus("Test reminders are only available in internal testing.",true);
     return;
   }
-  const testMode=mode==="classic"?"classic":"declarative";
   setFreedomRemindersStatus("Sending a test reminder…",false);
   try{
+    if(freedomRemindersNativeAvailable()){
+      const data=await window.FreedomNativeNotifications.sendTestReminder();
+      if(!data||!data.ok)throw new Error((data&&data.error&&data.error.message)||"Could not send a test reminder.");
+      setFreedomRemindersStatus("Test reminder scheduled on this iPhone. Tap it to open Home.",false);
+      return;
+    }
+    const testMode=mode==="classic"?"classic":"declarative";
     const data=await freedomSendTestReminder(testMode);
     const diag=freedomFormatPushDiagnostics(data);
     const base=diag?`Test reminder sent. ${diag}`:"Test reminder sent.";
@@ -8251,6 +8285,10 @@ async function freedomRemindersSendTest(mode){
       false
     );
   }catch(err){
+    if(err&&err.code==="permission"){
+      setFreedomRemindersStatus("Notifications were not allowed, so a test reminder could not be sent.",true);
+      return;
+    }
     setFreedomRemindersStatus((err&&err.message)||"Could not send a test reminder.",true);
   }
 }
@@ -8328,14 +8366,18 @@ function initFreedomRemindersUi(){
     closePanel:closeFreedomRemindersPanel,
     subscribe:freedomSubscribePush,
     unsubscribe:freedomUnsubscribePush,
-    sendTest:freedomSendTestReminder,
+    sendTest:freedomRemindersSendTest,
     chooseKeep:freedomRemindersChooseKeep,
     chooseNever:freedomRemindersChooseNever,
     renderPanel:renderFreedomRemindersPanel,
     isEffectivelyOn:freedomRemindersEffectivelyOn,
     copy:REMINDERS_COPY,
+    isNativeLocal:freedomRemindersNativeAvailable,
     _setDemoModeForTests:function(on){demoMode=!!on;}
   };
+  if(freedomRemindersNativeAvailable()){
+    try{window.FreedomNativeNotifications.ensureListeners();}catch(e){}
+  }
 }
 const PATRICIA_NOTE_COPY={
   home:{id:"home",text:"That credit card has €200 left.\njust saying...",doodle:"patricia-eyes.png",sticky:true},
@@ -10363,7 +10405,9 @@ function page(id){
   handleDemoPageVisit(id);
 }
 window.page=page;
-/* Reminder notification open: ?opened=reminder → Home + one-shot companion check-in. */
+/* Reminder notification open: ?opened=reminder → Home + one-shot companion check-in.
+   Idempotent for the same tap: boot/load/native listeners may all call this, but
+   arming happens once while pending so only one companion message can mount. */
 window.freedomOpenHomeFromReminder=function(opts){
   const options=opts&&typeof opts==="object"?opts:{};
   let fromQuery=false;
@@ -10381,10 +10425,14 @@ window.freedomOpenHomeFromReminder=function(opts){
     }
   }catch(e){}
   try{
-    if(window.FreedomMonthlyReminderCheckIn&&typeof window.FreedomMonthlyReminderCheckIn.armFromNotificationTap==="function"){
-      window.FreedomMonthlyReminderCheckIn.armFromNotificationTap();
-    }else{
-      try{sessionStorage.setItem("freedom50-reminder-checkin-pending-v1","1");}catch(e){}
+    const checkIn=window.FreedomMonthlyReminderCheckIn;
+    const alreadyPending=!!(checkIn&&typeof checkIn.isPending==="function"&&checkIn.isPending());
+    if(!alreadyPending){
+      if(checkIn&&typeof checkIn.armFromNotificationTap==="function"){
+        checkIn.armFromNotificationTap();
+      }else{
+        try{sessionStorage.setItem("freedom50-reminder-checkin-pending-v1","1");}catch(e){}
+      }
     }
   }catch(e){}
   try{
@@ -13361,6 +13409,14 @@ async function freedomCompleteAppBoot(){
   }
   if(freedomIsNativeApp()&&!freedomNativeStorageReady)freedomMarkNativeStorageReady();
   fillForm();render();initFreedomBackupUi();initFreedomRemindersUi();
+  /* Refresh native monthly local schedules when reminders are on (no Worker on native). */
+  try{
+    if(freedomRemindersNativeAvailable()&&getRemindersChoice()==="keep"){
+      await window.FreedomNativeNotifications.refreshIfEnabled(getRemindersChoice);
+    }
+  }catch(e){
+    console.warn("Freedom could not refresh native reminder schedule:",e);
+  }
   /* Reminder notification deep-link (?opened=reminder) — Home + one-shot companion check-in. */
   if(typeof window.freedomOpenHomeFromReminder==="function"&&window.freedomOpenHomeFromReminder({cleanUrl:true})){
     /* Handled: skip normal hash boot. */
@@ -16944,9 +17000,17 @@ window.FreedomMonthlyReminderCheckIn=(function(){
     return readPending()||!!window.__FREEDOM_FROM_REMINDER__;
   }
   function armFromNotificationTap(){
+    /* Same notification tap can reach us from native listener + boot + load.
+       Stay pending without resetting retry/show state mid-flight. */
+    if(readPending()||window.__FREEDOM_FROM_REMINDER__){
+      writePending(true);
+      window.__FREEDOM_FROM_REMINDER__=true;
+      return;
+    }
     writePending(true);
     window.__FREEDOM_FROM_REMINDER__=true;
     retryCount=0;
+    cancelRetry();
   }
   function consumePending(){
     writePending(false);

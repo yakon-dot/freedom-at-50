@@ -36,6 +36,10 @@ assert.match(capAppSpm, /import FilesystemPlugin/);
 assert.match(capAppSpm, /FreedomCapAppSPMPluginAnchor/);
 assert.match(capAppSpm, /FilesystemPlugin\.self/);
 assert.match(capAppSpm, /dead-strip|NSClassFromString|packageClassList/);
+/* Local notifications anchor is added in the native-notifications step; tolerate either state during partial checkouts. */
+if (/import LocalNotificationsPlugin/.test(capAppSpm)) {
+  assert.match(capAppSpm, /LocalNotificationsPlugin\.self/);
+}
 const capConfig = JSON.parse(
   fs.readFileSync(path.join(root, "ios/App/App/capacitor.config.json"), "utf8")
 );

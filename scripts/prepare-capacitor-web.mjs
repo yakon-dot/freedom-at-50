@@ -16,6 +16,7 @@ const ROOT_FILES = [
   "service-worker.js",
   "freedom-push-config.js",
   "freedom-native-storage.js",
+  "freedom-native-notifications.js",
   "icon-192.png",
   "icon-512.png",
   "companion-select-wallpaper.jpg",
