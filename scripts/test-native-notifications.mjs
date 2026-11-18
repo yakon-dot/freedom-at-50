@@ -31,6 +31,12 @@ assert.match(index, /isNativeLocal:freedomRemindersNativeAvailable/);
 assert.match(index, /alreadyPending/);
 assert.match(index, /Could not cancel scheduled Freedom reminders/);
 assert.match(index, /Your reminders stay on until they can be cancelled/);
+assert.match(index, /closeFreedomRemindersPanel/);
+assert.match(
+  index,
+  /freedomOpenHomeFromReminder=function[\s\S]*?closeFreedomRemindersPanel[\s\S]*?page\("home"\)/
+);
+assert.match(index, /Always dismiss blocking overlays first/);
 assert.match(sw, /freedom-native-notifications\.js/);
 assert.match(sw, /freedom-at-50-v1\.8\.6\.162/);
 assert.match(prepare, /freedom-native-notifications\.js/);
