@@ -7,3 +7,6 @@ cloudflare/freedom-reminders/.wrangler/
 vapid-secrets.json
 **/vapid-secrets.json
 vapid-public-key.txt
+
+# Capacitor: staged web copy for native sync (regenerate with npm run cap:prepare)
+www/

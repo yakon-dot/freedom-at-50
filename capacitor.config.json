@@ -1,0 +1,14 @@
+{
+  "appId": "com.yakondot.freedom",
+  "appName": "Freedom",
+  "webDir": "www",
+  "backgroundColor": "#0b0c0e",
+  "server": {
+    "androidScheme": "https"
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile",
+    "allowsLinkPreview": false
+  }
+}
