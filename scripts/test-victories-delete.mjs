@@ -11,6 +11,10 @@ assert.match(index, /data-delete-victory-record/);
 assert.match(index, /permanentlyDeleteVictory/);
 assert.match(index, /This Victory record will be permanently deleted/);
 assert.match(index, /victories-row-delete/);
+assert.match(index, /\.victories-row-delete svg\{width:20px;height:20px/);
+assert.match(index, /width:44px;height:44px;min-width:44px;min-height:44px/);
+assert.match(index, /color:rgba\(210,208,202,\.62\)/);
+assert.equal(/\.victories-row-delete svg\{width:16px;height:16px/.test(index), false);
 assert.match(index, /background:#B86A61;color:#fff/);
 assert.equal(/background:rgba\(168,72,72,\.22\)/.test(index), false);
 console.log("PASS: source contracts for Victories delete");
@@ -124,6 +128,26 @@ async function main() {
   await page.waitForSelector("[data-delete-victory-record='victory-delete-1']", {
     timeout: 15000
   });
+
+  const binMetrics = await page.evaluate(() => {
+    const btn = document.querySelector("[data-delete-victory-record='victory-delete-1']");
+    const svg = btn?.querySelector("svg");
+    const br = btn.getBoundingClientRect();
+    const sr = svg.getBoundingClientRect();
+    const cs = getComputedStyle(btn);
+    return {
+      btnW: Math.round(br.width),
+      btnH: Math.round(br.height),
+      iconW: Math.round(sr.width),
+      iconH: Math.round(sr.height),
+      color: cs.color
+    };
+  });
+  assert.ok(binMetrics.btnW >= 44, `bin hit width ${binMetrics.btnW}`);
+  assert.ok(binMetrics.btnH >= 44, `bin hit height ${binMetrics.btnH}`);
+  assert.ok(binMetrics.iconW >= 19 && binMetrics.iconW <= 22, `bin icon width ${binMetrics.iconW}`);
+  assert.ok(binMetrics.iconH >= 19 && binMetrics.iconH <= 22, `bin icon height ${binMetrics.iconH}`);
+  console.log("PASS: Victory bin icon ~20px with 44×44 hit target");
 
   const before = await page.evaluate(() => {
     const st = JSON.parse(localStorage.getItem("freedom50-mobile-v1"));
