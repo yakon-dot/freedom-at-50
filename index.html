@@ -814,10 +814,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     font-size:clamp(19px,5.05vw,21.5px);line-height:1.2;font-weight:500;
     letter-spacing:.01em;color:#272045;text-align:center;
   }
-  /* Stationary; under the list so scrolling cards pass over without being blocked.
-     Sit fully below the yellow paper, right-aligned with the note cards (16px inset). */
+  /* Fixed under the yellow paper. Stack above the list so scrolling cards
+     pass underneath without covering the control. */
   body.notes-active-v318 #notes .notes-actions{
-    position:fixed;z-index:3;
+    position:fixed;z-index:20;
     left:auto;
     /* Align with note cards: main 18px + #notes 16px horizontal inset. */
     right:34px;
