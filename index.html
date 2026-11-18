@@ -12016,8 +12016,12 @@ function savePension(i){
   const nextAuto=autoEl?!!autoEl.checked:prevAuto;
   if(overviewEl)p.showInOverview=overviewEl.checked;
   const statementChanged=Math.abs(nextStatement-prevStatement)>1e-9;
+  /* New statement intent: balance changed, or the statement value field was edited
+     (including re-entering the same number from a newer statement). */
+  const statementEdited=!!(valueEl&&valueEl.dataset.statementEdited==="1");
+  const statementIntent=statementChanged||statementEdited;
   let statementIncreased=false;
-  if(statementChanged){
+  if(statementIntent){
     statementIncreased=nextStatement>prevStatement;
     p.autoContrib=nextAuto;
     pensionResetStatementBaseline(p,nextStatement,nextPersonal,nextEmployer,new Date());
@@ -12248,6 +12252,9 @@ function renderPensions(){
   list.querySelectorAll(".pension-field-value").forEach(input=>{
     input.addEventListener("input",e=>{
       const i=Number(e.target.id.split("_").pop());
+      if(e.target.id.startsWith("pensionValue_")){
+        e.target.dataset.statementEdited="1";
+      }
       const personal=Math.max(0,Number(byId(`pensionPersonal_${i}`)?.value)||0);
       const employer=Math.max(0,Number(byId(`pensionEmployer_${i}`)?.value)||0);
       const monthly=personal+employer;
