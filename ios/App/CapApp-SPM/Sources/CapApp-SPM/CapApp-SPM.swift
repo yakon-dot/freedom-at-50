@@ -1,19 +1,22 @@
 import Foundation
 import FilesystemPlugin
+import LocalNotificationsPlugin
 
 public let isCapacitorApp = true
 
 /**
  Capacitor registers SPM plugins through `packageClassList` + `NSClassFromString`.
  CapApp-SPM depends on plugin products, but without a live Swift reference the linker
- can dead-strip those classes. Then JS sees `isPluginAvailable("Filesystem") === false`
- / `filesystem-unavailable` even though CapacitorFilesystem appears in Xcode packages.
+ can dead-strip those classes. Then JS sees `isPluginAvailable(...) === false`
+ (for example `filesystem-unavailable`) even though the package appears in Xcode.
 
- Keep a retained reference so `@objc(FilesystemPlugin)` remains in the app binary.
+ Keep retained references so `@objc(FilesystemPlugin)` and
+ `@objc(LocalNotificationsPlugin)` remain in the app binary.
  */
 enum FreedomCapAppSPMPluginAnchor {
   static let linkedPluginClasses: [AnyClass] = [
-    FilesystemPlugin.self
+    FilesystemPlugin.self,
+    LocalNotificationsPlugin.self
   ]
 }
 
