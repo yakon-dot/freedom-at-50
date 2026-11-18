@@ -10407,7 +10407,9 @@ function page(id){
 window.page=page;
 /* Reminder notification open: ?opened=reminder → Home + one-shot companion check-in.
    Idempotent for the same tap: boot/load/native listeners may all call this, but
-   arming happens once while pending so only one companion message can mount. */
+   arming happens once while pending so only one companion message can mount.
+   Always dismiss blocking overlays first — native taps often arrive while More →
+   Reminders is still open after sending a test, which would leave Home underneath. */
 window.freedomOpenHomeFromReminder=function(opts){
   const options=opts&&typeof opts==="object"?opts:{};
   let fromQuery=false;
@@ -10425,6 +10427,12 @@ window.freedomOpenHomeFromReminder=function(opts){
     }
   }catch(e){}
   try{
+    if(typeof window.closeFreedomRemindersPanel==="function")window.closeFreedomRemindersPanel();
+  }catch(e){}
+  try{
+    if(typeof window.closeFreedomBackupPanel==="function")window.closeFreedomBackupPanel();
+  }catch(e){}
+  try{
     const checkIn=window.FreedomMonthlyReminderCheckIn;
     const alreadyPending=!!(checkIn&&typeof checkIn.isPending==="function"&&checkIn.isPending());
     if(!alreadyPending){
@@ -10436,7 +10444,9 @@ window.freedomOpenHomeFromReminder=function(opts){
     }
   }catch(e){}
   try{
-    if(typeof window.showHome==="function")window.showHome();
+    /* page("home") is the canonical tab switch; showHome alone can leave overlays/pages ahead. */
+    if(typeof window.page==="function")window.page("home");
+    else if(typeof window.showHome==="function")window.showHome();
     else{
       document.body.classList.add("home183");
       const home=document.getElementById("mobile183");
@@ -17194,7 +17204,8 @@ window.FreedomMonthlyReminderCheckIn=(function(){
       if(window.FreedomCompanionFirstCreated&&typeof window.FreedomCompanionFirstCreated.hideAll==="function"){
         window.FreedomCompanionFirstCreated.hideAll();
       }
-      if(typeof window.showHome==="function")window.showHome();
+      if(typeof window.page==="function")window.page("home");
+      else if(typeof window.showHome==="function")window.showHome();
       h.dataset.companionMessageOwner=OWNER;
       h.hidden=false;
       window.FreedomCompanionMessage.mount(h,{
@@ -17224,7 +17235,14 @@ window.FreedomMonthlyReminderCheckIn=(function(){
       scheduleRetry();
       return false;
     }
-    if(typeof window.showHome==="function")window.showHome();
+    try{
+      if(typeof window.closeFreedomRemindersPanel==="function")window.closeFreedomRemindersPanel();
+    }catch(e){}
+    try{
+      if(typeof window.closeFreedomBackupPanel==="function")window.closeFreedomBackupPanel();
+    }catch(e){}
+    if(typeof window.page==="function")window.page("home");
+    else if(typeof window.showHome==="function")window.showHome();
     if(!homeReady()){
       scheduleRetry();
       return false;

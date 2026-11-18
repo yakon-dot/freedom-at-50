@@ -298,6 +298,10 @@ assert.match(index, /freedomRemindersNativeAvailable/);
 assert.match(index, /FreedomNativeNotifications/);
 assert.match(index, /alreadyPending/);
 assert.match(index, /Could not cancel scheduled Freedom reminders/);
+assert.match(
+  index,
+  /freedomOpenHomeFromReminder=function[\s\S]*?closeFreedomRemindersPanel[\s\S]*?page\("home"\)/
+);
 assert.equal(sw.includes("#overview"), false);
 assert.match(sw, /registration\.scope/);
 assert.match(sw, /client\.navigate/);
