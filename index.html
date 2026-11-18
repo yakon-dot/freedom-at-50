@@ -8233,9 +8233,20 @@ async function freedomRemindersChooseNever(){
   renderFreedomRemindersPanel({preserveStatus:true});
   setFreedomRemindersStatus("Turning reminders off…",false);
   try{
-    if(freedomRemindersNativeAvailable())await window.FreedomNativeNotifications.disableMonthlyReminders();
-    else await freedomUnsubscribePush();
-  }catch(e){}
+    if(freedomRemindersNativeAvailable()){
+      const cleared=await window.FreedomNativeNotifications.disableMonthlyReminders();
+      if(!cleared||!cleared.ok){
+        throw new Error("Could not cancel scheduled Freedom reminders on this iPhone.");
+      }
+    }else{
+      await freedomUnsubscribePush();
+    }
+  }catch(err){
+    freedomRemindersBusy=false;
+    renderFreedomRemindersPanel({preserveStatus:true});
+    setFreedomRemindersStatus((err&&err.message)||"Could not turn reminders off. Your reminders stay on until they can be cancelled.",true);
+    return false;
+  }
   setRemindersChoice("never");
   freedomRemindersBusy=false;
   renderFreedomRemindersPanel();
@@ -10394,7 +10405,9 @@ function page(id){
   handleDemoPageVisit(id);
 }
 window.page=page;
-/* Reminder notification open: ?opened=reminder → Home + one-shot companion check-in. */
+/* Reminder notification open: ?opened=reminder → Home + one-shot companion check-in.
+   Idempotent for the same tap: boot/load/native listeners may all call this, but
+   arming happens once while pending so only one companion message can mount. */
 window.freedomOpenHomeFromReminder=function(opts){
   const options=opts&&typeof opts==="object"?opts:{};
   let fromQuery=false;
@@ -10412,10 +10425,14 @@ window.freedomOpenHomeFromReminder=function(opts){
     }
   }catch(e){}
   try{
-    if(window.FreedomMonthlyReminderCheckIn&&typeof window.FreedomMonthlyReminderCheckIn.armFromNotificationTap==="function"){
-      window.FreedomMonthlyReminderCheckIn.armFromNotificationTap();
-    }else{
-      try{sessionStorage.setItem("freedom50-reminder-checkin-pending-v1","1");}catch(e){}
+    const checkIn=window.FreedomMonthlyReminderCheckIn;
+    const alreadyPending=!!(checkIn&&typeof checkIn.isPending==="function"&&checkIn.isPending());
+    if(!alreadyPending){
+      if(checkIn&&typeof checkIn.armFromNotificationTap==="function"){
+        checkIn.armFromNotificationTap();
+      }else{
+        try{sessionStorage.setItem("freedom50-reminder-checkin-pending-v1","1");}catch(e){}
+      }
     }
   }catch(e){}
   try{
@@ -16983,9 +17000,17 @@ window.FreedomMonthlyReminderCheckIn=(function(){
     return readPending()||!!window.__FREEDOM_FROM_REMINDER__;
   }
   function armFromNotificationTap(){
+    /* Same notification tap can reach us from native listener + boot + load.
+       Stay pending without resetting retry/show state mid-flight. */
+    if(readPending()||window.__FREEDOM_FROM_REMINDER__){
+      writePending(true);
+      window.__FREEDOM_FROM_REMINDER__=true;
+      return;
+    }
     writePending(true);
     window.__FREEDOM_FROM_REMINDER__=true;
     retryCount=0;
+    cancelRetry();
   }
   function consumePending(){
     writePending(false);

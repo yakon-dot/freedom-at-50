@@ -296,6 +296,8 @@ assert.match(sw, /\?opened=reminder/);
 assert.match(index, /Your companion has something for you\. Tap to see what’s waiting\./);
 assert.match(index, /freedomRemindersNativeAvailable/);
 assert.match(index, /FreedomNativeNotifications/);
+assert.match(index, /alreadyPending/);
+assert.match(index, /Could not cancel scheduled Freedom reminders/);
 assert.equal(sw.includes("#overview"), false);
 assert.match(sw, /registration\.scope/);
 assert.match(sw, /client\.navigate/);

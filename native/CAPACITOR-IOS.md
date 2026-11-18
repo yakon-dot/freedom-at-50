@@ -77,6 +77,8 @@ npm run cap:sync
 - **SPM linking:** `CapApp-SPM.swift` also retains `LocalNotificationsPlugin.self` (same dead-strip pattern as Filesystem).
 - Tap handling uses the existing Home + one-shot companion check-in path (`freedomOpenHomeFromReminder` / `FreedomMonthlyReminderCheckIn`). Native and Web Push are mutually exclusive at runtime (`freedomRemindersNativeAvailable()`).
 - **Apple Developer Program:** installing on a real iPhone / App Store still needs a paid membership (already required for the native shell). Local notifications do **not** need the Push Notifications capability, APNs keys, or App Store Connect push setup. Those are only required if Freedom later moves to remote APNs.
+- **Signing:** `DEVELOPMENT_TEAM` is not committed in the Xcode project. Select your Team in Xcode (Signing & Capabilities) for local device builds.
+- **Disable / reschedule:** turning reminders off cancels every pending/delivered Freedom reminder (monthly ids + test id) discovered via `getPending` / delivered lists — not `cancelAll`, so unrelated notifications stay. Reschedule writes the new 12-month set first, then removes Freedom orphans, so a failed refresh cannot wipe active reminders while the UI still says they are on. Disable only flips the preference after cancel succeeds.
 
 ## After cloning
 
