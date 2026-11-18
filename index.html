@@ -1869,6 +1869,10 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
     font-size:12px;font-weight:760;white-space:nowrap;
     box-sizing:border-box;
   }
+  body.journey-active-v313 #journey .journey-repayment-msg{
+    margin:8px 0 0;font-size:11px;line-height:1.45;color:var(--muted);
+  }
+  body.journey-active-v313 #journey .journey-repayment-msg[hidden]{display:none!important}
   body.journey-active-v313 #journey .journey-last-repayment{
     margin-top:10px;font-size:12px;color:rgba(190,188,182,.58);line-height:1.45;
   }
@@ -9392,7 +9396,7 @@ function journeyMoneyFieldsHtml(i,loan){
   const lastRepay=loan.lastRepaymentAmount!=null&&loan.lastRepaymentDate
     ?`<strong>${euro2(loan.lastRepaymentAmount)} · ${formatRepaymentDate(loan.lastRepaymentDate)}</strong>`
     :`<span>—</span>`;
-  return`<div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div>`;
+  return`<div class="journey-repayment-section"><div class="journey-section-heading">Add repayment</div><div class="journey-field"><label for="loanRepayment_${i}">Amount</label><input class="journey-field-value" id="loanRepayment_${i}" data-loan-repayment="${i}" inputmode="decimal" type="number" min="0" step="0.01" value="" placeholder="0.00" aria-label="Repayment amount"></div><button class="save-btn journey-add-repayment" type="button" data-add-repayment="${i}">+ Add repayment</button><p class="journey-repayment-msg" data-loan-repayment-msg="${i}" hidden></p><div class="journey-last-repayment"><span class="journey-last-repayment-label">Last repayment</span> ${lastRepay}</div></div>`;
 }
 function journeyMoneySectionHtml(i,loan){
   const open=isLoanMoneySectionOpen(i);
@@ -11485,14 +11489,36 @@ function renderLoans(){
     if(inp)inp.value="";
     persist();render();
   }));
+  list.querySelectorAll("[data-loan-repayment]").forEach(input=>{
+    input.addEventListener("input",()=>{
+      const i=Number(input.dataset.loanRepayment);
+      const msgEl=list.querySelector(`[data-loan-repayment-msg="${i}"]`);
+      if(msgEl){msgEl.textContent="";msgEl.hidden=true;}
+    });
+  });
   list.querySelectorAll("[data-add-repayment]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const i=Number(btn.dataset.addRepayment);
     const loan=state.loans[i];
     if(!loan)return;
     const input=byId(`loanRepayment_${i}`);
-    const amount=Math.max(0,Number(input?.value)||0);
-    if(!amount){input?.focus();return;}
+    const msgEl=list.querySelector(`[data-loan-repayment-msg="${i}"]`);
+    const amount=Math.round(Math.max(0,Number(input?.value)||0)*100)/100;
+    if(!amount){
+      if(msgEl){msgEl.textContent="";msgEl.hidden=true;}
+      input?.focus();
+      return;
+    }
+    const remaining=Math.round(Math.max(0,Number(loan.current)||0)*100)/100;
+    if(amount>remaining){
+      if(msgEl){
+        msgEl.textContent=`Your remaining balance is ${euro2(remaining)}. You can enter up to ${euro2(remaining)}.`;
+        msgEl.hidden=false;
+      }
+      input?.focus();
+      return;
+    }
+    if(msgEl){msgEl.textContent="";msgEl.hidden=true;}
     const prevCurrent=loan.current;
     const prevFreedomDate=calculatedFreedomDate(prevCurrent,loan.payment);
     const isFirstActualRepayment=loan.firstRepaymentCompanionConsumed!==true&&!loan.lastRepaymentDate;
