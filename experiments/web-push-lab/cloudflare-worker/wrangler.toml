@@ -1,0 +1,20 @@
+name = "freedom-web-push-lab"
+main = "src/index.js"
+compatibility_date = "2026-11-01"
+compatibility_flags = ["nodejs_compat"]
+workers_dev = true
+
+[assets]
+directory = "../public"
+binding = "ASSETS"
+run_worker_first = true
+
+[vars]
+LAB_VERSION = "0.2.0"
+APP_ORIGIN = "https://freedom-web-push-lab.dorothy-yakon.workers.dev"
+
+# Test-only secrets and deployment-specific URLs must be supplied at deploy time:
+# VAPID_PUBLIC_KEY
+# VAPID_PRIVATE_KEY
+# VAPID_SUBJECT
+# LAB_ACCESS_CODE
