@@ -24,6 +24,7 @@ assert.ok(fs.existsSync(path.join(www, "freedom-native-storage.js")));
 assert.ok(fs.existsSync(path.join(www, "freedom-native-notifications.js")));
 assert.ok(fs.existsSync(path.join(www, "freedom-native-backup.js")));
 assert.ok(fs.existsSync(path.join(www, "freedom-native-purchases.js")));
+assert.ok(fs.existsSync(path.join(www, "freedom-subscription-gate.js")));
 assert.ok(fs.existsSync(path.join(www, "assets", "freedom-logo-horizontal.png")));
 
 const wwwIndex = fs.readFileSync(path.join(www, "index.html"), "utf8");

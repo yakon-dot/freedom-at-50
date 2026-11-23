@@ -12,7 +12,9 @@
     "test:native-storage": "node scripts/test-native-storage-mirror.mjs",
     "test:native-notifications": "node scripts/test-native-notifications.mjs",
     "test:splash-layout": "node scripts/test-splash-layout-stability.mjs",
-    "test:native-backup": "node scripts/test-native-backup-export.mjs"
+    "test:native-backup": "node scripts/test-native-backup-export.mjs",
+    "test:native-purchases": "node scripts/test-native-purchases.mjs",
+    "test:subscription-gate": "node scripts/test-subscription-gate.mjs"
   },
   "dependencies": {
     "@capacitor/core": "^8.6.2",

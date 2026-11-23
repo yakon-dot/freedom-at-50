@@ -482,6 +482,69 @@ html:has(#freedomMakeItYours.is-present:not([hidden])) body{
   #freedomMakeItYours{transition:none}
   #freedomMakeItYours .freedom-welcome-support.freedom-make-yours-support{opacity:1;transition:none}
 }
+/* —— Phase 2: Freedom Premium paywall (native only) —— */
+#freedomPaywall{
+  position:fixed;inset:0;z-index:9962;box-sizing:border-box;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:calc(28px + env(safe-area-inset-top,0px)) 28px calc(40px + env(safe-area-inset-bottom,0px));
+  background:var(--bg,#0b0c0e);text-align:center;-webkit-tap-highlight-color:transparent;
+  opacity:0;pointer-events:none;
+  overflow:auto;overscroll-behavior:none;
+}
+html:has(#freedomPaywall.is-present:not([hidden])),
+html:has(#freedomPaywall.is-present:not([hidden])) body{
+  overflow:hidden;overscroll-behavior:none;
+}
+#freedomPaywall[hidden]{display:none!important}
+#freedomPaywall.is-present{opacity:1;pointer-events:auto}
+.freedom-paywall-inner{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;max-width:22rem;gap:0;
+}
+.freedom-paywall-kicker{
+  margin:0 0 10px;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(239,203,170,.72);font-weight:600;
+}
+.freedom-paywall-title{
+  margin:0 0 14px;font-family:"Caveat",cursive;font-size:clamp(2.1rem,8vw,2.7rem);
+  line-height:1.05;font-weight:600;color:#efcbaa;
+}
+.freedom-paywall-detail{
+  margin:0 0 10px;max-width:18rem;font-size:15px;line-height:1.45;
+  color:rgba(245,244,240,.88);
+}
+.freedom-paywall-support{
+  margin:0 0 26px;max-width:18rem;font-size:13px;line-height:1.45;
+  color:rgba(245,244,240,.62);
+}
+.freedom-paywall-status{
+  margin:0 0 14px;max-width:18rem;font-size:13px;line-height:1.4;
+  color:rgba(245,244,240,.78);
+}
+.freedom-paywall-status.is-error{color:#f0b4a8}
+.freedom-paywall-actions{
+  display:flex;flex-direction:column;align-items:stretch;gap:12px;width:100%;
+}
+.freedom-paywall-actions .demo-outline-btn{width:100%}
+.freedom-paywall-secondary{
+  appearance:none;border:0;background:transparent;color:rgba(245,244,240,.72);
+  font:inherit;font-size:14px;padding:10px 8px;cursor:pointer;
+  text-decoration:underline;text-underline-offset:3px;
+}
+.freedom-paywall-secondary:disabled{opacity:.45;cursor:default}
+#freedomReadOnlyBanner{
+  position:fixed;left:0;right:0;top:0;z-index:9400;
+  display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
+  padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;
+  background:rgba(18,20,24,.94);border-bottom:1px solid rgba(239,203,170,.22);
+  color:rgba(245,244,240,.9);font-size:13px;line-height:1.35;text-align:center;
+}
+#freedomReadOnlyBanner[hidden]{display:none!important}
+#freedomReadOnlyBanner button{
+  appearance:none;border:1px solid rgba(239,203,170,.45);background:transparent;
+  color:#efcbaa;font:inherit;font-size:12px;padding:6px 10px;border-radius:999px;cursor:pointer;
+}
+body.freedom-readonly-active .app{padding-top:calc(44px + env(safe-area-inset-top,0px))}
 /* —— First-time Companion Selection —— */
 #freedomCompanionSelect{
   position:fixed;inset:0;z-index:9961;box-sizing:border-box;
@@ -4307,6 +4370,20 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     </button>
   </div>
 </div>
+<div id="freedomPaywall" class="freedom-paywall" hidden aria-label="Freedom Premium">
+  <div class="freedom-paywall-inner">
+    <p class="freedom-paywall-kicker">Subscription</p>
+    <h1 class="freedom-paywall-title" id="freedomPaywallTitle">Freedom Premium</h1>
+    <p class="freedom-paywall-detail" id="freedomPaywallDetail">Loading App Store offer…</p>
+    <p class="freedom-paywall-support" id="freedomPaywallSupport">Explore Demo Mode anytime. Your personal numbers stay on this iPhone.</p>
+    <p class="freedom-paywall-status" id="freedomPaywallStatus" hidden></p>
+    <div class="freedom-paywall-actions">
+      <button class="demo-outline-btn demo-enter-btn" id="freedomPaywallStart" type="button">Start free trial</button>
+      <button class="freedom-paywall-secondary" id="freedomPaywallRestore" type="button">Restore Purchases</button>
+      <button class="freedom-paywall-secondary" id="freedomPaywallDemo" type="button">Continue in Demo Mode</button>
+    </div>
+  </div>
+</div>
 <div id="freedomCompanionSelect" class="freedom-companion-select" hidden aria-label="Companion selection">
   <button type="button" class="freedom-companion-change-close" id="freedomCompanionChangeClose" hidden aria-label="Close">×</button>
   <div class="freedom-companion-wallpaper" aria-hidden="true">
@@ -5022,9 +5099,21 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     /* Home was staged under Companion before the fade; keep it authoritative. */
     stagePersonalHomeUnderCompanion();
     /* First-time setup only — never after More → Change companion. */
-    if(!wasChange&&window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.mountAfterSelection==="function"){
-      window.FreedomFirstCompanionSetup.mountAfterSelection();
+    if(wasChange)return;
+    function mountFirstSetup(){
+      if(window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.mountAfterSelection==="function"){
+        window.FreedomFirstCompanionSetup.mountAfterSelection();
+      }
     }
+    /* Native: subscription offer before personal financial entry. PWA skips. */
+    if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.afterCompanionSelection==="function"){
+      void window.FreedomSubscriptionGate.afterCompanionSelection(function(result){
+        if(result&&result.skipped&&result.reason==="demo")return;
+        mountFirstSetup();
+      });
+      return;
+    }
+    mountFirstSetup();
   }
   function completeCompanionSelection(id,pickBtn){
     if(companionSelecting)return;
@@ -5302,6 +5391,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
         <button class="sub183" type="button" data-more183="backup">Backup</button>
         <button class="sub183" type="button" data-more183="reminders">Reminders</button>
         <button class="sub183" type="button" data-more183="companion">Change companion</button>
+        <button class="sub183" type="button" data-more183="restorePurchases" id="freedomRestorePurchasesMoreBtn" hidden>Restore Purchases</button>
         <button class="sub183" type="button" data-more183="reset" id="resetFreedomMoreBtn" hidden aria-hidden="true" tabindex="-1">Reset Freedom</button>
       </div>
     </nav>
@@ -5319,6 +5409,10 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 </div>
 <div class="demo-banner" id="demoBanner" hidden>
   <span>DEMO MODE</span>
+</div>
+<div id="freedomReadOnlyBanner" hidden>
+  <span>Viewing only — Freedom Premium is not active.</span>
+  <button type="button" id="freedomReadOnlyRenew">Restore access</button>
 </div>
 <div class="demo-overlay" id="demoEntryOverlay" hidden>
   <div class="demo-entry-card">
@@ -5582,6 +5676,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <script src="./freedom-native-notifications.js"></script>
 <script src="./freedom-native-backup.js"></script>
 <script src="./freedom-native-purchases.js"></script>
+<script src="./freedom-subscription-gate.js"></script>
 <script>
 (function(){
 "use strict";
@@ -7469,6 +7564,11 @@ function freedomQueueNativeMirrorAfterLocalWrite(){
 }
 function persist(){
   if(demoMode){persistDemoSession();return;}
+  /* Native without Premium: keep existing personal data, block further writes. */
+  if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.allowsPersonalWrites==="function"&&!window.FreedomSubscriptionGate.allowsPersonalWrites()){
+    if(typeof window.FreedomSubscriptionGate.notifyWriteBlocked==="function")window.FreedomSubscriptionGate.notifyWriteBlocked();
+    return;
+  }
   /* Corrupt/unreadable personal KEY: never overwrite the stored blob. */
   if(freedomPersonalLoadError)return;
   if(!freedomNativeStorageReady){
@@ -9410,12 +9510,14 @@ function enterDemo(){
   if(demoMode)return;
   if(window.FreedomFirstCompanionSetup&&typeof window.FreedomFirstCompanionSetup.hide==="function")window.FreedomFirstCompanionSetup.hide();
   if(typeof closeFreedomRemindersPanel==="function")closeFreedomRemindersPanel();
+  if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.hidePaywall==="function")window.FreedomSubscriptionGate.hidePaywall();
   realStateSnapshot=JSON.parse(JSON.stringify(state));
   resetDemoSession();
   state=buildCanonicalDemoState();
   demoMode=true;
   persistDemoSession();
   syncDemoUi();
+  if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.syncReadOnlyUi==="function")window.FreedomSubscriptionGate.syncReadOnlyUi();
   dismissAllPatriciaNotes();
   if(typeof window.showHome==="function")window.showHome();
   render();
@@ -9438,6 +9540,7 @@ function exitDemo(){
   byId("demoEntryOverlay").hidden=true;
   hideDemoWelcomeOverlay();
   syncDemoUi();
+  if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.syncReadOnlyUi==="function")window.FreedomSubscriptionGate.syncReadOnlyUi();
   /* First-time Exit Demo: sage already covers the app. Do not make Personal Home
      the uncovered destination — Companion Selection follows Start my Freedom. */
   if(firstExit){
@@ -13907,6 +14010,22 @@ async function freedomCompleteAppBoot(){
     freedomMarkNativeStorageReady();
   }
   if(freedomIsNativeApp()&&!freedomNativeStorageReady)freedomMarkNativeStorageReady();
+  /* Native Premium entitlement — unlock writes or arm read-only before interaction. */
+  try{
+    if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.refreshEntitlement==="function"){
+      await window.FreedomSubscriptionGate.refreshEntitlement();
+      if(typeof window.FreedomSubscriptionGate.syncReadOnlyUi==="function")window.FreedomSubscriptionGate.syncReadOnlyUi();
+    }
+  }catch(e){
+    console.warn("Freedom could not refresh Premium entitlement:",e);
+  }
+  try{
+    var restoreMore=byId("freedomRestorePurchasesMoreBtn");
+    if(restoreMore){
+      var showRestore=!!(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.isNative==="function"&&window.FreedomSubscriptionGate.isNative());
+      restoreMore.hidden=!showRestore;
+    }
+  }catch(e){}
   fillForm();render();initFreedomBackupUi();initFreedomRemindersUi();
   /* Refresh native monthly local schedules when reminders are on (no Worker on native). */
   try{
@@ -13978,7 +14097,7 @@ window.FreedomWelcomeBackBridge={
 
 /* TEMP DEV ONLY — shared boot helper: strip onboarding chrome for nav previews. */
 function freedomBootNavPreview(open){
-  ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
+  ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","freedomPaywall","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
     const el=document.getElementById(id);
     if(!el)return;
     el.hidden=true;
@@ -14267,7 +14386,7 @@ function freedomBootNavPreview(open){
     if(booted)return;
     booted=true;
     const isDemo=/^demo/.test(String(preview.kind||""));
-    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
+    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","freedomPaywall","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
       const el=document.getElementById(id);
       if(!el)return;
       el.hidden=true;
@@ -14336,7 +14455,7 @@ function freedomBootNavPreview(open){
   function boot(){
     if(booted)return;
     booted=true;
-    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
+    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","freedomPaywall","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
       const el=document.getElementById(id);
       if(!el)return;
       el.hidden=true;
@@ -14367,7 +14486,7 @@ function freedomBootNavPreview(open){
   function bootDemoCompleteFlow(){
     if(booted)return;
     booted=true;
-    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
+    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","freedomPaywall","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
       const el=document.getElementById(id);
       if(!el)return;
       el.hidden=true;
@@ -14399,7 +14518,7 @@ function freedomBootNavPreview(open){
   function bootCompletionFlow(){
     if(booted)return;
     booted=true;
-    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
+    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","freedomPaywall","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
       const el=document.getElementById(id);
       if(!el)return;
       el.hidden=true;
@@ -14546,6 +14665,13 @@ function freedomBootNavPreview(open){
       if(key==="companion"){
         if(window.freedomCompanionSelect&&typeof window.freedomCompanionSelect.openForChange==="function"){
           window.freedomCompanionSelect.openForChange();
+        }
+        return;
+      }
+      if(key==="restorePurchases"){
+        closeMore();
+        if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.showPaywall==="function"){
+          window.FreedomSubscriptionGate.showPaywall({context:"renew",allowDemo:true});
         }
         return;
       }
@@ -16093,7 +16219,7 @@ window.FreedomMilestoneFlow=(function(){
   }
   function personalHomeIsVisible(){
     const home=document.getElementById("mobile183");
-    const blockers=["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect"];
+    const blockers=["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","freedomPaywall"];
     return document.body.classList.contains("home183")&&
       !!home&&home.getAttribute("aria-hidden")!=="true"&&
       !blockers.some(function(id){
@@ -17317,7 +17443,7 @@ window.FreedomWelcomeBack=(function(){
     }catch(e){return false;}
   }
   function onboardingVisible(){
-    return ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect"].some(function(id){
+    return ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","freedomPaywall"].some(function(id){
       const el=document.getElementById(id);
       return !!el&&!el.hidden;
     });
@@ -17625,7 +17751,7 @@ window.FreedomMonthlyReminderCheckIn=(function(){
     }catch(e){return false;}
   }
   function onboardingVisible(){
-    return ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect"].some(function(id){
+    return ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","freedomPaywall"].some(function(id){
       const el=document.getElementById(id);
       return !!el&&!el.hidden;
     });
@@ -17874,7 +18000,7 @@ window.FreedomMonthlyReminderCheckIn=(function(){
   function bootMilestonePreview(){
     if(booted)return;
     booted=true;
-    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
+    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","freedomPaywall","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
       const el=document.getElementById(id);
       if(!el)return;
       el.hidden=true;
@@ -17958,7 +18084,7 @@ window.FreedomMonthlyReminderCheckIn=(function(){
   function bootCompletionPreview(){
     if(booted)return;
     booted=true;
-    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
+    ["freedomSplash","freedomWelcome","freedomLookAround","freedomMakeItYours","freedomCompanionSelect","freedomPaywall","demoEntryOverlay","demoWelcomeOverlay"].forEach(function(id){
       const el=document.getElementById(id);
       if(!el)return;
       el.hidden=true;
