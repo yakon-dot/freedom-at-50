@@ -9651,6 +9651,19 @@ async function resetFreedomFreshStart(){
   try{
     if(typeof freedomUnsubscribePush==="function")await freedomUnsubscribePush();
   }catch(e){}
+  /* Cancel scheduled iOS local reminders so a wipe cannot leave orphan notifications. */
+  if(typeof freedomRemindersNativeAvailable==="function"&&freedomRemindersNativeAvailable()&&window.FreedomNativeNotifications&&typeof window.FreedomNativeNotifications.disableMonthlyReminders==="function"){
+    let cancelled=null;
+    try{
+      cancelled=await window.FreedomNativeNotifications.disableMonthlyReminders();
+    }catch(e){
+      cancelled={ok:false,error:e};
+    }
+    if(!cancelled||!cancelled.ok){
+      window.alert("Freedom could not cancel scheduled reminders on this iPhone.\n\nReset was cancelled so leftover notifications cannot arrive after your data is wiped.\n\nPlease try again.");
+      return;
+    }
+  }
   /* Clear native mirror first. If this fails, abort so old finances cannot return later. */
   if(freedomIsNativeApp()&&typeof window.FreedomNativeStorage.clearMirror==="function"){
     let cleared=null;

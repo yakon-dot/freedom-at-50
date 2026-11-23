@@ -3,5 +3,5 @@
 window.FREEDOM_PUSH = {
   apiBase: "https://freedom-reminders.dorothy-yakon.workers.dev",
   vapidPublicKey: "BA_eBVERzQPN_6tVV_S8KqJinG74gRVbhZxeNmWm2yaDiB_NcBOX_wUZ4Zek7A0Sj-DnqobkSi5ScxyHpuoFIys",
-  vapidSubject: "mailto:dorothy.yakon@gmail.com"
+  vapidSubject: "mailto:freedom.support@icloud.com"
 };

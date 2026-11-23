@@ -14,7 +14,8 @@
     "test:splash-layout": "node scripts/test-splash-layout-stability.mjs",
     "test:native-backup": "node scripts/test-native-backup-export.mjs",
     "test:native-purchases": "node scripts/test-native-purchases.mjs",
-    "test:subscription-gate": "node scripts/test-subscription-gate.mjs"
+    "test:subscription-gate": "node scripts/test-subscription-gate.mjs",
+    "test:privacy-prerelease": "node scripts/test-privacy-prerelease.mjs"
   },
   "dependencies": {
     "@capacitor/core": "^8.6.2",

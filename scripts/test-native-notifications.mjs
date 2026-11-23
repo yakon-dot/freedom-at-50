@@ -38,7 +38,8 @@ assert.match(
 );
 assert.match(index, /Always dismiss blocking overlays first/);
 assert.match(sw, /freedom-native-notifications\.js/);
-assert.match(sw, /freedom-at-50-v1\.8\.6\.162/);
+assert.match(sw, /freedom-at-50-v1\.8\.6\.165/);
+assert.match(index, /resetFreedomFreshStart[\s\S]*?disableMonthlyReminders/);
 assert.match(prepare, /freedom-native-notifications\.js/);
 assert.equal(
   !!pkg.dependencies["@capacitor/local-notifications"],

@@ -91,6 +91,8 @@ npm run cap:sync
 - The native mirror is **plaintext JSON** inside the app sandbox, covered by iOS Data Protection for app container files (available after first unlock). It is **not** application-level encrypted.
 - Risk accepted for automatic recovery without a password when WebView storage is cleared. Off-device or shared copies should still use encrypted Backup & export.
 - Uninstalling the app removes localStorage and the mirror. Device backups may include the sandbox file depending on the user’s backup settings.
+- **Privacy Manifests (required-reason APIs):** Freedom’s App target Swift (`AppDelegate` / `SceneDelegate`) does not call Apple’s required-reason APIs. Bundled SDKs already ship their own `PrivacyInfo.xcprivacy` (Capacitor / Cordova empty declarations; RevenueCat + PurchasesHybridCommon declare UserDefaults `CA92.1` and purchase-history collection for app functionality, tracking false). No speculative app-level Privacy Manifest was added for unused APIs.
+- **Reset Freedom** cancels native local reminder schedules before wiping personal storage, in addition to clearing the native mirror and Web Push unsubscribe on PWA.
 
 ## Native monthly reminders (local notifications)
 
