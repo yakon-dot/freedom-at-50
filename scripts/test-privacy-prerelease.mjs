@@ -44,10 +44,19 @@ assert.match(docs, /Privacy Manifests \(required-reason APIs\)/);
 assert.equal(!!pkg.dependencies["@revenuecat/purchases-capacitor"], true);
 console.log("PASS: no speculative App PrivacyInfo; Capacitor manifest present; App Swift clean");
 
-/* 4. No Privacy Policy / Terms of Use links in the shipped UI yet (site unpublished). */
-assert.equal(/privacy[\s_-]*policy/i.test(index) && /href\s*=\s*["'][^"']*privacy/i.test(index), false);
-assert.equal(/terms[\s_-]*of[\s_-]*use|terms[\s_-]*of[\s_-]*service/i.test(index) && /href\s*=\s*["'][^"']*terms/i.test(index), false);
-assert.equal(/yakon-dot\.github\.io\/freedom-at-50\/(privacy|terms)/i.test(index), false);
-console.log("PASS: no invented Privacy Policy / Terms URLs in app UI");
+/* 4. Allow real Privacy Policy / Terms links later; block invented placeholders only. */
+const legalHrefPattern =
+  /href\s*=\s*["']([^"']*(?:privacy|terms)[^"']*)["']/gi;
+const placeholderLegalHref =
+  /example\.(com|org)|placeholder|replace[\s_-]*me|insert[\s_-]*url|changeme|TODO|TBD|FIXME|about:blank|javascript:|localhost|127\.0\.0\.1|your[\s_-]*domain|coming[\s_-]*soon/i;
+let legalHref;
+while ((legalHref = legalHrefPattern.exec(index)) !== null) {
+  assert.equal(
+    placeholderLegalHref.test(legalHref[1]),
+    false,
+    "Privacy/Terms href must not use a placeholder URL: " + legalHref[1]
+  );
+}
+console.log("PASS: no placeholder Privacy Policy / Terms URLs in app UI");
 
 console.log("PASS: pre-release privacy cleanup contracts");
