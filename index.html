@@ -542,6 +542,18 @@ html:has(#freedomPaywall.is-present:not([hidden])) body{
   text-decoration:underline;text-underline-offset:3px;
 }
 .freedom-paywall-secondary:disabled{opacity:.45;cursor:default}
+.freedom-paywall-legal{
+  margin:18px 0 0;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;
+  gap:4px 10px;max-width:18rem;font-size:12px;line-height:1.4;
+}
+.freedom-paywall-legal a{
+  color:rgba(239,203,170,.72);text-decoration:underline;text-underline-offset:2px;
+  font:inherit;font-size:12px;
+}
+.freedom-paywall-legal a:focus-visible{
+  outline:2px solid rgba(239,203,170,.55);outline-offset:3px;border-radius:2px;
+}
+.freedom-paywall-legal-sep{color:rgba(245,244,240,.35);user-select:none}
 #freedomReadOnlyBanner{
   position:fixed;left:0;right:0;top:auto;bottom:0;z-index:9400;
   display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
@@ -2782,7 +2794,7 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   max-height:0;overflow:hidden;pointer-events:none;
   transition:max-height .48s cubic-bezier(.22,.61,.36,1)
 }
-.subwrap183.open{max-height:168px;pointer-events:auto}
+.subwrap183.open{max-height:360px;pointer-events:auto}
 .sub183{
   display:block;width:100%;border:0;background:transparent;color:#dedad3;text-align:left;
   padding:7px 0;font-size:13.5px;font-weight:450;cursor:pointer;touch-action:manipulation;
@@ -2794,6 +2806,16 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .subwrap183.open .sub183:nth-child(2){transition-delay:.13s}
 .subwrap183.open .sub183:nth-child(3){transition-delay:.21s}
 .subwrap183.open .sub183:nth-child(4){transition-delay:.29s}
+.subwrap183.open .sub183:nth-child(5){transition-delay:.34s}
+.more-legal-label{
+  margin:12px 0 2px;padding:0;font-size:11px;font-weight:500;letter-spacing:.04em;
+  text-transform:uppercase;color:rgba(239,203,170,.42);opacity:0;
+  transform:translateY(-6px);transition:opacity .22s ease,transform .28s cubic-bezier(.22,.61,.36,1)
+}
+.subwrap183.open .more-legal-label{opacity:1;transform:translateY(0);transition-delay:.34s}
+.sub183.more-legal-link{color:rgba(222,218,211,.78);font-size:13px;font-weight:450}
+.subwrap183.open .sub183.more-legal-link:nth-of-type(1),
+.subwrap183.open .more-legal-link{transition-delay:.38s}
 .sub183[hidden]{display:none!important;opacity:0!important;pointer-events:none!important;padding:0!important;margin:0!important;height:0!important;overflow:hidden!important}
 .demo-banner{
   display:none!important;
@@ -4395,6 +4417,23 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
       <button class="freedom-paywall-secondary" id="freedomPaywallRestore" type="button">Restore Purchases</button>
       <button class="freedom-paywall-secondary" id="freedomPaywallDemo" type="button">Continue in Demo Mode</button>
     </div>
+    <p class="freedom-paywall-legal">
+      <a
+        id="freedomPaywallPrivacy"
+        href="https://yakon-dot.github.io/freedom-website/privacy/"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Privacy Policy</a
+      >
+      <span class="freedom-paywall-legal-sep" aria-hidden="true">·</span>
+      <a
+        id="freedomPaywallTerms"
+        href="https://yakon-dot.github.io/freedom-website/terms/"
+        target="_blank"
+        rel="noopener noreferrer"
+        >Terms of Use</a
+      >
+    </p>
   </div>
 </div>
 <div id="freedomCompanionSelect" class="freedom-companion-select" hidden aria-label="Companion selection">
@@ -5405,6 +5444,10 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
         <button class="sub183" type="button" data-more183="reminders">Reminders</button>
         <button class="sub183" type="button" data-more183="companion">Change companion</button>
         <button class="sub183" type="button" data-more183="reset" id="resetFreedomMoreBtn" hidden aria-hidden="true" tabindex="-1">Reset Freedom</button>
+        <p class="more-legal-label" id="moreLegalLabel">Legal &amp; Support</p>
+        <button class="sub183 more-legal-link" type="button" data-more183="privacy">Privacy Policy</button>
+        <button class="sub183 more-legal-link" type="button" data-more183="terms">Terms of Use</button>
+        <button class="sub183 more-legal-link" type="button" data-more183="support">Contact Support</button>
       </div>
     </nav>
     <div class="freedom-companion-msg-host" id="freedomCompanionMsgHost" aria-live="polite"></div>
@@ -5688,6 +5731,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
 <script src="./freedom-native-notifications.js"></script>
 <script src="./freedom-native-backup.js"></script>
 <script src="./freedom-native-purchases.js"></script>
+<script src="./freedom-legal-links.js"></script>
 <script src="./freedom-subscription-gate.js"></script>
 <script>
 (function(){
@@ -14680,6 +14724,13 @@ function freedomBootNavPreview(open){
         }
         return;
       }
+      if(key==="privacy"||key==="terms"||key==="support"){
+        closeMore();
+        if(window.FreedomLegalLinks&&typeof window.FreedomLegalLinks.openKey==="function"){
+          window.FreedomLegalLinks.openKey(key);
+        }
+        return;
+      }
       hideHome();
       closeMore();
       if(key==="archive"){
@@ -14702,6 +14753,20 @@ function freedomBootNavPreview(open){
       }
       /* Unknown More keys stay on Home — never open the retired legacy More page. */
       showHome();
+    });
+  });
+
+  ["freedomPaywallPrivacy","freedomPaywallTerms"].forEach(id=>{
+    const link=document.getElementById(id);
+    if(!link)return;
+    link.addEventListener("click",event=>{
+      event.preventDefault();
+      const href=link.getAttribute("href");
+      if(window.FreedomLegalLinks&&typeof window.FreedomLegalLinks.open==="function"){
+        window.FreedomLegalLinks.open(href);
+      }else if(href){
+        window.open(href,"_blank","noopener,noreferrer");
+      }
     });
   });
 
