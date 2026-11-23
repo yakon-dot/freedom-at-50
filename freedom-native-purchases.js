@@ -92,6 +92,15 @@
     return fail(code, msg, { cancelled: false });
   }
 
+  /**
+   * RevenueCat Capacitor wraps CustomerInfo as `{ customerInfo: CustomerInfo }`
+   * for getCustomerInfo / restorePurchases (and purchase results). Unwrap so
+   * entitlement mapping always reads entitlements.active / .all.
+   */
+  function unwrapCustomerInfo(result) {
+    return result && result.customerInfo ? result.customerInfo : result;
+  }
+
   function entitlementSnapshot(customerInfo, entitlementId) {
     var info = customerInfo || {};
     var ents = info.entitlements || {};
@@ -199,7 +208,7 @@
     var purchases = getPurchasesPlugin();
     var cfg = getConfig();
     try {
-      var info = await purchases.getCustomerInfo();
+      var info = unwrapCustomerInfo(await purchases.getCustomerInfo());
       return {
         ok: true,
         native: true,
@@ -271,7 +280,7 @@
     var purchases = getPurchasesPlugin();
     var cfg = getConfig();
     try {
-      var info = await purchases.restorePurchases();
+      var info = unwrapCustomerInfo(await purchases.restorePurchases());
       return {
         ok: true,
         native: true,
@@ -293,6 +302,7 @@
     /* Phase 1 diagnostics helpers — not used by UI yet. */
     _test: {
       summarizePackage: summarizePackage,
+      unwrapCustomerInfo: unwrapCustomerInfo,
       entitlementSnapshot: entitlementSnapshot,
       findMonthlyPackage: findMonthlyPackage,
       isUserCancelled: isUserCancelled,

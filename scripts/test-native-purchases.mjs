@@ -108,9 +108,8 @@ const baseCfg = {
   console.log("PASS: refuses to configure without appl_ public key");
 }
 
-/* Offerings + entitlement mapping + cancelled purchase. */
-{
-  const monthlyPkg = {
+function makeMonthlyPackage() {
+  return {
     identifier: "$rc_monthly",
     packageType: "MONTHLY",
     product: {
@@ -123,7 +122,10 @@ const baseCfg = {
       introPrice: { priceString: "Free", periodUnit: "MONTH" }
     }
   };
-  const offerings = {
+}
+
+function makeOfferings(monthlyPkg) {
+  return {
     current: {
       identifier: "default",
       availablePackages: [monthlyPkg]
@@ -135,34 +137,27 @@ const baseCfg = {
       }
     }
   };
-  const customerInfo = {
-    originalAppUserId: "$RCAnonymousID:test",
-    entitlements: {
-      active: {
-        pro: {
-          identifier: "pro",
-          productIdentifier: "freedom.monthly",
-          expirationDate: "2026-12-23T00:00:00Z",
-          willRenew: true,
-          periodType: "TRIAL"
-        }
-      },
-      all: {}
-    }
+}
+
+/** Matches RevenueCat Capacitor plugin return shape. */
+function wrapCustomerInfo(customerInfo) {
+  return { customerInfo };
+}
+
+function makeCustomerInfo({ activePro, allPro, originalAppUserId }) {
+  const active = {};
+  const all = {};
+  if (activePro) active.pro = activePro;
+  if (allPro) all.pro = allPro;
+  else if (activePro) all.pro = activePro;
+  return {
+    originalAppUserId: originalAppUserId || "$RCAnonymousID:test",
+    entitlements: { active, all }
   };
-  let purchaseCalls = 0;
-  const purchases = {
-    configure: async () => {},
-    getOfferings: async () => offerings,
-    getCustomerInfo: async () => customerInfo,
-    purchasePackage: async opts => {
-      purchaseCalls += 1;
-      assert.equal(opts.aPackage.identifier, "$rc_monthly");
-      return { customerInfo };
-    },
-    restorePurchases: async () => customerInfo
-  };
-  const api = loadApi(
+}
+
+function loadPurchasesApi(purchases) {
+  return loadApi(
     {
       isNativePlatform: () => true,
       Plugins: { Purchases: purchases },
@@ -170,6 +165,34 @@ const baseCfg = {
     },
     baseCfg
   );
+}
+
+/* Offerings + entitlement mapping + cancelled purchase. */
+{
+  const monthlyPkg = makeMonthlyPackage();
+  const offerings = makeOfferings(monthlyPkg);
+  const customerInfo = makeCustomerInfo({
+    activePro: {
+      identifier: "pro",
+      productIdentifier: "freedom.monthly",
+      expirationDate: "2026-12-23T00:00:00Z",
+      willRenew: true,
+      periodType: "TRIAL"
+    }
+  });
+  let purchaseCalls = 0;
+  const purchases = {
+    configure: async () => {},
+    getOfferings: async () => offerings,
+    getCustomerInfo: async () => wrapCustomerInfo(customerInfo),
+    purchasePackage: async opts => {
+      purchaseCalls += 1;
+      assert.equal(opts.aPackage.identifier, "$rc_monthly");
+      return wrapCustomerInfo(customerInfo);
+    },
+    restorePurchases: async () => wrapCustomerInfo(customerInfo)
+  };
+  const api = loadPurchasesApi(purchases);
 
   const offering = await api.getMonthlyOffering();
   assert.equal(offering.ok, true);
@@ -186,6 +209,8 @@ const baseCfg = {
   const restored = await api.restorePurchases();
   assert.equal(restored.ok, true);
   assert.equal(restored.entitlement.isPro, true);
+  assert.equal(restored.customerInfo.entitlements.active.pro.periodType, "TRIAL");
+  assert.equal(restored.customerInfo.customerInfo, undefined);
 
   purchases.purchasePackage = async () => {
     const err = new Error("Purchase was cancelled.");
@@ -198,6 +223,115 @@ const baseCfg = {
   assert.equal(cancelled.cancelled, true);
   assert.equal(cancelled.code, "cancelled");
   console.log("PASS: offerings, purchase, restore, cancel mapping");
+}
+
+/* Active trial via getCustomerEntitlement — Capacitor { customerInfo } wrap. */
+{
+  const trialInfo = makeCustomerInfo({
+    activePro: {
+      identifier: "pro",
+      productIdentifier: "freedom.monthly",
+      expirationDate: "2026-11-23T12:34:20Z",
+      willRenew: true,
+      periodType: "TRIAL"
+    }
+  });
+  const purchases = {
+    configure: async () => {},
+    getOfferings: async () => makeOfferings(makeMonthlyPackage()),
+    getCustomerInfo: async () => wrapCustomerInfo(trialInfo),
+    purchasePackage: async () => wrapCustomerInfo(trialInfo),
+    restorePurchases: async () => wrapCustomerInfo(trialInfo)
+  };
+  const api = loadPurchasesApi(purchases);
+  const entitlement = await api.getCustomerEntitlement();
+  assert.equal(entitlement.ok, true);
+  assert.equal(entitlement.entitlement.isPro, true);
+  assert.equal(entitlement.entitlement.periodType, "TRIAL");
+  assert.equal(entitlement.entitlement.willRenew, true);
+  assert.equal(entitlement.entitlement.expirationDate, "2026-11-23T12:34:20Z");
+  assert.equal(entitlement.entitlement.activeEntitlementIds.join(","), "pro");
+  assert.equal(entitlement.customerInfo.entitlements.active.pro.periodType, "TRIAL");
+  assert.equal(entitlement.customerInfo.customerInfo, undefined);
+  console.log("PASS: active trial unwrap via getCustomerEntitlement");
+}
+
+/* Active paid subscription (NORMAL period). */
+{
+  const paidInfo = makeCustomerInfo({
+    activePro: {
+      identifier: "pro",
+      productIdentifier: "freedom.monthly",
+      expirationDate: "2026-12-23T00:00:00Z",
+      willRenew: true,
+      periodType: "NORMAL"
+    }
+  });
+  const purchases = {
+    configure: async () => {},
+    getOfferings: async () => ({}),
+    getCustomerInfo: async () => wrapCustomerInfo(paidInfo),
+    purchasePackage: async () => wrapCustomerInfo(paidInfo),
+    restorePurchases: async () => wrapCustomerInfo(paidInfo)
+  };
+  const api = loadPurchasesApi(purchases);
+  const entitlement = await api.getCustomerEntitlement();
+  assert.equal(entitlement.ok, true);
+  assert.equal(entitlement.entitlement.isPro, true);
+  assert.equal(entitlement.entitlement.periodType, "NORMAL");
+  assert.equal(entitlement.entitlement.willRenew, true);
+  console.log("PASS: active NORMAL subscription unwrap");
+}
+
+/* Expired subscription — not in active, still present in all. */
+{
+  const expiredPro = {
+    identifier: "pro",
+    productIdentifier: "freedom.monthly",
+    expirationDate: "2026-11-23T12:34:20Z",
+    willRenew: false,
+    periodType: "TRIAL",
+    isActive: false
+  };
+  const expiredInfo = makeCustomerInfo({
+    activePro: null,
+    allPro: expiredPro
+  });
+  const purchases = {
+    configure: async () => {},
+    getOfferings: async () => ({}),
+    getCustomerInfo: async () => wrapCustomerInfo(expiredInfo),
+    purchasePackage: async () => wrapCustomerInfo(expiredInfo),
+    restorePurchases: async () => wrapCustomerInfo(expiredInfo)
+  };
+  const api = loadPurchasesApi(purchases);
+  const entitlement = await api.getCustomerEntitlement();
+  assert.equal(entitlement.ok, true);
+  assert.equal(entitlement.entitlement.isPro, false);
+  assert.equal(entitlement.entitlement.activeEntitlementIds.length, 0);
+  assert.equal(entitlement.entitlement.expirationDate, "2026-11-23T12:34:20Z");
+  assert.equal(entitlement.entitlement.periodType, "TRIAL");
+  assert.equal(entitlement.entitlement.willRenew, false);
+  assert.equal(entitlement.entitlement.productIdentifier, "freedom.monthly");
+
+  const restored = await api.restorePurchases();
+  assert.equal(restored.ok, true);
+  assert.equal(restored.entitlement.isPro, false);
+  assert.equal(restored.entitlement.expirationDate, "2026-11-23T12:34:20Z");
+  console.log("PASS: expired subscription + restore keep expiry metadata");
+}
+
+/* unwrapCustomerInfo helper: wrapped vs already-bare. */
+{
+  const api = loadApi(
+    { isNativePlatform: () => false, Plugins: {}, registerPlugin: () => null },
+    baseCfg
+  );
+  const bare = { entitlements: { active: {}, all: {} } };
+  assert.equal(api._test.unwrapCustomerInfo({ customerInfo: bare }), bare);
+  assert.equal(api._test.unwrapCustomerInfo(bare), bare);
+  assert.equal(api._test.unwrapCustomerInfo(null), null);
+  console.log("PASS: unwrapCustomerInfo helper");
 }
 
 /* Unavailable offering. */
