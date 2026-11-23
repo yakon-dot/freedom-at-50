@@ -19,7 +19,8 @@
     "@capacitor/filesystem": "^8.1.5",
     "@capacitor/ios": "^8.6.2",
     "@capacitor/local-notifications": "^8.3.1",
-    "@capacitor/share": "^8.0.3"
+    "@capacitor/share": "^8.0.3",
+    "@revenuecat/purchases-capacitor": "^14.1.2"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.6.2",
