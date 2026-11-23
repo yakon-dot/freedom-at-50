@@ -7564,8 +7564,16 @@ function freedomQueueNativeMirrorAfterLocalWrite(){
 }
 function persist(){
   if(demoMode){persistDemoSession();return;}
-  /* Native without Premium: keep existing personal data, block further writes. */
+  /* Native without Premium: keep stored personal data, discard unsaved in-memory edits. */
   if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.allowsPersonalWrites==="function"&&!window.FreedomSubscriptionGate.allowsPersonalWrites()){
+    try{
+      const raw=localStorage.getItem(KEY);
+      if(raw){
+        const parsed=JSON.parse(raw);
+        if(parsed&&typeof parsed==="object")state=parsed;
+      }
+    }catch(e){}
+    if(typeof render==="function")render();
     if(typeof window.FreedomSubscriptionGate.notifyWriteBlocked==="function")window.FreedomSubscriptionGate.notifyWriteBlocked();
     return;
   }

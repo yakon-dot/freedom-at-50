@@ -74,24 +74,44 @@
   function writeCache(snapshot) {
     try {
       if (!global.localStorage) return;
+      var isPro = effectiveIsPro(snapshot);
       global.localStorage.setItem(
         CACHE_KEY,
         JSON.stringify({
-          isPro: !!snapshot.isPro,
-          expirationDate: snapshot.expirationDate || null,
-          periodType: snapshot.periodType || null,
+          isPro: isPro,
+          expirationDate: snapshot && snapshot.expirationDate ? snapshot.expirationDate : null,
+          periodType: snapshot && snapshot.periodType ? snapshot.periodType : null,
           updatedAt: new Date().toISOString()
         })
       );
     } catch (e) {}
   }
 
+  /**
+   * Active Premium only while entitlement says so AND expirationDate (if any)
+   * is still in the future. Past expirationDate never counts as pro — including
+   * stale localStorage caches after relaunch or failed network refresh.
+   */
+  function effectiveIsPro(snapshot) {
+    if (!snapshot || snapshot.isPro !== true) return false;
+    var raw = snapshot.expirationDate;
+    if (raw == null || raw === "") return true; /* lifetime / no expiry */
+    var exp = Date.parse(String(raw));
+    if (!isFinite(exp)) return false; /* unparseable expiry → conservative deny */
+    return exp > Date.now();
+  }
+
   function applyEntitlement(entitlement) {
     var ent = entitlement || {};
+    var isPro = effectiveIsPro(ent);
     access.entitlement = ent;
-    access.isPro = !!ent.isPro;
+    access.isPro = isPro;
     access.refreshed = true;
-    writeCache(ent);
+    writeCache({
+      isPro: isPro,
+      expirationDate: ent.expirationDate || null,
+      periodType: ent.periodType || null
+    });
     syncReadOnlyUi();
     return ent;
   }
@@ -99,17 +119,34 @@
   function allowsPersonalWrites() {
     if (!isNative()) return true;
     if (isDemo()) return true;
-    if (!access.refreshed) {
-      var cached = readCache();
-      if (cached && cached.isPro === true) return true;
-      if (cached && cached.isPro === false) return false;
-      return true;
-    }
-    return !!access.isPro;
+    if (access.refreshed) return !!access.isPro;
+    /* Before refresh: trust cache only if still unexpired. No cache → deny. */
+    return effectiveIsPro(readCache());
   }
 
   function isReadOnlyPersonal() {
-    return isNative() && !isDemo() && access.refreshed && !access.isPro;
+    return isNative() && !isDemo() && !allowsPersonalWrites();
+  }
+
+  function pluralUnit(value, singular) {
+    return value + " " + singular + (value === 1 ? "" : "s");
+  }
+
+  /** ISO 8601 durations from StoreKit/RevenueCat, e.g. P1M, P1W, P3D, P1Y. */
+  function formatIso8601Period(raw) {
+    var s = String(raw || "").trim().toUpperCase();
+    if (!s || s.charAt(0) !== "P") return "";
+    var matched = /^P(?:(\d+)Y)?(?:(\d+)M)?(?:(\d+)W)?(?:(\d+)D)?(?:T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+(?:\.\d+)?)S)?)?$/.exec(s);
+    if (!matched) return "";
+    var years = matched[1] ? Number(matched[1]) : 0;
+    var months = matched[2] ? Number(matched[2]) : 0;
+    var weeks = matched[3] ? Number(matched[3]) : 0;
+    var days = matched[4] ? Number(matched[4]) : 0;
+    if (years) return pluralUnit(years, "year");
+    if (months) return pluralUnit(months, "month");
+    if (weeks) return pluralUnit(weeks, "week");
+    if (days) return pluralUnit(days, "day");
+    return "";
   }
 
   function formatIntroPeriod(introPeriod) {
@@ -117,19 +154,32 @@
     if (typeof introPeriod === "string") {
       var s = introPeriod.trim();
       if (!s) return "";
+      var iso = formatIso8601Period(s);
+      if (iso) return iso;
       if (/^month/i.test(s)) return "1 month";
       if (/^week/i.test(s)) return "1 week";
       if (/^year/i.test(s)) return "1 year";
       if (/^day/i.test(s)) return "1 day";
+      /* Never surface raw ISO-looking tokens to customers. */
+      if (/^P\d/i.test(s)) return "";
       return s;
     }
     if (typeof introPeriod === "object") {
+      if (introPeriod.iso8601) {
+        var fromIso = formatIso8601Period(introPeriod.iso8601);
+        if (fromIso) return fromIso;
+      }
+      if (introPeriod.period) {
+        var fromPeriod = formatIso8601Period(introPeriod.period);
+        if (fromPeriod) return fromPeriod;
+      }
       var unit = String(introPeriod.unit || introPeriod.periodUnit || "").toLowerCase();
       var value = Number(introPeriod.value != null ? introPeriod.value : introPeriod.numberOfUnits);
       if (!unit) return "";
       if (!value || value < 1) value = 1;
       var label = unit.replace(/s$/, "");
-      return value + " " + label + (value === 1 ? "" : "s");
+      if (label === "m") label = "month";
+      return pluralUnit(value, label);
     }
     return "";
   }
@@ -289,9 +339,8 @@
       var result = await api.getCustomerEntitlement();
       if (!result || !result.ok) {
         access.refreshed = true;
-        /* Keep last known cache for offline; do not invent pro access. */
-        var cached = readCache();
-        if (cached && typeof cached.isPro === "boolean") access.isPro = !!cached.isPro;
+        /* Offline/error: keep personal data, but only allow writes if cache is still unexpired. */
+        access.isPro = effectiveIsPro(readCache());
         syncReadOnlyUi();
         return result || { ok: false, code: "customer-info-failed" };
       }
@@ -299,6 +348,7 @@
       return result;
     } catch (e) {
       access.refreshed = true;
+      access.isPro = effectiveIsPro(readCache());
       syncReadOnlyUi();
       return { ok: false, code: "customer-info-failed", error: String(e && e.message ? e.message : e) };
     }
@@ -440,13 +490,22 @@
   (function hydrateFromCache() {
     if (!isNative()) return;
     var cached = readCache();
-    if (!cached || typeof cached.isPro !== "boolean") return;
-    access.isPro = !!cached.isPro;
+    if (!cached) return;
+    var isPro = effectiveIsPro(cached);
+    access.isPro = isPro;
     access.entitlement = {
-      isPro: !!cached.isPro,
+      isPro: isPro,
       expirationDate: cached.expirationDate || null,
       periodType: cached.periodType || null
     };
+    /* Rewrite cache if a stale isPro:true had already passed expirationDate. */
+    if (cached.isPro === true && !isPro) {
+      writeCache({
+        isPro: false,
+        expirationDate: cached.expirationDate || null,
+        periodType: cached.periodType || null
+      });
+    }
   })();
 
   if (global.document && global.document.readyState === "loading") {
@@ -479,6 +538,8 @@
     _test: {
       buildOfferCopy: buildOfferCopy,
       formatIntroPeriod: formatIntroPeriod,
+      formatIso8601Period: formatIso8601Period,
+      effectiveIsPro: effectiveIsPro,
       applyEntitlement: applyEntitlement,
       CACHE_KEY: CACHE_KEY,
       WRITE_BLOCK_SELECTORS: WRITE_BLOCK_SELECTORS
