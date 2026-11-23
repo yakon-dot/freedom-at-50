@@ -93,7 +93,10 @@ async function main() {
       "backup",
       "reminders",
       "companion",
-      "reset"
+      "reset",
+      "privacy",
+      "terms",
+      "support"
     ]);
     console.log("PASS: #more deep link lands on Home; Reports gone; More menu intact");
     await page.close();

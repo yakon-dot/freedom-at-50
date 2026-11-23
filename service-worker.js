@@ -1,7 +1,7 @@
 /* Freedom at 50 — wallpaper cache + safe offline shell responses + Web Push */
 const CACHE_NAME = "freedom-at-50-v1.8.6.165";
 const WALLPAPER_CACHE = "freedom-wallpapers-v3";
-const APP_SHELL = ["./index.html", "./manifest.webmanifest", "./freedom-push-config.js", "./freedom-purchases-config.js", "./freedom-native-storage.js", "./freedom-native-notifications.js", "./freedom-native-backup.js", "./freedom-native-purchases.js", "./freedom-subscription-gate.js"];
+const APP_SHELL = ["./index.html", "./manifest.webmanifest", "./freedom-push-config.js", "./freedom-purchases-config.js", "./freedom-native-storage.js", "./freedom-native-notifications.js", "./freedom-native-backup.js", "./freedom-native-purchases.js", "./freedom-legal-links.js", "./freedom-subscription-gate.js"];
 const REMINDER_TITLE = "A little nudge";
 const REMINDER_BODY = "Your companion has something for you. Tap to see what’s waiting.";
 /* Absolute query URL: iOS openWindow / declarative navigate are unreliable with hash-only targets.

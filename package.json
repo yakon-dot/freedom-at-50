@@ -15,9 +15,11 @@
     "test:native-backup": "node scripts/test-native-backup-export.mjs",
     "test:native-purchases": "node scripts/test-native-purchases.mjs",
     "test:subscription-gate": "node scripts/test-subscription-gate.mjs",
-    "test:privacy-prerelease": "node scripts/test-privacy-prerelease.mjs"
+    "test:privacy-prerelease": "node scripts/test-privacy-prerelease.mjs",
+    "test:legal-support-links": "node scripts/test-legal-support-links.mjs"
   },
   "dependencies": {
+    "@capacitor/browser": "^8.0.5",
     "@capacitor/core": "^8.6.2",
     "@capacitor/filesystem": "^8.1.5",
     "@capacitor/ios": "^8.6.2",
