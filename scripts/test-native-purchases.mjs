@@ -36,7 +36,7 @@ assert.match(cfgSrc, /offeringId:\s*"default"/);
 assert.match(cfgSrc, /monthlyPackageId:\s*"\$rc_monthly"/);
 assert.match(cfgSrc, /productId:\s*"freedom\.monthly"/);
 assert.equal(/sk_[a-zA-Z0-9]/.test(cfgSrc), false);
-assert.equal(/appl_[a-zA-Z0-9]{8,}/.test(cfgSrc), false);
+assert.match(cfgSrc, /applePublicSdkKey:\s*"appl_aJQTfBycvAHKnyfWuiGlIfPtDqW"/);
 assert.match(nativeSrc, /FreedomNativePurchases/);
 assert.match(nativeSrc, /purchaseMonthly/);
 assert.match(nativeSrc, /restorePurchases/);
