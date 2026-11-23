@@ -19,10 +19,18 @@ const TERMS = "https://yakon-dot.github.io/freedom-website/terms/";
 const SUPPORT = "https://yakon-dot.github.io/freedom-website/support/";
 
 assert.match(index, /freedom-legal-links\.js/);
+assert.match(index, /data-more183="legal"/);
+assert.match(index, /id="moreLegalToggle"/);
+assert.match(index, /id="moreLegalSub"/);
 assert.match(index, /Legal &amp; Support/);
+assert.match(index, /more-legal-chev/);
 assert.match(index, /data-more183="privacy">Privacy Policy</);
 assert.match(index, /data-more183="terms">Terms of Use</);
 assert.match(index, /data-more183="support">Contact Support</);
+assert.match(index, /closeLegalSub/);
+assert.match(index, /legal-open/);
+assert.equal(/more-legal-label/.test(index), false);
+assert.equal(/text-transform:\s*uppercase/.test(index.match(/more-legal-toggle\{[\s\S]*?\}/)?.[0] || ""), false);
 assert.match(index, /id="freedomPaywallPrivacy"/);
 assert.match(index, /id="freedomPaywallTerms"/);
 assert.match(index, new RegExp(`href="${PRIVACY.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"`));

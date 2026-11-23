@@ -94,6 +94,7 @@ async function main() {
       "reminders",
       "companion",
       "reset",
+      "legal",
       "privacy",
       "terms",
       "support"
