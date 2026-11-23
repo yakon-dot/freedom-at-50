@@ -42,6 +42,9 @@ assert.match(nativeSrc, /purchaseMonthly/);
 assert.match(nativeSrc, /restorePurchases/);
 assert.match(nativeSrc, /getMonthlyOffering/);
 assert.match(nativeSrc, /getCustomerEntitlement/);
+assert.match(nativeSrc, /checkIntroEligibility/);
+assert.match(nativeSrc, /checkTrialOrIntroductoryPriceEligibility/);
+assert.match(nativeSrc, /normalizeIntroEligibility/);
 assert.match(capSpm, /PurchasesPlugin\.self/);
 assert.match(capSpm, /import RevenuecatPurchasesCapacitor/);
 assert.match(packageSwift, /RevenuecatPurchasesCapacitor/);
@@ -185,6 +188,12 @@ function loadPurchasesApi(purchases) {
     configure: async () => {},
     getOfferings: async () => offerings,
     getCustomerInfo: async () => wrapCustomerInfo(customerInfo),
+    checkTrialOrIntroductoryPriceEligibility: async opts => {
+      assert.equal(opts.productIdentifiers.join(","), "freedom.monthly");
+      return {
+        "freedom.monthly": { status: 2, description: "eligible" }
+      };
+    },
     purchasePackage: async opts => {
       purchaseCalls += 1;
       assert.equal(opts.aPackage.identifier, "$rc_monthly");
@@ -199,6 +208,14 @@ function loadPurchasesApi(purchases) {
   assert.equal(offering.product.productId, "freedom.monthly");
   assert.equal(offering.product.priceString, "€3.99");
   assert.equal(offering.product.hasIntroOffer, true);
+  assert.equal(offering.introEligibility, "eligible");
+
+  assert.equal(api._test.normalizeIntroEligibility({ status: 2 }), "eligible");
+  assert.equal(api._test.normalizeIntroEligibility({ status: 1 }), "ineligible");
+  assert.equal(api._test.normalizeIntroEligibility({ status: 0 }), "unknown");
+  assert.equal(api._test.normalizeIntroEligibility({ status: 3 }), "ineligible");
+  const ineligibleCheck = await api.checkIntroEligibility("freedom.monthly");
+  assert.equal(ineligibleCheck.status, "eligible");
 
   const purchased = await api.purchaseMonthly();
   assert.equal(purchased.ok, true);
@@ -240,6 +257,9 @@ function loadPurchasesApi(purchases) {
     configure: async () => {},
     getOfferings: async () => makeOfferings(makeMonthlyPackage()),
     getCustomerInfo: async () => wrapCustomerInfo(trialInfo),
+    checkTrialOrIntroductoryPriceEligibility: async () => ({
+      "freedom.monthly": { status: 2 }
+    }),
     purchasePackage: async () => wrapCustomerInfo(trialInfo),
     restorePurchases: async () => wrapCustomerInfo(trialInfo)
   };
@@ -333,6 +353,57 @@ function loadPurchasesApi(purchases) {
   assert.equal(api._test.unwrapCustomerInfo(null), null);
   console.log("PASS: unwrapCustomerInfo helper");
 }
+
+/* Intro eligibility normalization + unknown when API missing. */
+{
+  const api = loadApi(
+    { isNativePlatform: () => false, Plugins: {}, registerPlugin: () => null },
+    baseCfg
+  );
+  assert.equal(api._test.normalizeIntroEligibility({ status: 2 }), "eligible");
+  assert.equal(api._test.normalizeIntroEligibility({ status: 1 }), "ineligible");
+  assert.equal(api._test.normalizeIntroEligibility({ status: 0 }), "unknown");
+  assert.equal(api._test.normalizeIntroEligibility(null), "unknown");
+  console.log("PASS: intro eligibility status normalization");
+}
+
+{
+  const monthlyPkg = makeMonthlyPackage();
+  const purchases = {
+    configure: async () => {},
+    getOfferings: async () => makeOfferings(monthlyPkg),
+    getCustomerInfo: async () => ({}),
+    checkTrialOrIntroductoryPriceEligibility: async () => ({
+      "freedom.monthly": { status: 1 }
+    }),
+    purchasePackage: async () => ({}),
+    restorePurchases: async () => ({})
+  };
+  const api = loadPurchasesApi(purchases);
+  const offering = await api.getMonthlyOffering();
+  assert.equal(offering.ok, true);
+  assert.equal(offering.introEligibility, "ineligible");
+  const check = await api.checkIntroEligibility("freedom.monthly");
+  assert.equal(check.status, "ineligible");
+  console.log("PASS: ineligible intro offer from RevenueCat API");
+}
+
+{
+  const monthlyPkg = makeMonthlyPackage();
+  const purchases = {
+    configure: async () => {},
+    getOfferings: async () => makeOfferings(monthlyPkg),
+    getCustomerInfo: async () => ({}),
+    purchasePackage: async () => ({}),
+    restorePurchases: async () => ({})
+  };
+  const api = loadPurchasesApi(purchases);
+  const offering = await api.getMonthlyOffering();
+  assert.equal(offering.ok, true);
+  assert.equal(offering.introEligibility, "unknown");
+  console.log("PASS: missing eligibility API yields unknown (no trial promise)");
+}
+
 
 /* Unavailable offering. */
 {

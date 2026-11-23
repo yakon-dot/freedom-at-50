@@ -59,14 +59,16 @@ npm run cap:sync
 - No framework rewrite.
 - Demo Mode, onboarding, calculations, companion copy, and Web Push code paths are not migrated in this step.
 
-## RevenueCat subscriptions (Phase 1 — native only)
+## RevenueCat subscriptions (native only)
 
 - Dashboard setup (product `freedom.monthly`, entitlement `pro`, offering `default`) lives outside this repo.
 - JS service: `freedom-native-purchases.js` + public config `freedom-purchases-config.js`.
+- Phase 2 gate/UI: `freedom-subscription-gate.js` — paywall after companion selection, Restore Purchases, Demo escape, and personal read-only when Premium is inactive.
 - Uses `@revenuecat/purchases-capacitor` via Capacitor SPM. `CapApp-SPM.swift` retains `PurchasesPlugin` so it is not dead-stripped.
 - Put only the **Apple public SDK key** (`appl_…`) in `freedom-purchases-config.js`. Never commit secret API keys.
-- PWA / GitHub Pages: purchases no-op (`not-native`). No paywall or read-only gating in Phase 1.
-- After adding the public key: `npm run cap:sync`, enable In-App Purchase in Xcode, then verify on a device/simulator with a StoreKit / sandbox Apple ID.
+- PWA / GitHub Pages: purchases no-op; full personal access remains (no paywall / read-only).
+- Paywall terms come from App Store product fields (`priceString`, intro offer), not hardcoded prices.
+- After web changes: `npm run cap:sync`, then verify on a device with a Sandbox Apple ID.
 
 ## Encrypted backup export (native)
 

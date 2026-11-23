@@ -20,6 +20,7 @@ const ROOT_FILES = [
   "freedom-native-notifications.js",
   "freedom-native-backup.js",
   "freedom-native-purchases.js",
+  "freedom-subscription-gate.js",
   "icon-192.png",
   "icon-512.png",
   "companion-select-wallpaper.jpg",

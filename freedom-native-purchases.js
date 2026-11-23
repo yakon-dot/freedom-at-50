@@ -220,6 +220,64 @@
     }
   }
 
+  /**
+   * Normalize RevenueCat IntroEligibility to eligible | ineligible | unknown.
+   * Apple subscription-group rules decide this — never local install history.
+   */
+  function normalizeIntroEligibility(entry) {
+    if (!entry || entry.status == null) return "unknown";
+    var status = entry.status;
+    if (
+      status === 2 ||
+      status === "2" ||
+      status === "INTRO_ELIGIBILITY_STATUS_ELIGIBLE" ||
+      status === "ELIGIBLE"
+    ) {
+      return "eligible";
+    }
+    if (
+      status === 1 ||
+      status === "1" ||
+      status === "INTRO_ELIGIBILITY_STATUS_INELIGIBLE" ||
+      status === "INELIGIBLE" ||
+      status === 3 ||
+      status === "3" ||
+      status === "INTRO_ELIGIBILITY_STATUS_NO_INTRO_OFFER_EXISTS" ||
+      status === "NO_INTRO_OFFER_EXISTS"
+    ) {
+      return "ineligible";
+    }
+    return "unknown";
+  }
+
+  async function checkIntroEligibility(productId) {
+    var id = String(productId || "").trim();
+    if (!id) return { ok: true, status: "unknown", productId: null };
+    var purchases = getPurchasesPlugin();
+    if (!purchases || typeof purchases.checkTrialOrIntroductoryPriceEligibility !== "function") {
+      return { ok: true, status: "unknown", productId: id, unsupported: true };
+    }
+    try {
+      var map = await purchases.checkTrialOrIntroductoryPriceEligibility({
+        productIdentifiers: [id]
+      });
+      var entry = map && (map[id] || map[String(id)]) || null;
+      return {
+        ok: true,
+        status: normalizeIntroEligibility(entry),
+        productId: id,
+        raw: entry
+      };
+    } catch (e) {
+      return {
+        ok: false,
+        status: "unknown",
+        productId: id,
+        error: String(e && e.message ? e.message : e)
+      };
+    }
+  }
+
   async function getMonthlyOffering() {
     var ready = await ensureConfigured();
     if (!ready || !ready.ok) return ready;
@@ -240,12 +298,17 @@
           "The monthly Freedom Premium package is not available right now."
         );
       }
+      var product = summarizePackage(found.package);
+      var eligibility = await checkIntroEligibility(
+        (product && product.productId) || cfg.productId
+      );
       return {
         ok: true,
         native: true,
         offeringId: found.offering.identifier || cfg.offeringId,
         package: found.package,
-        product: summarizePackage(found.package),
+        product: product,
+        introEligibility: eligibility.status || "unknown",
         entitlementId: cfg.entitlementId
       };
     } catch (e) {
@@ -297,6 +360,7 @@
     ensureConfigured: ensureConfigured,
     getMonthlyOffering: getMonthlyOffering,
     getCustomerEntitlement: getCustomerEntitlement,
+    checkIntroEligibility: checkIntroEligibility,
     purchaseMonthly: purchaseMonthly,
     restorePurchases: restorePurchases,
     /* Phase 1 diagnostics helpers — not used by UI yet. */
@@ -305,6 +369,7 @@
       unwrapCustomerInfo: unwrapCustomerInfo,
       entitlementSnapshot: entitlementSnapshot,
       findMonthlyPackage: findMonthlyPackage,
+      normalizeIntroEligibility: normalizeIntroEligibility,
       isUserCancelled: isUserCancelled,
       getConfig: getConfig
     }
