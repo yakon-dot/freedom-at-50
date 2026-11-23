@@ -260,8 +260,10 @@
     var banner = byId("freedomReadOnlyBanner");
     var body = global.document && global.document.body;
     var readOnly = isReadOnlyPersonal();
+    var onHome = !!(body && body.classList && body.classList.contains("home183"));
     if (body) body.classList.toggle("freedom-readonly-active", readOnly);
-    if (banner) banner.hidden = !readOnly;
+    /* Permanent banner only on Home; other screens open the subscription offer on write. */
+    if (banner) banner.hidden = !(readOnly && onHome);
   }
 
   function hidePaywall() {

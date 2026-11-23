@@ -21,9 +21,14 @@ assert.match(index, /id="freedomPaywallStart"/);
 assert.match(index, /id="freedomPaywallRestore"/);
 assert.match(index, /id="freedomPaywallDemo"/);
 assert.match(index, /id="freedomReadOnlyBanner"/);
+assert.match(index, /Viewing only\. Freedom Premium is not active\./);
+assert.equal(index.includes("Viewing only —"), false);
 assert.match(index, /FreedomSubscriptionGate\.afterCompanionSelection/);
 assert.match(index, /FreedomSubscriptionGate\.allowsPersonalWrites/);
-assert.match(index, /data-more183="restorePurchases"/);
+assert.match(index, /body:not\(\.home183\) #freedomReadOnlyBanner/);
+assert.match(index, /#freedomReadOnlyBanner\{[^}]*bottom:\s*0/s);
+assert.equal(/data-more183="restorePurchases"/.test(index), false);
+assert.match(index, /id="freedomPaywallRestore"/);
 assert.match(prepare, /freedom-subscription-gate\.js/);
 assert.match(sw, /freedom-subscription-gate\.js/);
 assert.equal(!!pkg.scripts["test:subscription-gate"], true);
@@ -377,6 +382,15 @@ function mockPurchases({ isPro, product, cancelled }) {
   );
   assert.match(index, /notifyWriteBlocked/);
   console.log("PASS: blocked persist reverts unsaved in-memory personal edits");
+}
+
+/* Home-only permanent banner; write intents still open the subscription screen. */
+{
+  assert.match(gateSrc, /banner\.hidden = !\(readOnly && onHome\)/);
+  assert.match(gateSrc, /WRITE_BLOCK_SELECTORS/);
+  assert.match(gateSrc, /notifyWriteBlocked/);
+  assert.match(gateSrc, /showPaywall\(\{ context: "renew"/);
+  console.log("PASS: read-only banner is Home-only; writes still open subscription screen");
 }
 
 console.log("PASS: Phase 2 subscription gate unit contracts");

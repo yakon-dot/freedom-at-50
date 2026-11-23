@@ -533,18 +533,20 @@ html:has(#freedomPaywall.is-present:not([hidden])) body{
 }
 .freedom-paywall-secondary:disabled{opacity:.45;cursor:default}
 #freedomReadOnlyBanner{
-  position:fixed;left:0;right:0;top:0;z-index:9400;
+  position:fixed;left:0;right:0;top:auto;bottom:0;z-index:9400;
   display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;
-  padding:calc(8px + env(safe-area-inset-top,0px)) 14px 8px;
-  background:rgba(18,20,24,.94);border-bottom:1px solid rgba(239,203,170,.22);
+  padding:8px 14px calc(8px + env(safe-area-inset-bottom,0px));
+  background:rgba(18,20,24,.94);border-top:1px solid rgba(239,203,170,.22);border-bottom:0;
   color:rgba(245,244,240,.9);font-size:13px;line-height:1.35;text-align:center;
+  box-sizing:border-box;
 }
-#freedomReadOnlyBanner[hidden]{display:none!important}
+/* Permanent banner only on Home. Other pages rely on the subscription screen for write attempts. */
+#freedomReadOnlyBanner[hidden],
+body:not(.home183) #freedomReadOnlyBanner{display:none!important}
 #freedomReadOnlyBanner button{
   appearance:none;border:1px solid rgba(239,203,170,.45);background:transparent;
   color:#efcbaa;font:inherit;font-size:12px;padding:6px 10px;border-radius:999px;cursor:pointer;
 }
-body.freedom-readonly-active .app{padding-top:calc(44px + env(safe-area-inset-top,0px))}
 /* —— First-time Companion Selection —— */
 #freedomCompanionSelect{
   position:fixed;inset:0;z-index:9961;box-sizing:border-box;
@@ -5391,7 +5393,6 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
         <button class="sub183" type="button" data-more183="backup">Backup</button>
         <button class="sub183" type="button" data-more183="reminders">Reminders</button>
         <button class="sub183" type="button" data-more183="companion">Change companion</button>
-        <button class="sub183" type="button" data-more183="restorePurchases" id="freedomRestorePurchasesMoreBtn" hidden>Restore Purchases</button>
         <button class="sub183" type="button" data-more183="reset" id="resetFreedomMoreBtn" hidden aria-hidden="true" tabindex="-1">Reset Freedom</button>
       </div>
     </nav>
@@ -5411,7 +5412,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
   <span>DEMO MODE</span>
 </div>
 <div id="freedomReadOnlyBanner" hidden>
-  <span>Viewing only — Freedom Premium is not active.</span>
+  <span>Viewing only. Freedom Premium is not active.</span>
   <button type="button" id="freedomReadOnlyRenew">Restore access</button>
 </div>
 <div class="demo-overlay" id="demoEntryOverlay" hidden>
@@ -14027,13 +14028,6 @@ async function freedomCompleteAppBoot(){
   }catch(e){
     console.warn("Freedom could not refresh Premium entitlement:",e);
   }
-  try{
-    var restoreMore=byId("freedomRestorePurchasesMoreBtn");
-    if(restoreMore){
-      var showRestore=!!(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.isNative==="function"&&window.FreedomSubscriptionGate.isNative());
-      restoreMore.hidden=!showRestore;
-    }
-  }catch(e){}
   fillForm();render();initFreedomBackupUi();initFreedomRemindersUi();
   /* Refresh native monthly local schedules when reminders are on (no Worker on native). */
   try{
@@ -14616,10 +14610,16 @@ function freedomBootNavPreview(open){
       history.replaceState({freedomPage:"home"},"","#home");
     }
     if(window.freedomDemo&&typeof window.freedomDemo.onHomeShown==="function")window.freedomDemo.onHomeShown();
+    if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.syncReadOnlyUi==="function"){
+      window.FreedomSubscriptionGate.syncReadOnlyUi();
+    }
   }
   function hideHome(){
     document.body.classList.remove("home183");
     if(home)home.setAttribute("aria-hidden","true");
+    if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.syncReadOnlyUi==="function"){
+      window.FreedomSubscriptionGate.syncReadOnlyUi();
+    }
   }
 
   window.showHome=showHome;
@@ -14673,13 +14673,6 @@ function freedomBootNavPreview(open){
       if(key==="companion"){
         if(window.freedomCompanionSelect&&typeof window.freedomCompanionSelect.openForChange==="function"){
           window.freedomCompanionSelect.openForChange();
-        }
-        return;
-      }
-      if(key==="restorePurchases"){
-        closeMore();
-        if(window.FreedomSubscriptionGate&&typeof window.FreedomSubscriptionGate.showPaywall==="function"){
-          window.FreedomSubscriptionGate.showPaywall({context:"renew",allowDemo:true});
         }
         return;
       }
