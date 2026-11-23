@@ -2,6 +2,7 @@ import Foundation
 import FilesystemPlugin
 import LocalNotificationsPlugin
 import SharePlugin
+import RevenuecatPurchasesCapacitor
 
 public let isCapacitorApp = true
 
@@ -11,13 +12,14 @@ public let isCapacitorApp = true
  can dead-strip those classes. Then JS sees `isPluginAvailable(...) === false`
  even though the package appears in Xcode.
 
- Keep retained references so Filesystem, LocalNotifications, and Share stay linked.
+ Keep retained references so Filesystem, LocalNotifications, Share, and Purchases stay linked.
  */
 enum FreedomCapAppSPMPluginAnchor {
   static let linkedPluginClasses: [AnyClass] = [
     FilesystemPlugin.self,
     LocalNotificationsPlugin.self,
-    SharePlugin.self
+    SharePlugin.self,
+    PurchasesPlugin.self
   ]
 }
 
