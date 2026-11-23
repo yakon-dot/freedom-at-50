@@ -2794,7 +2794,8 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
   max-height:0;overflow:hidden;pointer-events:none;
   transition:max-height .48s cubic-bezier(.22,.61,.36,1)
 }
-.subwrap183.open{max-height:360px;pointer-events:auto}
+.subwrap183.open{max-height:220px;pointer-events:auto}
+.subwrap183.open.legal-open{max-height:360px}
 .sub183{
   display:block;width:100%;border:0;background:transparent;color:#dedad3;text-align:left;
   padding:7px 0;font-size:13.5px;font-weight:450;cursor:pointer;touch-action:manipulation;
@@ -2807,16 +2808,28 @@ input{width:100%;margin-top:7px;background:#0d0f12;color:var(--text);border:1px 
 .subwrap183.open .sub183:nth-child(3){transition-delay:.21s}
 .subwrap183.open .sub183:nth-child(4){transition-delay:.29s}
 .subwrap183.open .sub183:nth-child(5){transition-delay:.34s}
-.more-legal-label{
-  margin:12px 0 2px;padding:0;font-size:11px;font-weight:500;letter-spacing:.04em;
-  text-transform:uppercase;color:rgba(239,203,170,.42);opacity:0;
-  transform:translateY(-6px);transition:opacity .22s ease,transform .28s cubic-bezier(.22,.61,.36,1)
+.sub183.more-legal-toggle{
+  display:flex;align-items:center;gap:8px;width:100%;
+  color:#dedad3;font-size:13.5px;font-weight:450;text-transform:none;letter-spacing:normal;
 }
-.subwrap183.open .more-legal-label{opacity:1;transform:translateY(0);transition-delay:.34s}
-.sub183.more-legal-link{color:rgba(222,218,211,.78);font-size:13px;font-weight:450}
-.subwrap183.open .sub183.more-legal-link:nth-of-type(1),
-.subwrap183.open .more-legal-link{transition-delay:.38s}
+.sub183.more-legal-toggle .more-legal-chev{
+  margin-left:auto;width:8px;height:8px;flex:0 0 auto;
+  border-right:1.5px solid #dedad3;border-bottom:1.5px solid #dedad3;
+  transform:rotate(45deg);transition:transform .18s ease;
+}
+.sub183.more-legal-toggle[aria-expanded="true"] .more-legal-chev{transform:rotate(225deg)}
+.more-legal-sub{
+  margin:0 0 2px;padding:0 0 0 12px;border-left:1px solid rgba(239,203,170,.16);
+  max-height:0;overflow:hidden;pointer-events:none;
+  transition:max-height .28s cubic-bezier(.22,.61,.36,1)
+}
+.more-legal-sub.open{max-height:120px;pointer-events:auto}
+.more-legal-sub .sub183.more-legal-link{
+  color:#dedad3;font-size:13.5px;font-weight:450;padding:6px 0;
+}
+.subwrap183.open .more-legal-sub.open .sub183{opacity:1;transform:translateY(0)}
 .sub183[hidden]{display:none!important;opacity:0!important;pointer-events:none!important;padding:0!important;margin:0!important;height:0!important;overflow:hidden!important}
+.more-legal-sub[hidden]{display:none!important}
 .demo-banner{
   display:none!important;
 }
@@ -5444,10 +5457,22 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
         <button class="sub183" type="button" data-more183="reminders">Reminders</button>
         <button class="sub183" type="button" data-more183="companion">Change companion</button>
         <button class="sub183" type="button" data-more183="reset" id="resetFreedomMoreBtn" hidden aria-hidden="true" tabindex="-1">Reset Freedom</button>
-        <p class="more-legal-label" id="moreLegalLabel">Legal &amp; Support</p>
-        <button class="sub183 more-legal-link" type="button" data-more183="privacy">Privacy Policy</button>
-        <button class="sub183 more-legal-link" type="button" data-more183="terms">Terms of Use</button>
-        <button class="sub183 more-legal-link" type="button" data-more183="support">Contact Support</button>
+        <button
+          class="sub183 more-legal-toggle"
+          type="button"
+          id="moreLegalToggle"
+          data-more183="legal"
+          aria-expanded="false"
+          aria-controls="moreLegalSub"
+        >
+          <span>Legal &amp; Support</span>
+          <i class="more-legal-chev" aria-hidden="true"></i>
+        </button>
+        <div class="more-legal-sub" id="moreLegalSub" hidden>
+          <button class="sub183 more-legal-link" type="button" data-more183="privacy">Privacy Policy</button>
+          <button class="sub183 more-legal-link" type="button" data-more183="terms">Terms of Use</button>
+          <button class="sub183 more-legal-link" type="button" data-more183="support">Contact Support</button>
+        </div>
       </div>
     </nav>
     <div class="freedom-companion-msg-host" id="freedomCompanionMsgHost" aria-live="polite"></div>
@@ -14661,9 +14686,20 @@ function freedomBootNavPreview(open){
   const more=document.getElementById("more183");
   const sub=document.getElementById("sub183");
 
+  function closeLegalSub(){
+    const legalToggle=document.getElementById("moreLegalToggle");
+    const legalSub=document.getElementById("moreLegalSub");
+    if(legalToggle)legalToggle.setAttribute("aria-expanded","false");
+    if(legalSub){
+      legalSub.hidden=true;
+      legalSub.classList.remove("open");
+    }
+    if(sub)sub.classList.remove("legal-open");
+  }
   function closeMore(){
     if(more)more.setAttribute("aria-expanded","false");
     if(sub)sub.classList.remove("open");
+    closeLegalSub();
   }
   function showHome(){
     if(!isMobile())return;
@@ -14703,6 +14739,7 @@ function freedomBootNavPreview(open){
     const expanded=more.getAttribute("aria-expanded")==="true";
     more.setAttribute("aria-expanded",expanded?"false":"true");
     if(sub)sub.classList.toggle("open",!expanded);
+    if(expanded)closeLegalSub();
   });
 
   document.querySelectorAll("[data-go183]").forEach(btn=>{
@@ -14722,6 +14759,18 @@ function freedomBootNavPreview(open){
         if(window.freedomDev&&typeof window.freedomDev.resetFreshStart==="function"){
           window.freedomDev.resetFreshStart();
         }
+        return;
+      }
+      if(key==="legal"){
+        const legalToggle=document.getElementById("moreLegalToggle")||btn;
+        const legalSub=document.getElementById("moreLegalSub");
+        const open=legalToggle.getAttribute("aria-expanded")==="true";
+        legalToggle.setAttribute("aria-expanded",open?"false":"true");
+        if(legalSub){
+          legalSub.hidden=open;
+          legalSub.classList.toggle("open",!open);
+        }
+        if(sub)sub.classList.toggle("legal-open",!open);
         return;
       }
       if(key==="privacy"||key==="terms"||key==="support"){
