@@ -497,6 +497,16 @@ html:has(#freedomPaywall.is-present:not([hidden])) body{
 }
 #freedomPaywall[hidden]{display:none!important}
 #freedomPaywall.is-present{opacity:1;pointer-events:auto}
+#freedomPaywallClose{
+  position:absolute;top:calc(10px + env(safe-area-inset-top,0px));right:14px;z-index:3;
+  width:40px;height:40px;margin:0;padding:0;border:0;border-radius:50%;
+  background:rgba(14,16,19,.35);color:rgba(239,203,170,.78);font-size:24px;line-height:1;
+  display:grid;place-items:center;cursor:pointer;-webkit-tap-highlight-color:transparent;
+}
+#freedomPaywallClose[hidden]{display:none!important}
+#freedomPaywallClose:active{
+  color:rgba(245,244,240,.9);background:rgba(14,16,19,.5);
+}
 .freedom-paywall-inner{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   width:100%;max-width:22rem;gap:0;
@@ -4373,6 +4383,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
   </div>
 </div>
 <div id="freedomPaywall" class="freedom-paywall" hidden aria-label="Freedom Premium">
+  <button type="button" class="freedom-paywall-close" id="freedomPaywallClose" hidden aria-label="Close">×</button>
   <div class="freedom-paywall-inner">
     <p class="freedom-paywall-kicker">Subscription</p>
     <h1 class="freedom-paywall-title" id="freedomPaywallTitle">Freedom Premium</h1>
@@ -4380,7 +4391,7 @@ body.pension-active-v315 #pension .pension-action-row .save-btn[data-save-pensio
     <p class="freedom-paywall-support" id="freedomPaywallSupport">Explore Demo Mode anytime. Your personal numbers stay on this iPhone.</p>
     <p class="freedom-paywall-status" id="freedomPaywallStatus" hidden></p>
     <div class="freedom-paywall-actions">
-      <button class="demo-outline-btn demo-enter-btn" id="freedomPaywallStart" type="button">Start free trial</button>
+      <button class="demo-outline-btn demo-enter-btn" id="freedomPaywallStart" type="button">Subscribe</button>
       <button class="freedom-paywall-secondary" id="freedomPaywallRestore" type="button">Restore Purchases</button>
       <button class="freedom-paywall-secondary" id="freedomPaywallDemo" type="button">Continue in Demo Mode</button>
     </div>

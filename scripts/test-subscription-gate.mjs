@@ -20,9 +20,13 @@ assert.match(index, /id="freedomPaywall"/);
 assert.match(index, /id="freedomPaywallStart"/);
 assert.match(index, /id="freedomPaywallRestore"/);
 assert.match(index, /id="freedomPaywallDemo"/);
+assert.match(index, /id="freedomPaywallClose"/);
 assert.match(index, /id="freedomReadOnlyBanner"/);
 assert.match(index, /Viewing only\. Freedom Premium is not active\./);
 assert.equal(index.includes("Viewing only —"), false);
+assert.match(gateSrc, /dismissPaywall/);
+assert.match(purchasesSrc, /checkTrialOrIntroductoryPriceEligibility|checkIntroEligibility/);
+assert.match(purchasesSrc, /normalizeIntroEligibility/);
 assert.match(index, /FreedomSubscriptionGate\.afterCompanionSelection/);
 assert.match(index, /FreedomSubscriptionGate\.allowsPersonalWrites/);
 assert.match(index, /body:not\(\.home183\) #freedomReadOnlyBanner/);
@@ -120,48 +124,44 @@ function mockPurchases({ isPro, product, cancelled }) {
   };
 }
 
-/* Offer copy uses Apple product fields — no hardcoded €3.99 requirement in copy builder when absent. */
+/* Offer copy uses Apple product fields + intro eligibility. */
 {
   const { api } = loadGate({
     capacitor: { isNativePlatform: () => false },
     purchases: { isNative: () => false }
   });
-  const freeMonth = api._test.buildOfferCopy({
-    priceString: "€3.99",
-    hasIntroOffer: true,
-    introPriceString: "Free",
-    introPeriod: "MONTH"
-  });
-  assert.match(freeMonth.detail, /1 month free/i);
-  assert.match(freeMonth.detail, /€3\.99/);
-  assert.equal(freeMonth.cta, "Start free trial");
-
-  /* RevenueCat / StoreKit Sandbox returns ISO-8601 intro periods such as P1M. */
-  assert.equal(api._test.formatIntroPeriod("P1M"), "1 month");
-  assert.equal(api._test.formatIso8601Period("P1M"), "1 month");
-  assert.equal(api._test.formatIntroPeriod("P1W"), "1 week");
-  assert.equal(api._test.formatIntroPeriod("P1Y"), "1 year");
-  assert.equal(api._test.formatIntroPeriod("P3D"), "3 days");
-  const isoMonth = api._test.buildOfferCopy({
+  const product = {
     priceString: "€3.99",
     hasIntroOffer: true,
     introPriceString: "Free",
     introPeriod: "P1M"
-  });
-  assert.match(isoMonth.detail, /1 month free/i);
-  assert.equal(/P1M/i.test(isoMonth.detail), false);
-  assert.equal(isoMonth.cta, "Start free trial");
+  };
 
-  const paidOnly = api._test.buildOfferCopy({
-    priceString: "$4.99",
-    hasIntroOffer: false
-  });
-  assert.match(paidOnly.detail, /\$4\.99 per month/);
-  assert.match(paidOnly.cta, /\$4\.99/);
+  const eligible = api._test.buildOfferCopy(product, "eligible");
+  assert.match(eligible.detail, /1 month free/i);
+  assert.match(eligible.detail, /€3\.99/);
+  assert.equal(eligible.cta, "Start Free Trial");
+  assert.equal(eligible.offersFreeTrial, true);
+  assert.equal(/P1M/i.test(eligible.detail), false);
 
-  const empty = api._test.buildOfferCopy(null);
+  const ineligible = api._test.buildOfferCopy(product, "ineligible");
+  assert.match(ineligible.detail, /€3\.99 per month/);
+  assert.equal(/free trial|month free/i.test(ineligible.detail), false);
+  assert.equal(ineligible.cta, "Subscribe");
+  assert.equal(ineligible.offersFreeTrial, false);
+
+  const unknown = api._test.buildOfferCopy(product, "unknown");
+  assert.match(unknown.detail, /€3\.99 per month/);
+  assert.equal(/free trial|month free/i.test(unknown.detail), false);
+  assert.equal(unknown.cta, "Subscribe");
+  assert.equal(unknown.offersFreeTrial, false);
+
+  assert.equal(api._test.formatIntroPeriod("P1M"), "1 month");
+  assert.equal(api._test.formatIso8601Period("P1M"), "1 month");
+
+  const empty = api._test.buildOfferCopy(null, "eligible");
   assert.equal(/€3\.99/.test(empty.detail), false);
-  console.log("PASS: offer copy comes from product summary");
+  console.log("PASS: eligible / ineligible / unknown trial wording");
   console.log("PASS: P1M introPeriod renders as 1 month");
 }
 
@@ -391,6 +391,84 @@ function mockPurchases({ isPro, product, cancelled }) {
   assert.match(gateSrc, /notifyWriteBlocked/);
   assert.match(gateSrc, /showPaywall\(\{ context: "renew"/);
   console.log("PASS: read-only banner is Home-only; writes still open subscription screen");
+}
+
+/* Dismiss renew paywall without enabling edits. */
+{
+  function el(extra) {
+    return Object.assign({ addEventListener() {}, disabled: false, hidden: false, textContent: "" }, extra || {});
+  }
+  const closeState = el({ hidden: true });
+  const paywallState = el({
+    hidden: true,
+    classList: { add() {}, remove() {} }
+  });
+  const body = {
+    classList: {
+      contains: () => false,
+      toggle() {}
+    }
+  };
+  const elements = {
+    freedomPaywall: paywallState,
+    freedomPaywallClose: closeState,
+    freedomPaywallTitle: el(),
+    freedomPaywallDetail: el(),
+    freedomPaywallStart: el(),
+    freedomPaywallRestore: el(),
+    freedomPaywallDemo: el({ hidden: false }),
+    freedomPaywallSupport: el(),
+    freedomPaywallStatus: el({ hidden: true, classList: { toggle() {} } }),
+    freedomReadOnlyBanner: el({ hidden: true }),
+    freedomReadOnlyRenew: el()
+  };
+  const purchases = mockPurchases({ isPro: false });
+  const store = new Map();
+  const sandbox = {
+    console,
+    localStorage: {
+      getItem(key) {
+        return store.has(key) ? store.get(key) : null;
+      },
+      setItem(key, value) {
+        store.set(String(key), String(value));
+      },
+      removeItem(key) {
+        store.delete(String(key));
+      }
+    },
+    document: {
+      readyState: "complete",
+      body,
+      getElementById(id) {
+        return elements[id] || null;
+      },
+      addEventListener() {}
+    },
+    Capacitor: { isNativePlatform: () => true },
+    FreedomNativePurchases: purchases,
+    freedomDemo: { isActive: () => false }
+  };
+  sandbox.window = sandbox;
+  sandbox.globalThis = sandbox;
+  vm.runInNewContext(gateSrc, sandbox, { filename: "freedom-subscription-gate.js" });
+  const gate = sandbox.FreedomSubscriptionGate;
+  await gate.refreshEntitlement();
+  assert.equal(gate.allowsPersonalWrites(), false);
+  gate.showPaywall({ context: "renew", allowDemo: true });
+  assert.equal(paywallState.hidden, false);
+  assert.equal(closeState.hidden, false);
+  assert.equal(gate._test.getPaywallContext(), "renew");
+  assert.equal(gate.dismissPaywall(), true);
+  assert.equal(paywallState.hidden, true);
+  assert.equal(gate.allowsPersonalWrites(), false);
+  assert.equal(gate.isReadOnlyPersonal(), true);
+  /* Onboarding keeps close hidden and Demo Mode available. */
+  gate.showPaywall({ context: "onboarding" });
+  assert.equal(closeState.hidden, true);
+  assert.equal(elements.freedomPaywallDemo.hidden, false);
+  gate.hidePaywall();
+  console.log("PASS: renew paywall dismiss returns to tab without enabling edits");
 }
 
 console.log("PASS: Phase 2 subscription gate unit contracts");

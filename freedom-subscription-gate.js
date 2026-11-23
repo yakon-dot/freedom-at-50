@@ -25,7 +25,8 @@
     refreshed: false,
     isPro: false,
     entitlement: null,
-    product: null
+    product: null,
+    introEligibility: "unknown"
   };
   var paywallContext = "onboarding"; /* onboarding | renew */
   var continueAfterUnlock = null;
@@ -184,42 +185,58 @@
     return "";
   }
 
-  function buildOfferCopy(product) {
+  function isFreeIntroPrice(introPrice) {
+    if (!introPrice) return true;
+    if (/^free$/i.test(String(introPrice).trim())) return true;
+    var digits = String(introPrice).replace(/[^\d.,]/g, "");
+    return digits === "0" || digits === "0.00" || digits === "0,00";
+  }
+
+  /**
+   * Customer-facing offer copy. Trial wording only when Apple/RevenueCat says eligible.
+   * Unknown/ineligible never promises a free trial. Prices always from product fields.
+   */
+  function buildOfferCopy(product, introEligibility) {
     var price = (product && product.priceString) || "";
     var hasIntro = !!(product && product.hasIntroOffer);
     var introPrice = (product && product.introPriceString) || "";
     var introPeriod = formatIntroPeriod(product && product.introPeriod);
+    var eligibility = introEligibility === "eligible" || introEligibility === "ineligible"
+      ? introEligibility
+      : "unknown";
     var headline = "Freedom Premium";
     var detail = "";
     var cta = "Subscribe";
+    var freeIntro = hasIntro && isFreeIntroPrice(introPrice);
+    var canOfferFreeTrial =
+      eligibility === "eligible" && freeIntro && !!introPeriod;
 
-    if (hasIntro && introPeriod) {
-      var freeIntro =
-        !introPrice ||
-        /^free$/i.test(String(introPrice).trim()) ||
-        String(introPrice).replace(/[^\d.,]/g, "") === "0" ||
-        String(introPrice).replace(/[^\d.,]/g, "") === "0.00" ||
-        String(introPrice).replace(/[^\d.,]/g, "") === "0,00";
-      if (freeIntro) {
-        detail = price
-          ? "Start with " + introPeriod + " free, then " + price + " per month."
-          : "Start with " + introPeriod + " free, then continue monthly.";
-        cta = "Start free trial";
-      } else {
-        detail = price
-          ? "Start with " + introPrice + " for " + introPeriod + ", then " + price + " per month."
-          : "Start with " + introPrice + " for " + introPeriod + ".";
-        cta = "Start trial";
-      }
+    if (canOfferFreeTrial) {
+      detail = price
+        ? "Start with " + introPeriod + " free, then " + price + " per month."
+        : "Start with " + introPeriod + " free, then continue monthly.";
+      cta = "Start Free Trial";
+    } else if (eligibility === "eligible" && hasIntro && introPeriod && !freeIntro) {
+      detail = price
+        ? "Start with " + introPrice + " for " + introPeriod + ", then " + price + " per month."
+        : "Start with " + introPrice + " for " + introPeriod + ".";
+      cta = "Start Trial";
     } else if (price) {
       detail = price + " per month. Cancel anytime in your Apple ID settings.";
-      cta = "Subscribe for " + price;
+      cta = "Subscribe";
     } else {
       detail = "Unlock full Freedom on your iPhone. Pricing loads from the App Store.";
-      cta = "Continue";
+      cta = "Subscribe";
     }
 
-    return { headline: headline, detail: detail, cta: cta, priceString: price };
+    return {
+      headline: headline,
+      detail: detail,
+      cta: cta,
+      priceString: price,
+      introEligibility: eligibility,
+      offersFreeTrial: canOfferFreeTrial
+    };
   }
 
   function setStatus(message, isError) {
@@ -238,9 +255,17 @@
     });
   }
 
-  function fillPaywallProduct(product) {
+  function syncPaywallCloseButton() {
+    var closeBtn = byId("freedomPaywallClose");
+    if (!closeBtn) return;
+    /* Dismiss only for renew / read-only restore. Onboarding keeps Demo Mode instead. */
+    closeBtn.hidden = paywallContext !== "renew";
+  }
+
+  function fillPaywallProduct(product, introEligibility) {
     access.product = product || null;
-    var copy = buildOfferCopy(product);
+    if (introEligibility) access.introEligibility = introEligibility;
+    var copy = buildOfferCopy(product, access.introEligibility || "unknown");
     var title = byId("freedomPaywallTitle");
     var detail = byId("freedomPaywallDetail");
     var start = byId("freedomPaywallStart");
@@ -274,23 +299,36 @@
     setStatus("");
     setBusy(false);
     continueAfterUnlock = null;
+    syncPaywallCloseButton();
+  }
+
+  /**
+   * Close renew paywall without changing entitlement or enabling edits.
+   * Leaves the user on the same tab (overlay only).
+   */
+  function dismissPaywall() {
+    if (paywallContext !== "renew") return false;
+    continueAfterUnlock = null;
+    hidePaywall();
+    syncReadOnlyUi();
+    return true;
   }
 
   async function loadOfferingIntoPaywall() {
     var api = purchases();
     if (!api || typeof api.getMonthlyOffering !== "function") {
-      fillPaywallProduct(null);
+      fillPaywallProduct(null, "unknown");
       setStatus("Purchases are not available in this build.", true);
       return null;
     }
     setStatus("Loading offer…");
     var offering = await api.getMonthlyOffering();
     if (!offering || !offering.ok) {
-      fillPaywallProduct(null);
+      fillPaywallProduct(null, "unknown");
       setStatus((offering && offering.error) || "Could not load the App Store offer.", true);
       return offering;
     }
-    fillPaywallProduct(offering.product);
+    fillPaywallProduct(offering.product, offering.introEligibility || "unknown");
     setStatus("");
     return offering;
   }
@@ -311,7 +349,8 @@
     }
     el.hidden = false;
     el.classList.add("is-present");
-    fillPaywallProduct(access.product);
+    syncPaywallCloseButton();
+    fillPaywallProduct(access.product, access.introEligibility || "unknown");
     void loadOfferingIntoPaywall();
   }
 
@@ -476,10 +515,12 @@
     var start = byId("freedomPaywallStart");
     var restore = byId("freedomPaywallRestore");
     var demo = byId("freedomPaywallDemo");
+    var closeBtn = byId("freedomPaywallClose");
     var renew = byId("freedomReadOnlyRenew");
     if (start) start.addEventListener("click", function () { void startPurchase(); });
     if (restore) restore.addEventListener("click", function () { void startRestore(); });
     if (demo) demo.addEventListener("click", function () { continueInDemo(); });
+    if (closeBtn) closeBtn.addEventListener("click", function () { dismissPaywall(); });
     if (renew) {
       renew.addEventListener("click", function () {
         showPaywall({ context: "renew", allowDemo: true });
@@ -524,6 +565,7 @@
     afterCompanionSelection: afterCompanionSelection,
     showPaywall: showPaywall,
     hidePaywall: hidePaywall,
+    dismissPaywall: dismissPaywall,
     notifyWriteBlocked: notifyWriteBlocked,
     startPurchase: startPurchase,
     startRestore: startRestore,
@@ -534,7 +576,8 @@
         refreshed: access.refreshed,
         isPro: access.isPro,
         entitlement: access.entitlement,
-        product: access.product
+        product: access.product,
+        introEligibility: access.introEligibility
       };
     },
     _test: {
@@ -543,8 +586,12 @@
       formatIso8601Period: formatIso8601Period,
       effectiveIsPro: effectiveIsPro,
       applyEntitlement: applyEntitlement,
+      isFreeIntroPrice: isFreeIntroPrice,
       CACHE_KEY: CACHE_KEY,
-      WRITE_BLOCK_SELECTORS: WRITE_BLOCK_SELECTORS
+      WRITE_BLOCK_SELECTORS: WRITE_BLOCK_SELECTORS,
+      getPaywallContext: function () {
+        return paywallContext;
+      }
     }
   };
 })(typeof window !== "undefined" ? window : globalThis);
