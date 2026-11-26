@@ -9,7 +9,9 @@ import puppeteer from "puppeteer-core";
 const index = fs.readFileSync("index.html", "utf8");
 assert.match(index, /function applyJourneyRepaymentToLoan/);
 assert.match(index, /function presentJourneyRepaymentEffects/);
-assert.match(index, /function readJourneyRepaymentAmount/);
+assert.match(index, /function parseJourneyRepaymentField/);
+assert.match(index, /function showJourneyRepaymentInvalid/);
+assert.match(index, /Enter a valid repayment amount greater than zero\./);
 assert.match(index, /journeyRepaymentBusy/);
 assert.match(index, /Your remaining balance is \$\{euro2\(remaining\)\}\. You can enter up to \$\{euro2\(remaining\)\}\./);
 /* Save must call shared apply (not only injectRepay). */
@@ -273,7 +275,7 @@ async function main() {
     console.log("PASS: 6 Save without repayment keeps balance and saves name");
   });
 
-  /* 7) Invalid / negative / excessive amounts */
+  /* 7) Excessive amount on Save — keep value, show over-balance warning */
   await withPage(browser, baseState(), async page => {
     const over = await page.evaluate(() => {
       const before = JSON.parse(localStorage.getItem("freedom50-mobile-v1")).loans[0];
@@ -299,17 +301,113 @@ async function main() {
     assert.equal(over.inputValue, "999");
     assert.equal(over.afterCurrent, 600);
     assert.equal(over.afterLast, 50);
+    console.log("PASS: 7 excessive amount on Save keeps input and warns");
+  });
 
-    const negAdd = await page.evaluate(() => {
+  const INVALID_MSG = "Enter a valid repayment amount greater than zero.";
+
+  /* type=number + min=0 strips many invalid strings; relax constraints so JS validation is exercised. */
+  async function setRawRepayment(page, raw) {
+    await page.evaluate(value => {
       const inp = document.getElementById("loanRepayment_0");
-      inp.value = "-25";
+      inp.removeAttribute("min");
+      inp.type = "text";
+      inp.value = value;
+    }, raw);
+  }
+
+  /* 7b) Negative / non-numeric on Add Repayment — error, keep input, no balance change */
+  await withPage(browser, baseState(), async page => {
+    await setRawRepayment(page, "-25");
+    const neg = await page.evaluate(() => {
       document.querySelector("[data-add-repayment='0']").click();
+      const inp = document.getElementById("loanRepayment_0");
+      const msg = document.querySelector('[data-loan-repayment-msg="0"]');
       const after = JSON.parse(localStorage.getItem("freedom50-mobile-v1")).loans[0];
-      return { current: after.current, last: after.lastRepaymentAmount };
+      return {
+        msgHidden: !!msg?.hidden,
+        msgText: msg?.textContent || "",
+        inputValue: inp.value,
+        current: after.current,
+        last: after.lastRepaymentAmount
+      };
     });
-    assert.equal(negAdd.current, 600);
-    assert.equal(negAdd.last, 50);
-    console.log("PASS: 7 invalid/negative/excessive amounts rejected without discard on over");
+    assert.equal(neg.msgHidden, false);
+    assert.equal(neg.msgText, INVALID_MSG);
+    assert.equal(neg.inputValue, "-25");
+    assert.equal(neg.current, 600);
+    assert.equal(neg.last, 50);
+
+    await setRawRepayment(page, "abc");
+    const nonNumeric = await page.evaluate(() => {
+      document.querySelector("[data-add-repayment='0']").click();
+      const inp = document.getElementById("loanRepayment_0");
+      const msg = document.querySelector('[data-loan-repayment-msg="0"]');
+      const after = JSON.parse(localStorage.getItem("freedom50-mobile-v1")).loans[0];
+      return {
+        msgHidden: !!msg?.hidden,
+        msgText: msg?.textContent || "",
+        inputValue: inp.value,
+        current: after.current,
+        last: after.lastRepaymentAmount
+      };
+    });
+    assert.equal(nonNumeric.msgHidden, false);
+    assert.equal(nonNumeric.msgText, INVALID_MSG);
+    assert.equal(nonNumeric.inputValue, "abc");
+    assert.equal(nonNumeric.current, 600);
+    assert.equal(nonNumeric.last, 50);
+    console.log("PASS: 7b Add Repayment rejects negative and non-numeric with visible error");
+  });
+
+  /* 7c) Negative / non-numeric on Save — error, keep input, do not save plan changes */
+  await withPage(browser, baseState(), async page => {
+    await setRawRepayment(page, "-10");
+    const negSave = await page.evaluate(() => {
+      const name = document.querySelector('input[data-loan="0"][data-field="name"]');
+      if (name) name.value = "Should Not Save";
+      document.querySelector("[data-save-loan='0']").click();
+      const inp = document.getElementById("loanRepayment_0");
+      const msg = document.querySelector('[data-loan-repayment-msg="0"]');
+      const after = JSON.parse(localStorage.getItem("freedom50-mobile-v1")).loans[0];
+      return {
+        msgHidden: !!msg?.hidden,
+        msgText: msg?.textContent || "",
+        inputValue: inp.value,
+        current: after.current,
+        last: after.lastRepaymentAmount,
+        name: after.name
+      };
+    });
+    assert.equal(negSave.msgHidden, false);
+    assert.equal(negSave.msgText, INVALID_MSG);
+    assert.equal(negSave.inputValue, "-10");
+    assert.equal(negSave.current, 600);
+    assert.equal(negSave.last, 50);
+    assert.equal(negSave.name, "REPAY-SAVE");
+
+    await setRawRepayment(page, "12e");
+    const junkSave = await page.evaluate(() => {
+      const name = document.querySelector('input[data-loan="0"][data-field="name"]');
+      if (name) name.value = "Still Should Not Save";
+      document.querySelector("[data-save-loan='0']").click();
+      const inp = document.getElementById("loanRepayment_0");
+      const msg = document.querySelector('[data-loan-repayment-msg="0"]');
+      const after = JSON.parse(localStorage.getItem("freedom50-mobile-v1")).loans[0];
+      return {
+        msgHidden: !!msg?.hidden,
+        msgText: msg?.textContent || "",
+        inputValue: inp.value,
+        current: after.current,
+        name: after.name
+      };
+    });
+    assert.equal(junkSave.msgHidden, false);
+    assert.equal(junkSave.msgText, INVALID_MSG);
+    assert.equal(junkSave.inputValue, "12e");
+    assert.equal(junkSave.current, 600);
+    assert.equal(junkSave.name, "REPAY-SAVE");
+    console.log("PASS: 7c Save rejects negative and non-numeric without applying plan changes");
   });
 
   /* 8) Repayment equal to remaining balance */
