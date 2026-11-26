@@ -33,6 +33,17 @@ assert.match(index, /body:not\(\.home183\) #freedomReadOnlyBanner/);
 assert.match(index, /#freedomReadOnlyBanner\{[^}]*bottom:\s*0/s);
 assert.equal(/data-more183="restorePurchases"/.test(index), false);
 assert.match(index, /id="freedomPaywallRestore"/);
+const onboardingSupport =
+  "Create and manage your Journeys, Goals, Pension and Notes. Track your progress with encouragement from your chosen companion. Explore Demo Mode anytime. Your personal numbers stay on this iPhone.";
+const renewSupport =
+  "Your information is still here. Restore full access to your Journeys, Goals, Pension and Notes to continue tracking your progress.";
+assert.match(
+  index,
+  /id="freedomPaywallSupport">Create and manage your Journeys, Goals, Pension and Notes\. Track your progress with encouragement from your chosen companion\. Explore Demo Mode anytime\. Your personal numbers stay on this iPhone\.</
+);
+assert.match(gateSrc, new RegExp(onboardingSupport.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+assert.match(gateSrc, new RegExp(renewSupport.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+assert.equal(onboardingSupport.includes("—") || renewSupport.includes("—"), false);
 assert.match(prepare, /freedom-subscription-gate\.js/);
 assert.match(sw, /freedom-subscription-gate\.js/);
 assert.equal(!!pkg.scripts["test:subscription-gate"], true);
@@ -459,6 +470,10 @@ function mockPurchases({ isPro, product, cancelled }) {
   assert.equal(paywallState.hidden, false);
   assert.equal(closeState.hidden, false);
   assert.equal(gate._test.getPaywallContext(), "renew");
+  assert.equal(
+    elements.freedomPaywallSupport.textContent,
+    "Your information is still here. Restore full access to your Journeys, Goals, Pension and Notes to continue tracking your progress."
+  );
   assert.equal(gate.dismissPaywall(), true);
   assert.equal(paywallState.hidden, true);
   assert.equal(gate.allowsPersonalWrites(), false);
@@ -467,6 +482,10 @@ function mockPurchases({ isPro, product, cancelled }) {
   gate.showPaywall({ context: "onboarding" });
   assert.equal(closeState.hidden, true);
   assert.equal(elements.freedomPaywallDemo.hidden, false);
+  assert.equal(
+    elements.freedomPaywallSupport.textContent,
+    "Create and manage your Journeys, Goals, Pension and Notes. Track your progress with encouragement from your chosen companion. Explore Demo Mode anytime. Your personal numbers stay on this iPhone."
+  );
   gate.hidePaywall();
   console.log("PASS: renew paywall dismiss returns to tab without enabling edits");
 }

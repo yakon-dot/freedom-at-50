@@ -276,8 +276,8 @@
     if (support) {
       support.textContent =
         paywallContext === "renew"
-          ? "Your information is still here. Restore access to keep making changes."
-          : "Explore Demo Mode anytime. Your personal numbers stay on this iPhone.";
+          ? "Your information is still here. Restore full access to your Journeys, Goals, Pension and Notes to continue tracking your progress."
+          : "Create and manage your Journeys, Goals, Pension and Notes. Track your progress with encouragement from your chosen companion. Explore Demo Mode anytime. Your personal numbers stay on this iPhone.";
     }
   }
 
