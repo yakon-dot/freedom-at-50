@@ -33,6 +33,17 @@ assert.match(index, /body:not\(\.home183\) #freedomReadOnlyBanner/);
 assert.match(index, /#freedomReadOnlyBanner\{[^}]*bottom:\s*0/s);
 assert.equal(/data-more183="restorePurchases"/.test(index), false);
 assert.match(index, /id="freedomPaywallRestore"/);
+const onboardingSupport =
+  "Create and manage your Journeys, Goals, Pension and Notes. Track your progress with encouragement from your chosen companion. Explore Demo Mode anytime. Your personal numbers stay on this iPhone.";
+const renewSupport =
+  "Your information is still here. Restore full access to your Journeys, Goals, Pension and Notes to continue tracking your progress.";
+assert.match(
+  index,
+  /id="freedomPaywallSupport">Create and manage your Journeys, Goals, Pension and Notes\. Track your progress with encouragement from your chosen companion\. Explore Demo Mode anytime\. Your personal numbers stay on this iPhone\.</
+);
+assert.match(gateSrc, new RegExp(onboardingSupport.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+assert.match(gateSrc, new RegExp(renewSupport.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+assert.equal(onboardingSupport.includes("—") || renewSupport.includes("—"), false);
 assert.match(prepare, /freedom-subscription-gate\.js/);
 assert.match(sw, /freedom-subscription-gate\.js/);
 assert.equal(!!pkg.scripts["test:subscription-gate"], true);
@@ -140,21 +151,47 @@ function mockPurchases({ isPro, product, cancelled }) {
   const eligible = api._test.buildOfferCopy(product, "eligible");
   assert.match(eligible.detail, /1 month free/i);
   assert.match(eligible.detail, /€3\.99/);
+  assert.equal(
+    eligible.detail,
+    "Start with 1 month free, then €3.99 per month. Renews automatically unless cancelled."
+  );
   assert.equal(eligible.cta, "Start Free Trial");
   assert.equal(eligible.offersFreeTrial, true);
   assert.equal(/P1M/i.test(eligible.detail), false);
 
   const ineligible = api._test.buildOfferCopy(product, "ineligible");
-  assert.match(ineligible.detail, /€3\.99 per month/);
+  assert.equal(
+    ineligible.detail,
+    "€3.99 per month. Renews automatically unless cancelled in your Apple ID settings."
+  );
   assert.equal(/free trial|month free/i.test(ineligible.detail), false);
   assert.equal(ineligible.cta, "Subscribe");
   assert.equal(ineligible.offersFreeTrial, false);
 
   const unknown = api._test.buildOfferCopy(product, "unknown");
-  assert.match(unknown.detail, /€3\.99 per month/);
+  assert.equal(
+    unknown.detail,
+    "€3.99 per month. Renews automatically unless cancelled in your Apple ID settings."
+  );
   assert.equal(/free trial|month free/i.test(unknown.detail), false);
   assert.equal(unknown.cta, "Subscribe");
   assert.equal(unknown.offersFreeTrial, false);
+
+  const paidIntro = api._test.buildOfferCopy(
+    {
+      priceString: "€3.99",
+      hasIntroOffer: true,
+      introPriceString: "€0.99",
+      introPeriod: "P1W"
+    },
+    "eligible"
+  );
+  assert.equal(
+    paidIntro.detail,
+    "Start with €0.99 for 1 week, then €3.99 per month. Renews automatically unless cancelled."
+  );
+  assert.equal(paidIntro.cta, "Start Trial");
+  assert.equal(paidIntro.offersFreeTrial, false);
 
   assert.equal(api._test.formatIntroPeriod("P1M"), "1 month");
   assert.equal(api._test.formatIso8601Period("P1M"), "1 month");
@@ -162,6 +199,7 @@ function mockPurchases({ isPro, product, cancelled }) {
   const empty = api._test.buildOfferCopy(null, "eligible");
   assert.equal(/€3\.99/.test(empty.detail), false);
   console.log("PASS: eligible / ineligible / unknown trial wording");
+  console.log("PASS: paid-intro and auto-renew disclosure wording");
   console.log("PASS: P1M introPeriod renders as 1 month");
 }
 
@@ -459,6 +497,10 @@ function mockPurchases({ isPro, product, cancelled }) {
   assert.equal(paywallState.hidden, false);
   assert.equal(closeState.hidden, false);
   assert.equal(gate._test.getPaywallContext(), "renew");
+  assert.equal(
+    elements.freedomPaywallSupport.textContent,
+    "Your information is still here. Restore full access to your Journeys, Goals, Pension and Notes to continue tracking your progress."
+  );
   assert.equal(gate.dismissPaywall(), true);
   assert.equal(paywallState.hidden, true);
   assert.equal(gate.allowsPersonalWrites(), false);
@@ -467,6 +509,10 @@ function mockPurchases({ isPro, product, cancelled }) {
   gate.showPaywall({ context: "onboarding" });
   assert.equal(closeState.hidden, true);
   assert.equal(elements.freedomPaywallDemo.hidden, false);
+  assert.equal(
+    elements.freedomPaywallSupport.textContent,
+    "Create and manage your Journeys, Goals, Pension and Notes. Track your progress with encouragement from your chosen companion. Explore Demo Mode anytime. Your personal numbers stay on this iPhone."
+  );
   gate.hidePaywall();
   console.log("PASS: renew paywall dismiss returns to tab without enabling edits");
 }
