@@ -213,16 +213,18 @@
 
     if (canOfferFreeTrial) {
       detail = price
-        ? "Start with " + introPeriod + " free, then " + price + " per month."
-        : "Start with " + introPeriod + " free, then continue monthly.";
+        ? "Start with " + introPeriod + " free, then " + price + " per month. Renews automatically unless cancelled."
+        : "Start with " + introPeriod + " free, then continue monthly. Renews automatically unless cancelled.";
       cta = "Start Free Trial";
     } else if (eligibility === "eligible" && hasIntro && introPeriod && !freeIntro) {
       detail = price
-        ? "Start with " + introPrice + " for " + introPeriod + ", then " + price + " per month."
-        : "Start with " + introPrice + " for " + introPeriod + ".";
+        ? "Start with " + introPrice + " for " + introPeriod + ", then " + price + " per month. Renews automatically unless cancelled."
+        : "Start with " + introPrice + " for " + introPeriod + ". Renews automatically unless cancelled.";
       cta = "Start Trial";
     } else if (price) {
-      detail = price + " per month. Cancel anytime in your Apple ID settings.";
+      detail =
+        price +
+        " per month. Renews automatically unless cancelled in your Apple ID settings.";
       cta = "Subscribe";
     } else {
       detail = "Unlock full Freedom on your iPhone. Pricing loads from the App Store.";

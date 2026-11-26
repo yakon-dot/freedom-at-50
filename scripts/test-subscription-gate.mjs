@@ -151,21 +151,47 @@ function mockPurchases({ isPro, product, cancelled }) {
   const eligible = api._test.buildOfferCopy(product, "eligible");
   assert.match(eligible.detail, /1 month free/i);
   assert.match(eligible.detail, /€3\.99/);
+  assert.equal(
+    eligible.detail,
+    "Start with 1 month free, then €3.99 per month. Renews automatically unless cancelled."
+  );
   assert.equal(eligible.cta, "Start Free Trial");
   assert.equal(eligible.offersFreeTrial, true);
   assert.equal(/P1M/i.test(eligible.detail), false);
 
   const ineligible = api._test.buildOfferCopy(product, "ineligible");
-  assert.match(ineligible.detail, /€3\.99 per month/);
+  assert.equal(
+    ineligible.detail,
+    "€3.99 per month. Renews automatically unless cancelled in your Apple ID settings."
+  );
   assert.equal(/free trial|month free/i.test(ineligible.detail), false);
   assert.equal(ineligible.cta, "Subscribe");
   assert.equal(ineligible.offersFreeTrial, false);
 
   const unknown = api._test.buildOfferCopy(product, "unknown");
-  assert.match(unknown.detail, /€3\.99 per month/);
+  assert.equal(
+    unknown.detail,
+    "€3.99 per month. Renews automatically unless cancelled in your Apple ID settings."
+  );
   assert.equal(/free trial|month free/i.test(unknown.detail), false);
   assert.equal(unknown.cta, "Subscribe");
   assert.equal(unknown.offersFreeTrial, false);
+
+  const paidIntro = api._test.buildOfferCopy(
+    {
+      priceString: "€3.99",
+      hasIntroOffer: true,
+      introPriceString: "€0.99",
+      introPeriod: "P1W"
+    },
+    "eligible"
+  );
+  assert.equal(
+    paidIntro.detail,
+    "Start with €0.99 for 1 week, then €3.99 per month. Renews automatically unless cancelled."
+  );
+  assert.equal(paidIntro.cta, "Start Trial");
+  assert.equal(paidIntro.offersFreeTrial, false);
 
   assert.equal(api._test.formatIntroPeriod("P1M"), "1 month");
   assert.equal(api._test.formatIso8601Period("P1M"), "1 month");
@@ -173,6 +199,7 @@ function mockPurchases({ isPro, product, cancelled }) {
   const empty = api._test.buildOfferCopy(null, "eligible");
   assert.equal(/€3\.99/.test(empty.detail), false);
   console.log("PASS: eligible / ineligible / unknown trial wording");
+  console.log("PASS: paid-intro and auto-renew disclosure wording");
   console.log("PASS: P1M introPeriod renders as 1 month");
 }
 
