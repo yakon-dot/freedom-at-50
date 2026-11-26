@@ -12037,6 +12037,141 @@ function setupGoalReorder(list){
     card.addEventListener("pointercancel",onEnd);
   });
 }
+/* Shared Journey repayment apply — used by + Add repayment and Save.
+   Clears the amount field only after a successful commit. Busy map blocks rapid double-apply. */
+const journeyRepaymentBusy={};
+function clearJourneyRepaymentMessage(i){
+  const msgEl=document.querySelector(`[data-loan-repayment-msg="${i}"]`);
+  if(msgEl){msgEl.textContent="";msgEl.hidden=true;}
+}
+function showJourneyRepaymentMessage(i,text){
+  const msgEl=document.querySelector(`[data-loan-repayment-msg="${i}"]`);
+  const input=byId(`loanRepayment_${i}`);
+  if(msgEl){
+    msgEl.textContent=text;
+    msgEl.hidden=false;
+    msgEl.setAttribute("role","alert");
+    msgEl.setAttribute("aria-live","assertive");
+    try{msgEl.scrollIntoView({block:"nearest",behavior:"smooth"});}catch(err){}
+  }
+  try{loanMoneySectionOpen[i]=true;}catch(err){}
+  input?.focus();
+}
+function showJourneyRepaymentOverBalance(i,remaining){
+  showJourneyRepaymentMessage(i,`Your remaining balance is ${euro2(remaining)}. You can enter up to ${euro2(remaining)}.`);
+}
+function showJourneyRepaymentInvalid(i){
+  showJourneyRepaymentMessage(i,"Enter a valid repayment amount greater than zero.");
+}
+/**
+ * Parse the repayment field (or TEMP preview override).
+ * Empty / blank / explicit 0 → empty (no repayment, no error).
+ * Negative or non-numeric → invalid (caller must show error and keep the input).
+ */
+function parseJourneyRepaymentField(i,amountOverride){
+  if(amountOverride!=null&&Number(amountOverride)>0){
+    return{ok:true,empty:false,invalid:false,amount:Math.round(Number(amountOverride)*100)/100};
+  }
+  const input=byId(`loanRepayment_${i}`);
+  const raw=String(input&&input.value!=null?input.value:"").trim();
+  if(!raw)return{ok:true,empty:true,invalid:false,amount:0};
+  const num=Number(raw);
+  if(!isFinite(num)||num<0){
+    return{ok:false,empty:false,invalid:true,amount:0,raw:raw};
+  }
+  if(num===0)return{ok:true,empty:true,invalid:false,amount:0};
+  return{ok:true,empty:false,invalid:false,amount:Math.round(num*100)/100};
+}
+function readJourneyRepaymentAmount(i,amountOverride){
+  const parsed=parseJourneyRepaymentField(i,amountOverride);
+  if(!parsed.ok||parsed.invalid||parsed.empty)return 0;
+  return parsed.amount;
+}
+/** Validate + mutate loan. Does not persist, render, or present companion effects. */
+function applyJourneyRepaymentToLoan(i,opts){
+  opts=opts||{};
+  const loan=state.loans[i];
+  if(!loan)return{ok:false,applied:false,amount:0,reason:"missing"};
+  const parsed=parseJourneyRepaymentField(i,opts.amountOverride);
+  if(parsed.invalid){
+    showJourneyRepaymentInvalid(i);
+    return{ok:false,applied:false,amount:0,reason:"invalid",loan:loan,loanIndex:i};
+  }
+  const amount=parsed.amount||0;
+  if(!amount||parsed.empty){
+    clearJourneyRepaymentMessage(i);
+    return{ok:true,applied:false,amount:0,loan:loan,loanIndex:i};
+  }
+  const remaining=Math.round(Math.max(0,Number(loan.current)||0)*100)/100;
+  if(amount>remaining){
+    showJourneyRepaymentOverBalance(i,remaining);
+    return{ok:false,applied:false,amount:amount,remaining:remaining,reason:"over",loan:loan,loanIndex:i};
+  }
+  clearJourneyRepaymentMessage(i);
+  const prevCurrent=loan.current;
+  const prevFreedomDate=calculatedFreedomDate(prevCurrent,loan.payment);
+  const isFirstActualRepayment=loan.firstRepaymentCompanionConsumed!==true&&!loan.lastRepaymentDate;
+  const hadPriorGenuineRepayment=loan.firstRepaymentCompanionConsumed===true||!!loan.lastRepaymentDate;
+  const wasDormantBeforeProgress=isMeaningfulProgressDormant(loan.lastMeaningfulProgressAt);
+  loan.current=Math.max(0,Math.round((loan.current-amount)*100)/100);
+  loan.lastRepaymentAmount=amount;
+  loan.lastRepaymentDate=new Date().toISOString();
+  if(amount>0&&loan.current<prevCurrent){
+    loan.lastMeaningfulProgressAt=new Date().toISOString();
+  }
+  if(isFirstActualRepayment)loan.firstRepaymentCompanionConsumed=true;
+  const starting=Math.max(0,Number(loan.starting)||0);
+  const prevProgress=starting?Math.max(0,(starting-prevCurrent)/starting):0;
+  const nextProgress=starting?Math.max(0,(starting-loan.current)/starting):0;
+  if(opts.collapseOnFirst!==false&&isFirstActualRepayment)loan.collapsed=true;
+  const input=byId(`loanRepayment_${i}`);
+  if(input)input.value="";
+  return{
+    ok:true,
+    applied:true,
+    amount:amount,
+    loan:loan,
+    loanIndex:i,
+    prevCurrent:prevCurrent,
+    prevFreedomDate:prevFreedomDate,
+    prevProgress:prevProgress,
+    nextProgress:nextProgress,
+    wasDormantBeforeProgress:wasDormantBeforeProgress,
+    hadPriorGenuineRepayment:hadPriorGenuineRepayment,
+    isFirstActualRepayment:isFirstActualRepayment
+  };
+}
+function presentJourneyRepaymentEffects(result){
+  if(!result||!result.applied||!(result.amount>0))return;
+  const loan=result.loan;
+  const i=result.loanIndex;
+  const amount=result.amount;
+  const prevCurrent=result.prevCurrent;
+  const prevFreedomDate=result.prevFreedomDate;
+  const prevProgress=result.prevProgress;
+  const nextProgress=result.nextProgress;
+  const wasDormantBeforeProgress=result.wasDormantBeforeProgress;
+  const hadPriorGenuineRepayment=result.hadPriorGenuineRepayment;
+  /* Priority: completion > 50% > dormant > positive-pattern > freedom-date > ordinary.
+     First genuine repayment stays silent for ordinary/freedom-date. Progress still counts for pattern. */
+  if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.record==="function"){
+    window.FreedomPositivePattern.record();
+  }
+  if(checkJourneyCompletionCelebration(loan,prevCurrent)){
+    /* completion already marks milestoneExperienced */
+  }else if(checkJourneyMilestoneCelebration(loan,prevProgress,nextProgress)){
+    /* 50% owns this interaction */
+  }else if(window.FreedomCompanionDormantReturn&&typeof window.FreedomCompanionDormantReturn.tryJourney==="function"&&window.FreedomCompanionDormantReturn.tryJourney({loan:loan,loanIndex:i,amount:amount,wasDormant:wasDormantBeforeProgress,prevCurrent:prevCurrent})){
+    persist();
+  }else if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.tryPresent==="function"&&window.FreedomPositivePattern.tryPresent("journey")){
+    /* positive-pattern owns this interaction */
+  }else if(hadPriorGenuineRepayment&&amount>0&&loan.current<prevCurrent&&window.FreedomDateRecognition&&typeof window.FreedomDateRecognition.tryJourney==="function"&&window.FreedomDateRecognition.tryJourney({loan:loan,prevFreedomDate:prevFreedomDate,nextFreedomDate:calculatedFreedomDate(loan.current,loan.payment),amount:amount})){
+    persist();
+  }else if(hadPriorGenuineRepayment&&amount>0&&loan.current<prevCurrent&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryJourney==="function"){
+    const ordinary=window.FreedomOrdinaryProgress.tryJourney(loan,i);
+    if(ordinary&&ordinary.changed)persist();
+  }
+}
 function renderLoans(){
   const list=byId("loanList");
   list.innerHTML="";
@@ -12237,66 +12372,20 @@ function renderLoans(){
   list.querySelectorAll("[data-add-repayment]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
     const i=Number(btn.dataset.addRepayment);
-    const loan=state.loans[i];
-    if(!loan)return;
-    const input=byId(`loanRepayment_${i}`);
-    const msgEl=list.querySelector(`[data-loan-repayment-msg="${i}"]`);
-    const amount=Math.round(Math.max(0,Number(input?.value)||0)*100)/100;
-    if(!amount){
-      if(msgEl){msgEl.textContent="";msgEl.hidden=true;}
-      input?.focus();
-      return;
-    }
-    const remaining=Math.round(Math.max(0,Number(loan.current)||0)*100)/100;
-    if(amount>remaining){
-      if(msgEl){
-        msgEl.textContent=`Your remaining balance is ${euro2(remaining)}. You can enter up to ${euro2(remaining)}.`;
-        msgEl.hidden=false;
-        msgEl.setAttribute("role","alert");
-        msgEl.setAttribute("aria-live","assertive");
-        try{msgEl.scrollIntoView({block:"nearest",behavior:"smooth"});}catch(err){}
+    if(!state.loans[i])return;
+    if(journeyRepaymentBusy[i])return;
+    journeyRepaymentBusy[i]=true;
+    try{
+      const result=applyJourneyRepaymentToLoan(i);
+      if(!result.ok)return;
+      if(!result.applied){
+        byId(`loanRepayment_${i}`)?.focus();
+        return;
       }
-      /* Keep Money movements open so the warning stays in view. */
-      try{loanMoneySectionOpen[i]=true;}catch(err){}
-      input?.focus();
-      return;
-    }
-    if(msgEl){msgEl.textContent="";msgEl.hidden=true;}
-    const prevCurrent=loan.current;
-    const prevFreedomDate=calculatedFreedomDate(prevCurrent,loan.payment);
-    const isFirstActualRepayment=loan.firstRepaymentCompanionConsumed!==true&&!loan.lastRepaymentDate;
-    const hadPriorGenuineRepayment=loan.firstRepaymentCompanionConsumed===true||!!loan.lastRepaymentDate;
-    const wasDormantBeforeProgress=isMeaningfulProgressDormant(loan.lastMeaningfulProgressAt);
-    loan.current=Math.max(0,Math.round((loan.current-amount)*100)/100);
-    loan.lastRepaymentAmount=amount;
-    loan.lastRepaymentDate=new Date().toISOString();
-    if(amount>0&&loan.current<prevCurrent){
-      loan.lastMeaningfulProgressAt=new Date().toISOString();
-    }
-    if(isFirstActualRepayment)loan.firstRepaymentCompanionConsumed=true;
-    const starting=Math.max(0,Number(loan.starting)||0);
-    const prevProgress=starting?Math.max(0,(starting-prevCurrent)/starting):0;
-    const nextProgress=starting?Math.max(0,(starting-loan.current)/starting):0;
-    if(isFirstActualRepayment)loan.collapsed=true;
-    persist();render();
-    /* Priority: completion > 50% > dormant > positive-pattern > freedom-date > ordinary.
-       First genuine repayment stays silent for ordinary/freedom-date. Progress still counts for pattern. */
-    if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.record==="function"){
-      window.FreedomPositivePattern.record();
-    }
-    if(checkJourneyCompletionCelebration(loan,prevCurrent)){
-      /* completion already marks milestoneExperienced */
-    }else if(checkJourneyMilestoneCelebration(loan,prevProgress,nextProgress)){
-      /* 50% owns this interaction */
-    }else if(window.FreedomCompanionDormantReturn&&typeof window.FreedomCompanionDormantReturn.tryJourney==="function"&&window.FreedomCompanionDormantReturn.tryJourney({loan:loan,loanIndex:i,amount:amount,wasDormant:wasDormantBeforeProgress,prevCurrent:prevCurrent})){
-      persist();
-    }else if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.tryPresent==="function"&&window.FreedomPositivePattern.tryPresent("journey")){
-      /* positive-pattern owns this interaction */
-    }else if(hadPriorGenuineRepayment&&amount>0&&loan.current<prevCurrent&&window.FreedomDateRecognition&&typeof window.FreedomDateRecognition.tryJourney==="function"&&window.FreedomDateRecognition.tryJourney({loan:loan,prevFreedomDate:prevFreedomDate,nextFreedomDate:calculatedFreedomDate(loan.current,loan.payment),amount:amount})){
-      persist();
-    }else if(hadPriorGenuineRepayment&&amount>0&&loan.current<prevCurrent&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryJourney==="function"){
-      const ordinary=window.FreedomOrdinaryProgress.tryJourney(loan,i);
-      if(ordinary&&ordinary.changed)persist();
+      persist();render();
+      presentJourneyRepaymentEffects(result);
+    }finally{
+      journeyRepaymentBusy[i]=false;
     }
   }));
   list.querySelectorAll("[data-save-loan]").forEach(btn=>btn.addEventListener("click",e=>{
@@ -12306,12 +12395,36 @@ function renderLoans(){
     if(freedomSaveFeedback.busy(saveKey)||!freedomSaveFeedback.begin(saveKey))return;
     const loan=state.loans[i];
     if(!loan){freedomSaveFeedback.cancel(saveKey);return;}
+    if(journeyRepaymentBusy[i]){freedomSaveFeedback.cancel(saveKey);return;}
     const card=btn.closest(".loan-card");
     const nameEl=card?.querySelector(`input[data-loan="${i}"][data-field="name"]`);
     const paymentEl=card?.querySelector(`input[data-loan="${i}"][data-field="payment"]`);
     const dateEl=card?.querySelector(`input[data-loan="${i}"][data-field="freedomDate"]`);
     const modeBtn=card?.querySelector(`[data-loan-mode="${i}"].active`);
     const renameOldName=loan.name||"";
+    /* TEMP DEV ONLY — renameFlow / positivePattern seeds may inject a repayment on Save. */
+    const renameFlow=window.__FREEDOM_RENAME_FLOW__;
+    const patternFlow=window.__FREEDOM_POSITIVE_PATTERN__;
+    const injectRepay=(renameFlow&&(renameFlow.kind==="journey-half"||renameFlow.kind==="journey-wake")&&Number(renameFlow.injectRepay)>0)
+      ?Number(renameFlow.injectRepay)
+      :((patternFlow&&Number(patternFlow.injectRepay)>0)?Number(patternFlow.injectRepay):0);
+    /* Validate field repayment before mutating plan settings so invalid amounts are not discarded silently. */
+    if(!(injectRepay>0)){
+      const peek=parseJourneyRepaymentField(i);
+      if(peek.invalid){
+        showJourneyRepaymentInvalid(i);
+        freedomSaveFeedback.cancel(saveKey);
+        return;
+      }
+      if(peek.amount>0){
+        const remaining=Math.round(Math.max(0,Number(loan.current)||0)*100)/100;
+        if(peek.amount>remaining){
+          showJourneyRepaymentOverBalance(i,remaining);
+          freedomSaveFeedback.cancel(saveKey);
+          return;
+        }
+      }
+    }
     if(nameEl&&!applyLoanField(i,"name",nameEl.value)){
       nameEl.value=loan.name;
       nameEl.focus();
@@ -12325,63 +12438,31 @@ function renderLoans(){
     const genuineRename=window.FreedomRenameAck&&typeof window.FreedomRenameAck.isGenuineRename==="function"
       ?window.FreedomRenameAck.isGenuineRename(renameOldName,renameNewName)
       :false;
-    /* TEMP DEV ONLY — renameFlow / positivePattern seeds may inject a repayment on Save. */
-    const renameFlow=window.__FREEDOM_RENAME_FLOW__;
-    const patternFlow=window.__FREEDOM_POSITIVE_PATTERN__;
-    const injectRepay=(renameFlow&&(renameFlow.kind==="journey-half"||renameFlow.kind==="journey-wake")&&Number(renameFlow.injectRepay)>0)
-      ?Number(renameFlow.injectRepay)
-      :((patternFlow&&Number(patternFlow.injectRepay)>0)?Number(patternFlow.injectRepay):0);
-    let amount=0;
-    let prevCurrent=loan.current;
-    let prevFreedomDate=null;
-    let prevProgress=null;
-    let nextProgress=null;
-    let wasDormantBeforeProgress=false;
-    let hadPriorGenuineRepayment=false;
-    if(injectRepay>0){
-      amount=injectRepay;
-      prevCurrent=loan.current;
-      prevFreedomDate=calculatedFreedomDate(prevCurrent,loan.payment);
-      hadPriorGenuineRepayment=loan.firstRepaymentCompanionConsumed===true||!!loan.lastRepaymentDate;
-      wasDormantBeforeProgress=isMeaningfulProgressDormant(loan.lastMeaningfulProgressAt);
-      const starting=Math.max(0,Number(loan.starting)||0);
-      prevProgress=starting?Math.max(0,(starting-prevCurrent)/starting):0;
-      loan.current=Math.max(0,Math.round((loan.current-amount)*100)/100);
-      loan.lastRepaymentAmount=amount;
-      loan.lastRepaymentDate=new Date().toISOString();
-      if(amount>0&&loan.current<prevCurrent){
-        loan.lastMeaningfulProgressAt=new Date().toISOString();
+    journeyRepaymentBusy[i]=true;
+    let repayResult={ok:true,applied:false,amount:0};
+    try{
+      /* Inject override (preview) wins; otherwise apply any amount still in the repayment field. */
+      repayResult=applyJourneyRepaymentToLoan(i,injectRepay>0
+        ?{amountOverride:injectRepay,collapseOnFirst:false}
+        :{collapseOnFirst:false});
+      if(!repayResult.ok){
+        freedomSaveFeedback.cancel(saveKey);
+        return;
       }
-      if(loan.firstRepaymentCompanionConsumed!==true&&!hadPriorGenuineRepayment){
-        loan.firstRepaymentCompanionConsumed=true;
+      persist();render();
+      if(repayResult.applied){
+        presentJourneyRepaymentEffects(repayResult);
+      }else if(genuineRename&&window.FreedomRenameAck&&typeof window.FreedomRenameAck.tryPresent==="function"){
+        window.FreedomRenameAck.tryPresent({kind:"journey",newName:renameNewName});
       }
-      nextProgress=starting?Math.max(0,(starting-loan.current)/starting):0;
+      const freshBtn=document.querySelector(`#loanList [data-save-loan="${i}"]`);
+      freedomSaveFeedback.afterSuccess(saveKey,freshBtn,()=>{
+        const live=state.loans[i];
+        if(live&&!live.collapsed)toggleLoanCollapsed(i);
+      });
+    }finally{
+      journeyRepaymentBusy[i]=false;
     }
-    persist();render();
-    /* Priority: completion > 50% > dormant > positive-pattern > freedom-date > ordinary > rename. */
-    if(amount>0&&loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.record==="function"){
-      window.FreedomPositivePattern.record();
-    }
-    if(amount>0){
-      if(checkJourneyCompletionCelebration(loan,prevCurrent)){
-        /* completion owns this Save */
-      }else if(checkJourneyMilestoneCelebration(loan,prevProgress,nextProgress)){
-        /* 50% owns this Save */
-      }else if(window.FreedomCompanionDormantReturn&&typeof window.FreedomCompanionDormantReturn.tryJourney==="function"&&window.FreedomCompanionDormantReturn.tryJourney({loan:loan,loanIndex:i,amount:amount,wasDormant:wasDormantBeforeProgress,prevCurrent:prevCurrent})){
-        persist();
-      }else if(loan.current<prevCurrent&&window.FreedomPositivePattern&&typeof window.FreedomPositivePattern.tryPresent==="function"&&window.FreedomPositivePattern.tryPresent("journey")){
-        /* positive-pattern owns this Save */
-      }else if(hadPriorGenuineRepayment&&loan.current<prevCurrent&&window.FreedomDateRecognition&&typeof window.FreedomDateRecognition.tryJourney==="function"&&window.FreedomDateRecognition.tryJourney({loan:loan,prevFreedomDate:prevFreedomDate,nextFreedomDate:calculatedFreedomDate(loan.current,loan.payment),amount:amount})){
-        persist();
-      }else if(hadPriorGenuineRepayment&&loan.current<prevCurrent&&window.FreedomOrdinaryProgress&&typeof window.FreedomOrdinaryProgress.tryJourney==="function"){
-        const ordinary=window.FreedomOrdinaryProgress.tryJourney(loan,i);
-        if(ordinary&&ordinary.changed)persist();
-      }
-    }else if(genuineRename&&window.FreedomRenameAck&&typeof window.FreedomRenameAck.tryPresent==="function"){
-      window.FreedomRenameAck.tryPresent({kind:"journey",newName:renameNewName});
-    }
-    const freshBtn=document.querySelector(`#loanList [data-save-loan="${i}"]`);
-    freedomSaveFeedback.afterSuccess(saveKey,freshBtn,()=>toggleLoanCollapsed(i));
   }));
   list.querySelectorAll("[data-archive-loan]").forEach(btn=>btn.addEventListener("click",e=>{
     e.stopPropagation();
