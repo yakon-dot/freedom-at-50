@@ -26,10 +26,17 @@ assert.ok(fs.existsSync(path.join(www, "freedom-native-backup.js")));
 assert.ok(fs.existsSync(path.join(www, "freedom-native-purchases.js")));
 assert.ok(fs.existsSync(path.join(www, "freedom-subscription-gate.js")));
 assert.ok(fs.existsSync(path.join(www, "assets", "freedom-logo-horizontal.png")));
+assert.ok(fs.existsSync(path.join(www, "assets", "fonts", "Caveat-Regular.woff2")));
+assert.ok(fs.existsSync(path.join(www, "assets", "fonts", "Caveat-Medium.woff2")));
+assert.ok(fs.existsSync(path.join(www, "assets", "fonts", "OFL.txt")));
 
 const wwwIndex = fs.readFileSync(path.join(www, "index.html"), "utf8");
 const rootIndex = fs.readFileSync(path.join(root, "index.html"), "utf8");
 assert.equal(wwwIndex, rootIndex, "www/index.html must match the PWA root index.html");
+assert.doesNotMatch(wwwIndex, /fonts\.googleapis\.com|fonts\.gstatic\.com/);
+assert.match(wwwIndex, /assets\/fonts\/Caveat-Regular\.woff2/);
+assert.match(wwwIndex, /assets\/fonts\/Caveat-Medium\.woff2/);
+assert.match(wwwIndex, /font-display:block/);
 
 const config = JSON.parse(fs.readFileSync(path.join(root, "capacitor.config.json"), "utf8"));
 assert.equal(config.appName, "Freedom");
